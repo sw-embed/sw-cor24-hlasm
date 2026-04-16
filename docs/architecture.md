@@ -142,9 +142,9 @@ pattern as sw-cor24-forth and sw-cor24-rpg-ii:
 ## Build / Test
 
 ```bash
-make              # assemble check
-make test         # run reg-rs regression suite
-make demo         # run example
+just build        # assemble check
+just test         # run reg-rs regression suite
+just demo         # run example
 ./build.sh        # build script
 ./demo.sh         # demo script
 ./demo.sh test    # test suite

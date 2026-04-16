@@ -37,17 +37,17 @@ cor24-run --assemble --run
 
 ```bash
 # Build / assemble check
-./build.sh
+just build
 
 # Run demo
-./demo.sh
+just demo
 
 # Run tests
-./demo.sh test
-# or
-./build.sh test
-# or
-make test
+just test
+
+# Or use shell scripts directly:
+./build.sh          # build / test / run
+./demo.sh           # demo / test / repl
 ```
 
 ## Project Structure
@@ -56,7 +56,7 @@ make test
 hlasm.s        -- COR24 assembly source (the macro-assembler)
 build.sh       -- build / test / run script
 demo.sh        -- demo script
-Makefile       -- make targets
+justfile       -- just targets
 docs/          -- architecture, prd, design, plan
 reg-rs/        -- reg-rs test specifications and baselines
 ```
