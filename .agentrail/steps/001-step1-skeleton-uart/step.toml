@@ -1,6 +1,6 @@
 number = 1
 slug = "step1-skeleton-uart"
-status = "in-progress"
+status = "completed"
 description = """
 Step 1: Skeleton and UART output
 
@@ -8,4 +8,5 @@ Create the initial hlasm.s with reset vecto..."""
 role = "production"
 context_files = []
 created_at = "2026-04-16T08:01:08"
-commits = []
+completed_at = "2026-04-16T08:06:02"
+commits = ["2b57ad4bff0dd2799c44217f3c9e7c5f1dd4c626"]
