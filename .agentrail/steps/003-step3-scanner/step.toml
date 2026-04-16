@@ -1,0 +1,11 @@
+number = 3
+slug = "step3-scanner"
+status = "pending"
+description = """
+Step 3: Scanner / tokenizer
+
+Implement a scanner that reads characters from t..."""
+role = "production"
+context_files = []
+created_at = "2026-04-16T08:02:01"
+commits = []

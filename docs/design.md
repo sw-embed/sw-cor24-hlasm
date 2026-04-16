@@ -2,21 +2,24 @@
 
 ## Syntax Design
 
-### Source File Extension
+### Input
 
-`.hlasm` -- HLASM-inspired COR24 structured macro-assembly source.
+.hlasm source text loaded into memory at a fixed address via `--load-binary`.
+The macro-assembler reads characters from this buffer and writes expanded
+assembly to UART.
 
-### Pass Structure
+### Source Format
 
-The tool processes source in these passes:
+Lines are newline-terminated (0x0A). The macro-assembler processes source
+line by line, recognizing:
 
-1. **Lex**: Tokenize input into a stream of tokens
-2. **Parse**: Identify macro definitions, structured blocks, conditionals,
-   COPY directives, and plain assembly lines
-3. **Expand**: Resolve COPY, expand macro invocations, generate unique labels
-4. **Condition**: Evaluate conditional assembly (SET, IFDEF, IFEQ)
-5. **Lower**: Transform structured blocks (IF, DO, SELECT) into labels + branches
-6. **Emit**: Write plain .s output with source mapping comments
+- **Keywords**: MACRO, MEND, IF, ELSEIF, ELSE, ENDIF, DO, DOEXIT, ITERATE,
+  ENDDO, SELECT, WHEN, OTHERWISE, ENDSEL, SET, IFDEF, IFNDEF, IFEQ, IFNE,
+  ELSEASM, ENDIFASM
+- **Labels**: name followed by colon on own line
+- **Instructions**: standard COR24 mnemonics
+- **Comments**: semicolon or hash to end of line
+- **Directives**: .byte, .word, .comm, .org (passed through)
 
 ### Structured Control-Flow Syntax
 
@@ -33,35 +36,18 @@ ENDIF
 ```
 
 Condition specifiers: `cc_eq`, `cc_ne`, `cc_lt` (signed), `cc_lu` (unsigned),
-`cc_ge`, `cc_le`, `cc_gt`, `cc_zset` (C flag set), `cc_zclr` (C flag clear).
+`cc_zset` (C flag set), `cc_zclr` (C flag clear).
 
-Lowering for IF/ELSE/ELSEIF/ENDIF:
-
+Lowering produces labels and branches:
 ```
-; IF cc_eq, r0, 0
     ceq r0, z
-    brf .L0001_if_end
-    ; body
-; ELSEIF cc_lt, r1, 10
-    bra .L0002_if_elseif
-.L0001_if_end:
-    cls r1, z
-    brf .L0003_if_else
-    lc r0, 10
-    cls r1, r0
-    ; elseif body
-    bra .L0004_if_done
-.L0002_if_elseif:
-.L0003_if_else:
-    ; else body
-.L0004_if_done:
-; ENDIF
+    brf .L0001
+    ; IF body
+    bra .L0002
+.L0001:
+    ; ELSEIF/ELSE body
+.L0002:
 ```
-
-Note: For non-zero comparisons, the constant is loaded into a register
-using `lc` (range 0..127) or `la` + `lw` (larger values), and compared
-against that register. This respects the COR24 constraint that `ceq/cls/clu`
-only work with registers.
 
 #### DO / DOEXIT / ITERATE / ENDDO
 
@@ -71,73 +57,35 @@ DO
     DOEXIT cc_eq, r0, 0
     ; more body
 ENDDO
-
-DO WHILE, cc_ne, r0, 0
-    ; body
-ENDDO
 ```
 
-Lowering for infinite DO:
-
+Lowering:
 ```
-.L0001_do_top:
+.L0001:
     ; body
     ceq r0, z
-    brt .L0002_do_exit
+    brt .L0002
     ; more body
-    bra .L0001_do_top
-.L0002_do_exit:
+    bra .L0001
+.L0002:
 ```
-
-Lowering for DO WHILE:
-
-```
-.L0001_do_cond:
-    ; evaluate condition
-    brf .L0002_do_exit
-    ; body
-    bra .L0001_do_cond
-.L0002_do_exit:
-```
-
-ITERATE jumps to the condition/loop top. DOEXIT jumps past ENDDO.
 
 #### SELECT / WHEN / OTHERWISE / ENDSEL
 
 ```
 SELECT r0
     WHEN 0
-        ; handle case 0
+        ; case 0
     WHEN 1
-        ; handle case 1
+        ; case 1
     OTHERWISE
         ; default
 ENDSEL
 ```
 
-Lowering:
-
-```
-    ceq r0, z
-    brt .L0001_sel_0
-    lc r1, 1
-    ceq r0, r1
-    brt .L0002_sel_1
-    bra .L0003_sel_other
-.L0001_sel_0:
-    ; case 0 body
-    bra .L0004_sel_done
-.L0002_sel_1:
-    ; case 1 body
-    bra .L0004_sel_done
-.L0003_sel_other:
-    ; otherwise body
-.L0004_sel_done:
-```
+Lowering produces a compare-and-branch chain.
 
 ### Macro Syntax
-
-#### MACRO / MEND
 
 ```
 PUSHREG MACRO reg
@@ -145,45 +93,23 @@ PUSHREG MACRO reg
 MEND
 ```
 
-Parameters referenced with backslash prefix: `\reg`, `\dst`, `\src`.
+Parameters referenced with backslash: `\reg`, `\dst`.
+Local labels: `\@` generates unique label per expansion.
 
-#### Default and keyword parameters
-
-```
-EMIT_CHAR MACRO ch=65
-    la r2, -65280
-    lc r0, \ch
-poll\@: lb r1, 1(r2)
-    cls r1, z
-    brt poll\@
-    sb r0, 0(r2)
-MEND
-```
-
-`\@` generates a unique local label per expansion (e.g., `poll0001`, `poll0002`).
-
-#### Invoking macros
-
+Invocation:
 ```
     PUSHREG r0
     PUSHREG r1
-    EMIT_CHAR
-    EMIT_CHAR ch=66
 ```
 
-### Conditional Assembly Syntax
+### Conditional Assembly
 
 ```
 SET DEBUG, 1
 SET VERSION, 3
-SET UART_BASE, -65280
 
 IFDEF DEBUG
     ; debug-only code
-ENDIF
-
-IFNDEF RELEASE
-    COPY debug_helpers.hlasm
 ENDIF
 
 IFEQ VERSION, 3
@@ -193,120 +119,87 @@ ELSEASM
 ENDIFASM
 ```
 
-SET symbols are integers. String SET is not in initial scope.
-
-### COPY / Include
-
-```
-COPY uart_macros.hlasm
-COPY "path/to/file.hlasm"
-```
-
-Search order:
-1. Relative to including file's directory
-2. `lib/` directory in project root
-3. Paths specified via `-I` command-line flag
-
-### Plain Assembly Passthrough
+### Passthrough
 
 Any line that is not a macro definition, structured block, conditional, or
-COPY directive is passed through to the output as-is. This includes:
-
-- All standard COR24 instructions: add, sub, mov, lw, sw, bra, etc.
-- Labels: `label_name:` (on their own line)
-- Directives: .byte, .word, .comm, .org, .text, .data
-- Comments: `;` and `#`
-
-### Source Mapping Comments
-
-Output .s includes comments mapping back to .hlasm source:
-
-```
-; [hlasm src:3] IF cc_eq, r0, 0
-    ceq r0, z
-    brf .L0001
-; [hlasm src:4]     push r0
-    push r0
-; [hlasm src:5] ENDIF
-```
+keyword is passed through to output unchanged (plain COR24 assembly).
 
 ## Label Generation
 
 - Global labels: passed through as-is
-- Macro-local labels: `<name>\@` becomes `<name><expansion_counter>`
-  (e.g., `loop\@` in expansion 5 becomes `loop0005`)
-- Structured block labels: `.L<counter>_<type>_<qualifier>`
-  (e.g., `.L0001_if_end`, `.L0002_do_top`, `.L0003_sel_1`)
-
-Counter is global per assembly, incrementing monotonically.
+- Macro-local labels: `\@` becomes unique counter (e.g., `loop0001`)
+- Structured block labels: `.L<counter>` (e.g., `.L0001`, `.L0002`)
+- Counter is global, monotonically increasing
 
 ## Condition Specifier Semantics
-
-The COR24 ISA has a single C flag set by compare instructions. The condition
-specifiers map as follows:
 
 | Specifier | COR24 Instructions | Semantics |
 |-----------|-------------------|-----------|
 | `cc_eq` | `ceq ra, rb` | C set if ra == rb |
-| `cc_ne` | `ceq ra, rb` | C clear if ra != rb (invert branch sense) |
+| `cc_ne` | `ceq ra, rb` | C clear if ra != rb |
 | `cc_lt` | `cls ra, rb` | C set if ra < rb (signed) |
 | `cc_lu` | `clu ra, rb` | C set if ra < rb (unsigned) |
 | `cc_zset` | (no compare) | C flag already set |
 | `cc_zclr` | (no compare) | C flag already clear |
 
-For comparisons with constants, the constant is loaded into a register first:
+For constant comparisons, load constant into a register first:
 - 0..127: `lc r_tmp, const`
 - 0..255: `lcu r_tmp, const`
-- larger: `la r_tmp, const` (4 bytes)
+- larger: `la r_tmp, const`
 
-This respects the COR24 constraint that compare instructions only take registers.
+## Register Allocation
 
-## Command-Line Interface
+| Register | Use |
+|----------|-----|
+| r0 | Work register / scratch |
+| r1 | Return address / subroutine link |
+| r2 | Current pointer / working area |
+| fp | Frame pointer for subroutines |
+| sp | Data stack (hardware push/pop) |
 
-```
-hlasm [OPTIONS] <input.hlasm>
+## Subroutine Convention
 
-OPTIONS:
-  -o <file.s>        Output file (default: stdout)
-  -l                 Listing mode (macro expansion + lowered output)
-  -I <dir>           Add include search path (repeatable)
-  -D <name[=val]>    Define SET symbol (repeatable)
-  --help             Show help
-  --version          Show version
-```
+Follows the pattern from sw-cor24-forth and sw-cor24-rpg-ii:
+- Caller pushes arguments right-to-left on stack
+- Callee: push fp, push r2, push r1, mov fp,sp
+- Return value in r0
+- Callee restores: mov sp,fp, pop r1, pop r2, pop fp, jmp (r1)
 
-## Error Handling
+## Data Structures
 
-Errors are reported with .hlasm source line number and context:
+### Macro Table Entry
 
-- Undefined macro invocation
-- Wrong number of macro arguments
-- Undefined SET symbol in conditional
-- Malformed structured block (missing ENDIF, ENDDO, etc.)
-- COPY file not found
-- Nested macro expansion depth exceeded
+Fixed-size records in memory:
+- Name (up to 16 chars, null-terminated)
+- Param count (1 byte)
+- Param names (up to 8 params, 8 chars each)
+- Default values (up to 8, 24-bit integers)
+- Body pointer (offset into source buffer)
+- Body length (24-bit)
 
-Errors halt assembly and produce a non-zero exit code. Warnings produce
-messages but continue.
+### Symbol Table Entry
 
-## Implementation Language
+- Name (up to 16 chars)
+- Value (24-bit integer for SET symbols)
+- Type flag: SET, LABEL, MACRO
 
-Rust. Single binary crate. No workspace. No Python, C, or other HLL.
+### Token
 
-Build: `cargo build --release` (or a shell script wrapper)
-Install: `cargo install --path .` or copy binary
+Minimal token representation:
+- Type (1 byte): KEYWORD, MNEMONIC, REGISTER, NUMBER, STRING, LABEL, IDENT, COMMENT, COMMA, LPAREN, RPAREN, NEWLINE, EOF
+- Value (up to 8 bytes for the token text or numeric value)
+
+## Character I/O
+
+UART at 0xFF0100 (data) and 0xFF0101 (status):
+- TX busy: bit 7 of status register (sign-extended, negative = busy)
+- RX ready: bit 0 of status register
 
 ## Testing Approach
 
-Tests use reg-rs golden-output regression testing (same as sw-cor24-forth):
-
+Tests use reg-rs golden-output regression testing:
 - Test prefix: `hlasm_`
-- Each test runs the hlasm tool and pipes output through cor24-run
-- Preprocess filter extracts relevant output (UART output, listing sections)
+- Input source prepared as binary file, loaded via `--load-binary`
+- Output captured via UART
+- Preprocess filter extracts UART output
 - Test files in `reg-rs/` directory with `.rgt` and `.out` pairs
-
-Test categories:
-1. **Lowering tests**: .hlasm -> .s, verify output matches expected assembly
-2. **Macro tests**: verify expansion correctness
-3. **Conditional tests**: verify IFDEF/IFEQ behavior
-4. **End-to-end tests**: .hlasm -> .s -> cor24-run -> verify UART output

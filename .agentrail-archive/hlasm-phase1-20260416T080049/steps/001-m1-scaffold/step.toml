@@ -1,6 +1,6 @@
 number = 1
 slug = "m1-scaffold"
-status = "pending"
+status = "in-progress"
 description = """
 M1: Project scaffold + passthrough
 

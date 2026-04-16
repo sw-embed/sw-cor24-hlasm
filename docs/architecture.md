@@ -2,81 +2,132 @@
 
 ## Overview
 
-sw-cor24-hlasm is a **macro-assembler front-end** for the COR24 24-bit RISC ISA.
-It reads HLASM-inspired structured assembly source and lowers it to plain COR24
-assembly (`.s` files) that the existing Rust-based assembler in sw-cor24-emulator
-(`cor24-run`) can assemble and execute.
+sw-cor24-hlasm is a **macro-assembler** for the COR24 24-bit RISC ISA,
+written entirely in COR24 assembly. It reads HLASM-inspired structured
+assembly source from an in-memory text buffer and emits plain COR24
+assembly (`.s` output via UART).
 
-**Product statement**: A COR24 structured macro-assembler front-end that lowers
-HLASM-inspired control-flow and macro constructs into ordinary COR24 assembly.
+The macro-assembler runs on the COR24 emulator (`cor24-run`) just like
+sw-cor24-forth and sw-cor24-rpg-ii.
+
+**Product statement**: A COR24 macro-assembler, written in COR24 assembly,
+that processes HLASM-inspired source and produces plain COR24 assembly output.
 
 ## Processing Pipeline
 
 ```
-.hlasm source
+.hlasm source (loaded into memory)
      |
      v
-  [HLASM Preprocessor]  -- macro expansion, conditional assembly, COPY/include
++-------------------------------+
+| HLASM Macro-Assembler         |
+|  (COR24 assembly program)     |
+|   Scanner / tokenizer         |
+|   Macro table lookup          |
+|   Macro expansion             |
+|   Conditional assembly eval   |
+|   Structured lowering         |
+|   Symbol table management     |
++-------------------------------+
      |
      v
-  [Structured Lowering] -- IF/DO/SELECT/PROC -> labels + branches
+UART output: plain .s assembly
      |
      v
-  plain .s output  -->  cor24-run --assemble / --run
+cor24-run --assemble --run
 ```
 
-The tool is a **preprocessor**, not a replacement assembler. It produces plain
-`.s` files that are byte-compatible with the existing `cor24-run` assembler.
+The macro-assembler is a COR24 program that reads text and writes text.
+It is not a host-side tool -- it runs on the target.
 
-## Component Architecture
+## Platform
 
-```
-hlasm
- |
- +-- lexer      -- tokenize .hlasm source into tokens
- +-- parser     -- parse macro defs, conditionals, structured blocks, instructions
- +-- expander   -- expand macro invocations (scoped locals, nested calls)
- +-- cond       -- evaluate conditional assembly (SET symbols, IFASM, etc.)
- +-- lower      -- lower structured blocks to labels + branches
- +-- copy       -- resolve COPY/include directives
- +-- emit       -- emit plain .s output with source mapping comments
- +-- diagnose   -- listing, symbol table, xref, expansion trace
-```
+COR24 24-bit RISC: 3 GP registers (r0-r2), fp, sp, z, iv, ir,
+24-bit words, variable-length instructions (1/2/4 bytes), UART at 0xFF0100.
+
+## Memory Layout
+
+| Region | Address | Contents |
+|--------|---------|----------|
+| Code | 0x000000+ | HLASM macro-assembler assembly |
+| Source buffer | 0x080000 | Input .hlasm source text |
+| Macro table | 0x090000 | Macro definitions (name, params, body) |
+| Symbol table | 0x0A0000 | SET symbols, labels |
+| Output buffer | 0x0B0000 | Expanded/lowered .s output |
+| Working storage | 0x0C0000 | Temp buffers, string workspace |
+| Stack | 0xFEEC00 | Hardware stack (EBR, grows down) |
+
+Addresses are approximate; exact layout decided during implementation.
+
+## Components
+
+### Scanner
+Reads input text character by character. Identifies keywords (MACRO, MEND,
+IF, DO, SELECT, etc.), mnemonics, register names, numbers, labels, comments.
+Produces a token stream in memory.
+
+### Macro Table
+Stores macro definitions: name, parameter list, body token stream.
+Lookup on macro invocation. Supports nested macros.
+
+### Macro Expander
+Substitutes parameters (\name -> argument). Generates unique local labels
+(\@ -> unique counter). Handles nested expansion with depth limit.
+
+### Conditional Assembly
+Evaluates SET symbols, IFDEF, IFEQ at assembly time. Includes or excludes
+source sections based on conditions.
+
+### Structured Lowering
+Transforms IF/ELSEIF/ELSE/ENDIF, DO/ENDDO, SELECT/WHEN/ENDSEL into plain
+labels and branches. Generates unique branch target labels.
+
+### Symbol Table
+Tracks labels, SET symbols, and macro names. Symbol lookup during expansion
+and lowering.
+
+### Output Emitter
+Writes expanded, lowered assembly text to the output buffer. Flushes to UART.
+
+## Register Allocation
+
+Follows Forth/RPG-II convention (frozen):
+
+| Register | Use |
+|----------|-----|
+| r0 | Work register / scratch |
+| r1 | Return address / temp pointer |
+| r2 | Pointer to current input position / working area |
+| fp | Frame pointer for subroutines |
+| sp | Data stack (hardware push/pop) |
+
+## I/O Model
+
+- **Input**: .hlasm source loaded into memory via `--load-binary`
+- **Output**: plain .s assembly emitted via UART
+- **UART**: character I/O at 0xFF0100
 
 ## Dependency Relationship
 
 ```
-sw-cor24-hlasm  (this project -- macro-assembler front-end)
-     |
-     |  outputs plain .s files
-     v
-sw-cor24-emulator  (cor24-run -- assembler + emulator)
-     |
-     |  provides ISA crate
-     v
-cor24-isa         (shared ISA definitions: opcodes, registers, encoding)
+sw-cor24-hlasm (this project)
+  |
+  |  runs on
+  v
+sw-cor24-emulator (cor24-run -- assembler + emulator)
 ```
-
-No Rust crate dependency is required at runtime. The HLASM tool reads text
-and writes text. Validation is done by piping output through `cor24-run`.
 
 ## Testing Strategy
 
 Tests use **reg-rs** (golden-output regression testing), following the same
-pattern as sw-cor24-forth:
+pattern as sw-cor24-forth and sw-cor24-rpg-ii:
 
-1. Each test is a `.rgt` file with a command, expected exit code, and
-   a preprocess filter to extract relevant output
-2. Tests run via `reg-rs run -p hlasm --parallel`
-3. The HLASM tool produces `.s` output; tests verify:
-   - Correct lowering of structured constructs to plain assembly
-   - Macro expansion correctness
-   - Conditional assembly behavior
-   - End-to-end: HLASM -> .s -> cor24-run -> UART output
+1. Each test is a `.rgt` file with a `cor24-run` command
+2. Input source loaded via `--load-binary`
+3. Preprocess filter extracts UART output
+4. Tests run via `reg-rs run -p hlasm --parallel`
 
-## COR24 ISA Summary (Reference)
-
-The target ISA has these constraints that shape the macro-assembler design:
+## COR24 ISA Constraints
 
 - 24-bit words (3 bytes), little-endian
 - 3 GPRs (r0, r1, r2), plus fp, sp, z, iv, ir
@@ -88,37 +139,25 @@ The target ISA has these constraints that shape the macro-assembler design:
 - No mov r0,sp -- must use mov fp,sp; push fp; pop r0
 - 16 MB address space: 1 MB SRAM + 8 KB EBR + I/O
 
-## Key Design Decisions
+## Build / Test
 
-1. **Text-in, text-out**: No binary dependency on cor24-isa crate.
-   Validation is external (pipe through cor24-run).
-2. **No runtime semantics**: Structured forms lower to labels + branches.
-   No hidden runtime, no types, no expression evaluator beyond assembly-time.
-3. **Source mapping**: Output .s includes comments mapping back to .hlasm
-   source lines for debugging.
-4. **Macro-local symbols**: Each macro expansion gets unique local labels
-   to prevent collisions across invocations.
-5. **Not a compiler**: This is deliberately limited. Complex logic belongs
-   in PL/SW, not in the macro-assembler.
-
-## File Layout (Planned)
-
+```bash
+make              # assemble check
+make test         # run reg-rs regression suite
+make demo         # run example
+./build.sh        # build script
+./demo.sh         # demo script
+./demo.sh test    # test suite
 ```
-sw-cor24-hlasm/
-  docs/              -- documentation
-  reg-rs/            -- reg-rs test specifications (.rgt) and baselines (.out)
-  scripts/           -- build and test shell scripts
-  src/               -- Rust source for the HLASM tool
-  tests/             -- test .hlasm source files
-  lib/               -- standard macro library files (.hlasm, COPY-able)
-  examples/          -- example .hlasm programs
-```
+
+All shell scripts for build/test. No Python/Rust/C in the project.
+Follows sw-cor24-forth and sw-cor24-rpg-ii patterns.
 
 ## Non-Goals
 
-- No types, type system, or record system beyond lightweight layout helpers
+- No types, type system, or record system
 - No general-purpose compile-time programming language
-- No optimizing transformations (clean lowering only)
-- No relocatable object format or linker changes
+- No optimizing transformations
+- No relocatable object format or linker
 - No runtime abstractions hidden behind macros
 - No expression semantics approaching C/PL/I/PL/SW

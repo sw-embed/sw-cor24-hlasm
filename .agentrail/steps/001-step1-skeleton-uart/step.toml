@@ -1,0 +1,11 @@
+number = 1
+slug = "step1-skeleton-uart"
+status = "pending"
+description = """
+Step 1: Skeleton and UART output
+
+Create the initial hlasm.s with reset vecto..."""
+role = "production"
+context_files = []
+created_at = "2026-04-16T08:01:08"
+commits = []

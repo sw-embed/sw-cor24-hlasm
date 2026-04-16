@@ -1,0 +1,11 @@
+number = 4
+slug = "step4-passthrough"
+status = "pending"
+description = """
+Step 4: Line reader and passthrough
+
+Implement line-by-line reading and passt..."""
+role = "production"
+context_files = []
+created_at = "2026-04-16T08:02:17"
+commits = []

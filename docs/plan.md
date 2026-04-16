@@ -1,169 +1,121 @@
 # Implementation Plan
 
-## Milestones
+## Approach
 
-### M1: Project Scaffold + Passthrough
-Goal: Rust binary that reads .hlasm and writes .s, passing plain assembly
-through unchanged.
+Single COR24 assembly file (`hlasm.s`), built up incrementally.
+Shell scripts for build/test/demo. `reg-rs` for regression tests.
+Follows sw-cor24-forth and sw-cor24-rpg-ii patterns directly.
 
-Deliverables:
-- Cargo project with `hlasm` binary crate
-- CLI argument parsing (-o, -l, -I, -D)
-- Line-based input: pass non-structured lines through to output
-- Source mapping comments on output lines
-- Build script (`scripts/build.sh`)
-- reg-rs test: hello-world passthrough
-- reg-rs test runner script (`scripts/test.sh`)
+## Step 1 -- Skeleton and UART output
 
-Exit criteria: `echo "nop" | hlasm` outputs `nop` and `cor24-run` accepts it.
+Set up `hlasm.s` with reset vector, UART emit subroutine, and a halt loop.
+Verify it assembles and runs with `cor24-run`.
 
-### M2: Lexer + Tokenizer
-Goal: Tokenize .hlasm input into a structured token stream.
+**Deliverable**: `hlasm.s` prints "HLASM" to UART and halts.
 
-Deliverables:
-- Token types: keyword, mnemonic, register, number, string, label, comment,
-  operator, comma, paren, newline
-- Lexer handles: labels with colon, `;` and `#` comments, hex/decimal numbers,
-  register names, mnemonic names, macro keywords
-- reg-rs tests for tokenization edge cases
+**Test**: `reg-rs` golden output contains "HLASM".
 
-### M3: MACRO/MEND + Expansion
-Goal: Define and invoke macros with parameters and local labels.
+## Step 2 -- Source buffer reader
 
-Deliverables:
-- MACRO/MEND parsing (collect body tokens)
-- Macro invocation (match name, bind parameters)
-- Positional parameters with `\name` substitution
-- Default parameter values
-- Local label generation with `\@`
-- Nested macro calls (macro body invokes another macro)
-- Unique label counter (global, monotonically increasing)
-- reg-rs tests: simple macro, parameterized macro, default params,
-  local labels, nested macros, multiple invocations
+Implement subroutine to read characters from an in-memory source buffer.
+Load a small test source via `--load-binary` and verify characters are
+read and echoed correctly.
 
-### M4: COPY / Include
-Goal: Include external .hlasm files as macro libraries.
+**Deliverable**: `_read_char`, `_peek_char`, `_skip_whitespace` subroutines.
+Source buffer descriptor layout.
 
-Deliverables:
-- COPY directive parsing
-- File search: relative to including file, `lib/`, `-I` paths
-- Recursive include (with depth limit)
-- COPY inside conditional (deferred evaluation)
-- `lib/` directory with placeholder file
-- reg-rs tests: COPY from lib/, COPY with -I path, nested COPY
+**Test**: load source text, echo first N characters to UART.
 
-### M5: Conditional Assembly
-Goal: Compile-time conditionals and SET symbols.
+## Step 3 -- Scanner / tokenizer
 
-Deliverables:
-- SET directive (integer symbols)
-- -D command-line symbol definition
-- IFDEF / IFNDEF (symbol defined / not defined)
-- IFEQ / IFNE (integer comparison)
-- ELSEASM / ENDIFASM
-- Nested conditionals
-- reg-rs tests: IFDEF true/false, IFEQ equal/not-equal, nesting,
-  -D override, SET/IFDEF interaction
+Implement a scanner that reads characters and produces tokens.
+Recognize: keywords (MACRO, MEND, IF, ENDIF, DO, ENDDO, SELECT, etc.),
+mnemonics, register names, numbers (decimal, hex), labels, identifiers,
+comments, operators.
 
-### M6: Structured IF
-Goal: IF/ELSEIF/ELSE/ENDIF lowering to labels + branches.
+**Deliverable**: `_next_token`, `_scan_number`, `_scan_ident`, `_scan_keyword`.
+Token type enum in memory.
 
-Deliverables:
-- Parse IF with condition specifier and operands
-- Parse optional ELSEIF chain
-- Parse optional ELSE
-- Parse ENDIF
-- Lower to ceq/cls/clu + brf/brt + generated labels
-- Handle constant comparisons (load into register first)
-- Handle cc_zset / cc_zclr (no compare needed)
-- Source mapping comments in lowered output
-- reg-rs tests: simple IF, IF/ELSE, IF/ELSEIF/ELSE, nested IF,
-  constant comparison, zero flag conditions, end-to-end with cor24-run
+**Test**: scan a small source, print token types/values to UART.
 
-### M7: Structured DO
-Goal: DO/DOEXIT/ITERATE/ENDDO lowering to loops.
+## Step 4 -- Line reader and passthrough
 
-Deliverables:
-- Parse DO (infinite loop)
-- Parse DO WHILE (pre-condition loop)
-- Parse DOEXIT with condition
-- Parse ITERATE (jump to loop top)
-- Parse ENDDO
-- Lower to labels + branches
-- ITERATE goes to condition evaluation (for WHILE) or loop top (for infinite)
-- DOEXIT goes past ENDDO
-- reg-rs tests: infinite loop, WHILE loop, DOEXIT, ITERATE,
-  nested DO, end-to-end with cor24-run (e.g., count-down loop)
+Implement line-by-line reading from the source buffer. Pass non-structured
+lines through to UART output unchanged. Handle comments, labels, empty lines.
 
-### M8: Structured SELECT
-Goal: SELECT/WHEN/OTHERWISE/ENDSEL lowering to dispatch.
+**Deliverable**: `_read_line`, `_emit_line`, passthrough main loop.
 
-Deliverables:
-- Parse SELECT with register operand
-- Parse WHEN with constant value
-- Parse OTHERWISE
-- Parse ENDSEL
-- Lower to compare-and-branch chain
-- Handle 0 specially (use z register)
-- Handle constants > 127 (la + lw pattern)
-- reg-rs tests: 2-way dispatch, multi-way dispatch, OTHERWISE,
-  nested SELECT, end-to-end with cor24-run (e.g., command interpreter)
+**Test**: load a simple .s program as source, emit it unchanged via UART.
 
-### M9: Listing + Diagnostics
-Goal: Listing mode showing macro expansion and lowered code.
+## Step 5 -- Macro table and MACRO/MEND parsing
 
-Deliverables:
-- `-l` flag produces listing to stdout or file
-- Listing format: source line number, structured source, lowered assembly
-- Macro expansion trace (optional verbosity level)
-- Error messages with source line numbers
-- reg-rs tests: listing output format verification
+Implement the macro table data structure. Parse MACRO/MEND definitions:
+store name, parameters, defaults, and body location in the table.
 
-### M10: Standard Macro Library
-Goal: Reusable COR24 macro library in `lib/`.
+**Deliverable**: macro table layout, `_parse_macro_def`, `_lookup_macro`.
 
-Deliverables:
-- `lib/cor24_base.hlasm` -- register names, UART addresses, common equates
-- `lib/cor24_uart.hlasm` -- EMIT_CHAR, READ_CHAR, PRINT_STRING macros
-- `lib/cor24_stack.hlasm` -- PUSHREG, POPREG, SAVE_CONTEXT, RESTORE_CONTEXT
-- `lib/cor24_debug.hlasm` -- conditional debug output macros
-- End-to-end tests using library macros
+**Test**: define a macro, print its name and param count via UART.
 
-## Dependency Graph
+## Step 6 -- Macro expansion
 
-```
-M1 (scaffold) --> M2 (lexer) --> M3 (macros) --> M4 (COPY)
-                                            \--> M5 (conditionals)
-M3 + M5 --> M6 (IF) --> M7 (DO) --> M8 (SELECT) --> M9 (listing)
-                                                        \--> M10 (library)
-```
+Implement macro invocation: look up macro in table, substitute parameters,
+generate unique local labels for `\@`. Emit expanded body to output.
 
-M6, M7, M8 can be developed in any order after M3+M5.
-M9 and M10 are independent of each other.
+**Deliverable**: `_expand_macro`, `_substitute_params`, unique label counter.
 
-## Phase 1 (This Saga)
+**Test**: define PUSHREG macro, invoke it twice, verify expanded output.
 
-The first saga implements through M1-M3, establishing the foundation:
+## Step 7 -- Conditional assembly (SET, IFDEF, IFEQ)
 
-1. M1: Project scaffold + passthrough
-2. M2: Lexer + tokenizer
-3. M3: MACRO/MEND + expansion
+Implement SET symbol definition and lookup. Evaluate IFDEF/IFNDEF
+(symbol defined/not defined) and IFEQ/IFNE (integer comparison).
+Skip or include sections based on conditions.
 
-This gives us a working tool that can define macros, invoke them, and produce
-valid .s output. Structured control flow and conditionals come in the next saga.
+**Deliverable**: `_set_symbol`, `_lookup_symbol`, `_eval_conditional`.
 
-## Testing Throughout
+**Test**: SET DEBUG,1; IFDEF DEBUG -> emit "debug"; verify output.
 
-Every milestone includes reg-rs tests. The test prefix is `hlasm_`.
+## Step 8 -- Structured IF lowering
 
-Test naming convention:
-- `hlasm_m1_passthrough` -- M1 tests
-- `hlasm_m2_tokenize_*` -- M2 tests
-- `hlasm_m3_macro_*` -- M3 tests
-- `hlasm_m4_copy_*` -- M4 tests
-- etc.
+Implement IF/ELSEIF/ELSE/ENDIF parsing and lowering to labels + branches.
+Handle condition specifiers (cc_eq, cc_lt, etc.). Generate unique branch
+target labels.
 
-Each test follows the sw-cor24-forth pattern:
-- `.rgt` file with command, timeout, preprocess, exit_code, desc
-- `.out` file with golden baseline
-- Run via `reg-rs run -p hlasm --parallel`
+**Deliverable**: `_parse_if`, `_lower_if`, label generation for blocks.
+
+**Test**: IF/ELSE block produces correct branch output.
+
+## Step 9 -- Structured DO lowering
+
+Implement DO/DOEXIT/ITERATE/ENDDO parsing and lowering to loops.
+
+**Deliverable**: `_parse_do`, `_lower_do`.
+
+**Test**: DO loop produces correct loop structure.
+
+## Step 10 -- Structured SELECT lowering
+
+Implement SELECT/WHEN/OTHERWISE/ENDSEL parsing and lowering to
+compare-and-branch dispatch.
+
+**Deliverable**: `_parse_select`, `_lower_select`.
+
+**Test**: SELECT/WHEN produces correct dispatch chain.
+
+## Step 11 -- Integration demo
+
+Wire up all components. Process a non-trivial .hlasm source that uses
+macros, conditionals, and structured control flow. Verify the output
+assembles and runs correctly on `cor24-run`.
+
+**Deliverable**: example .hlasm program, demo script, `reg-rs` test.
+
+## Deferred
+
+- COPY/include (file-based macro libraries)
+- PROC/ENDP (procedure scaffolding)
+- STRUCT/ENDSTRUCT (data layout)
+- REPT (assembly-time repetition)
+- Listing mode and xref
+- Error recovery and diagnostics
+- String SET symbols
