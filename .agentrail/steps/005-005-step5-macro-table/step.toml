@@ -1,6 +1,6 @@
 number = 5
 slug = "005-step5-macro-table"
-status = "in-progress"
+status = "completed"
 description = """
 Step 5: Macro table
 
@@ -8,4 +8,5 @@ Implement a macro table to store macro definitions. When..."""
 role = "legacy"
 context_files = []
 created_at = "2026-04-16T11:31:32"
-commits = []
+completed_at = "2026-04-16T13:53:14"
+commits = ["47ca21e005e03a6790ed6d5aa13fbe0616306269"]

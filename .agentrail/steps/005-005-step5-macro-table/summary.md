@@ -1,0 +1,1 @@
+Implement macro table: MACRO/MEND definition, body recording in _macro_buf, _lookup_macro for name matching, _emit_macro_body for expansion. Fixed 8 bugs including inverted branches, unreachable loop body, wrong return value, register clobbering, stack leaks. All 6 reg-rs tests pass.
