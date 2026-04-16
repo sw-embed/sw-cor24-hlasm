@@ -1,6 +1,6 @@
 number = 4
 slug = "step4-passthrough"
-status = "pending"
+status = "in-progress"
 description = """
 Step 4: Line reader and passthrough
 

@@ -1,5 +1,5 @@
 ; hlasm.s -- HLASM-Inspired Macro-Assembler for COR24
-; Step 003: Scanner / tokenizer.
+; Step 004: Line reader and passthrough.
 ;
 ; UART at 0xFF0100 (-65280). TX busy: bit 7 of status (sign-extended).
 ;
@@ -19,23 +19,277 @@ _main:
 	push	fp
 	mov	fp,sp
 
-_sa_loop:
-	la	r0,_src_desc
+_ml_loop:
 	push	r0
-	la	r0,_next_token
+	la	r0,_read_line
 	jal	r1,(r0)
 	add	sp,3
 
 	ceq	r0,z
-	brt	_sa_done
+	brt	_ml_done
 
-	bra	_sa_loop
+	push	r0
+	la	r0,_is_structured
+	jal	r1,(r0)
 
-_sa_done:
+	ceq	r0,z
+	brf	_ml_skip
+
+	la	r0,_emit_line
+	jal	r1,(r0)
+	add	sp,3
+	bra	_ml_loop
+
+_ml_skip:
+	add	sp,3
+	bra	_ml_loop
+
+_ml_done:
 	mov	sp,fp
 	pop	fp
 _halt:
 	bra	_halt
+
+; _read_line: Read one line from source into _line_buf.
+; Returns: r0 = line length (0 on EOF)
+; Frame: push fp, r1, r2, r2 = 12 bytes.
+; 0(fp) = current length counter
+; Uses _line_buf for storage, _src_desc for input.
+_read_line:
+	push	fp
+	push	r1
+	push	r2
+	push	r2
+	mov	fp,sp
+
+	la	r1,_line_buf
+	la	r0,0
+	sw	r0,0(fp)
+
+_rl_loop:
+	push	r1
+	la	r2,_src_desc
+	push	r2
+	la	r0,_read_char
+	jal	r1,(r0)
+	add	sp,3
+	pop	r1
+
+	ceq	r0,z
+	brt	_rl_eof
+
+	lc	r2,10
+	ceq	r0,r2
+	brt	_rl_eol
+
+	sb	r0,0(r1)
+	add	r1,1
+	lw	r0,0(fp)
+	add	r0,1
+	sw	r0,0(fp)
+	bra	_rl_loop
+
+_rl_eof:
+	lw	r0,0(fp)
+	ceq	r0,z
+	brt	_rl_empty
+
+	la	r0,0
+	sb	r0,0(r1)
+	bra	_rl_ret_len
+
+_rl_eol:
+	la	r0,0
+	sb	r0,0(r1)
+
+_rl_ret_len:
+	lw	r0,0(fp)
+	mov	sp,fp
+	pop	r2
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+_rl_empty:
+	la	r0,0
+	mov	sp,fp
+	pop	r2
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_line: Write _line_buf contents to UART followed by CR+LF.
+; Arg on stack: line length
+; Frame: push fp, r1, r2 = 9 bytes. Arg at 9(fp).
+_emit_line:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r0,9(fp)
+	ceq	r0,z
+	brt	_el_done
+
+	la	r1,_line_buf
+
+_el_loop:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_el_end_str
+
+	push	r1
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+	pop	r1
+
+	add	r1,1
+	bra	_el_loop
+
+_el_end_str:
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+_el_done:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _is_structured: Check if line starts with a keyword.
+; Arg on stack: line length
+; Returns: r0 = 1 if structured (starts with keyword), 0 if not
+; Frame: push fp, r1, r2 = 9 bytes. Arg at 9(fp).
+_is_structured:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r0,9(fp)
+	ceq	r0,z
+	brt	_is_no
+
+	la	r2,_line_buf
+
+_is_skip_ws:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_is_no
+
+	lc	r1,32
+	ceq	r0,r1
+	brt	_is_ws_skip
+
+	lc	r1,9
+	ceq	r0,r1
+	brt	_is_ws_skip
+
+	bra	_is_check
+
+_is_ws_skip:
+	add	r2,1
+	bra	_is_skip_ws
+
+_is_check:
+	la	r1,_kw_prefix_table
+
+_is_loop:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_is_no
+
+	push	r1
+	push	r2
+	la	r0,_kw_prefix_match
+	jal	r1,(r0)
+	pop	r2
+	pop	r1
+
+	ceq	r0,z
+	brt	_is_next
+
+	la	r0,1
+	bra	_is_ret
+
+_is_next:
+_is_skip_entry:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_is_skipped
+
+	add	r1,1
+	bra	_is_skip_entry
+
+_is_skipped:
+	add	r1,1
+	bra	_is_loop
+
+_is_no:
+	la	r0,0
+
+_is_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _kw_prefix_match: Check if line at r2 matches prefix at r1.
+; Args on stack: line_ptr (9 fp), prefix_ptr (12 fp)
+; Frame: push fp, r1, r2 = 9 bytes. Args at 9,12(fp).
+; Returns: r0 = 1 if match, 0 if not
+_kw_prefix_match:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r1,12(fp)
+	lw	r2,9(fp)
+
+_kpm_loop:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_kpm_match
+
+	push	r2
+	lbu	r2,0(r2)
+	ceq	r2,z
+	brf	_kpm_has_char
+
+	pop	r2
+	la	r0,0
+	bra	_kpm_ret
+
+_kpm_has_char:
+	ceq	r0,r2
+	brf	_kpm_nomatch
+
+	pop	r2
+	add	r1,1
+	add	r2,1
+	bra	_kpm_loop
+
+_kpm_nomatch:
+	add	sp,3
+	la	r0,0
+	bra	_kpm_ret
+
+_kpm_match:
+	la	r0,1
+
+_kpm_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
 
 ; _next_token: Read and print next token.
 ; Arg on stack: src_desc pointer
@@ -1505,6 +1759,51 @@ _cc_table:
 	.byte 99,99,95,108,117,0
 	.byte 99,99,95,122,115,101,116,0
 	.byte 99,99,95,122,99,108,114,0
+	.byte 0
+
+; --- Line buffer (128 bytes) ---
+_line_buf:
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+
+; --- Keyword prefix table (for _is_structured) ---
+_kw_prefix_table:
+	.byte 77,65,67,82,79,0
+	.byte 77,69,78,68,0
+	.byte 73,70,0
+	.byte 69,76,83,69,73,70,0
+	.byte 69,76,83,69,0
+	.byte 69,78,68,73,70,0
+	.byte 68,79,0
+	.byte 68,79,69,88,73,84,0
+	.byte 73,84,69,82,65,84,69,0
+	.byte 69,78,68,68,79,0
+	.byte 83,69,76,69,67,84,0
+	.byte 87,72,69,78,0
+	.byte 79,84,72,69,82,87,73,83,69,0
+	.byte 69,78,68,83,69,76,0
+	.byte 83,69,84,0
+	.byte 73,70,68,73,70,0
+	.byte 73,70,78,68,73,70,0
+	.byte 73,70,69,81,0
+	.byte 73,70,78,69,0
+	.byte 69,76,83,69,65,83,77,0
+	.byte 69,78,68,73,70,65,83,77,0
 	.byte 0
 
 ; --- Buffers ---

@@ -1,0 +1,1 @@
+scanner/tokenizer with _next_token, _nt_switch dispatch, scanner functions for all token types, lookup tables, UART output. Fixed branch-too-far, arg offsets, stack balance, and register clobber bugs.
