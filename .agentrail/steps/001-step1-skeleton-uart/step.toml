@@ -1,6 +1,6 @@
 number = 1
 slug = "step1-skeleton-uart"
-status = "pending"
+status = "in-progress"
 description = """
 Step 1: Skeleton and UART output
 
