@@ -1,0 +1,1926 @@
+
+
+
+
+I have a COR24 assembler (and emulator) and a PL/I-inspired system programming language (PL/SW w/macros) that could be considered a high-level-portable assembler.  I'm looking for something in-between, like a macro-assembler.  I'm looking for one with features from MVS/ESA (assuming that macro-assembler is more powerful than others, like a PC-DOC macro assembler.  What other macro-assemblers should I consider (or features)?  I would like macros (duh) and the ability to structure assembler programs better (fewer gotos, more structured-programming).  Suggestions?
+
+I’m comparing the main families of macro-assemblers and the features they brought to the table, then I’ll map that back onto what fits best between raw assembler and PL/SW.
+
+Thought for 24s
+You want something between raw COR24 assembler and PL/SW: a macro-assembler that keeps assembly close to the machine, but adds enough abstraction to improve structure, reuse, portability, and readability.
+
+What to optimize for
+For your use case, the sweet spot is usually:
+
+Real macros with parameters, defaults, local symbols, recursion/iteration
+
+Conditional assembly for target variants, debug/release, feature flags
+
+Structured control-flow macros so open-coded branches are less error-prone
+
+Sections / relocation / symbol visibility so larger programs can be organized cleanly
+
+Good listing / cross-reference / diagnostics so it still feels like assembly, not a mysterious preprocessor
+
+Libraries of reusable macros for calling conventions, prolog/epilog, MMIO, tables, dispatch, loops
+
+That is exactly the territory where IBM’s HLASM became strong: not just “MACRO/MEND,” but a whole ecosystem of conditional assembly, reusable macro libraries, and structured-programming macro sets like IF / ELSEIF / ELSE / ENDIF, DO / ENDDO, CASE, SEARCH, and SELECT. IBM explicitly documents these structured-programming macros as part of the Toolkit Feature, intended to simplify complex control flow and reduce branch mistakes. 
+
+My recommendation
+For COR24, I would not try to copy one historical macro-assembler wholesale. I would build a hybrid macro-assembler inspired by the best ideas from several systems.
+
+Best reference model: IBM HLASM style
+This is the best model if your goal is “portable high-level assembly” rather than just textual substitution. HLASM’s structured macro facilities and strong conditional-assembly support are the closest historical match to what you described. IBM’s materials describe HLASM and the Toolkit Feature as providing structured constructs and broader tools for understanding and maintaining assembler applications. 
+
+Best second model: DEC MACRO-11 / VAX MACRO
+DEC’s macro assemblers are a very strong reference for practical macro power without going too far from the metal. DEC documentation highlights features like:
+
+user-defined macros
+
+conditional assembly
+
+program sectioning
+
+relocatable object modules
+
+global symbols
+
+system macro libraries
+
+listing and cross-reference support 
+
+That combination is very attractive for your COR24 environment, especially if you want separately assembled modules and eventual loaders/linkers.
+
+Best “high-level syntax in assembler” reference: MASM/TASM family
+MASM is worth studying because it popularized assembler-level structured directives such as .IF, .WHILE, and .REPEAT. Even the Microsoft docs still reflect these as first-class “high-level directives.” 
+
+These are useful not because MASM itself is your ideal, but because the syntax is familiar and easy to teach.
+
+Macro-assemblers worth studying
+1. IBM HLASM
+Why study it
+
+Most mature “assembler as a higher-level language” tradition
+
+Strong conditional assembly
+
+Structured-programming macro libraries
+
+Good large-program discipline
+
+Steal these ideas
+
+IF / ELSEIF / ELSE / ENDIF
+
+DO / ENDDO
+
+SELECT / WHEN / OTHERWISE / ENDSEL
+
+CASE
+
+macro libraries for entry/exit, stack frames, register-save patterns
+
+compile-time symbol logic and feature switches
+
+Best if
+
+You want COR24 assembly to scale to substantial systems code
+
+You want assembler that feels disciplined, not ad hoc
+
+2. DEC MACRO-11 / VAX MACRO
+Why study it
+
+Classic, practical macro-assembler lineage
+
+Excellent balance of power and simplicity
+
+Good examples of modular assembly via sections, globals, relocatable objects, and macro libraries 
+
+Steal these ideas
+
+local labels inside macro expansions
+
+rich conditional assembly
+
+module/section organization
+
+universal/include macro libraries
+
+PIC-friendly conventions
+
+Best if
+
+You want something elegant and historically proven
+
+You want more structure than plain assembler, but less ceremony than PL/SW
+
+3. MASM / TASM
+Why study it
+
+Widely known structured directives
+
+Easy on-ramp for users
+
+Nice syntax for procedures, structs, conditional assembly
+
+Steal these ideas
+
+.IF/.ELSE/.ENDIF
+
+.WHILE/.ENDW
+
+.REPEAT/.UNTIL
+
+PROC/ENDP
+
+STRUCT/ENDS
+
+Best if
+
+You want approachable syntax for demos and education
+
+You want the macro-assembler to feel familiar to PC-assembly users
+
+4. TOPS-10 MACRO and similar older macro systems
+DEC’s older macro assemblers are also worth a look because they show serious use of conditional assembly, iterative pseudo-ops like IRP/IRPC, and reusable “UNIVERSAL” include-style definitions. 
+
+Steal these ideas
+
+iterate over parameter lists at assembly time
+
+character-wise macro iteration
+
+default symbol definitions via IFDEF/IFNDEF
+
+Features I would put into a COR24 macro-assembler
+Tier 1: must-have
+These are the ones I’d implement first.
+
+1. Real macro system
+Support:
+
+named parameters
+
+positional + keyword args
+
+default values
+
+variadic args
+
+local labels per expansion
+
+unique symbol generation
+
+nested macro expansion
+
+Example:
+
+PUSHREG MACRO reg
+  STORE \reg, [sp]
+  SUBI  sp, 3
+MEND
+2. Conditional assembly
+Support:
+
+IFDEF, IFNDEF
+
+IFEQ, IFNE
+
+string compare if practical
+
+target-feature switches
+
+debug/release toggles
+
+This is one of the major reasons HLASM and DEC macro assemblers stayed productive. 
+
+3. Structured control-flow macros
+This is probably the biggest win for you.
+
+I would add macro forms like:
+
+IF cc_eq, r0, 0
+  ...
+ELSEIF cc_lt, r1, 10
+  ...
+ELSE
+  ...
+ENDIF
+and
+
+DO
+  ...
+  EXITIF cc_eq, done
+ENDDO
+These should expand to ordinary labels and branches, but the source becomes much easier to read and maintain. IBM explicitly positions its structured-programming macros this way. 
+
+4. Named block / procedure macros
+Even if COR24 has no native call-frame support, your macro-assembler can help.
+
+For example:
+
+PROC foo, uses=r0,r1
+  ...
+ENDP
+or:
+
+BEGIN_MODULE uart
+  ...
+END_MODULE
+This is partly MASM-like, partly DEC-like, and very useful.
+
+5. Include / macro library system
+You will want reusable files for:
+
+calling conventions
+
+stack helpers
+
+UART I/O
+
+interrupt entry/exit
+
+memory copy/fill
+
+dispatch tables
+
+switch/case helpers
+
+PL/SW interop stubs
+
+Tier 2: highly desirable
+6. Compile-time iteration
+Examples:
+
+REPT n
+
+IRP sym,<a,b,c>
+
+table generation
+
+unrolled copies
+
+vector/record layout helpers
+
+This is very useful for jump tables, register-save lists, structure offsets, repeated initialization, and MMIO descriptors.
+
+7. Structure/record declarations
+Not full PL/SW types, just lightweight layout support:
+
+STRUCT UART_REGS
+  DATA    DS 1
+  STATUS  DS 1
+ENDSTRUCT
+Then:
+
+UART0 EQU 0FF0100
+LOAD r0, UART0+UART_REGS.STATUS
+8. Sections / visibility / relocatables
+Even if your current as24 is simple, this is a valuable direction:
+
+.text, .data, .bss
+
+PUBLIC, EXTERN
+
+SECTION name
+
+relocation records later
+
+DEC macro assemblers made this normal, and it is what lets assembly scale beyond single files. 
+
+9. Cross-reference and listing control
+This matters more than people expect. Good macro assemblers usually give:
+
+macro expansion listings
+
+symbol tables
+
+xref
+
+conditional assembly traces
+
+local-label diagnostics
+
+DEC explicitly called out listing control, symbol table listing, and cross-reference as key features. 
+
+What I would not do
+Do not make it a full language
+If it gets too close to PL/SW, you will end up maintaining two high-level languages.
+
+Avoid:
+
+expression syntax that becomes C-like
+
+complex type systems
+
+runtime semantics hidden behind macros
+
+too much implicit state
+
+A macro-assembler should still feel like:
+
+visible registers
+
+visible branches after expansion
+
+visible memory layout
+
+predictable expansion
+
+Do not rely only on textual substitution
+A weak macro system becomes a mess fast.
+
+You want:
+
+scoped macro locals
+
+hygienic-ish generated labels
+
+compile-time expressions
+
+controlled conditionals
+
+maybe named blocks that validate nesting
+
+That is the difference between “assembler with macros” and “usable macro-assembler.”
+
+Best architecture for your toolchain
+Given what you already have, I would strongly consider this layering:
+
+Option A: Preprocessor macro-assembler in front of existing as24
+Flow:
+
+cor24m source  ->  macro expansion / structural lowering  ->  plain .s  ->  as24
+Benefits
+least disruption
+
+keeps existing assembler/emulator stable
+
+easy to inspect generated output
+
+ideal for education and debugging
+
+Downsides
+some diagnostics point to post-expansion source unless you add source mapping
+
+sections/relocation may be limited by as24 backend
+
+This is probably the best near-term choice.
+
+Option B: Extend as24 directly
+Flow:
+
+cor24m source  ->  parser + macro expander + assembler in one
+Benefits
+better diagnostics
+
+cleaner integration
+
+easier to add relocations, sections, symbol visibility later
+
+Downsides
+more work
+
+harder to iterate initially
+
+If you already trust your assembler core, I would still start with Option A.
+
+Concrete feature set I’d suggest for version 1
+Syntax surface
+I would choose a blend of IBM + MASM + DEC ideas:
+
+Macros
+MACRO PUSH reg
+  STORE \reg,[sp]
+  SUBI sp,3
+MEND
+Conditional assembly
+IFDEF DEBUG
+  ...
+ENDIF
+Structured programming
+IF EQ,r0,0
+  ...
+ELSEIF LT,r1,10
+  ...
+ELSE
+  ...
+ENDIF
+DO WHILE,NE,r2,0
+  ...
+ENDDO
+SELECT r0
+  WHEN 0
+    ...
+  WHEN 1
+    ...
+  OTHERWISE
+    ...
+ENDSEL
+Procedure / frame helpers
+PROC uart_putch, USES=r0,r1
+  ...
+ENDP
+Data layout
+STRUCT HEADER
+  MAGIC  DB 3
+  LEN    DW 1
+ENDSTRUCT
+My ranking for historical inspiration
+Best overall
+IBM HLASM — best model for structured macro programming in assembler 
+
+DEC MACRO-11 / VAX MACRO — best practical model for modular macro assembly and relocatable organization 
+
+MASM/TASM — best source of familiar high-level assembler syntax like .IF and .WHILE 
+
+TOPS-10 MACRO family — good source for powerful compile-time iteration and conditional techniques 
+
+Bottom line
+For COR24, I would build:
+
+“COR24 Macro Assembler”
+with:
+
+IBM-style structured programming macros
+
+DEC-style macro libraries, sections, globals, relocatable mindset
+
+MASM-style friendly syntax for IF/WHILE/REPEAT/PROC
+
+a preprocessor-to-as24 architecture first
+
+That would give you a true middle layer:
+
+assembler for exact machine control
+
+macro-assembler for scalable systems programming
+
+PL/SW for higher-level logic and portability
+
+The macro-assembler becomes the right place for:
+
+calling conventions
+
+interrupt scaffolding
+
+MMIO abstractions
+
+table generators
+
+state machine helpers
+
+structured branch lowering
+
+and it keeps PL/SW from having to absorb every “slightly higher level than assembly” need.
+
+If you want, I can draft a COR24 macro-assembler feature spec and syntax sketch with example IF/DO/CASE/PROC/STRUCT expansions into plain COR24 assembly.
+
+
+Yes, I want an IBM HLASM-inspired, better than text-substitution, form of as24 (a separate project, preserving the current ones).  The Dec, Microsoft ones could be considered later for comparison.   I do want it to be limited in scope (I already have PL/SW).   So the control-flow macros at least.  What else?  What staged set of features can I implement incrementally?  Where do we declare victory and draw the line?
+
+I’ve narrowed this to an incremental design problem now: what belongs in the new assembler layer, what stays in PL/SW, and what the “done” line should look like.
+
+Thought for 12s
+You want a new, separate COR24 macro-assembler inspired primarily by IBM HLASM, but deliberately limited in scope so it does not grow into PL/SW. The goal is not “fancier text substitution.” The goal is a structured assembly layer that still exposes registers, labels, memory layout, and branch behavior, while removing the repetitive and error-prone parts.
+
+That means the right design center is:
+
+structured control-flow lowering
+
+real macro expansion with scope and validation
+
+conditional assembly
+
+reusable include/copy libraries
+
+diagnostics/listings good enough that expanded code is still understandable
+
+IBM’s HLASM Toolkit Feature is exactly the historical reference for that mindset: its structured macro families include IF/ELSEIF/ELSE/ENDIF, DO/DOEXIT/ITERATE/ENDDO, SELECT/WHEN/OTHRWISE/ENDSEL, plus related search/case forms, specifically to simplify control flow and reduce branch errors. 
+
+The boundary: what belongs here vs. PL/SW
+This new macro-assembler should do
+Make assembly safer and more structured
+
+Generate labels/branches correctly
+
+Encapsulate common assembler idioms
+
+Support compile-time decisions
+
+Organize source into reusable macro/include libraries
+
+Help with prolog/epilog, loops, case dispatch, tables, register-save patterns, MMIO wrappers
+
+It should not do
+Become a typed language
+
+Add rich runtime abstractions
+
+Hide calling conventions too much
+
+Grow expression semantics toward C/PL/I/PL/SW
+
+Introduce “business logic” constructs that belong in PL/SW
+
+That line matters, because IBM HLASM’s power comes from macro and conditional assembly language, not from turning assembler into a general-purpose high-level language. IBM’s macro language explicitly supports arithmetic/logical/character expressions and variable symbols for assembly-time control and substitution. 
+
+What else beyond control-flow macros?
+If control-flow is the anchor, I would add only the things that directly support “structured assembly” rather than “another compiler.”
+
+1. Real macro semantics
+Not mere token paste.
+
+You want:
+
+positional and keyword parameters
+
+defaults
+
+variadic operands later
+
+local symbols per expansion
+
+unique generated labels
+
+compile-time variables
+
+nested expansion
+
+basic validation and error messages
+
+This is core HLASM territory: local/global variable symbols, conditional assembly expressions, and substitution are part of the intended model, not an afterthought. 
+
+2. Conditional assembly
+This is the second pillar after control-flow macros.
+
+Use it for:
+
+debug/release
+
+CPU/ISA variant selection
+
+emulator-only helpers
+
+optional tracing
+
+compile-time feature flags
+
+selecting alternate implementations
+
+Without this, the macro system stays shallow. With it, you can write real macro libraries.
+
+3. COPY / include libraries
+IBM’s COPY exists exactly to reuse frequently needed source fragments from source libraries. 
+
+For COR24, this becomes:
+
+register/save-restore helpers
+
+interrupt entry/exit
+
+UART helpers
+
+table and descriptor generators
+
+structured programming macro packages
+
+standard equates and MMIO layout declarations
+
+4. Procedure/block scaffolding
+Not full procedures as a language feature, but structured wrappers for common assembly patterns:
+
+PROC / ENDP
+
+optional USES=...
+
+optional save/restore templates
+
+local-label scope
+
+named exit labels
+
+This keeps routines readable without inventing a runtime model.
+
+5. Small compile-time data/layout helpers
+A carefully limited version is useful:
+
+EQU
+
+offset helpers
+
+repeated field/table generation
+
+maybe a very small STRUCT/record-offset facility
+
+This should stop at layout assistance, not become a type system.
+
+6. Listing / expansion / xref support
+This is easy to underestimate. It is one of the things that makes a macro-assembler usable in practice.
+
+You want:
+
+source-with-expansion view
+
+final lowered .s
+
+macro trace on demand
+
+symbol table
+
+label xref
+
+nesting diagnostics
+
+Because once you introduce structured macros, you need a clean way to inspect what they became.
+
+Staged implementation plan
+I would do this in six stages, with a strict “no uncontrolled growth” rule.
+
+Stage 0 — Define the contract
+Before code, define the product boundary.
+
+Deliverables
+language scope doc
+
+syntax doc
+
+lowering rules doc
+
+non-goals doc
+
+test corpus
+
+Decisions to lock now
+output is still plain as24 source initially
+
+macro-assembler is a front-end/lowering pass
+
+no runtime semantics added
+
+no types
+
+no general expressions beyond what assembly-time control needs
+
+every structured form must lower into ordinary labels + branches in a transparent way
+
+Victory condition
+You can explain the entire product as:
+
+“A structured macro-and-conditional-assembly front-end for as24.”
+
+That sentence should remain true the whole life of the project.
+
+Stage 1 — Real macros, but no structured control yet
+Build the machinery first.
+
+Features
+MACRO / MEND
+
+positional params
+
+keyword params
+
+defaults
+
+macro-local symbols
+
+generated unique labels
+
+nested macro calls
+
+basic COPY / include
+
+nice expansion diagnostics
+
+Why first
+Because all later structured forms depend on this being solid.
+
+Example
+MACRO PUSH reg
+  st \reg,[sp]
+  subi sp,3
+MEND
+Victory condition
+You can implement reusable helpers without label collisions, and the expansion is deterministic and debuggable.
+
+Draw the line
+Do not add loops or conditionals in the macro language yet.
+
+Stage 2 — Conditional assembly
+Now give the macro system compile-time intelligence.
+
+Features
+AIF-style or your own IFASM/ELSEASM/ENDIFASM
+
+symbol-defined checks
+
+integer/string-ish compile-time values
+
+macro-time variables
+
+feature flags
+
+assembly-time comparisons
+
+conditional COPY
+
+HLASM’s macro and conditional assembly model is a strong precedent here: arithmetic, logical, and character expressions with variable symbols are first-class parts of the macro language. 
+
+Examples
+IFASM DEF(DEBUG)
+  COPY debug_helpers
+ENDIFASM
+IFASM ISA_LEVEL >= 2
+  ...
+ELSEASM
+  ...
+ENDIFASM
+Victory condition
+You can write one macro library that adapts itself to configuration flags and validates its parameters.
+
+Draw the line
+Still no general-purpose compile-time programming language. Keep it declarative and small.
+
+Stage 3 — Structured IF
+This is your first real HLASM-inspired win.
+
+IBM documents the IF family as IF, optional ELSE, optional ELSEIF, then ENDIF. 
+
+Features
+IF
+
+ELSEIF
+
+ELSE
+
+ENDIF
+
+Design choice
+Do not try to parse arbitrary boolean algebra first. Start with a constrained operand model.
+
+For example:
+
+IF cc_eq, r0, 0
+  ...
+ELSEIF cc_lt, r1, 10
+  ...
+ELSE
+  ...
+ENDIF
+or:
+
+IF ZSET
+  ...
+ENDIF
+depending on how your ISA models condition codes.
+
+Why not more at first
+The hard part is:
+
+nesting
+
+label generation
+
+correct lowering
+
+readable diagnostics
+
+not rich condition syntax.
+
+Victory condition
+Nested IF/ELSEIF/ELSE/ENDIF lowers correctly 100% of the time and is pleasant to debug.
+
+Draw the line
+No short-circuit boolean parser yet. No AND/OR/NOT unless it is clearly assembly-time or branch-template-based.
+
+Stage 4 — Structured DO loops
+IBM’s DO macro set includes DO, optional DOEXIT, optional ITERATE, and ENDDO. 
+
+Features
+DO
+
+ENDDO
+
+DOEXIT
+
+ITERATE
+
+Start with these loop forms
+infinite loop with structured exits
+
+while-precondition loop
+
+until-postcondition loop
+
+Examples:
+
+DO
+  ...
+  DOEXIT cc_eq, done
+  ...
+ENDDO
+DO WHILE, cc_ne, r0, 0
+  ...
+ENDDO
+Why this stage matters
+This removes a lot of hand-written branch spaghetti while still feeling like assembly.
+
+Victory condition
+You can write scanning loops, UART polling loops, and state-machine loops without raw backward branch labels.
+
+Draw the line
+Do not add FOR with high-level induction semantics unless it lowers trivially and visibly.
+
+Stage 5 — SELECT / CASE
+IBM’s toolkit explicitly includes SELECT, WHEN, optional OTHRWISE, ENDSEL, and also CASE-related forms. 
+
+Features
+SELECT expr
+
+WHEN value
+
+OTHERWISE
+
+ENDSEL
+
+Possibly later:
+
+range cases
+
+fallthrough-disabled by default
+
+jump-table lowering only as an optimization, not a semantic requirement
+
+Why this belongs
+A lot of assembler control flow is dispatch:
+
+opcode dispatch
+
+command interpreters
+
+parser state machines
+
+MMIO command handlers
+
+This is still structured assembly, not high-level language creep.
+
+Victory condition
+You can implement command interpreters and dispatch tables without hand-managed compare/branch ladders.
+
+Draw the line
+No pattern matching. No arbitrary expression evaluation beyond what dispatch needs.
+
+Stage 6 — Small structural helpers
+Only after the core is solid.
+
+Candidates
+PROC / ENDP
+
+USES=...
+
+LEAVE name
+
+BLOCK / ENDBLOCK
+
+lightweight STRUCT / offsets
+
+REPT / simple assembly-time repetition
+
+Why late
+These are useful, but they are also where scope creep starts.
+
+Victory condition
+They save boilerplate without hiding machine behavior.
+
+Draw the line
+If a helper starts looking like a programming language statement rather than assembly organization, stop.
+
+What to postpone deliberately
+These are tempting, but I would put them outside the initial “victory line.”
+
+1. Full compile-time language
+No general string engine, no recursive metaprogramming playground, no elaborate token rewriting DSL.
+
+2. High-level expression parser for runtime conditions
+A limited condition grammar is enough for structured lowering. You do not need PL/I conditions inside assembler.
+
+3. Full type/record system
+Offsets and layout helpers are fine. A real type system belongs elsewhere.
+
+4. Optimizing transformations
+The macro-assembler should lower structure cleanly. It does not need to become an optimizer.
+
+5. Relocatable object format and linker changes
+Useful later, but outside the first declaration of success unless you already planned an object-format evolution.
+
+Where to declare victory
+There are really three possible finish lines.
+
+Victory Line A — Minimal, practical success
+This is the one I recommend.
+
+You are done when you have:
+real macros with local/generated symbols
+
+conditional assembly
+
+COPY / include libraries
+
+IF/ELSEIF/ELSE/ENDIF
+
+DO/DOEXIT/ITERATE/ENDDO
+
+SELECT/WHEN/OTHERWISE/ENDSEL
+
+listings/expansion diagnostics
+
+a small standard macro library for COR24 conventions
+
+At that point, you have a genuine HLASM-inspired structured macro-assembler that is clearly distinct from PL/SW and clearly more powerful than text substitution. That is the best stopping point.
+
+Victory Line B — Nice-to-have completion
+Add:
+
+PROC/ENDP
+
+lightweight STRUCT
+
+REPT
+
+macro-library packaging conventions
+
+better xref/listing tools
+
+This is good polish, but not necessary to claim success.
+
+Victory Line C — Too far
+If you start adding:
+
+rich expressions
+
+hidden runtime semantics
+
+typed variables
+
+complex declarations
+
+optimizer-like behavior
+
+language-like procedures and modules
+
+then you are drifting into “mini-PL/SW in assembler clothing.” That is where to stop.
+
+My concrete recommendation
+Build to Victory Line A
+That gives you a disciplined project with a clear identity.
+
+Product statement
+A COR24 structured macro-assembler front-end that lowers HLASM-inspired control-flow and macro constructs into ordinary as24 source.
+
+Initial feature set
+macro definitions with scope and validation
+
+conditional assembly
+
+include/copy libraries
+
+structured IF
+
+structured DO
+
+structured SELECT
+
+good listings and diagnostics
+
+Keep out
+types
+
+runtime abstractions
+
+full expression language
+
+optimizer behavior
+
+high-level modules/classes/procedures beyond light scaffolding
+
+A practical rule of thumb
+When deciding whether to add a feature, ask:
+
+“Does this primarily help me write assembly more safely and readably, or does it start helping me write high-level program logic?”
+If it helps write assembly safely/readably: it belongs here.
+
+If it helps write high-level logic: it belongs in PL/SW.
+
+That one rule will save this project from ballooning.
+
+Suggested milestone sequence
+M1
+parser/preprocessor scaffold
+
+MACRO/MEND
+
+local labels
+
+deterministic expansion tests
+
+M2
+conditional assembly
+
+include/copy
+
+macro library support
+
+source maps / diagnostics
+
+M3
+IF/ELSEIF/ELSE/ENDIF
+
+nested block tests
+
+lowering golden files
+
+M4
+DO/DOEXIT/ITERATE/ENDDO
+
+loop-exit correctness tests
+
+complex nesting tests
+
+M5
+SELECT/WHEN/OTHERWISE/ENDSEL
+
+command-dispatch demo
+
+listing/xref polish
+
+M6
+optional PROC/ENDP
+
+optional lightweight STRUCT
+
+documentation and standard COR24 macro library
+
+Bottom line
+The right line to draw is:
+
+This project is finished when it delivers structured control flow + real macros + conditional assembly + reusable libraries, while still lowering transparently into plain as24.
+That is a clean, historically grounded HLASM-inspired target. IBM’s documented structured macro families and macro/conditional assembly capabilities justify exactly that scope, and no more. 
+
+I can turn this into a docs/{architecture,prd,design,plan}.md-style project outline for a new sw-cor24-hlasm-style repo if you want.
+
+
+For demos, I'd like to see how to use the macro-assembler features to implements part of an RPG-II compiler.
+
+I’m grounding this in how RPG II source was historically organized and what parts of a compiler are easiest to showcase with structured macros, then I’ll map those onto concrete COR24 demo slices.
+
+Thought for 31s
+Yes — that is a very good demo target.
+
+An RPG-II compiler is a great fit because RPG-II source is highly regular, fixed-format, card-oriented, indicator-heavy, and dispatch-heavy. That means a macro-assembler can visibly help with exactly the things it should be good at:
+
+structured control flow
+
+compile-time table generation
+
+repetitive decoder/dispatcher patterns
+
+reusable prolog/epilog and scanner helpers
+
+clearer handling of indicator-conditioned logic
+
+Historically, RPG programs are organized around specification types such as F, E, I, C, O, with calculation specifications describing calculations and their order, and output specifications describing output records and fields. IBM’s documentation explicitly describes calculation specs as defining the order of calculations and notes that they can also control some input/output operations. 
+
+That gives you a natural path for demos: do not try to compile all of RPG-II first. Instead, build a sequence of small compiler slices where each slice showcases one macro-assembler capability.
+
+High-level architecture for the demos
+The best demo architecture is:
+
+80-col RPG card deck
+   ->
+card reader / fixed-column extractor
+   ->
+spec classifier (F/I/C/O/etc.)
+   ->
+small parsers per spec type
+   ->
+tiny IR / internal record
+   ->
+diagnostics listing
+   ->
+very small codegen or interpreter stub
+For demo purposes, you do not need the whole pipeline at once. You can stop at:
+
+parse + listing
+
+parse + tiny IR
+
+parse + one tiny executable subset
+
+That is enough to prove the macro-assembler helps.
+
+What macro-assembler features get showcased well?
+1. SELECT/WHEN/OTHERWISE/ENDSEL
+This is perfect for:
+
+classifying a card by spec letter
+
+dispatching on calculation opcodes
+
+dispatching on indicator combinations
+
+dispatching on compile-state modes
+
+Example demo:
+
+col 6 = 'C'  -> parse calc spec
+col 6 = 'I'  -> parse input spec
+col 6 = 'O'  -> parse output spec
+otherwise    -> error
+This is one of the cleanest “before/after” wins over hand-written branches.
+
+2. IF/ELSEIF/ELSE/ENDIF
+Perfect for:
+
+validating fields
+
+checking blank vs. present fixed columns
+
+testing operation classes
+
+handling conditioned operations
+
+compile-time flag handling in the compiler itself
+
+Example:
+
+if opcode field blank -> diagnostic
+
+else if opcode is MOVE
+
+else if opcode is ADD
+
+else -> unsupported opcode error
+
+3. DO/DOEXIT/ITERATE/ENDDO
+Perfect for:
+
+scanning card decks
+
+trimming blanks
+
+reading next non-empty card
+
+iterating field tables
+
+walking generated diagnostic entries
+
+4. real macros with locals and parameters
+Perfect for:
+
+fixed-column extraction helpers
+
+repetitive parser skeletons
+
+card listing output
+
+diagnostic emission
+
+table entry declarations
+
+standardized parser entry/exit scaffolding
+
+5. conditional assembly
+Perfect for:
+
+enabling verbose compile traces
+
+emulator-only debug output
+
+choosing alternate codegen backends
+
+building “parser-only” vs “parser+codegen” demo versions
+
+Best staged demo set
+Here is the staged set I would recommend.
+
+Demo 1 — Card scanner and spec classifier
+Goal
+Read an array of 80-column cards and classify each one by spec type.
+
+Why it is a good first demo
+It is visually obvious.
+It uses fixed-format source.
+It naturally uses DO and SELECT.
+
+Macro-assembler features showcased
+DO/ENDDO for main scan loop
+
+SELECT/WHEN/OTHERWISE for card type dispatch
+
+IF/ELSE for blank/comment detection
+
+reusable GETCOL / GETSPAN macros
+
+Output
+A compile listing like:
+
+0001 C spec
+0002 C spec
+0003 O spec
+0004 unknown spec at col 6
+Why this is historically grounded
+RPG source is organized by specification type, and IBM describes the main source section in terms of these specification lines, including calculation and output specs. 
+
+What this proves
+Your macro-assembler makes fixed-format source decoding readable.
+
+Demo 2 — Fixed-column field extractor library
+Goal
+Build a reusable macro library for extracting named slices from 80-column cards.
+
+Why this matters
+RPG-II is fixed-format, so this is a canonical assembly pain point. A macro-assembler should make it much cleaner.
+
+Macro features showcased
+parameterized macros
+
+local labels
+
+conditional assembly for debug tracing
+
+small include library
+
+Example macro uses
+GETCOL   dst, cardptr, 6
+GETSPAN  dst, cardptr, 20, 25
+ISBLANKS flag, cardptr, 16, 18
+Output
+Hex/ASCII debug dump of extracted fields:
+
+spec='C'
+factor1='TOTAL   '
+opcode='ADD '
+result='SUM '
+What this proves
+The macro-assembler is more than text substitution: it is giving you a small, reusable, structured standard library.
+
+Demo 3 — Parse a tiny subset of C specs
+Goal
+Recognize a few calculation operations, maybe:
+
+MOVE
+
+ADD
+
+SUB
+
+Z-ADD
+
+EXCPT
+
+IBM’s docs describe calculation specifications as describing the calculations to be done and their order, and as also controlling some I/O. 
+
+Why it is a great demo
+C-specs are where RPG “feels like a language.”
+You can keep the subset tiny but still meaningful.
+
+Macro features showcased
+SELECT on opcode
+
+IF validation of required fields
+
+helper macros for field normalization
+
+table-driven dispatch
+
+Output
+Either:
+
+parsed IR records, or
+
+pseudocode listing
+
+Example:
+
+C ADD  PRICE   TOTAL
+-> IR_ADD factor1=PRICE result=TOTAL
+What this proves
+Structured macros are great for mini-dispatch parsers.
+
+Demo 4 — Indicator-conditioned operations
+Goal
+Parse and normalize a tiny subset of RPG indicator conditioning.
+
+RPG has a strong indicator model, and IBM’s docs discuss how operations may be conditioned by indicators, including tricky cases around EXCPT and overflow indicators. IBM specifically describes a case where operations following EXCPT conditioned by the same printer overflow indicator may need to be grouped between DO and END to preserve intended behavior. 
+
+Why this is a superb macro-assembler demo
+Indicator-conditioned logic is exactly the kind of thing that becomes ugly in raw assembler and much cleaner with structured control-flow macros.
+
+Macro features showcased
+IF/ELSEIF/ELSE
+
+DO/ENDDO
+
+helper macros that lower conditioned operations into structured branch blocks
+
+compile-time validation for legal indicator combinations
+
+Output
+Normalized internal form:
+
+if IN55 then EXCPT REPORT
+if not IN03 then ADD PRICE TOTAL
+What this proves
+Your macro-assembler helps structure control flow in the compiler, and later could help structure generated assembly too.
+
+Demo 5 — Tiny IR builder
+Goal
+Convert parsed C-spec lines into a compact internal representation.
+
+For example:
+
+IR record:
+  op_kind
+  cond_mask
+  factor1_ref
+  factor2_ref
+  result_ref
+Why this matters
+This is where you start looking like a real compiler, not just a parser.
+
+Macro features showcased
+macros for defining IR layouts
+
+repeated-field store helpers
+
+dispatch scaffolding
+
+debug-only dumps via conditional assembly
+
+Output
+Memory dump or listing:
+
+0000: IR_ADD cond=00000000 f1=12 f2=0 res=18
+0001: IR_MOVE cond=00000020 f1=21 f2=0 res=22
+What this proves
+The macro-assembler can support compiler implementation patterns without needing PL/SW yet.
+
+Demo 6 — Compile one tiny RPG-II subset into COR24 assembly
+Goal
+Take a very small language subset and emit executable COR24 code.
+
+Good subset:
+
+one input record already loaded into memory
+
+one or two numeric fields
+
+MOVE, ADD, SUB
+
+maybe one EXCPT-like output stub to line printer buffer
+
+Why this is the “wow” demo
+You go from:
+
+card deck
+to
+
+parsed RPG C-specs
+to
+
+generated COR24
+to
+
+running in your emulator
+
+Macro features showcased
+code-emission macros
+
+procedure scaffolding
+
+branch templates
+
+listing/debug helpers
+
+Output
+A tiny end-to-end example:
+
+RPG cards -> compile -> cor24.s -> assemble -> run -> output buffer
+What this proves
+The macro-assembler is useful not just for writing apps, but also for writing language tools.
+
+Best demo programs to compile
+For demo value, choose very small RPG-like source examples.
+
+Demo source A — running total
+C           PRICE     ADD  TOTAL
+C           TAX       ADD  TOTAL
+Why good
+tiny
+
+obvious semantics
+
+easy IR
+
+easy codegen
+
+Demo source B — move and format output
+C           NAME      MOVE PRINTNAME
+C                     EXCPTREPORT
+Why good
+shows data movement
+
+shows a pseudo-report/output step
+
+ties to RPG report heritage
+
+Demo source C — indicator-conditioned output
+C   55                EXCPTOVRFLW
+C           AMOUNT    ADD  TOTAL
+Why good
+shows indicator conditioning
+
+shows structured lowering
+
+Demo source D — card classification only
+A mixed deck with C, O, and bad records.
+
+Why good
+ideal earliest milestone
+
+no codegen required
+
+How the macro-assembler features map to compiler parts
+Scanner / card loop
+Use:
+
+DO
+
+DOEXIT
+
+ITERATE
+
+Example conceptual style:
+
+DO
+  READ_NEXT_CARD cardptr
+  DOEXIT EOF
+  IF BLANK_CARD
+    ITERATE
+  ENDIF
+  CLASSIFY_CARD ...
+ENDDO
+This is much clearer than raw branch spaghetti.
+
+Spec dispatch
+Use:
+
+SELECT/WHEN/OTHERWISE
+
+Example conceptual style:
+
+SELECT specchar
+  WHEN 'C'
+    PARSE_C_SPEC ...
+  WHEN 'O'
+    PARSE_O_SPEC ...
+  WHEN 'I'
+    PARSE_I_SPEC ...
+  OTHERWISE
+    EMIT_ERROR ...
+ENDSEL
+Opcode parse
+Use:
+
+SELECT opcode
+
+helper match macros
+
+Example:
+
+SELECT opcode
+  WHEN OP_MOVE
+    BUILD_IR_MOVE ...
+  WHEN OP_ADD
+    BUILD_IR_ADD ...
+  OTHERWISE
+    UNSUPPORTED_OPCODE ...
+ENDSEL
+Condition handling
+Use:
+
+IF/ELSEIF/ELSE
+
+Example:
+
+IF cond_present
+  BUILD_COND_MASK ...
+ELSE
+  CLEAR_COND_MASK ...
+ENDIF
+Diagnostics
+Use:
+
+parameterized macros
+
+conditional assembly
+
+Example:
+
+EMIT_DIAG line_no, ERR_BAD_OPCODE, opcode_ptr
+TRACE_PARSE "C-spec opcode dispatch"
+What not to demo too early
+To keep the macro-assembler demo clean, avoid these too early:
+
+1. Full RPG program cycle
+That is historically important, but too large for the first demos.
+
+2. Full F/I/O spec support
+Do tiny subsets only.
+
+3. Packed-decimal arithmetic everywhere
+Interesting later, but not necessary for the first “macro-assembler helps compiler implementation” story.
+
+4. Full indicator semantics
+Start with a small subset of conditioning indicators.
+
+5. Full code generation
+First prove:
+
+scanner
+
+parser
+
+IR
+Then add one tiny backend.
+
+Where the macro-assembler visibly helps most
+If you want demos where the audience immediately sees the value, I would rank them like this:
+
+Best demo value
+Spec classifier
+
+Tiny C-spec parser
+
+Indicator-conditioned operations
+
+Tiny IR builder
+
+Tiny code generator
+
+The reason is simple:
+
+they are branch-heavy
+
+they are table-heavy
+
+they are repetitive
+
+they benefit a lot from SELECT, IF, DO, and reusable extraction macros
+
+That is exactly the sweet spot for an HLASM-inspired macro-assembler.
+
+A recommended demo roadmap
+Demo milestone 1
+“RPG card deck lister”
+
+read 80-col cards
+
+classify C/O/I/unknown
+
+print listing
+
+Demo milestone 2
+“RPG C-spec field extractor”
+
+show extracted factor1/opcode/result
+
+Demo milestone 3
+“RPG tiny parser”
+
+support MOVE, ADD, SUB, EXCPT
+
+Demo milestone 4
+“RPG indicator normalization”
+
+support conditioned operations
+
+Demo milestone 5
+“RPG tiny compiler”
+
+emit COR24 for a minimal subset
+
+My strongest recommendation
+Start with this exact demo:
+
+“Compile a tiny RPG-II calculation deck into a diagnostic listing and optional IR”
+Why this one:
+
+historically recognizable
+
+uses real fixed-format RPG ideas
+
+shows off SELECT, IF, DO, macros, conditional assembly
+
+does not require the full RPG runtime/program cycle
+
+gives you a stable demo corpus for regression tests
+
+Use a source deck like:
+
+C           PRICE     ADD  TOTAL
+C           TAX       ADD  TOTAL
+C   55                EXCPTOVRFLW
+O                     REPORT
+Then show:
+
+card classification
+
+extracted columns
+
+opcode dispatch
+
+normalized IR
+
+optional generated COR24 stub
+
+That gives you a crisp “macro-assembler makes compiler construction easier” story, and it maps directly to documented RPG structure and calculation/output specification roles. 
+
+I can draft a demo plan with 5 tiny RPG-II card decks and the macro-assembler constructs each one is meant to exercise.
+
+
+I do not understand the RPG-II related examples.  It looked like application logic, not implementing a compiler.  "Demo Source A" C           PRICE     ADD  TOTAL
+C           TAX       ADD  TOTAL. -- what does this mean?  Explain how the RPG-II compiler is using macro-assembler features to implement the compiler and then the compiler reads this Demo Source?   Wouldn't the compiler need a whole program?  I'm confused by what you are showing that has PRICE, TAX, and TOTAL.  These are not something I would expect to see in an compiler written in macro-assembler.  Please clarify
+
+Good catch — your confusion is 100% justified. What I showed was RPG application source, not the compiler itself. Let’s cleanly separate the two worlds and then show exactly how your macro-assembler helps implement the compiler, not the program being compiled.
+
+1. Two completely different things
+A. RPG-II program (what gets compiled)
+This is what I showed before:
+
+C           PRICE     ADD  TOTAL
+C           TAX       ADD  TOTAL
+This is NOT compiler code.
+This is input data to the compiler — like:
+
+C source to a C compiler
+
+Rust source to rustc
+
+What it means (ELI5)
+Each line is an 80-column fixed-format “card.”
+
+That line roughly means:
+
+Take the value in PRICE and add it into TOTAL
+
+Second line:
+
+Take the value in TAX and add it into TOTAL
+
+So yes — PRICE, TAX, TOTAL are variables in the user’s RPG program, not variables in the compiler.
+
+B. The RPG-II compiler (what you are building)
+This is your project:
+
+RPG source (cards)
+   ->
+your compiler (written in COR24 macro-assembler)
+   ->
+COR24 assembly (or IR)
+   ->
+as24 -> executable
+So your macro-assembler is used to implement:
+
+scanner
+
+parser
+
+dispatcher
+
+IR builder
+
+(maybe) code generator
+
+2. Why I showed tiny RPG snippets
+You asked:
+
+“Wouldn’t the compiler need a whole program?”
+
+Yes in reality — but NOT for a demo.
+
+Compilers are almost always built/tested incrementally using tiny valid fragments, not full programs.
+
+Exactly like:
+
+testing a C compiler with int x;
+
+testing a parser with if (x) {}
+
+So:
+
+👉 That 2-line RPG snippet is a minimal test case
+👉 It exercises one feature: parsing calculation specs
+
+3. What the compiler actually does with that line
+Let’s walk one line end-to-end:
+
+C           PRICE     ADD  TOTAL
+Step 1 — raw input (80 columns)
+Your compiler reads a memory buffer like:
+
+[0..79] = 'C    ... PRICE ... ADD ... TOTAL ...'
+Step 2 — extract fields (fixed columns)
+RPG-II is fixed format. The compiler does:
+
+col 6 → spec type = 'C'
+
+cols X–Y → factor1 = "PRICE"
+
+cols A–B → opcode = "ADD"
+
+cols M–N → result = "TOTAL"
+
+Step 3 — classify
+spec == 'C' → calculation spec
+Step 4 — opcode dispatch
+opcode == ADD → build ADD IR node
+Step 5 — produce IR
+Something like:
+
+IR_ADD {
+  factor1 = PRICE
+  result  = TOTAL
+}
+4. Where your macro-assembler comes in
+Now we get to the important part.
+
+The macro-assembler is NOT writing:
+
+PRICE ADD TOTAL
+It is helping you write this compiler logic cleanly.
+
+5. Without macro-assembler (raw assembly style)
+The compiler might look like:
+
+loop:
+  call read_card
+  cmp r0, EOF
+  beq done
+
+  call get_col6
+  cmp r1, 'C'
+  bne not_c_spec
+
+  call extract_opcode
+  cmp r2, OP_ADD
+  beq handle_add
+  cmp r2, OP_MOVE
+  beq handle_move
+  b error
+
+handle_add:
+  call extract_factor1
+  call extract_result
+  call build_ir_add
+  b loop
+
+not_c_spec:
+  ...
+This quickly becomes:
+
+branch-heavy
+
+repetitive
+
+error-prone
+
+6. WITH macro-assembler (your goal)
+Now the same compiler logic using structured macros:
+
+Main loop (DO)
+DO
+  READ_CARD cardptr
+  DOEXIT EOF
+
+  GETCOL spec, cardptr, 6
+
+  SELECT spec
+    WHEN 'C'
+      PARSE_C_SPEC cardptr
+    WHEN 'O'
+      PARSE_O_SPEC cardptr
+    OTHERWISE
+      EMIT_ERROR ERR_BAD_SPEC
+  ENDSEL
+ENDDO
+Parsing a C-spec (SELECT + macros)
+PARSE_C_SPEC MACRO cardptr
+  GETSPAN opcode, \cardptr, OPC_START, OPC_END
+
+  SELECT opcode
+    WHEN OP_ADD
+      BUILD_ADD \cardptr
+    WHEN OP_MOVE
+      BUILD_MOVE \cardptr
+    OTHERWISE
+      EMIT_ERROR ERR_BAD_OPCODE
+  ENDSEL
+MEND
+Building IR (macro abstraction)
+BUILD_ADD MACRO cardptr
+  GETSPAN factor1, \cardptr, F1_START, F1_END
+  GETSPAN result,  \cardptr, RES_START, RES_END
+
+  IR_EMIT_ADD factor1, result
+MEND
+7. Now tie it back to your confusion
+You said:
+
+“These look like application logic, not compiler logic”
+
+Correct — but they are:
+
+✔ input to the compiler
+C           PRICE     ADD  TOTAL
+✔ processed by compiler code written like this
+SELECT opcode
+  WHEN OP_ADD
+    BUILD_ADD ...
+8. Why this is actually a great macro-assembler demo
+Because RPG-II has:
+
+1. Fixed columns
+→ perfect for macro-based field extraction
+
+2. Many repeated patterns
+→ perfect for parameterized macros
+
+3. Dispatch-heavy parsing
+→ perfect for SELECT
+
+4. Conditioned operations
+→ perfect for IF
+
+5. Card-by-card processing
+→ perfect for DO
+
+So the macro-assembler is helping with:
+
+Compiler Task	Macro Feature
+Scan cards	DO
+Classify spec	SELECT
+Parse opcode	SELECT
+Validate fields	IF
+Emit IR	macros
+Handle conditions	IF/ELSE
+9. Minimal mental model (keep this)
+Think of it like this:
+
+RPG program (PRICE ADD TOTAL)
+        ↓
+Compiler (written in macro-assembler)
+        ↓
+IR or COR24 assembly
+Your macro-assembler is helping you write the middle box, not the top.
+
+10. If you want a cleaner first demo
+If RPG still feels confusing, start with something simpler:
+
+Demo: tiny expression compiler
+Input:
+
+ADD A B
+ADD B C
+Then build:
+
+scanner
+
+opcode dispatch
+
+IR builder
+
+Same structure, less historical baggage.
+
+Then swap in RPG fixed-format later.
+
+11. Key takeaway
+PRICE, TAX, TOTAL → user program variables
+
+your macro-assembler → used to implement the compiler
+
+tiny RPG snippets → unit tests for the compiler
+
+If you want, next step I can:
+
+show a full tiny COR24 macro-assembler compiler skeleton
+
+or map exact column positions for real RPG-II C-spec parsing
+
+or give a side-by-side raw assembly vs macro-assembler version of one compiler pass
+
+
+
+
