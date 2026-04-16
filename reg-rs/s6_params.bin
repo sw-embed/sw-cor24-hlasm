@@ -1,0 +1,6 @@
+MACRO pushreg
+ st &1
+ st &2
+MEND
+pushreg r0,r1
+pushreg r2,fp

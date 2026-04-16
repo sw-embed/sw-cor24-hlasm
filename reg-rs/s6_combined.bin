@@ -1,0 +1,6 @@
+MACRO test
+L\@: st &1
+ b L\@
+MEND
+test r0
+test r1

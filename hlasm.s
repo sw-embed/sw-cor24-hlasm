@@ -1,5 +1,5 @@
 ; hlasm.s -- HLASM-Inspired Macro-Assembler for COR24
-; Step 004: Line reader and passthrough.
+; Step 006: Macro expansion with parameter substitution and \@ labels.
 ;
 ; UART at 0xFF0100 (-65280). TX busy: bit 7 of status (sign-extended).
 ;
@@ -105,7 +105,7 @@ _ml_nf5:
 
 _ml_emit_body:
 	push	r0
-	la	r0,_emit_macro_body
+	la	r0,_expand_macro
 	jal	r1,(r0)
 	add	sp,3
 	la	r1,_ml_loop
@@ -2008,11 +2008,7 @@ _emn_copy:
 	lw	r2,0(r2)
 
 	push	r2
-	la	r0,_mul3
-	jal	r1,(r0)
-	add	sp,3
-	push	r0
-	la	r0,_mul3
+	la	r0,_mul15
 	jal	r1,(r0)
 	add	sp,3
 
@@ -2064,11 +2060,7 @@ _emn_name_end:
 	la	r1,_macro_rec_idx
 	lw	r0,0(r1)
 	push	r0
-	la	r0,_mul3
-	jal	r1,(r0)
-	add	sp,3
-	push	r0
-	la	r0,_mul3
+	la	r0,_mul15
 	jal	r1,(r0)
 	add	sp,3
 	la	r1,_macro_table
@@ -2076,7 +2068,7 @@ _emn_name_end:
 
 	la	r0,_macro_body_start
 	lw	r0,0(r0)
-	sw	r0,3(r1)
+	sw	r0,9(r1)
 
 _emn_done:
 	mov	sp,fp
@@ -2101,6 +2093,27 @@ _m3_loop:
 	add	r1,1
 	bra	_m3_loop
 _m3_done:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+_mul15:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	lw	r0,6(fp)
+	la	r1,0
+_m15_loop:
+	la	r2,15
+	clu	r0,r2
+	brt	_m15_done
+	la	r2,15
+	sub	r0,r2
+	add	r1,1
+	bra	_m15_loop
+_m15_done:
 	mov	sp,fp
 	pop	r1
 	pop	fp
@@ -2158,20 +2171,16 @@ _finish_macro:
 	la	r1,_macro_rec_idx
 	lw	r0,0(r1)
 	push	r0
-	la	r0,_mul3
-	jal	r1,(r0)
-	add	sp,3
-	push	r0
-	la	r0,_mul3
+	la	r0,_mul15
 	jal	r1,(r0)
 	add	sp,3
 	la	r1,_macro_table
 	add	r1,r0
 
-; Store body length (current pos - body start)
+; Store body end position
 	la	r0,_macro_body_start
 	lw	r0,0(r0)
-	sw	r0,6(r1)
+	sw	r0,12(r1)
 
 ; Clear macro state
 	la	r1,_macro_state
@@ -2241,11 +2250,7 @@ _lm_tbl_loop:
 ; Save index on stack for later use in _lm_found
 	push	r0
 	push	r0
-	la	r0,_mul3
-	jal	r1,(r0)
-	add	sp,3
-	push	r0
-	la	r0,_mul3
+	la	r0,_mul15
 	jal	r1,(r0)
 	add	sp,3
 
@@ -2303,61 +2308,535 @@ _lm_ret:
 	pop	fp
 	jmp	(r1)
 
-; _emit_macro_body: Emit all lines of a macro.
-; Arg on stack: macro index
-_emit_macro_body:
+; _expand_macro: Expand a macro with parameter substitution and \@ labels.
+; Arg on stack: macro index (1-based from _lookup_macro)
+_expand_macro:
 	push	fp
 	push	r1
 	push	r2
+	push	r2
 	mov	fp,sp
 
-	lw	r0,9(fp)
+	lw	r0,12(fp)
 	add	r0,-1
 	push	r0
-	la	r0,_mul3
-	jal	r1,(r0)
-	add	sp,3
-	push	r0
-	la	r0,_mul3
+	la	r0,_mul15
 	jal	r1,(r0)
 	add	sp,3
 	la	r1,_macro_table
 	add	r1,r0
 
-	lw	r2,3(r1)
-	lw	r0,6(r1)
+	lw	r2,9(r1)
+	lw	r0,12(r1)
+	sw	r0,0(fp)
+
 	la	r1,_emb_end
 	sw	r0,0(r1)
 
-_emb_loop:
-	la	r1,_emb_end
-	lw	r0,0(r1)
+	sw	r2,3(fp)
+
+_exm_loop:
+	lw	r0,0(fp)
+	lw	r2,3(fp)
 	clu	r2,r0
-	brf	_emb_done
+	brf	_exm_done
+
+	push	r2
+	la	r0,_expand_body_line
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_exm_done
+
+	sw	r0,3(fp)
+
+	push	r0
+	la	r0,_emit_expand_buf
+	jal	r1,(r0)
+	add	sp,3
+
+	bra	_exm_loop
+
+_exm_done:
+	la	r1,_expand_counter
+	lw	r0,0(r1)
+	add	r0,1
+	sw	r0,0(r1)
+
+	mov	sp,fp
+	pop	r2
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _expand_body_line: Read one body line, expand &N and \@ into _expand_buf.
+; Arg on stack: current body position pointer
+; Returns: r0 = updated position (past line), or 0 if at end
+; Frame: push fp, r1, r2, r2, r2 = 15 bytes. Arg at 15(fp).
+; 0(fp) = write ptr into _expand_buf
+_expand_body_line:
+	push	fp
+	push	r1
+	push	r2
+	push	r2
+	push	r2
+	mov	fp,sp
+
+	la	r1,_expand_buf
+	sw	r1,0(fp)
+
+	lw	r2,15(fp)
+
+_ebl_loop:
+	la	r1,_emb_end
+	lw	r1,0(r1)
+	clu	r2,r1
+	brf	_ebl_nf
+
+	lbu	r0,0(r2)
+
+	ceq	r0,z
+	brt	_ebl_eol_near
+
+	lc	r1,10
+	ceq	r0,r1
+	brt	_ebl_eol_near
+
+	bra	_ebl_cont
+
+_ebl_nf:
+	la	r1,_ebl_done
+	jmp	(r1)
+
+_ebl_eol_near:
+	la	r1,_ebl_eol
+	jmp	(r1)
+
+_ebl_cont:
+	lc	r1,38
+	ceq	r0,r1
+	brt	_ebl_amp
+
+	lc	r1,92
+	ceq	r0,r1
+	brt	_ebl_bslash
+
+_ebl_copy:
+	lw	r1,0(fp)
+	sb	r0,0(r1)
+	add	r1,1
+	sw	r1,0(fp)
+	add	r2,1
+	bra	_ebl_loop
+
+_ebl_amp:
+	add	r2,1
+	lbu	r0,0(r2)
+	add	r2,1
+
+	lc	r1,48
+	sub	r0,r1
+
+	push	r2
+	sw	r2,6(fp)
+	push	r0
+	la	r0,_get_arg_start
+	jal	r1,(r0)
+	add	sp,3
+	lw	r2,6(fp)
+
+	ceq	r0,z
+	brf	_ebl_has_arg
+
+	pop	r2
+	la	r1,_ebl_loop
+	jmp	(r1)
+
+_ebl_has_arg:
+_ebl_arg_loop:
+	lbu	r1,0(r0)
+
+	ceq	r1,z
+	brt	_ebl_arg_done
+
+	lc	r2,44
+	ceq	r1,r2
+	brt	_ebl_arg_done
+
+	lc	r2,32
+	ceq	r1,r2
+	brt	_ebl_arg_done
+
+	lc	r2,9
+	ceq	r1,r2
+	brt	_ebl_arg_done
+
+	lw	r2,0(fp)
+	sb	r1,0(r2)
+	add	r2,1
+	sw	r2,0(fp)
+
+	add	r0,1
+	bra	_ebl_arg_loop
+
+_ebl_arg_done:
+	pop	r2
+	la	r1,_ebl_loop
+	jmp	(r1)
+
+_ebl_bslash:
+	add	r2,1
+	lbu	r0,0(r2)
+
+	lc	r1,64
+	ceq	r0,r1
+	brf	_ebl_bslash_plain
+
+	add	r2,1
+
+	push	r2
+
+	la	r1,_expand_write_ptr
+	lw	r0,0(fp)
+	sw	r0,0(r1)
+
+	la	r0,_expand_counter
+	lw	r0,0(r0)
+	push	r0
+	la	r0,_emit_num4_to_buf
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,_expand_write_ptr
+	lw	r0,0(r1)
+	sw	r0,0(fp)
+
+	pop	r2
+	la	r1,_ebl_loop
+	jmp	(r1)
+
+_ebl_bslash_plain:
+	lw	r1,0(fp)
+	lc	r0,92
+	sb	r0,0(r1)
+	add	r1,1
+	sw	r1,0(fp)
+	la	r1,_ebl_loop
+	jmp	(r1)
+
+_ebl_eol:
+	lw	r0,0(fp)
+	la	r1,0
+	sb	r1,0(r0)
+
+	lbu	r0,0(r2)
+	lc	r1,10
+	ceq	r0,r1
+	brf	_ebl_ret
+
+	add	r2,1
+
+_ebl_ret:
+	mov	r0,r2
+	bra	_ebl_exit
+
+_ebl_done:
+	la	r0,0
+	lw	r1,0(fp)
+	la	r2,0
+	sb	r2,0(r1)
+
+_ebl_exit:
+	mov	sp,fp
+	pop	r2
+	pop	r2
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_char_to_buf: Write char to _expand_buf at current write position.
+; Arg on stack: char value
+; Frame: push fp, r1, r2 = 9 bytes. Arg at 9(fp).
+_emit_char_to_buf:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	la	r2,_expand_write_ptr
+	lw	r1,0(r2)
+
+	lw	r0,9(fp)
+	sb	r0,0(r1)
+
+	add	r1,1
+	sw	r1,0(r2)
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_num4_to_buf: Write 4-digit zero-padded decimal number to _expand_buf.
+; Arg on stack: number (0-9999)
+; Frame: push fp, r1, r2, r2 = 12 bytes. Arg at 12(fp).
+; 0(fp) = remaining value
+_emit_num4_to_buf:
+	push	fp
+	push	r1
+	push	r2
+	push	r2
+	mov	fp,sp
+
+	lw	r0,12(fp)
+	sw	r0,0(fp)
+
+	la	r1,1000
+	la	r2,0
+_en4_tloop:
+	lw	r0,0(fp)
+	clu	r0,r1
+	brt	_en4_tdone
+	lw	r0,0(fp)
+	sub	r0,r1
+	sw	r0,0(fp)
+	add	r2,1
+	bra	_en4_tloop
+_en4_tdone:
+	lc	r0,48
+	add	r0,r2
+	push	r0
+	la	r0,_emit_char_to_buf
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,100
+	la	r2,0
+_en4_hloop:
+	lw	r0,0(fp)
+	clu	r0,r1
+	brt	_en4_hdone
+	lw	r0,0(fp)
+	sub	r0,r1
+	sw	r0,0(fp)
+	add	r2,1
+	bra	_en4_hloop
+_en4_hdone:
+	lc	r0,48
+	add	r0,r2
+	push	r0
+	la	r0,_emit_char_to_buf
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,10
+	la	r2,0
+_en4_oloop:
+	lw	r0,0(fp)
+	clu	r0,r1
+	brt	_en4_odone
+	lw	r0,0(fp)
+	sub	r0,r1
+	sw	r0,0(fp)
+	add	r2,1
+	bra	_en4_oloop
+_en4_odone:
+	lc	r0,48
+	add	r0,r2
+	push	r0
+	la	r0,_emit_char_to_buf
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,0(fp)
+	lc	r1,48
+	add	r0,r1
+	push	r0
+	la	r0,_emit_char_to_buf
+	jal	r1,(r0)
+	add	sp,3
+
+	mov	sp,fp
+	pop	r2
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _get_arg_start: Find Nth argument (1-based) in invocation line _line_buf.
+; Arg on stack: arg number (1-based)
+; Returns: r0 = pointer to arg in _line_buf, or 0 if not found
+; Frame: push fp, r1, r2, r2 = 12 bytes. Arg at 12(fp).
+; 0(fp) = current arg index counter
+_get_arg_start:
+	push	fp
+	push	r1
+	push	r2
+	push	r2
+	mov	fp,sp
+
+	la	r2,_line_buf
+
+_gas_skip_name:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_gas_no_arg_hop
+
+	lc	r1,32
+	ceq	r0,r1
+	brt	_gas_found_ws
+
+	lc	r1,9
+	ceq	r0,r1
+	brt	_gas_found_ws
+
+	add	r2,1
+	bra	_gas_skip_name
+
+_gas_no_arg_hop:
+	la	r1,_gas_no_arg
+	jmp	(r1)
+
+_gas_found_ws:
+	add	r2,1
+_gas_skip_ws:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_gas_no_arg
+
+	lc	r1,32
+	ceq	r0,r1
+	brt	_gas_skip_ws2
+
+	lc	r1,9
+	ceq	r0,r1
+	brt	_gas_skip_ws2
+
+	bra	_gas_count
+
+_gas_skip_ws2:
+	add	r2,1
+	bra	_gas_skip_ws
+
+_gas_count:
+	lw	r0,12(fp)
+	la	r1,1
+	ceq	r0,r1
+	brt	_gas_found
+
+	la	r1,1
+	sw	r1,0(fp)
+
+_gas_skip_loop:
+	lw	r0,0(fp)
+	lw	r1,12(fp)
+	ceq	r0,r1
+	brt	_gas_found
 
 	lbu	r0,0(r2)
 	ceq	r0,z
-	brt	_emb_nl
+	brt	_gas_no_arg
 
+	lc	r1,44
+	ceq	r0,r1
+	brf	_gas_not_comma
+
+	add	r2,1
+	lw	r0,0(fp)
+	add	r0,1
+	sw	r0,0(fp)
+
+_gas_skip_arg:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_gas_no_arg
+
+	lc	r1,32
+	ceq	r0,r1
+	brf	_gsa_not_sp
+
+	add	r2,1
+	bra	_gas_skip_arg
+
+_gsa_not_sp:
+	lc	r1,9
+	ceq	r0,r1
+	brf	_gas_skip_loop
+
+	add	r2,1
+	bra	_gas_skip_arg
+
+_gas_not_comma:
+	add	r2,1
+	bra	_gas_skip_loop
+
+_gas_skip_arg:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_gas_no_arg
+
+	lc	r1,32
+	ceq	r0,r1
+	brt	_gas_skip_arg
+
+	lc	r1,9
+	ceq	r0,r1
+	brt	_gas_skip_arg
+
+	lc	r1,44
+	ceq	r0,r1
+	brt	_gas_skip_arg
+
+	add	r2,1
+	bra	_gas_skip_arg
+
+_gas_found:
+	mov	r0,r2
+	bra	_gas_ret
+
+_gas_no_arg:
+	la	r0,0
+
+_gas_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_expand_buf: Emit _expand_buf contents to UART followed by CR+LF.
+_emit_expand_buf:
+	push	fp
+	push	r1
 	push	r2
+	mov	fp,sp
+
+	la	r1,_expand_buf
+
+_eeb_loop:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_eeb_done
+
+	push	r1
 	push	r0
 	la	r0,_emit_char
 	jal	r1,(r0)
 	add	sp,3
-	pop	r2
+	pop	r1
 
-	add	r2,1
-	bra	_emb_loop
+	add	r1,1
+	bra	_eeb_loop
 
-_emb_nl:
-	push	r2
+_eeb_done:
 	la	r0,_emit_crlf
 	jal	r1,(r0)
-	pop	r2
-	add	r2,1
-	bra	_emb_loop
 
-_emb_done:
 	mov	sp,fp
 	pop	r2
 	pop	r1
@@ -2407,22 +2886,22 @@ _macro_count:
 	.word	0
 
 _macro_table:
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 _macro_buf:
 	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -2458,6 +2937,31 @@ _macro_buf:
 	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
+; --- Step 6: Expansion data ---
+_expand_buf:
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+
+_expand_write_ptr:
+	.word	0
+
+_expand_counter:
+	.word	1
 
 _macro_state:
 	.word	0

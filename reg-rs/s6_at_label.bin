@@ -1,0 +1,6 @@
+MACRO loop
+L\@: add r0,1
+ b L\@
+MEND
+loop
+loop
