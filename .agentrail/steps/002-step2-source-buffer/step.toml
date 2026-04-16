@@ -1,6 +1,6 @@
 number = 2
 slug = "step2-source-buffer"
-status = "in-progress"
+status = "completed"
 description = """
 Step 2: Source buffer reader
 
@@ -8,4 +8,5 @@ Implement subroutines to read characters from a..."""
 role = "production"
 context_files = []
 created_at = "2026-04-16T08:01:28"
-commits = []
+completed_at = "2026-04-16T08:09:40"
+commits = ["7381a6101f32aa36482f87e49ab78796bb855e54"]

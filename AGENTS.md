@@ -225,3 +225,30 @@ work normally — use snapshot only as belt-and-suspenders insurance.
 - Do not skip `agentrail next` "because you remember what the step was"
   — the next output includes trajectories and skill docs that change as
   the system learns.
+
+---
+
+## Project-specific rules
+
+### Commit checklist after each step
+
+After `agentrail complete`, verify:
+
+1. `git status` shows clean working tree
+2. `.agentrail/` changes (step.toml, summary.md, saga.toml) are committed
+3. Code changes (.s files, build.sh, etc.) are committed
+
+If anything is uncommitted, commit it now.
+
+### When a saga completes (last step uses --done)
+
+1. `git add -A && git commit` -- ensure everything is committed
+2. `agentrail archive --reason "saga complete"` -- archive the saga
+3. `git add -A && git commit` -- commit the archive
+4. `git push` -- push all commits to remote
+
+### This is a .s project
+
+No Rust, C, Python, awk, or sed. Only shell scripts and .s files.
+The macro-assembler is itself a COR24 assembly program running on `cor24-run`.
+Follow sw-cor24-forth and sw-cor24-rpg-ii patterns.
