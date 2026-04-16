@@ -15,9 +15,17 @@
 ; After N pushes + mov fp,sp, first caller arg is at N*3(fp).
 ; Functions returning r0 must NOT pop r0 (use add sp,3 instead).
 
+; Step 005: Macro table -- record and expand macro definitions.
+
 _main:
 	push	fp
 	mov	fp,sp
+	push	r2
+	mov	fp,sp
+
+	la	r1,_macro_count
+	la	r0,0
+	sw	r0,0(r1)
 
 _ml_loop:
 	push	r0
@@ -26,29 +34,120 @@ _ml_loop:
 	add	sp,3
 
 	ceq	r0,z
-	brt	_ml_done
+	brf	_ml_go
 
-	push	r0
-	la	r0,_is_structured
-	jal	r1,(r0)
-
-	ceq	r0,z
-	brf	_ml_skip
-
-	la	r0,_emit_line
-	jal	r1,(r0)
-	add	sp,3
-	bra	_ml_loop
-
-_ml_skip:
-	add	sp,3
-	bra	_ml_loop
-
-_ml_done:
 	mov	sp,fp
+	pop	r2
 	pop	fp
 _halt:
 	bra	_halt
+
+_ml_go:
+	sw	r0,0(fp)
+
+	la	r1,_macro_state
+	lw	r0,0(r1)
+	ceq	r0,z
+	brf	_ml_recording
+
+; Not recording: check for MACRO, MEND, structured keywords, macro invocations
+	la	r1,_kw_macro
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brf	_ml_is_macro
+
+	la	r1,_kw_mend
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brf	_ml_is_mend_skip
+
+	lw	r0,0(fp)
+	push	r0
+	la	r0,_is_structured
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brf	_ml_skip_kw
+
+	la	r1,_ml_nf4
+	jmp	(r1)
+
+_ml_nf4:
+	lw	r0,0(fp)
+	push	r0
+	la	r0,_lookup_macro
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brf	_ml_emit_body
+
+	la	r1,_ml_nf5
+	jmp	(r1)
+
+_ml_nf5:
+	lw	r0,0(fp)
+	push	r0
+	la	r0,_emit_line
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_emit_body:
+	push	r0
+	la	r0,_emit_macro_body
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_skip_kw:
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_macro:
+	la	r0,_extract_macro_name
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_mend_skip:
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_recording:
+	la	r1,_kw_mend
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brf	_ml_finish
+
+	lw	r0,0(fp)
+	push	r0
+	la	r0,_record_macro_line
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_finish:
+	la	r0,_finish_macro
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
 
 ; _read_line: Read one line from source into _line_buf.
 ; Returns: r0 = line length (0 on EOF)
@@ -1782,6 +1881,489 @@ _line_buf:
 	.byte 0, 0, 0, 0, 0, 0, 0, 0
 
 ; --- Keyword prefix table (for _is_structured) ---
+
+; --- Step 5: Macro functions ---
+
+; _starts_with: Check if _line_buf starts with the given prefix.
+; Arg on stack: prefix_ptr
+; Returns: r0 = 1 if match, 0 if not
+; Frame: push fp, r1, r2 = 9 bytes. Arg at 9(fp).
+_starts_with:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	la	r2,_line_buf
+
+_sws_skip:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_sws_check
+
+	lc	r1,32
+	ceq	r0,r1
+	brt	_sws_ws
+
+	lc	r1,9
+	ceq	r0,r1
+	brt	_sws_ws
+
+	bra	_sws_check
+
+_sws_ws:
+	add	r2,1
+	bra	_sws_skip
+
+_sws_check:
+	lw	r1,9(fp)
+
+_sws_loop:
+	push	r1
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_sws_match
+
+	push	r0
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_sws_nomatch_pop
+
+	pop	r1
+	ceq	r0,r1
+	brt	_sws_next
+
+	bra	_sws_nomatch_pop2
+
+_sws_nomatch_pop:
+	pop	r1
+	bra	_sws_nomatch_pop2
+
+_sws_nomatch_pop2:
+	pop	r1
+	bra	_sws_nomatch
+
+_sws_next:
+	pop	r1
+	add	r1,1
+	add	r2,1
+	bra	_sws_loop
+
+_sws_match:
+	la	r0,1
+	bra	_sws_ret
+
+_sws_nomatch:
+	la	r0,0
+
+_sws_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _extract_macro_name: Parse macro name from _line_buf after "MACRO ".
+; Sets _macro_state=1, _macro_rec_idx=next slot.
+_extract_macro_name:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+; Skip "MACRO" (5 chars) in _line_buf
+	la	r1,_line_buf
+	la	r0,5
+	add	r1,r0
+
+; Skip whitespace after MACRO
+_emn_skip_ws:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_emn_done_far
+
+	lc	r2,32
+	ceq	r0,r2
+	brt	_emn_ws
+
+	lc	r2,9
+	ceq	r0,r2
+	brt	_emn_ws
+
+	bra	_emn_copy
+
+_emn_ws:
+	add	r1,1
+	bra	_emn_skip_ws
+
+_emn_done_far:
+	la	r1,_emn_done
+	jmp	(r1)
+
+; Now r1 points to macro name in _line_buf
+; Copy name to macro table entry
+_emn_copy:
+	push	r1
+	la	r2,_macro_count
+	lw	r2,0(r2)
+
+	push	r2
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r2,_macro_table
+	add	r2,r0
+	pop	r1
+
+; r2 = &macro_table[index], r1 = name ptr in _line_buf
+_emn_cloop:
+	push	r2
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_emn_ne_pop
+
+	lc	r2,32
+	ceq	r0,r2
+	brt	_emn_ne_pop
+
+	pop	r2
+	sb	r0,0(r2)
+	add	r1,1
+	add	r2,1
+	bra	_emn_cloop
+
+_emn_ne_pop:
+	pop	r2
+	bra	_emn_name_end
+
+_emn_name_end:
+	la	r0,0
+	push	r1
+	push	r2
+	sb	r0,0(r2)
+	pop	r2
+	pop	r1
+
+; Set macro state to recording
+	la	r1,_macro_state
+	la	r0,1
+	sw	r0,0(r1)
+
+; Save current macro index
+	la	r1,_macro_rec_idx
+	la	r2,_macro_count
+	lw	r0,0(r2)
+	sw	r0,0(r1)
+
+; Set body ptr to current _macro_body_start
+	la	r1,_macro_rec_idx
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_macro_table
+	add	r1,r0
+
+	la	r0,_macro_body_start
+	lw	r0,0(r0)
+	sw	r0,3(r1)
+
+_emn_done:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+_mul3:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	lw	r0,6(fp)
+	la	r1,0
+_m3_loop:
+	la	r2,3
+	clu	r0,r2
+	brt	_m3_done
+	la	r2,3
+	sub	r0,r2
+	add	r1,1
+	bra	_m3_loop
+_m3_done:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _record_macro_line: Append current _line_buf to _macro_buf.
+; Arg on stack: line length
+_record_macro_line:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r0,9(fp)
+	ceq	r0,z
+	brt	_rml_done
+
+	la	r1,_line_buf
+	la	r2,_macro_body_start
+	lw	r2,0(r2)
+
+_rml_cloop:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_rml_end
+
+	sb	r0,0(r2)
+	add	r1,1
+	add	r2,1
+	bra	_rml_cloop
+
+_rml_end:
+	la	r0,10
+	sb	r0,0(r2)
+	add	r2,1
+
+	la	r1,_macro_body_start
+	sw	r2,0(r1)
+
+_rml_done:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _finish_macro: Finalize current macro recording.
+_finish_macro:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+; Get macro table entry for current recording index
+	la	r1,_macro_rec_idx
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_macro_table
+	add	r1,r0
+
+; Store body length (current pos - body start)
+	la	r0,_macro_body_start
+	lw	r0,0(r0)
+	sw	r0,6(r1)
+
+; Clear macro state
+	la	r1,_macro_state
+	la	r0,0
+	sw	r0,0(r1)
+
+; Increment macro count
+	la	r1,_macro_count
+	lw	r0,0(r1)
+	add	r0,1
+	sw	r0,0(r1)
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _lookup_macro: Check if _line_buf starts with a defined macro name.
+; Returns: r0 = 0 if not found, 1+index if found
+_lookup_macro:
+	push	fp
+	push	r1
+	push	r2
+	push	r2
+	mov	fp,sp
+
+; Save name start from _line_buf (skip whitespace)
+	la	r2,_line_buf
+
+_lm_scan_name:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_lm_sn2
+
+	lc	r1,32
+	ceq	r0,r1
+	brt	_lm_skip_ws
+
+	lc	r1,9
+	ceq	r0,r1
+	brt	_lm_skip_ws
+
+; r2 points to first char of name. Save it.
+	sw	r2,0(fp)
+
+	bra	_lm_tbl_start
+
+_lm_sn2:
+	la	r1,_lm_not_found
+	jmp	(r1)
+
+_lm_skip_ws:
+	add	r2,1
+	bra	_lm_scan_name
+
+_lm_tbl_start:
+	la	r0,0
+
+_lm_tbl_loop:
+	la	r1,_macro_count
+	lw	r1,0(r1)
+	clu	r0,r1
+	brf	_lm_nf3
+
+; Get macro table entry for index r0
+; Save index on stack for later use in _lm_found
+	push	r0
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,_macro_table
+	add	r1,r0
+
+; Compare table name (r1) with line_buf name (saved at 0(fp))
+; Stack: [... saved_index]
+	lw	r2,0(fp)
+
+_lm_name_check:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_lm_found_pop_idx
+
+	push	r2
+	lbu	r2,0(r2)
+	ceq	r2,z
+	brt	_lm_found_pop2_idx
+
+	ceq	r0,r2
+	brf	_lm_next_entry2
+
+	pop	r2
+	add	r1,1
+	add	r2,1
+	bra	_lm_name_check
+
+_lm_found_pop2_idx:
+	pop	r2
+_lm_found_pop_idx:
+	pop	r0
+	add	r0,1
+	bra	_lm_ret
+
+_lm_next_entry2:
+	pop	r2
+	pop	r0
+	add	r0,1
+	la	r1,_lm_tbl_loop
+	jmp	(r1)
+
+_lm_nf3:
+	la	r1,_lm_not_found
+	jmp	(r1)
+
+_lm_not_found:
+	la	r0,0
+
+_lm_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_macro_body: Emit all lines of a macro.
+; Arg on stack: macro index
+_emit_macro_body:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r0,9(fp)
+	add	r0,-1
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_macro_table
+	add	r1,r0
+
+	lw	r2,3(r1)
+	lw	r0,6(r1)
+	la	r1,_emb_end
+	sw	r0,0(r1)
+
+_emb_loop:
+	la	r1,_emb_end
+	lw	r0,0(r1)
+	clu	r2,r0
+	brf	_emb_done
+
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_emb_nl
+
+	push	r2
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+	pop	r2
+
+	add	r2,1
+	bra	_emb_loop
+
+_emb_nl:
+	push	r2
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+	pop	r2
+	add	r2,1
+	bra	_emb_loop
+
+_emb_done:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
 _kw_prefix_table:
 	.byte 77,65,67,82,79,0
 	.byte 77,69,78,68,0
@@ -1816,3 +2398,79 @@ _src_desc:
 	.word	524288
 	.word	64
 	.word	0
+
+; --- Step 5: Macro data ---
+_emb_end:
+	.word	0
+
+_macro_count:
+	.word	0
+
+_macro_table:
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+
+_macro_buf:
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
+_macro_state:
+	.word	0
+
+_macro_rec_idx:
+	.word	0
+
+_macro_body_start:
+	.word	_macro_buf
+
+_kw_macro:
+	.byte	77,65,67,82,79,0
+
+_kw_mend:
+	.byte	77,69,78,68,0
+

@@ -1,0 +1,1 @@
+Implemented line-by-line passthrough. Fixed 4 bugs: _main stack imbalance, _read_line fallthrough always returning 0, _is_structured reversed args and r1 clobber, _kw_prefix_match comparison logic. All 3 reg-rs tests pass.
