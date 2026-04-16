@@ -1,0 +1,621 @@
+
+
+
+
+I need an assembler linter for COR24. e.g., a coding agent might chain short-range branches into a "relay" to fix a problem where the target code is "too far away" instead of using the long-range jump instructions. Also, there are idiomatic usage for COR24 registers, that take advantage of the "C-oriented" nature, the way the C condition register was designed, conditional branches designed to work with it, the use of the Z constant ("register") for setting or comparisons.  Basically a feedback mechanism for hand-written assembler, but also for HLASM generated code, PL/SW generated code, etc.  What precedents are there for linting assembler?  What approaches/styles are there?  which matches HLASM or COR24 assembler best?
+
+I’m checking two things in parallel: what real precedents exist for assembly linting, and which linting style maps best onto COR24’s branch model and register idioms. Then I’ll turn that into a concrete design for a COR24 assembler linter rather than just a survey.
+
+There are real precedents, but they’re split across two families:
+
+Assembler-integrated diagnostics like NASM/Yasm warning classes and GNU as/linker range diagnostics.
+
+Program-understanding tooling in the HLASM world, where IBM emphasizes cross-reference and control-flow analysis more than a Rust/Clippy-style “lint” pass.
+
+I’m pulling both together because COR24 wants a hybrid: HLASM-like structural analysis plus ISA-specific style checks.
+
+Thought for 52s
+You want a COR24 assembler linter that does more than syntax checking:
+
+catch non-idiomatic control-flow repairs such as short-branch relay chains used instead of the proper long-range jump/call form,
+
+enforce COR24 register idioms that reflect the ISA’s “C-oriented” design,
+
+work on handwritten asm and also on generated asm from HLASM-like macros, PL/SW, and other tools,
+
+and choose a linter style that fits HLASM/COR24 culture, not just a generic x86-style warning pass.
+
+The main conclusion
+The best match is not “assembler warnings only,” and it is not “full optimizer.”
+The best fit is a two-layer linter:
+
+Assembler-adjacent static checks in the NASM/Yasm spirit: named warnings, severities, per-rule enable/disable, promotion to error. NASM explicitly supports warning classes that can be enabled, disabled, or promoted to errors, and Yasm exposes similar command-line warning behavior. 
+
+Program-understanding analysis in the HLASM spirit: cross-reference, CFG/control-flow analysis, macro-awareness, and higher-level structure discovery. IBM’s HLASM Toolkit emphasizes exactly that style through the Cross-Reference Facility and Program Understanding Tool, which analyze variable/macro usage and control flow rather than acting like a narrow syntax checker. 
+
+For COR24, that means: Clippy-for-assembly on the front end, HLASM Toolkit-like structural analysis underneath.
+
+What precedents exist for linting assembler?
+1) Warning-oriented assemblers
+A classic precedent is NASM/Yasm-style warning classes.
+
+NASM has a formal warning-class system, where warnings can be individually enabled, disabled, or promoted to errors. That is exactly the right precedent for a configurable linter surface. 
+
+Yasm also exposes focused warnings such as -Worphan-labels, which warns about labels on a line without a trailing colon because they may be accidental or typo-driven. That is a very “lint-like” warning rather than a semantic assembly error. 
+
+What this style is good at
+local source hygiene
+
+suspicious syntax
+
+naming and layout conventions
+
+pattern-based control-flow smells
+
+configurable rule severities
+
+What it is not good at
+deeper intent recovery
+
+macro-expanded structural analysis
+
+whole-function or whole-program branch-shape analysis
+
+2) Range/relaxation/trampoline precedents
+Another precedent is the family of assemblers and linkers that deal with out-of-range branches.
+
+GNU as documents targets where out-of-range branches can be handled via branch relaxation, and by default some targets instead treat out-of-range branches as errors. 
+
+GNU as for Xtensa explicitly supports jump trampolines and related transformations to extend jump range. 
+
+GNU ld also documents cases where trampolines / branch stubs are inserted when branches may be out of range. 
+
+Why this matters for your relay example
+Your “agent chained short branches into a relay” case is not weird at all historically. It is the same problem domain as:
+
+branch relaxation,
+
+long-call expansion,
+
+trampolines,
+
+linker stubs.
+
+What is different is your desired policy:
+
+“Do not silently patch this by relays; tell me I should use the proper long-range instruction.”
+
+That is a lint policy, not just an assembler capability.
+
+3) HLASM / IBM precedents
+IBM HLASM Toolkit is the strongest precedent for the style you want.
+
+IBM’s Toolkit is centered around:
+
+Cross-Reference Facility for variable and macro usage,
+
+Program Understanding Tool for control-flow views,
+
+structured-programming views over assembler,
+
+use of ADATA and related analysis flows. 
+
+This is important because HLASM precedent says:
+
+assembly tooling should help understand and manage programs “in the large,” not merely parse lines.
+
+That mindset maps very well to COR24 because your concerns are mostly:
+
+idiomatic register use,
+
+control-flow shape,
+
+generated code quality,
+
+macro output quality,
+
+architecture-specific conventions.
+
+So the best precedent is HLASM analysis culture, combined with NASM-style warning classes.
+
+What linter approaches/styles are there?
+There are really five useful styles.
+
+Style A: Parser-only warnings
+Examples:
+
+duplicate labels
+
+unreachable local labels
+
+suspicious immediates
+
+orphan labels
+
+malformed directive usage
+
+Pros
+easy to build
+
+fast
+
+good first milestone
+
+Cons
+misses the real problems you care about
+
+weak for generated code
+
+weak for relay/jump-shape issues
+
+This is not enough by itself.
+
+Style B: Instruction-local semantic lint
+Examples:
+
+branch target out of architectural range
+
+compare/branch pairs that misuse the condition model
+
+using a non-idiomatic register for zero/comparison patterns
+
+suspicious writes to architecturally special registers
+
+immediate forms that waste code size or obscure intent
+
+Pros
+directly useful for COR24
+
+catches real mistakes early
+
+still fairly simple
+
+Cons
+cannot reliably judge bigger control-flow intent
+
+relay chains may slip by unless you do CFG analysis
+
+This should definitely exist.
+
+Style C: CFG and dataflow lint
+Examples:
+
+relay branch chains
+
+inverted branch patterns that increase path length
+
+jump-to-jump sequences
+
+branch-over-branch idioms that should be a long jump
+
+dead fallthrough blocks
+
+useless label islands
+
+save/restore mismatches
+
+inconsistent call/return discipline
+
+Pros
+catches your most important example
+
+robust on handwritten and generated assembly
+
+lets you talk about intent, not just syntax
+
+Cons
+more work
+
+requires symbol resolution and block formation
+
+macro-origin tracking becomes valuable
+
+This is the core of the “real” COR24 linter.
+
+Style D: House-style / idiom lint
+Examples:
+
+use Z instead of loading literal zero
+
+use the intended compare/branch sequence rather than ad hoc arithmetic tests
+
+prefer canonical register roles in leaf/non-leaf routines
+
+require consistent prologue/epilogue patterns
+
+enforce naming for labels, literals, and linkage points
+
+Pros
+high value for humans and agent-generated code
+
+educates compiler backends and macro authors
+
+makes generated code converge toward recognizable shapes
+
+Cons
+architecture- and project-specific
+
+can become noisy if too rigid
+
+For COR24, this is essential.
+
+Style E: Transformation-aware lint
+Examples:
+
+“This short branch relay chain looks machine-generated; replace with LJMP”
+
+“This compare-to-zero was synthesized with two instructions but has a one-instruction idiom”
+
+“This HLASM macro emitted a non-canonical prologue”
+
+Pros
+highest value for agent feedback loops
+
+great for compiler/backend tuning
+
+ideal for PL/SW / HLASM macro output
+
+Cons
+needs origin metadata or very good heuristics
+
+most sophisticated to build
+
+This is the later-stage “excellent” version.
+
+Which style matches HLASM best?
+HLASM best matches Style C + D, supported by Style A/B.
+
+IBM’s tooling is not primarily “tiny style nags.” It is about:
+
+cross-reference,
+
+macro usage,
+
+structural understanding,
+
+control-flow views. 
+
+So if you want something that “feels HLASM-ish,” the linter should:
+
+understand macro expansion boundaries,
+
+understand basic blocks and flow,
+
+report at the level of routines, labels, branches, and register roles,
+
+optionally emit cross-reference and control-flow summaries.
+
+A pure NASM/Yasm warning-class model is good UX, but not sufficient as the underlying analysis model.
+
+Which style matches COR24 best?
+COR24 wants a hybrid: Style B + C + D, with NASM-style configuration.
+
+Why:
+
+Because COR24 has strong architectural idioms
+You specifically described:
+
+a C-oriented condition model,
+
+branch instructions designed to pair with that model,
+
+intentional use of Z as a constant register for compares / setup,
+
+idiomatic register roles.
+
+That means the linter should know not merely “legal instruction forms,” but also:
+
+what is canonical,
+
+what is suboptimal but acceptable,
+
+what is codegen smell,
+
+what is probably wrong.
+
+That is much closer to Clippy than to a classic assembler’s minimal warnings.
+
+Because branch relays are a structural smell
+A relay chain is rarely a local mistake. It is usually a code-shape mistake:
+
+wrong branch family,
+
+missing long-form jump,
+
+late layout patch,
+
+backend weakness.
+
+That requires CFG-level inspection.
+
+Because you care about generated code too
+Handwritten code, HLASM macro output, and PL/SW output all need the same quality bar.
+That strongly argues for an IR-based linter over a source-only one.
+
+Recommended architecture for a COR24 linter
+1) Parse to a rich assembly IR
+Not just lines and tokens. Keep:
+
+source file / line / column
+
+labels
+
+instruction opcode and operands
+
+macro-expansion provenance if available
+
+section / location counter
+
+resolved branch type
+
+symbol references
+
+comment text optionally
+
+This enables both style and structural analysis.
+
+2) Build a CFG per routine
+Identify:
+
+basic blocks
+
+fallthrough edges
+
+conditional edges
+
+call edges
+
+return-like exits
+
+unreachable blocks
+
+Then you can detect:
+
+jump-to-jump
+
+branch relay chains
+
+two-hop range fixes
+
+dead labels
+
+blocks with only a forwarding branch
+
+3) Add a small abstract machine model
+For COR24, track:
+
+which register currently holds the “active compare/test result” if your condition model implies that,
+
+whether a value is definitely zero / definitely from Z,
+
+whether a branch is consuming the canonical preceding producer,
+
+whether a special register is being used outside its idiom.
+
+This does not need full symbolic execution. A light dataflow pass is enough for many valuable checks.
+
+4) Use rule classes and severities
+Copy NASM’s good idea here. Have rule IDs like:
+
+cor24-branch-relay
+
+cor24-longjump-preferred
+
+cor24-z-register-idiom
+
+cor24-compare-branch-pair
+
+cor24-noncanonical-zeroing
+
+cor24-dead-fallthrough
+
+cor24-prologue-shape
+
+cor24-special-reg-abuse
+
+Rules should be:
+
+allow / warn / deny
+
+optionally project-specific
+
+suppressible at file / function / line scope
+
+That keeps it usable for generated code and legacy code.
+
+A practical rule taxonomy for COR24
+Tier 1: correctness / almost-certain bug
+These should often default to error.
+
+short branch target out of range
+
+branch relay chain where a long-range instruction exists
+
+compare/branch sequence that cannot work under COR24 condition semantics
+
+unreachable code after unconditional transfer where no label intentionally splits flow
+
+clobber of architecturally reserved/special register in forbidden context
+
+These are closest to assembler/linker diagnostics plus target-specific lint. GNU toolchains already treat out-of-range branches and branch-relaxation decisions as architecture-sensitive concerns, so this is a very established precedent. 
+
+Tier 2: strong idiom / performance / maintainability
+These should default to warn.
+
+using relay branches instead of long jump/call
+
+jump to a block whose only instruction is another jump
+
+manual zero load instead of using Z
+
+compare against literal zero using a non-canonical sequence
+
+non-canonical condition setup before a conditional branch
+
+pointless move through temp register when Z or direct form suffices
+
+These are the most valuable rules for agents and code generators.
+
+Tier 3: style / readability
+These should default to allow or warn depending on profile.
+
+label naming
+
+literal pool naming
+
+block layout conventions
+
+comment requirements near tricky hand-coded sequences
+
+macro-generated boilerplate marked as generated
+
+leaf function / non-leaf function prologue style consistency
+
+Specific recommendation for the branch-relay problem
+Your example deserves a dedicated rule, not just a generic branch warning.
+
+Rule: cor24-branch-relay
+Trigger when:
+
+block A conditionally branches to block B,
+
+block B contains only one unconditional short-range transfer to C, or a minimal relay sequence,
+
+and A→C could have been expressed by a canonical long-range conditional or by branch-around + long jump,
+
+or B exists only to repair range.
+
+Message shape
+Suspicious branch relay: short-range branch uses relay label .L123 to reach distant target foo. Prefer canonical long-range control transfer (LJMP / long-form conditional pattern) over relay chaining.
+
+Why this is good
+catches backend/codegen hacks
+
+catches hand-patched assembly
+
+teaches the proper pattern
+
+makes code review much easier
+
+This is exactly analogous in spirit to branch relaxation/trampoline machinery in GNU toolchains, except your policy is to flag the non-canonical source form instead of silently accepting it. 
+
+How to make it feel HLASM-friendly
+If you want HLASM influence, I would avoid making it look like only a list of warnings. Add reports like:
+
+Cross-reference report
+labels defined / referenced
+
+register usage by routine
+
+macro expansions by source site
+
+branch density / call graph
+
+Flow report
+CFG per routine
+
+relay blocks
+
+dead blocks
+
+return sites
+
+abnormal exits
+
+Idiom report
+non-canonical compare/branch sequences
+
+non-canonical zero usage
+
+special-register usage summary
+
+That aligns much more with IBM’s “Program Understanding Tool” and “Cross-Reference Facility” tradition. 
+
+Best overall fit
+Best UX model
+NASM/Yasm-style warning classes.
+Because users need:
+
+rule IDs,
+
+suppression,
+
+severity levels,
+
+“treat warnings as errors,”
+
+profiles for handwritten vs generated code. 
+
+Best analysis model
+HLASM-style program understanding.
+Because your checks are mostly about:
+
+control flow,
+
+macro output,
+
+whole-routine conventions,
+
+register-role idioms. 
+
+Best COR24 answer
+Build a COR24 assembly linter with HLASM-style analysis and NASM-style rule management.
+
+That is the cleanest match.
+
+Concrete recommendation
+I would define three lint profiles from day one:
+
+strict-human
+For handwritten assembly.
+
+aggressive idiom checks
+
+readability rules enabled
+
+relay branches warned or errored
+
+comment/style checks enabled
+
+strict-codegen
+For PL/SW / compiler / HLASM output.
+
+disable cosmetic naming rules
+
+keep structural and idiom rules
+
+surface repeated backend smells
+
+emit machine-readable JSON
+
+compat
+For legacy assembly.
+
+only correctness and major maintainability findings
+
+style mostly off
+
+relay branches warn, not error
+
+That gives you a feedback mechanism for both humans and generators without creating constant noise.
+
+Bottom line
+The strongest precedents are:
+
+NASM/Yasm for configurable warning classes and lint-like source diagnostics. 
+
+GNU as / ld for the general problem of out-of-range branches, relaxation, trampolines, and stub insertion. 
+
+IBM HLASM Toolkit for the deeper style of assembly analysis based on cross-reference and control-flow understanding. 
+
+For COR24, the best match is:
+
+HLASM-style structural analysis + NASM-style warning classes + COR24-specific idiom rules.
+
+That will fit your ISA, your macro ambitions, and your generated-code use cases much better than a plain assembler warning pass.
+
+I can next turn this into a rule catalog and architecture doc for a cor24lint tool, including a first 20–30 lint rules and an internal IR design.
+
+
+
+
