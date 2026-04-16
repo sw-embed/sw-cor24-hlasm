@@ -1,0 +1,11 @@
+number = 1
+slug = "m1-scaffold"
+status = "pending"
+description = """
+M1: Project scaffold + passthrough
+
+Create the Rust binary crate "hlasm" that..."""
+role = "production"
+context_files = []
+created_at = "2026-04-15T19:59:29"
+commits = []

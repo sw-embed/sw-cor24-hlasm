@@ -1,0 +1,11 @@
+number = 2
+slug = "m2-lexer"
+status = "pending"
+description = """
+M2: Lexer + tokenizer
+
+Build a lexer that tokenizes .hlasm input into a struc..."""
+role = "production"
+context_files = []
+created_at = "2026-04-15T19:59:41"
+commits = []
