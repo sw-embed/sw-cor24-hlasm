@@ -1,0 +1,5 @@
+# Demo 34 COPY-based macro and symbol library through composed source-set fragments.
+PROFILE default.profile
+ROOT .
+SOURCESET d34_copy_macro_library_main.sourceset
+SOURCESET d34_copy_macro_library_members.sourceset

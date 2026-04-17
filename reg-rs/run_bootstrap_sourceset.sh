@@ -146,9 +146,9 @@ process_sourceset() {
                 printf 'main %s %s\n' "$main_addr" "$size_part" >> "$cfg_txt"
                 load_args+=("--load-binary" "${bin_part}@${main_addr}")
                 ;;
-            INCLUDE)
+            INCLUDE|COPY)
                 if [[ $# -ne 3 ]]; then
-                    echo "ERROR: INCLUDE expects: INCLUDE <name> <file.hlasm>"
+                    echo "ERROR: $1 expects: $1 <name> <file.hlasm>"
                     exit 1
                 fi
 

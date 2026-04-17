@@ -1,4 +1,4 @@
-Assembled 15553 bytes
+Assembled 15600 bytes
 Loaded 80 bytes from 'demos/d04_set_ifdef.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -12,5 +12,5 @@ Running (speed: max IPS, time limit: 10s)...
 UART output:  nop
 
 
-Executed 45385 instructions
+Executed 45433 instructions
 CPU halted (self-branch detected)

@@ -1,4 +1,4 @@
-Assembled 15553 bytes
+Assembled 15600 bytes
 Loaded 41 bytes from 'demos/d20_patched_main_main.bin' at 0x090000
 Loaded 27 bytes from 'demos/d20_patched_main_extra.bin' at 0x081000
 Loaded 29 bytes from 'reg-rs/s12_patched_main.cfg' at 0x07F000

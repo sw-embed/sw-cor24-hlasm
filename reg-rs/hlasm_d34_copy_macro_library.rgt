@@ -1,0 +1,5 @@
+command = "bash reg-rs/run_bootstrap_sourceset.sh demos/d34_copy_macro_library.sourceset 140000 2>&1"
+timeout = 15
+preprocess = "grep -A 140 '^UART output:' || true"
+exit_code = 0
+desc = "Demo 34: COPY resolves named library members through the existing sourceset/include path so copied macro and symbol libraries are reusable"

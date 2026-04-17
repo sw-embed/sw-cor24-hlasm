@@ -25,6 +25,8 @@ line by line, recognizing:
   hex suffix forms for assembly-time parsing
 - **Small assembly-time expressions**: `SET`, `EQU`, `IFEQ`, and `IFNE`
   accept literals and known symbols joined by `+` and `-`
+- **Source libraries**: named `COPY` and `INCLUDE` members can be supplied by
+  the host-side source-set runner and consumed from assembler-facing source
 
 ### Structured Control-Flow Syntax
 
@@ -171,6 +173,26 @@ keyword is passed through to output unchanged (plain COR24 assembly).
 That includes ordinary assembler expressions such as `label+3` and `end-start`,
 which are preserved for the downstream assembler rather than evaluated by
 `hlasm` itself.
+
+### Source Library Workflow
+
+`COPY name` is an HLASM-style alias for named source inclusion. In the current
+workflow, host-side source sets provide named members:
+
+```
+COPY libmac
+COPY libsym
+```
+
+using source-set entries like:
+
+```
+COPY libmac macros.hlasm
+COPY libsym symbols.hlasm
+```
+
+This reuses the same runtime named-include table as `INCLUDE`, but gives macro
+and symbol libraries an explicit source-oriented entry point.
 
 ## Label Generation
 

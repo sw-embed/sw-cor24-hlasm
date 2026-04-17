@@ -1,4 +1,4 @@
-Assembled 15553 bytes
+Assembled 15600 bytes
 Loaded 84 bytes from 'demos/d09_comments.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -68,32 +68,32 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 50000] ' '  (0x20)
 [UART TX @ 50000] 'b'  (0x62)
 [UART TX @ 50000] 'r'  (0x72)
-[UART TX @ 50000] 'a'  (0x61)
-[UART TX @ 50000] ' '  (0x20)
-[UART TX @ 50000] 'h'  (0x68)
-[UART TX @ 50000] 'a'  (0x61)
-[UART TX @ 50000] 'l'  (0x6C)
-[UART TX @ 50000] 't'  (0x74)
-[UART TX @ 50000] ''  (0x0D)
-[UART TX @ 50000] '\n'
-[UART TX @ 57071] 'h'  (0x68)
-[UART TX @ 57071] 'a'  (0x61)
-[UART TX @ 57071] 'l'  (0x6C)
-[UART TX @ 57071] 't'  (0x74)
-[UART TX @ 57071] ':'  (0x3A)
-[UART TX @ 57071] ''  (0x0D)
-[UART TX @ 57071] '\n'
-[UART TX @ 57071] ' '  (0x20)
-[UART TX @ 57071] 'b'  (0x62)
-[UART TX @ 57071] 'r'  (0x72)
-[UART TX @ 57071] 'a'  (0x61)
-[UART TX @ 57071] ' '  (0x20)
-[UART TX @ 57071] 'h'  (0x68)
-[UART TX @ 57071] 'a'  (0x61)
-[UART TX @ 57071] 'l'  (0x6C)
-[UART TX @ 57071] 't'  (0x74)
-[UART TX @ 57071] ''  (0x0D)
-[UART TX @ 57071] '\n'
+[UART TX @ 57375] 'a'  (0x61)
+[UART TX @ 57375] ' '  (0x20)
+[UART TX @ 57375] 'h'  (0x68)
+[UART TX @ 57375] 'a'  (0x61)
+[UART TX @ 57375] 'l'  (0x6C)
+[UART TX @ 57375] 't'  (0x74)
+[UART TX @ 57375] ''  (0x0D)
+[UART TX @ 57375] '\n'
+[UART TX @ 57375] 'h'  (0x68)
+[UART TX @ 57375] 'a'  (0x61)
+[UART TX @ 57375] 'l'  (0x6C)
+[UART TX @ 57375] 't'  (0x74)
+[UART TX @ 57375] ':'  (0x3A)
+[UART TX @ 57375] ''  (0x0D)
+[UART TX @ 57375] '\n'
+[UART TX @ 57375] ' '  (0x20)
+[UART TX @ 57375] 'b'  (0x62)
+[UART TX @ 57375] 'r'  (0x72)
+[UART TX @ 57375] 'a'  (0x61)
+[UART TX @ 57375] ' '  (0x20)
+[UART TX @ 57375] 'h'  (0x68)
+[UART TX @ 57375] 'a'  (0x61)
+[UART TX @ 57375] 'l'  (0x6C)
+[UART TX @ 57375] 't'  (0x74)
+[UART TX @ 57375] ''  (0x0D)
+[UART TX @ 57375] '\n'
 
 UART output: nop
 ; this is a comment
@@ -104,5 +104,5 @@ halt:
  bra halt
 
 
-Executed 57071 instructions
+Executed 57375 instructions
 CPU halted (self-branch detected)

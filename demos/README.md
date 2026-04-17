@@ -40,6 +40,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d31 | Large source + macro capacity | WORKS |
 | d32 | Literals and data ergonomics | WORKS |
 | d33 | Symbols and expressions | WORKS |
+| d34 | COPY macro library workflow | WORKS |
 
 ## Demo Policy
 
@@ -187,14 +188,22 @@ INCBUF 1            ; push current slot/position, read slot 1, then
 
 INCLUDE tail        ; resolve "tail" through the low-SRAM include-name table,
                     ; then include that slot and resume the caller source
+
+COPY libmac         ; HLASM-style alias for a named source member, useful
+                    ; for macro and symbol library fragments
 ```
 
 Bootstrap-facing include demos and proofs now use a source-set manifest:
 optional `PROFILE file`, then `ROOT dir`, optional `MAINADDR` / `EXTRAADDR` /
 `ALIGN`, `SOURCESET child.sourceset`, then `MAIN file.hlasm` plus repeated
-`INCLUDE name file.hlasm`. The host-side runner builds the `.bin` files, packs
-include buffers from their real sizes, emits the unchanged low-SRAM config
-image, and feeds the same runtime include table into `hlasm.s`.
+`INCLUDE name file.hlasm` or `COPY name file.hlasm`. The host-side runner
+builds the `.bin` files, packs include buffers from their real sizes, emits the
+unchanged low-SRAM config image, and feeds the same runtime include table into
+`hlasm.s`.
+
+Demo 34 uses the same composed source-set path to package a small copied macro
+library plus a copied symbol library, then consumes both from a main source via
+`COPY`.
 
 Demo 24 now uses that composed source-set path directly, so the fragment model
 is exercised on a named-include proof as well as the split `hlasm0` bootstrap

@@ -1,0 +1,2 @@
+COPY libmac d34_copy_macro_library_macros.hlasm
+COPY libsym d34_copy_macro_library_symbols.hlasm

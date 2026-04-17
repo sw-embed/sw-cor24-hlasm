@@ -61,6 +61,11 @@ table, conditional stack, and a small include-lookup scratch word. This keeps
 loaded source text and assembler-owned mutable state in separate SRAM regions,
 which is the first bootstrap-oriented layout.
 
+Named library members use the same low-SRAM table as named includes. `COPY name`
+is treated as an explicit HLASM-style alias for that path, so macro and symbol
+libraries can be packaged as source-set members without adding a second runtime
+resolver.
+
 ## Components
 
 ### Scanner

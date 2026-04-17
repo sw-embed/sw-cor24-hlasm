@@ -1,4 +1,4 @@
-Assembled 15553 bytes
+Assembled 15600 bytes
 Loaded 20 bytes from 'reg-rs/s4_simple.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -14,22 +14,22 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 40000] ':'  (0x3A)
 [UART TX @ 40000] ''  (0x0D)
 [UART TX @ 40000] '\n'
-[UART TX @ 40554] ' '  (0x20)
-[UART TX @ 40554] 'b'  (0x62)
-[UART TX @ 40554] 'r'  (0x72)
-[UART TX @ 40554] 'a'  (0x61)
-[UART TX @ 40554] ' '  (0x20)
-[UART TX @ 40554] 'h'  (0x68)
-[UART TX @ 40554] 'a'  (0x61)
-[UART TX @ 40554] 'l'  (0x6C)
-[UART TX @ 40554] 't'  (0x74)
-[UART TX @ 40554] ''  (0x0D)
-[UART TX @ 40554] '\n'
+[UART TX @ 40682] ' '  (0x20)
+[UART TX @ 40682] 'b'  (0x62)
+[UART TX @ 40682] 'r'  (0x72)
+[UART TX @ 40682] 'a'  (0x61)
+[UART TX @ 40682] ' '  (0x20)
+[UART TX @ 40682] 'h'  (0x68)
+[UART TX @ 40682] 'a'  (0x61)
+[UART TX @ 40682] 'l'  (0x6C)
+[UART TX @ 40682] 't'  (0x74)
+[UART TX @ 40682] ''  (0x0D)
+[UART TX @ 40682] '\n'
 
 UART output: nop
 halt:
  bra halt
 
 
-Executed 40554 instructions
+Executed 40682 instructions
 CPU halted (self-branch detected)

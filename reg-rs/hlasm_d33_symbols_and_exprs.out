@@ -1,4 +1,4 @@
-Assembled 15553 bytes
+Assembled 15600 bytes
 Loaded 257 bytes from 'demos/d33_symbols_and_exprs.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -86,12 +86,12 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 80000] ''  (0x0D)
 [UART TX @ 80000] '\n'
 [UART TX @ 80000] 'm'  (0x6D)
-[UART TX @ 80000] 'a'  (0x61)
-[UART TX @ 80000] 'r'  (0x72)
-[UART TX @ 80000] 'k'  (0x6B)
-[UART TX @ 80000] ':'  (0x3A)
-[UART TX @ 80000] ''  (0x0D)
-[UART TX @ 80000] '\n'
+[UART TX @ 90000] 'a'  (0x61)
+[UART TX @ 90000] 'r'  (0x72)
+[UART TX @ 90000] 'k'  (0x6B)
+[UART TX @ 90000] ':'  (0x3A)
+[UART TX @ 90000] ''  (0x0D)
+[UART TX @ 90000] '\n'
 [UART TX @ 90000] ' '  (0x20)
 [UART TX @ 90000] '.'  (0x2E)
 [UART TX @ 90000] 'w'  (0x77)
@@ -125,30 +125,30 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 90000] 'k'  (0x6B)
 [UART TX @ 90000] ''  (0x0D)
 [UART TX @ 90000] '\n'
-[UART TX @ 95634] ' '  (0x20)
-[UART TX @ 95634] '.'  (0x2E)
-[UART TX @ 95634] 'b'  (0x62)
-[UART TX @ 95634] 'y'  (0x79)
-[UART TX @ 95634] 't'  (0x74)
-[UART TX @ 95634] 'e'  (0x65)
-[UART TX @ 95634] ' '  (0x20)
-[UART TX @ 95634] '3'  (0x33)
-[UART TX @ 95634] '2'  (0x32)
-[UART TX @ 95634] ','  (0x2C)
-[UART TX @ 95634] '4'  (0x34)
-[UART TX @ 95634] '2'  (0x32)
-[UART TX @ 95634] ','  (0x2C)
-[UART TX @ 95634] '4'  (0x34)
-[UART TX @ 95634] '2'  (0x32)
-[UART TX @ 95634] ''  (0x0D)
-[UART TX @ 95634] '\n'
-[UART TX @ 95634] 't'  (0x74)
-[UART TX @ 95634] 'a'  (0x61)
-[UART TX @ 95634] 'i'  (0x69)
-[UART TX @ 95634] 'l'  (0x6C)
-[UART TX @ 95634] ':'  (0x3A)
-[UART TX @ 95634] ''  (0x0D)
-[UART TX @ 95634] '\n'
+[UART TX @ 96057] ' '  (0x20)
+[UART TX @ 96057] '.'  (0x2E)
+[UART TX @ 96057] 'b'  (0x62)
+[UART TX @ 96057] 'y'  (0x79)
+[UART TX @ 96057] 't'  (0x74)
+[UART TX @ 96057] 'e'  (0x65)
+[UART TX @ 96057] ' '  (0x20)
+[UART TX @ 96057] '3'  (0x33)
+[UART TX @ 96057] '2'  (0x32)
+[UART TX @ 96057] ','  (0x2C)
+[UART TX @ 96057] '4'  (0x34)
+[UART TX @ 96057] '2'  (0x32)
+[UART TX @ 96057] ','  (0x2C)
+[UART TX @ 96057] '4'  (0x34)
+[UART TX @ 96057] '2'  (0x32)
+[UART TX @ 96057] ''  (0x0D)
+[UART TX @ 96057] '\n'
+[UART TX @ 96057] 't'  (0x74)
+[UART TX @ 96057] 'a'  (0x61)
+[UART TX @ 96057] 'i'  (0x69)
+[UART TX @ 96057] 'l'  (0x6C)
+[UART TX @ 96057] ':'  (0x3A)
+[UART TX @ 96057] ''  (0x0D)
+[UART TX @ 96057] '\n'
 
 UART output: ; Demo 33: EQU aliases and small assembly-time expressions
 
@@ -163,5 +163,5 @@ mark:
 tail:
 
 
-Executed 95634 instructions
+Executed 96057 instructions
 CPU halted (self-branch detected)

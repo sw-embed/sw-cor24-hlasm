@@ -1,4 +1,4 @@
-Assembled 15553 bytes
+Assembled 15600 bytes
 Loaded 36 bytes from 'demos/d02_simple_macro.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -13,33 +13,33 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 40000] '1'  (0x31)
 [UART TX @ 40000] ''  (0x0D)
 [UART TX @ 40000] '\n'
-[UART TX @ 44715] ' '  (0x20)
-[UART TX @ 44715] 'a'  (0x61)
-[UART TX @ 44715] 'd'  (0x64)
-[UART TX @ 44715] 'd'  (0x64)
-[UART TX @ 44715] ' '  (0x20)
-[UART TX @ 44715] 'r'  (0x72)
-[UART TX @ 44715] '0'  (0x30)
-[UART TX @ 44715] ','  (0x2C)
-[UART TX @ 44715] '1'  (0x31)
-[UART TX @ 44715] ''  (0x0D)
-[UART TX @ 44715] '\n'
-[UART TX @ 44715] ' '  (0x20)
-[UART TX @ 44715] 'a'  (0x61)
-[UART TX @ 44715] 'd'  (0x64)
-[UART TX @ 44715] 'd'  (0x64)
-[UART TX @ 44715] ' '  (0x20)
-[UART TX @ 44715] 'r'  (0x72)
-[UART TX @ 44715] '0'  (0x30)
-[UART TX @ 44715] ','  (0x2C)
-[UART TX @ 44715] '1'  (0x31)
-[UART TX @ 44715] ''  (0x0D)
-[UART TX @ 44715] '\n'
+[UART TX @ 44835] ' '  (0x20)
+[UART TX @ 44835] 'a'  (0x61)
+[UART TX @ 44835] 'd'  (0x64)
+[UART TX @ 44835] 'd'  (0x64)
+[UART TX @ 44835] ' '  (0x20)
+[UART TX @ 44835] 'r'  (0x72)
+[UART TX @ 44835] '0'  (0x30)
+[UART TX @ 44835] ','  (0x2C)
+[UART TX @ 44835] '1'  (0x31)
+[UART TX @ 44835] ''  (0x0D)
+[UART TX @ 44835] '\n'
+[UART TX @ 44835] ' '  (0x20)
+[UART TX @ 44835] 'a'  (0x61)
+[UART TX @ 44835] 'd'  (0x64)
+[UART TX @ 44835] 'd'  (0x64)
+[UART TX @ 44835] ' '  (0x20)
+[UART TX @ 44835] 'r'  (0x72)
+[UART TX @ 44835] '0'  (0x30)
+[UART TX @ 44835] ','  (0x2C)
+[UART TX @ 44835] '1'  (0x31)
+[UART TX @ 44835] ''  (0x0D)
+[UART TX @ 44835] '\n'
 
 UART output:  add r0,1
  add r0,1
  add r0,1
 
 
-Executed 44715 instructions
+Executed 44835 instructions
 CPU halted (self-branch detected)

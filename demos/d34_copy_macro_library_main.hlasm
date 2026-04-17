@@ -1,0 +1,16 @@
+; Demo 34: COPY-based macro and symbol library workflow
+COPY libmac
+COPY libsym
+
+PUSH2 r0,r1
+
+IFEQ LIB_ANSWER,42
+ nop
+ENDIFASM
+
+IFNE LIB_MASK,41
+ add r0,1
+ENDIFASM
+
+LOAD7 r2
+POP2 r1,r0

@@ -1,6 +1,6 @@
 number = 6
 slug = "004-copy-and-macro-libraries"
-status = "pending"
+status = "in-progress"
 description = "Add a stronger COPY / macro-library workflow on top of the current include pa..."
 role = "production"
 context_files = []

@@ -617,6 +617,20 @@ _ml_skipkw_near:
 
 	_ml_nf4c:
 
+		la	r1,_kw_copy
+		push	r1
+		la	r0,_line_is_keyword
+		jal	r1,(r0)
+		add	sp,3
+
+		ceq	r0,z
+		brt	_ml_nf4d
+
+		la	r1,_ml_is_copy
+		jmp	(r1)
+
+	_ml_nf4d:
+
 		lw	r0,0(fp)
 		push	r0
 		la	r0,_lookup_macro
@@ -662,6 +676,12 @@ _ml_is_mend_skip:
 
 _ml_is_set:
 	la	r0,_set_symbol
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_copy:
+	la	r0,_handle_copy
 	jal	r1,(r0)
 	la	r1,_ml_loop
 	jmp	(r1)
@@ -7214,6 +7234,20 @@ _hi_ret:
 	pop	fp
 	jmp	(r1)
 
+; _handle_copy: COPY name -- HLASM-style alias for named source include.
+_handle_copy:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_handle_include
+	jal	r1,(r0)
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
 ; _handle_incbuf: INCBUF slot -- push current source state, switch, return on EOF.
 _handle_incbuf:
 	push	fp
@@ -9550,6 +9584,9 @@ _kw_set:
 
 _kw_include:
 	.byte	73,78,67,76,85,68,69,0
+
+_kw_copy:
+	.byte	67,79,80,89,0
 
 _kw_incbuf:
 	.byte	73,78,67,66,85,70,0

@@ -1,0 +1,13 @@
+MACRO PUSH2 &A,&B
+ push &A
+ push &B
+MEND
+
+MACRO POP2 &A,&B
+ pop &A
+ pop &B
+MEND
+
+MACRO LOAD7 &R
+ lc &R,7
+MEND

@@ -1,4 +1,4 @@
-Assembled 15553 bytes
+Assembled 15600 bytes
 Loaded 19 bytes from 'demos/d01_passthrough.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -14,22 +14,22 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 40000] ':'  (0x3A)
 [UART TX @ 40000] ''  (0x0D)
 [UART TX @ 40000] '\n'
-[UART TX @ 40555] ' '  (0x20)
-[UART TX @ 40555] 'b'  (0x62)
-[UART TX @ 40555] 'r'  (0x72)
-[UART TX @ 40555] 'a'  (0x61)
-[UART TX @ 40555] ' '  (0x20)
-[UART TX @ 40555] 'h'  (0x68)
-[UART TX @ 40555] 'a'  (0x61)
-[UART TX @ 40555] 'l'  (0x6C)
-[UART TX @ 40555] 't'  (0x74)
-[UART TX @ 40555] ''  (0x0D)
-[UART TX @ 40555] '\n'
+[UART TX @ 40683] ' '  (0x20)
+[UART TX @ 40683] 'b'  (0x62)
+[UART TX @ 40683] 'r'  (0x72)
+[UART TX @ 40683] 'a'  (0x61)
+[UART TX @ 40683] ' '  (0x20)
+[UART TX @ 40683] 'h'  (0x68)
+[UART TX @ 40683] 'a'  (0x61)
+[UART TX @ 40683] 'l'  (0x6C)
+[UART TX @ 40683] 't'  (0x74)
+[UART TX @ 40683] ''  (0x0D)
+[UART TX @ 40683] '\n'
 
 UART output: nop
 halt:
  bra halt
 
 
-Executed 40555 instructions
+Executed 40683 instructions
 CPU halted (self-branch detected)
