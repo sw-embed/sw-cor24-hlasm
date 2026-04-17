@@ -1,0 +1,1 @@
+Add an opt-in hlasm source switch that emits structured IF/THEN/ELSE, DO/ENDDO, and SELECT/WHEN source markers as comments in lowered .s output. Keep default output compact. Document the switch and add a demo/regression proving annotated lowering.

@@ -1,0 +1,8 @@
+number = 4
+slug = "004-copy-and-macro-libraries"
+status = "pending"
+description = "Add a stronger COPY / macro-library workflow on top of the current include pa..."
+role = "production"
+context_files = []
+created_at = "2026-04-16T23:55:37"
+commits = []

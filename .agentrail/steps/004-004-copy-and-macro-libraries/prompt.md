@@ -1,0 +1,1 @@
+Add a stronger COPY / macro-library workflow on top of the current include path so reusable assembler fragments and macro libraries are practical. Keep behavior explicit and source-oriented; do not drift into PL/SW features.

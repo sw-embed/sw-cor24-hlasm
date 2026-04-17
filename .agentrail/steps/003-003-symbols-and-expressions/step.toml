@@ -1,0 +1,8 @@
+number = 3
+slug = "003-symbols-and-expressions"
+status = "pending"
+description = "Add ergonomic symbol and expression support that keeps hlasm squarely in asse..."
+role = "production"
+context_files = []
+created_at = "2026-04-16T23:55:37"
+commits = []

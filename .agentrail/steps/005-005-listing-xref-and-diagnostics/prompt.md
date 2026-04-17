@@ -1,0 +1,1 @@
+Improve the ergonomics of understanding generated assembly and debugging assembler sources: listings, cross-reference-friendly output, and better diagnostics. Tie this to the structured-annotation feature where useful, while keeping normal output compact by default.

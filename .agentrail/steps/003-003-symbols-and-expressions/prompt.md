@@ -1,0 +1,1 @@
+Add ergonomic symbol and expression support that keeps hlasm squarely in assembler territory: EQU-style aliases, current-location-friendly expressions, and useful arithmetic over constants/labels. Add focused proofs and update docs.

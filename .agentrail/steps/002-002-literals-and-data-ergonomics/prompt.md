@@ -1,0 +1,1 @@
+Improve assembler ergonomics for literals and data definition relative to as24. Focus on practical, assembler-level conveniences such as richer literal forms and better data directives without introducing typing. Add demos/regressions and keep the suite green.

@@ -1,0 +1,8 @@
+number = 5
+slug = "005-listing-xref-and-diagnostics"
+status = "pending"
+description = "Improve the ergonomics of understanding generated assembly and debugging asse..."
+role = "production"
+context_files = []
+created_at = "2026-04-16T23:55:37"
+commits = []
