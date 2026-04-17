@@ -67,13 +67,14 @@ The first explicit bootstrap-oriented map is now:
 
 - `0x07F000`: source-switch config block
 - `0x080000-0x0BFFFF`: preloaded ASCII source/include buffers
-- `0x0C0000-0x0C0515`: `hlasm` runtime arena
+- `0x0C0000-0x0C055B`: `hlasm` runtime arena
 - `0xFEE000-0xFEEBFF`: preferred 3K EBR stack (`cor24-run --stack-kilobytes 3`)
 
 The current runtime arena packs the mutable assembler state into middle SRAM:
 
 - line buffer
 - source descriptor table and counters
+- source-return stack for include-style buffer calls
 - macro table and macro body pool
 - expansion buffer state
 - symbol table
@@ -121,6 +122,12 @@ position zero. This is still a minimal bootstrap mechanism: slot selection is
 numeric, target-native, and intentionally simple, but it lets a patched main
 source explicitly pull in the next preloaded buffer instead of depending only
 on EOF-driven handoff.
+
+Step 14 adds `INCBUF <slot>` on top of that same table. `INCBUF` pushes the
+current `(slot, position)` onto a tiny runtime source-return stack, rewinds the
+target slot, and switches into it. When the included buffer reaches EOF,
+`hlasm` restores the caller slot/position and resumes reading the original
+source stream. Plain `SRCBUF` still behaves as a direct non-returning switch.
 
 ## Step 8 Deliverable
 

@@ -28,6 +28,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d19 | Bootstrap memory map proof | WORKS |
 | d20 | Patchable main source window | WORKS |
 | d21 | Directive-driven source switch | WORKS |
+| d22 | Include-return source stack | WORKS |
 
 ## Demo Policy
 
@@ -88,6 +89,15 @@ ENDIFASM
 IFNE VER,2          ; include if VER does NOT equal 2
  sub r0,1
 ENDIFASM
+```
+
+### Source Buffer Control
+
+```
+SRCBUF 1            ; jump directly to preloaded source slot 1
+
+INCBUF 1            ; push current slot/position, read slot 1, then
+                    ; return to the caller source when slot 1 hits EOF
 ```
 
 Conditionals can nest:

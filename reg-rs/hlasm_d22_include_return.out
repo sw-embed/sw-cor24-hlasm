@@ -1,0 +1,7 @@
+UART output: tail:
+ bra _h
+ bra tail
+
+
+Executed 22603 instructions
+CPU halted (self-branch detected)

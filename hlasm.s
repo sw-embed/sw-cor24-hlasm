@@ -9,7 +9,8 @@
 ; Bootstrap memory map:
 ;   0x07F000  config block for extra source buffers
 ;   0x080000+ preloaded ASCII source/include buffers
-;   0x0C0000+ runtime arena (line buffer, descriptors, macro/symbol state)
+;   0x0C0000+ runtime arena (line buffer, descriptors, source-return stack,
+;              macro/symbol state)
 ;   EBR stack: prefer cor24-run --stack-kilobytes 3 unless a future SRAM
 ;              fallback stack is explicitly needed
 ;
@@ -182,6 +183,20 @@ _ml_not_recording:
 	jmp	(r1)
 
 _mlnr_directives:
+	la	r1,_kw_incbuf
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_incbuf_near
+
+	la	r1,_ml_is_incbuf
+	jmp	(r1)
+
+_ml_is_incbuf_near:
+
 	la	r1,_kw_srcbuf
 	push	r1
 	la	r0,_starts_with
@@ -374,6 +389,12 @@ _ml_is_set:
 	la	r1,_ml_loop
 	jmp	(r1)
 
+_ml_is_incbuf:
+	la	r0,_handle_incbuf
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
 _ml_is_srcbuf:
 	la	r0,_handle_srcbuf
 	jal	r1,(r0)
@@ -516,6 +537,14 @@ _rl_loop:
 	bra	_rl_loop
 
 _rl_eof:
+	push	r1
+	la	r0,_pop_src_return
+	jal	r1,(r0)
+	pop	r1
+
+	ceq	r0,z
+	brf	_rl_loop
+
 	push	r1
 	la	r0,_advance_src_desc
 	jal	r1,(r0)
@@ -2012,7 +2041,7 @@ _init_runtime_arena:
 	push	r2
 	mov	fp,sp
 
-	la	r0,1302
+	la	r0,1372
 	push	r0
 	la	r0,786432
 	push	r0
@@ -2234,6 +2263,104 @@ _sss_no:
 	la	r0,0
 
 _sss_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _push_src_return: Save current source slot and position for include return.
+; Returns: r0 = 1 if pushed, 0 if stack full
+_push_src_return:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	la	r1,787753
+	lw	r0,0(r1)
+	la	r2,8
+	clu	r0,r2
+	brf	_psr_no
+
+	push	r0
+	la	r0,_mul6
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,787756
+	add	r1,r0
+	mov	r2,r1
+
+	la	r1,786600
+	lw	r0,0(r1)
+	sw	r0,0(r2)
+
+	la	r0,_current_src_desc
+	jal	r1,(r0)
+	lw	r0,6(r0)
+	sw	r0,3(r2)
+
+	la	r1,787753
+	lw	r0,0(r1)
+	add	r0,1
+	sw	r0,0(r1)
+	la	r0,1
+	bra	_psr_ret
+
+_psr_no:
+	la	r0,0
+
+_psr_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _pop_src_return: Restore the caller source slot and position after include EOF.
+; Returns: r0 = 1 if restored, 0 if stack empty
+_pop_src_return:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	la	r1,787753
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_prr_no
+
+	add	r0,-1
+	sw	r0,0(r1)
+
+	push	r0
+	la	r0,_mul6
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,787756
+	add	r1,r0
+	mov	r2,r1
+
+	lw	r0,0(r2)
+	la	r1,786600
+	sw	r0,0(r1)
+
+	push	r0
+	la	r0,_mul9
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,786606
+	add	r1,r0
+	lw	r0,3(r2)
+	sw	r0,6(r1)
+
+	la	r0,1
+	bra	_prr_ret
+
+_prr_no:
+	la	r0,0
+
+_prr_ret:
 	mov	sp,fp
 	pop	r2
 	pop	r1
@@ -4096,6 +4223,41 @@ _handle_srcbuf:
 	pop	fp
 	jmp	(r1)
 
+; _handle_incbuf: INCBUF slot -- push current source state, switch, return on EOF.
+_handle_incbuf:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+	la	r0,_extract_kw_arg
+	jal	r1,(r0)
+	la	r0,786576
+	push	r0
+	la	r0,_atoi
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-3(fp)
+	la	r0,_push_src_return
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hib_ret
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_select_src_slot
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brf	_hib_ret
+	la	r0,_pop_src_return
+	jal	r1,(r0)
+_hib_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; _mul9: Multiply arg by 9 (symbol table entry offset).
 ; Arg on stack: value
 ; Returns: r0 = value * 9
@@ -4334,6 +4496,9 @@ _kw_prefix_table:
 ; --- Step 7: Conditional assembly data ---
 _kw_set:
 	.byte	83,69,84,0
+
+_kw_incbuf:
+	.byte	73,78,67,66,85,70,0
 
 _kw_srcbuf:
 	.byte	83,82,67,66,85,70,0

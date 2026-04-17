@@ -1,0 +1,4 @@
+IFDEF PULL
+tail:
+ bra _h
+ENDIFASM
