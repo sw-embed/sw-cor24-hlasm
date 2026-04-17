@@ -1,0 +1,1 @@
+Implemented multi-buffer source input with a second configurable ASCII buffer, added a cross-buffer macro/symbol demo, and documented the config-driven bootstrap path.

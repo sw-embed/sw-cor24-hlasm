@@ -1,0 +1,8 @@
+number = 10
+slug = "010-step10-include-ready-switch"
+status = "pending"
+description = "Build an include-ready source switcher on top of the new multi-buffer input p..."
+role = "legacy"
+context_files = []
+created_at = "2026-04-16T18:44:53"
+commits = []
