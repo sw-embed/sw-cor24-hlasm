@@ -1,0 +1,1 @@
+Fixed the RPG-II emission blocker by enlarging the runtime macro/source arena so macro-heavy large sources lower fully again, added a large-source regression, and refreshed tracked baselines with the suite back to green.
