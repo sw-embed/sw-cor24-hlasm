@@ -1,0 +1,1 @@
+Convert another named-include or bootstrap-facing proof to the composed source-set workflow, or tighten the shared demo/bootstrap profile split if that yields a cleaner reusable model. Keep the low-SRAM config layout and runtime INCLUDE lookup unchanged, but continue exercising the composition grammar on additional proof paths.

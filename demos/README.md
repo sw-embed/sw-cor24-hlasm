@@ -121,6 +121,9 @@ Demo 24 now uses that composed source-set path directly, so the fragment model
 is exercised on a named-include proof as well as the split `hlasm0` bootstrap
 proof.
 
+Demo 23 now uses the same composed source-set path, so both named-include
+proofs run through the shared demo profile and fragment workflow.
+
 Conditionals can nest:
 ```
 SET OUTER,1

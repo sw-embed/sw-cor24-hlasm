@@ -1,0 +1,5 @@
+# Demo 23 named include through composed source-set fragments.
+PROFILE default.profile
+ROOT .
+SOURCESET d23_named_include_main.sourceset
+SOURCESET d23_named_include_includes.sourceset

@@ -1,0 +1,1 @@
+Converted the nested named-include proof to the composed source-set workflow so the fragment model is exercised on a second proof path beyond split hlasm0.
