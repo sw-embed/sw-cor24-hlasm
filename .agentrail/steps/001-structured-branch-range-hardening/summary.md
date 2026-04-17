@@ -1,0 +1,1 @@
+Hardened structured IF/DO lowering against branch range limits, refreshed affected baselines, and added a dedicated long-range proof demo/regression.
