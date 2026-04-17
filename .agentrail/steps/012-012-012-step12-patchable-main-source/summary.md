@@ -1,0 +1,1 @@
+Extended the source config block with optional main-base and main-length overrides, preserved legacy extra-buffer records, and added a proof demo that assembles from a non-default main source window at 0x090000.
