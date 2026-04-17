@@ -1,1 +1,1 @@
-BLOCKED: Deferred behind inserted RPG-II emission blocker fix step
+Added practical assembler ergonomics for literals and data: assembly-time parsing now accepts decimal, 0x hex, 0b binary, and h/H hex-suffix numbers, and new .ascii/.asciz/.space/.fill directives lower transparently to plain .byte output. Added demo/regression d32, updated docs, refreshed tracked baselines, and kept ./build.sh test green.

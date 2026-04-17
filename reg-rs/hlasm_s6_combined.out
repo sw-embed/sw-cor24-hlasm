@@ -1,4 +1,4 @@
-Assembled 14851 bytes
+Assembled 15553 bytes
 Loaded 50 bytes from 'reg-rs/s6_combined.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -26,30 +26,30 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 40000] '1'  (0x31)
 [UART TX @ 40000] ''  (0x0D)
 [UART TX @ 40000] '\n'
-[UART TX @ 43895] 'L'  (0x4C)
-[UART TX @ 43895] '0'  (0x30)
-[UART TX @ 43895] '0'  (0x30)
-[UART TX @ 43895] '0'  (0x30)
-[UART TX @ 43895] '2'  (0x32)
-[UART TX @ 43895] ':'  (0x3A)
-[UART TX @ 43895] ' '  (0x20)
-[UART TX @ 43895] 's'  (0x73)
-[UART TX @ 43895] 't'  (0x74)
-[UART TX @ 43895] ' '  (0x20)
-[UART TX @ 43895] 'r'  (0x72)
-[UART TX @ 43895] '1'  (0x31)
-[UART TX @ 43895] ''  (0x0D)
-[UART TX @ 43895] '\n'
-[UART TX @ 43895] ' '  (0x20)
-[UART TX @ 43895] 'b'  (0x62)
-[UART TX @ 43895] ' '  (0x20)
-[UART TX @ 43895] 'L'  (0x4C)
-[UART TX @ 43895] '0'  (0x30)
-[UART TX @ 43895] '0'  (0x30)
-[UART TX @ 43895] '0'  (0x30)
-[UART TX @ 43895] '2'  (0x32)
-[UART TX @ 43895] ''  (0x0D)
-[UART TX @ 43895] '\n'
+[UART TX @ 44647] 'L'  (0x4C)
+[UART TX @ 44647] '0'  (0x30)
+[UART TX @ 44647] '0'  (0x30)
+[UART TX @ 44647] '0'  (0x30)
+[UART TX @ 44647] '2'  (0x32)
+[UART TX @ 44647] ':'  (0x3A)
+[UART TX @ 44647] ' '  (0x20)
+[UART TX @ 44647] 's'  (0x73)
+[UART TX @ 44647] 't'  (0x74)
+[UART TX @ 44647] ' '  (0x20)
+[UART TX @ 44647] 'r'  (0x72)
+[UART TX @ 44647] '1'  (0x31)
+[UART TX @ 44647] ''  (0x0D)
+[UART TX @ 44647] '\n'
+[UART TX @ 44647] ' '  (0x20)
+[UART TX @ 44647] 'b'  (0x62)
+[UART TX @ 44647] ' '  (0x20)
+[UART TX @ 44647] 'L'  (0x4C)
+[UART TX @ 44647] '0'  (0x30)
+[UART TX @ 44647] '0'  (0x30)
+[UART TX @ 44647] '0'  (0x30)
+[UART TX @ 44647] '2'  (0x32)
+[UART TX @ 44647] ''  (0x0D)
+[UART TX @ 44647] '\n'
 
 UART output: L0001: st r0
  b L0001
@@ -57,5 +57,5 @@ L0002: st r1
  b L0002
 
 
-Executed 43895 instructions
+Executed 44647 instructions
 CPU halted (self-branch detected)

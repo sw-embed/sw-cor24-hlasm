@@ -39,6 +39,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d30 | Structured annotation comments | WORKS |
 | d31 | Large source + macro capacity | WORKS |
 | d32 | Literals and data ergonomics | WORKS |
+| d33 | Symbols and expressions | WORKS |
 
 ## Demo Policy
 
@@ -136,6 +137,27 @@ SET COUNT,42
 SET MASK,0x2A
 SET BITS,0b101010
 SET SAME,2Ah
+```
+
+Small assembly-time symbol arithmetic is also supported for `SET`, `EQU`,
+`IFEQ`, and `IFNE`:
+```
+MASK EQU 0x20
+STEP EQU 2
+SET BASE,8
+SET TOTL,MASK+BASE+STEP
+IFEQ TOTL,42
+ nop
+ENDIFASM
+```
+
+Current-location and label arithmetic remain assembler passthrough, not
+assembly-time evaluation inside `hlasm`:
+```
+mark:
+ .word mark+3
+ .word tail-mark
+tail:
 ```
 
 ### Data Directives

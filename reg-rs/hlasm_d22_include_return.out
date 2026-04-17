@@ -1,4 +1,4 @@
-Assembled 14851 bytes
+Assembled 15553 bytes
 Loaded 33 bytes from 'demos/d22_include_return_main.bin' at 0x090000
 Loaded 33 bytes from 'demos/d22_include_return_extra.bin' at 0x081000
 Loaded 27 bytes from 'reg-rs/s14_include_return.cfg' at 0x07F000
@@ -11,31 +11,31 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 40000] ':'  (0x3A)
 [UART TX @ 40000] ''  (0x0D)
 [UART TX @ 40000] '\n'
-[UART TX @ 48694] ' '  (0x20)
-[UART TX @ 48694] 'b'  (0x62)
-[UART TX @ 48694] 'r'  (0x72)
-[UART TX @ 48694] 'a'  (0x61)
-[UART TX @ 48694] ' '  (0x20)
-[UART TX @ 48694] '_'  (0x5F)
-[UART TX @ 48694] 'h'  (0x68)
-[UART TX @ 48694] ''  (0x0D)
-[UART TX @ 48694] '\n'
-[UART TX @ 48694] '_'  (0x5F)
-[UART TX @ 48694] 'h'  (0x68)
-[UART TX @ 48694] ':'  (0x3A)
-[UART TX @ 48694] ''  (0x0D)
-[UART TX @ 48694] '\n'
-[UART TX @ 48694] ' '  (0x20)
-[UART TX @ 48694] 'b'  (0x62)
-[UART TX @ 48694] 'r'  (0x72)
-[UART TX @ 48694] 'a'  (0x61)
-[UART TX @ 48694] ' '  (0x20)
-[UART TX @ 48694] 't'  (0x74)
-[UART TX @ 48694] 'a'  (0x61)
-[UART TX @ 48694] 'i'  (0x69)
-[UART TX @ 48694] 'l'  (0x6C)
-[UART TX @ 48694] ''  (0x0D)
-[UART TX @ 48694] '\n'
+[UART TX @ 50000] ' '  (0x20)
+[UART TX @ 50000] 'b'  (0x62)
+[UART TX @ 50000] 'r'  (0x72)
+[UART TX @ 50000] 'a'  (0x61)
+[UART TX @ 50000] ' '  (0x20)
+[UART TX @ 50000] '_'  (0x5F)
+[UART TX @ 50000] 'h'  (0x68)
+[UART TX @ 50000] ''  (0x0D)
+[UART TX @ 50000] '\n'
+[UART TX @ 50000] '_'  (0x5F)
+[UART TX @ 50000] 'h'  (0x68)
+[UART TX @ 50000] ':'  (0x3A)
+[UART TX @ 50000] ''  (0x0D)
+[UART TX @ 50000] '\n'
+[UART TX @ 50659] ' '  (0x20)
+[UART TX @ 50659] 'b'  (0x62)
+[UART TX @ 50659] 'r'  (0x72)
+[UART TX @ 50659] 'a'  (0x61)
+[UART TX @ 50659] ' '  (0x20)
+[UART TX @ 50659] 't'  (0x74)
+[UART TX @ 50659] 'a'  (0x61)
+[UART TX @ 50659] 'i'  (0x69)
+[UART TX @ 50659] 'l'  (0x6C)
+[UART TX @ 50659] ''  (0x0D)
+[UART TX @ 50659] '\n'
 
 UART output: tail:
  bra _h
@@ -43,5 +43,5 @@ _h:
  bra tail
 
 
-Executed 48694 instructions
+Executed 50659 instructions
 CPU halted (self-branch detected)

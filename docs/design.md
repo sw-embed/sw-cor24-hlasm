@@ -23,6 +23,8 @@ line by line, recognizing:
   `.ascii`, `.asciz`, `.space`, `.fill` (lowered to `.byte` lists)
 - **Numeric literals**: decimal plus `0x` hex, `0b` binary, and `h`/`H`
   hex suffix forms for assembly-time parsing
+- **Small assembly-time expressions**: `SET`, `EQU`, `IFEQ`, and `IFNE`
+  accept literals and known symbols joined by `+` and `-`
 
 ### Structured Control-Flow Syntax
 
@@ -144,6 +146,8 @@ MEND
 ```
 SET DEBUG, 1
 SET VERSION, 3
+MASK EQU 0x20
+SET TOTAL, MASK+10
 
 IFDEF DEBUG
     ; debug-only code
@@ -154,12 +158,19 @@ IFEQ VERSION, 3
 ELSEASM
     ; other versions
 ENDIFASM
+
+IFNE TOTAL, 41
+    ; expression-based guard
+ENDIFASM
 ```
 
 ### Passthrough
 
 Any line that is not a macro definition, structured block, conditional, or
 keyword is passed through to output unchanged (plain COR24 assembly).
+That includes ordinary assembler expressions such as `label+3` and `end-start`,
+which are preserved for the downstream assembler rather than evaluated by
+`hlasm` itself.
 
 ## Label Generation
 

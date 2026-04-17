@@ -1,0 +1,20 @@
+; Demo 33: EQU aliases and small assembly-time expressions
+MASK EQU 0x20
+STEP EQU 2
+SET BASE,8
+SET TOTL,MASK+BASE+STEP
+SET SAME,TOTL-1+1
+
+IFEQ TOTL,42
+ nop
+ENDIFASM
+
+IFNE SAME,41
+ add r0,1
+ENDIFASM
+
+mark:
+ .word mark+3
+ .word tail-mark
+ .byte 32,42,42
+tail:

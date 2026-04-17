@@ -604,6 +604,19 @@ _ml_skipkw_near:
 
 	_ml_nf4b:
 
+		la	r0,_line_is_equ_stmt
+		jal	r1,(r0)
+
+		ceq	r0,z
+		brt	_ml_nf4c
+
+		la	r0,_handle_equ
+		jal	r1,(r0)
+		la	r1,_ml_loop
+		jmp	(r1)
+
+	_ml_nf4c:
+
 		lw	r0,0(fp)
 		push	r0
 		la	r0,_lookup_macro
@@ -2153,6 +2166,70 @@ _ian_yes:
 	la	r0,1
 
 _ian_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _is_ident_start: r0 = 1 if alpha or underscore
+; Arg on stack: char
+_is_ident_start:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	lw	r0,6(fp)
+	lc	r1,95
+	ceq	r0,r1
+	brt	_iis_yes
+
+	push	r0
+	la	r0,_is_alpha
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_iis_no
+
+_iis_yes:
+	la	r0,1
+	bra	_iis_ret
+
+_iis_no:
+	la	r0,0
+
+_iis_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _is_ident_char: r0 = 1 if alnum or underscore
+; Arg on stack: char
+_is_ident_char:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	lw	r0,6(fp)
+	lc	r1,95
+	ceq	r0,r1
+	brt	_iic_yes
+
+	push	r0
+	la	r0,_is_alnum
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_iic_no
+
+_iic_yes:
+	la	r0,1
+	bra	_iic_ret
+
+_iic_no:
+	la	r0,0
+
+_iic_ret:
 	mov	sp,fp
 	pop	r1
 	pop	fp
@@ -3877,6 +3954,127 @@ _sws_ret:
 	pop	fp
 	jmp	(r1)
 
+; _line_is_equ_stmt: Return 1 if line starts with "name EQU ..."
+_line_is_equ_stmt:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r2,786432
+
+_lies_ws:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_lies_no_near
+	lc	r1,32
+	ceq	r0,r1
+	brt	_lies_ws_adv
+	lc	r1,9
+	ceq	r0,r1
+	brt	_lies_ws_adv
+	bra	_lies_name
+
+_lies_no_near:
+	la	r1,_lies_no
+	jmp	(r1)
+
+_lies_ws_adv:
+	add	r2,1
+	bra	_lies_ws
+
+_lies_name:
+	lbu	r0,0(r2)
+	push	r0
+	la	r0,_is_ident_start
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_lies_no
+
+_lies_name_loop:
+	lbu	r0,0(r2)
+	push	r0
+	la	r0,_is_alnum
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_lies_after_name
+	add	r2,1
+	bra	_lies_name_loop
+
+_lies_after_name:
+	lbu	r0,0(r2)
+	lc	r1,32
+	ceq	r0,r1
+	brt	_lies_kw_ws
+	lc	r1,9
+	ceq	r0,r1
+	brt	_lies_kw_ws
+	bra	_lies_no
+
+_lies_kw_ws:
+	lbu	r0,0(r2)
+	lc	r1,32
+	ceq	r0,r1
+	brt	_lies_kw_ws_adv
+	lc	r1,9
+	ceq	r0,r1
+	brt	_lies_kw_ws_adv
+	bra	_lies_kw
+
+_lies_kw_ws_adv:
+	add	r2,1
+	bra	_lies_kw_ws
+
+_lies_kw:
+	lbu	r0,0(r2)
+	lc	r1,69
+	ceq	r0,r1
+	brt	_lies_kw_q
+	bra	_lies_no
+
+_lies_kw_q:
+	lbu	r0,1(r2)
+	lc	r1,81
+	ceq	r0,r1
+	brt	_lies_kw_u
+	bra	_lies_no
+
+_lies_kw_u:
+	lbu	r0,2(r2)
+	lc	r1,85
+	ceq	r0,r1
+	brt	_lies_kw_end
+	bra	_lies_no
+
+_lies_kw_end:
+	add	r2,3
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_lies_yes
+	lc	r1,32
+	ceq	r0,r1
+	brt	_lies_yes
+	lc	r1,9
+	ceq	r0,r1
+	brt	_lies_yes
+	bra	_lies_no
+
+_lies_yes:
+	la	r0,1
+	bra	_lies_ret
+
+_lies_no:
+	la	r0,0
+
+_lies_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; _extract_macro_name: Parse macro name from _line_buf after "MACRO ".
 ; Sets _macro_state=1, _macro_rec_idx=next slot.
 _extract_macro_name:
@@ -5332,6 +5530,293 @@ _eeb_done:
 	pop	fp
 	jmp	(r1)
 
+; _copy_ident_token: Copy identifier token at ptr to _parse_name_buf.
+; Arg on stack: ptr
+; Returns: r0 = ptr after token
+_copy_ident_token:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+
+	lw	r2,9(fp)
+	la	r0,786576
+	sw	r0,-3(fp)
+
+	lbu	r0,0(r2)
+	push	r0
+	la	r0,_is_ident_start
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_cit_done
+
+_cit_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_cit_done
+	push	r0
+	la	r0,_is_ident_char
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_cit_done
+	lbu	r0,0(r2)
+	lw	r1,-3(fp)
+	sb	r0,0(r1)
+	add	r1,1
+	sw	r1,-3(fp)
+	add	r2,1
+	bra	_cit_loop
+
+_cit_done:
+	lw	r1,-3(fp)
+	la	r0,0
+	sb	r0,0(r1)
+	mov	r0,r2
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _copy_expr_token: Copy one expression term token to _parse_name_buf.
+; Arg on stack: ptr
+; Returns: r0 = ptr after token
+_copy_expr_token:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+
+	lw	r2,9(fp)
+	la	r0,786576
+	sw	r0,-3(fp)
+
+_cet_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_cet_done
+	lc	r1,32
+	ceq	r0,r1
+	brt	_cet_done
+	lc	r1,9
+	ceq	r0,r1
+	brt	_cet_done
+	lc	r1,43
+	ceq	r0,r1
+	brt	_cet_done
+	lc	r1,45
+	ceq	r0,r1
+	brt	_cet_done
+	lc	r1,44
+	ceq	r0,r1
+	brt	_cet_done
+	lc	r1,59
+	ceq	r0,r1
+	brt	_cet_done
+	lc	r1,35
+	ceq	r0,r1
+	brt	_cet_done
+	lw	r1,-3(fp)
+	lbu	r0,0(r2)
+	sb	r0,0(r1)
+	add	r1,1
+	sw	r1,-3(fp)
+	la	r0,0
+	sb	r0,0(r1)
+	add	r2,1
+	bra	_cet_loop
+
+_cet_done:
+	mov	r0,r2
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _store_parse_name_value: Store value under _parse_name_buf in symbol table.
+; Arg on stack: value
+_store_parse_name_value:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-6
+
+	la	r0,_sym_find
+	jal	r1,(r0)
+	la	r1,787560
+	lw	r1,0(r1)
+	clu	r0,r1
+	brf	_spnv_new
+	push	r0
+	la	r0,_mul9
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,787563
+	add	r1,r0
+	bra	_spnv_store
+
+_spnv_new:
+	la	r1,787560
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_mul9
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,787563
+	add	r1,r0
+	la	r2,787560
+	lw	r0,0(r2)
+	add	r0,1
+	sw	r0,0(r2)
+
+_spnv_store:
+	sw	r1,-3(fp)
+	la	r2,786576
+
+_spnv_name:
+	lbu	r0,0(r2)
+	sb	r0,0(r1)
+	ceq	r0,z
+	brt	_spnv_after
+	add	r1,1
+	add	r2,1
+	bra	_spnv_name
+
+_spnv_after:
+	lw	r1,-3(fp)
+	lw	r0,9(fp)
+	sw	r0,6(r1)
+
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _eval_expr_ptr: Evaluate a small assembly-time expression at ptr.
+; Supports literals and known symbols joined by + / -.
+; Args on stack: ptr
+; Returns: r0 = value
+_eval_expr_ptr:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-9
+
+	la	r0,0
+	sw	r0,-3(fp)
+	la	r0,1
+	sw	r0,-6(fp)
+	lw	r2,9(fp)
+
+_eep_loop:
+	push	r2
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_eep_ret_near
+	lc	r1,44
+	ceq	r0,r1
+	brt	_eep_ret_near
+	lc	r1,59
+	ceq	r0,r1
+	brt	_eep_ret_near
+	lc	r1,43
+	ceq	r0,r1
+	brt	_eep_plus
+	lc	r1,45
+	ceq	r0,r1
+	brt	_eep_minus
+	bra	_eep_term
+
+_eep_ret_near:
+	la	r1,_eep_ret
+	jmp	(r1)
+
+_eep_term:
+	mov	r0,r2
+	sw	r0,-9(fp)
+	push	r2
+	la	r0,_copy_expr_token
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+	lw	r0,-9(fp)
+	ceq	r0,r2
+	brt	_eep_ret
+
+	la	r0,786576
+	push	r0
+	la	r0,_is_number_str
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_eep_sym
+
+	la	r0,786576
+	push	r0
+	la	r0,_atoi
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-9(fp)
+	bra	_eep_apply
+
+_eep_sym:
+	la	r0,_lookup_symbol
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_eep_zero_term
+	la	r1,786594
+	lw	r0,0(r1)
+	sw	r0,-9(fp)
+	bra	_eep_apply
+
+_eep_zero_term:
+	la	r0,0
+	sw	r0,-9(fp)
+
+_eep_apply:
+	lw	r0,-9(fp)
+	lw	r1,-6(fp)
+	mul	r0,r1
+	lw	r1,-3(fp)
+	add	r1,r0
+	sw	r1,-3(fp)
+	bra	_eep_loop
+
+_eep_plus:
+	la	r0,1
+	sw	r0,-6(fp)
+	add	r2,1
+	la	r1,_eep_loop
+	jmp	(r1)
+
+_eep_minus:
+	la	r0,-1
+	sw	r0,-6(fp)
+	add	r2,1
+	la	r1,_eep_loop
+	jmp	(r1)
+
+_eep_ret:
+	lw	r0,-3(fp)
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; _skip_ws_ptr: Advance pointer past spaces and tabs.
 ; Arg on stack: ptr
 ; Returns: r0 = advanced ptr
@@ -6158,7 +6643,7 @@ pcv_ws2:
 	bra	pcv_ws
 pcv_call:
 	push	r2
-	la	r0,_atoi
+	la	r0,_eval_expr_ptr
 	jal	r1,(r0)
 	add	sp,3
 pcv_ret:
@@ -6216,126 +6701,170 @@ sf_ret:
 	pop	fp
 	jmp	(r1)
 
+; _handle_equ: Parse "name EQU expr" from _line_buf, store/update in table.
+_handle_equ:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-12
+
+	la	r2,786432
+	push	r2
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+
+	push	r2
+	la	r0,_copy_ident_token
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+
+	sw	r2,-6(fp)
+	la	r1,786576
+	la	r2,0
+	add	r2,fp
+	add	r2,-12
+_heq_save_name:
+	lbu	r0,0(r1)
+	sb	r0,0(r2)
+	ceq	r0,z
+	brt	_heq_saved
+	add	r1,1
+	add	r2,1
+	bra	_heq_save_name
+
+_heq_saved:
+	lw	r2,-6(fp)
+	push	r2
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+
+	add	r2,3
+	push	r2
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	push	r0
+	la	r0,_eval_expr_ptr
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-3(fp)
+
+	la	r1,0
+	add	r1,fp
+	add	r1,-12
+	la	r2,786576
+_heq_restore_name:
+	lbu	r0,0(r1)
+	sb	r0,0(r2)
+	ceq	r0,z
+	brt	_heq_name_restored
+	add	r1,1
+	add	r2,1
+	bra	_heq_restore_name
+
+_heq_name_restored:
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_store_parse_name_value
+	jal	r1,(r0)
+	add	sp,3
+
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; _set_symbol: Parse 'SET name,value' from _line_buf, store/update in table.
 _set_symbol:
 	push	fp
 	push	r2
 	push	r1
 	mov	fp,sp
-	add	sp,-9
+	add	sp,-12
 	la	r2,786432
-	add	r2,4
-ss_sw:
-	lbu	r0,0(r2)
-	ceq	r0,z
-	brf	ss_sw_cont
-	la	r1,ss_ret
-	jmp	(r1)
-ss_sw_cont:
-	la	r1,32
-	ceq	r0,r1
-	brt	ss_sw2
-	la	r1,9
-	ceq	r0,r1
-	brt	ss_sw2
-	bra	ss_cn
-ss_sw2:
-	add	r2,1
-	bra	ss_sw
-ss_cn:
-	la	r0,786576
-	sw	r0,-6(fp)
-ss_cn_loop:
-	lbu	r0,0(r2)
-	ceq	r0,z
-	brt	ss_cn_done
-	la	r1,44
-	ceq	r0,r1
-	brt	ss_cn_done
-	la	r1,32
-	ceq	r0,r1
-	brt	ss_cn_done
-	lw	r1,-6(fp)
-	sb	r0,0(r1)
-	add	r1,1
-	sw	r1,-6(fp)
-	add	r2,1
-	bra	ss_cn_loop
-ss_cn_done:
-	lw	r1,-6(fp)
-	la	r0,0
-	sb	r0,0(r1)
-	lbu	r0,0(r2)
-	la	r1,44
-	ceq	r0,r1
-	brf	ss_no_val
-	add	r2,1
-ss_vsw:
-	lbu	r0,0(r2)
-	ceq	r0,z
-	brt	ss_no_val
-	la	r1,32
-	ceq	r0,r1
-	brt	ss_vsw2
-	la	r1,9
-	ceq	r0,r1
-	brt	ss_vsw2
-	bra	ss_call_atoi
-ss_vsw2:
-	add	r2,1
-	bra	ss_vsw
-ss_call_atoi:
+	add	r2,3
 	push	r2
-	la	r0,_atoi
+	la	r0,_skip_ws_ptr
 	jal	r1,(r0)
 	add	sp,3
-	sw	r0,-3(fp)
-	bra	ss_search
-ss_no_val:
-	la	r0,0
-	sw	r0,-3(fp)
-ss_search:
-	la	r0,_sym_find
-	jal	r1,(r0)
-	la	r1,787560
-	lw	r1,0(r1)
-	clu	r0,r1
-	brf	ss_new
-	push	r0
-	la	r0,_mul9
+	mov	r2,r0
+
+	push	r2
+	la	r0,_copy_ident_token
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,787563
-	add	r1,r0
-	bra	ss_store
-ss_new:
-	la	r1,787560
-	lw	r0,0(r1)
-	push	r0
-	la	r0,_mul9
-	jal	r1,(r0)
-	add	sp,3
-	la	r1,787563
-	add	r1,r0
-	la	r2,787560
-	lw	r0,0(r2)
-	add	r0,1
-	sw	r0,0(r2)
-ss_store:
-	la	r2,786576
-	sw	r1,-9(fp)
-ss_cname:
-	lbu	r0,0(r2)
-	sb	r0,0(r1)
+	mov	r2,r0
+
+	sw	r2,-6(fp)
+	la	r1,786576
+	la	r2,0
+	add	r2,fp
+	add	r2,-12
+_ss_save_name:
+	lbu	r0,0(r1)
+	sb	r0,0(r2)
 	ceq	r0,z
-	brt	ss_after_name
+	brt	_ss_saved
 	add	r1,1
 	add	r2,1
-	bra	ss_cname
-ss_after_name:
+	bra	_ss_save_name
+
+_ss_saved:
+	lw	r2,-6(fp)
+_ss_find_comma:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_ss_no_val
+	lc	r1,44
+	ceq	r0,r1
+	brt	_ss_after_comma
+	add	r2,1
+	bra	_ss_find_comma
+
+_ss_after_comma:
+	add	r2,1
+	push	r2
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	push	r0
+	la	r0,_eval_expr_ptr
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-3(fp)
+	bra	_ss_store
+
+_ss_no_val:
+	la	r0,0
+	sw	r0,-3(fp)
+
+_ss_store:
+	la	r1,0
+	add	r1,fp
+	add	r1,-12
+	la	r2,786576
+_ss_restore_name:
+	lbu	r0,0(r1)
+	sb	r0,0(r2)
+	ceq	r0,z
+	brt	_ss_name_restored
+	add	r1,1
+	add	r2,1
+	bra	_ss_restore_name
+
+_ss_name_restored:
 	lw	r0,-3(fp)
-	lw	r1,-9(fp)
-	sw	r0,6(r1)
+	push	r0
+	la	r0,_store_parse_name_value
+	jal	r1,(r0)
+	add	sp,3
 ss_ret:
 	mov	sp,fp
 	pop	r1

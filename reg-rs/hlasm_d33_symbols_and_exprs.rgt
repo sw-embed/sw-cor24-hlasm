@@ -1,0 +1,5 @@
+command = "cor24-run --run hlasm.s --load-binary demos/d33_symbols_and_exprs.bin@524288 --speed 0 -n 220000 2>&1"
+timeout = 15
+preprocess = "grep -A 180 '^UART output:' || true"
+exit_code = 0
+desc = "Demo 33: EQU aliases and small assembly-time expressions"

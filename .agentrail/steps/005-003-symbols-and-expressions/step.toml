@@ -1,6 +1,6 @@
 number = 5
 slug = "003-symbols-and-expressions"
-status = "pending"
+status = "in-progress"
 description = "Add ergonomic symbol and expression support that keeps hlasm squarely in asse..."
 role = "production"
 context_files = []

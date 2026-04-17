@@ -103,8 +103,10 @@ branches skip over unconditional `jmp` instructions, and generated
 unconditional structured transfers emit `jmp` directly instead of `bra`.
 
 ### Symbol Table
-Tracks labels, SET symbols, and macro names. Symbol lookup during expansion
-and lowering.
+Tracks small assembly-time symbols for `SET` and `EQU`. These values are used
+during conditional assembly and structured-lowering constant handling.
+Ordinary assembler label arithmetic remains passthrough to the downstream
+assembler rather than being evaluated inside `hlasm`.
 
 ### Output Emitter
 Writes expanded, lowered assembly text to the output buffer. Flushes to UART.
