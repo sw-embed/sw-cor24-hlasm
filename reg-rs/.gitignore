@@ -1,4 +1,4 @@
-# reg-rs test outputs
-*.out
+# reg-rs transient test database files
 *.tdb
 *.tdb.lock
+*.lock
