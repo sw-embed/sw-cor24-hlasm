@@ -27,6 +27,9 @@ line by line, recognizing:
   accept literals and known symbols joined by `+` and `-`
 - **Source libraries**: named `COPY` and `INCLUDE` members can be supplied by
   the host-side source-set runner and consumed from assembler-facing source
+- **Opt-in listing comments**: `SET HLIST,1` emits grep-friendly semicolon
+  comments for copied members, macro definitions, macro expansion, and selected
+  consumed directives
 
 ### Structured Control-Flow Syntax
 
@@ -193,6 +196,21 @@ COPY libsym symbols.hlasm
 
 This reuses the same runtime named-include table as `INCLUDE`, but gives macro
 and symbol libraries an explicit source-oriented entry point.
+
+### Listing / Xref Comments
+
+`SET HLIST,1` enables compact listing/xref-friendly comments in the lowered
+output, for example:
+
+```
+; HLASM COPY libmac
+; HLASM MACRO PUSH2
+; HLASM EXPAND PUSH2
+```
+
+This is meant to make generated `.s` files easier to inspect with normal text
+tools. `SET HLANN,1` remains the separate switch for structured-control-flow
+source markers; users can enable either or both.
 
 ## Label Generation
 

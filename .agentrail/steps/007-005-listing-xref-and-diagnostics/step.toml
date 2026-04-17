@@ -1,6 +1,6 @@
 number = 7
 slug = "005-listing-xref-and-diagnostics"
-status = "pending"
+status = "in-progress"
 description = "Improve the ergonomics of understanding generated assembly and debugging asse..."
 role = "production"
 context_files = []

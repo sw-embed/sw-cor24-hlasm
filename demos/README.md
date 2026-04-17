@@ -41,6 +41,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d32 | Literals and data ergonomics | WORKS |
 | d33 | Symbols and expressions | WORKS |
 | d34 | COPY macro library workflow | WORKS |
+| d35 | Listing/xref comments | WORKS |
 
 ## Demo Policy
 
@@ -236,6 +237,18 @@ reversed conditional branch skips over an unconditional `jmp`, so generated
 control flow does not depend on raw `bra` reach.
 When `SET HLANN,1` is active, `hlasm` also emits opt-in semicolon comment
 lines that mark structured source boundaries in the lowered `.s` output.
+
+When `SET HLIST,1` is active, `hlasm` emits broader listing/xref-friendly
+semicolon comments for consumed source-level events such as:
+
+- `COPY name`
+- `MACRO name`
+- `EXPAND name`
+- `EQU name`
+
+`HLIST` is intended for understanding generated assembly and expansion flow.
+`HLANN` remains the narrower switch for structured-control-flow source markers.
+They can be used independently.
 
 ```
 IF cc_eq, r0, 0

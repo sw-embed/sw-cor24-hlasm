@@ -2379,14 +2379,36 @@ _emit_crlf:
 	pop	fp
 	jmp	(r1)
 
-; _struct_ann_enabled: Return 1 if SET HLASM_ANN,<nonzero> is active.
-_struct_ann_enabled:
+; _symbol_enabled: Return 1 if named SET/EQU symbol is active and nonzero.
+; Arg on stack: symbol_name_ptr
+_symbol_enabled:
 	push	fp
 	push	r2
 	push	r1
 	mov	fp,sp
+	add	sp,-24
 
-	la	r0,_ann_symbol_name
+	la	r1,786576
+	la	r2,0
+	add	r2,fp
+	add	r2,-18
+	la	r0,16
+	sw	r0,-21(fp)
+_sye_save:
+	lbu	r0,0(r1)
+	sb	r0,0(r2)
+	add	r1,1
+	add	r2,1
+	lw	r0,-21(fp)
+	add	r0,-1
+	sw	r0,-21(fp)
+	ceq	r0,z
+	brt	_sye_saved
+	bra	_sye_save
+
+_sye_saved:
+
+	lw	r0,9(fp)
 	push	r0
 	la	r0,786576
 	push	r0
@@ -2397,23 +2419,77 @@ _struct_ann_enabled:
 	la	r0,_lookup_symbol
 	jal	r1,(r0)
 	ceq	r0,z
-	brt	_sae_off
+	brt	_syme_off
 
 	la	r1,786594
 	lw	r0,0(r1)
 	ceq	r0,z
-	brt	_sae_off
+	brt	_syme_off
 
 	la	r0,1
-	bra	_sae_ret
+	bra	_sye_ret
 
-_sae_off:
+	_syme_off:
 	la	r0,0
 
-_sae_ret:
+_sye_ret:
+	sw	r0,-24(fp)
+	la	r1,0
+	add	r1,fp
+	add	r1,-18
+	la	r2,786576
+	la	r0,16
+	sw	r0,-21(fp)
+_sye_restore:
+	lbu	r0,0(r1)
+	sb	r0,0(r2)
+	add	r1,1
+	add	r2,1
+	lw	r0,-21(fp)
+	add	r0,-1
+	sw	r0,-21(fp)
+	ceq	r0,z
+	brt	_syme_ret
+	bra	_sye_restore
+
+	_syme_ret:
+	lw	r0,-24(fp)
 	mov	sp,fp
 	pop	r1
 	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _struct_ann_enabled: Return 1 if SET HLANN,<nonzero> is active.
+_struct_ann_enabled:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_ann_symbol_name
+	push	r0
+	la	r0,_symbol_enabled
+	jal	r1,(r0)
+	add	sp,3
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _listing_enabled: Return 1 if SET HLLIST,<nonzero> is active.
+_listing_enabled:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_list_symbol_name
+	push	r0
+	la	r0,_symbol_enabled
+	jal	r1,(r0)
+	add	sp,3
+
+	mov	sp,fp
+	pop	r1
 	pop	fp
 	jmp	(r1)
 
@@ -2501,6 +2577,48 @@ _emit_ann_line1:
 	jal	r1,(r0)
 
 _eal1_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_list_line1: Emit "; HLASM <keyword> <arg>" when listing is enabled.
+; Args on stack: keyword_ptr (9 fp), arg_ptr (6 fp)
+_emit_list_line1:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_listing_enabled
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_ell1_ret
+
+	la	r0,_emit_ann_prefix
+	jal	r1,(r0)
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+_ell1_ret:
 	mov	sp,fp
 	pop	r1
 	pop	fp
@@ -4102,7 +4220,7 @@ _extract_macro_name:
 	push	r1
 	push	r2
 	mov	fp,sp
-	add	sp,-3
+	add	sp,-6
 
 ; Skip "MACRO" (5 chars) in _line_buf
 	la	r1,786432
@@ -4147,6 +4265,7 @@ _emn_copy:
 
 	la	r2,788304
 	add	r2,r0
+	sw	r2,-6(fp)
 	pop	r1
 	la	r0,31
 	sw	r0,-3(fp)
@@ -4233,6 +4352,14 @@ _emn_name_end:
 
 	la	r0,_parse_macro_params
 	jal	r1,(r0)
+
+	la	r0,_kw_macro
+	push	r0
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_emit_list_line1
+	jal	r1,(r0)
+	add	sp,6
 
 _emn_done:
 	mov	sp,fp
@@ -5032,6 +5159,15 @@ _expand_macro:
 	add	sp,3
 	la	r1,788304
 	add	r1,r0
+
+	push	r1
+	la	r0,_expand_txt
+	push	r0
+	push	r1
+	la	r0,_emit_list_line1
+	jal	r1,(r0)
+	add	sp,6
+	pop	r1
 
 	lw	r2,33(r1)
 	lw	r0,36(r1)
@@ -6742,6 +6878,14 @@ _handle_equ:
 	add	sp,3
 	mov	r2,r0
 
+	la	r0,_kw_equ
+	push	r0
+	la	r0,786576
+	push	r0
+	la	r0,_emit_list_line1
+	jal	r1,(r0)
+	add	sp,6
+
 	sw	r2,-6(fp)
 	la	r1,786576
 	la	r2,0
@@ -7205,10 +7349,17 @@ _handle_include:
 
 	la	r0,_extract_kw_arg
 	jal	r1,(r0)
+	la	r0,_kw_include
+	push	r0
+	la	r0,786576
+	push	r0
+	la	r0,_emit_list_line1
+	jal	r1,(r0)
+	add	sp,6
 	la	r0,_lookup_include_slot
 	jal	r1,(r0)
 	ceq	r0,z
-	brt	_hi_ret
+	brt	_hi_missing
 
 	la	r0,_push_src_return
 	jal	r1,(r0)
@@ -7226,6 +7377,16 @@ _handle_include:
 
 	la	r0,_pop_src_return
 	jal	r1,(r0)
+	bra	_hi_ret
+
+_hi_missing:
+	la	r0,_missing_txt
+	push	r0
+	la	r0,786576
+	push	r0
+	la	r0,_emit_list_line1
+	jal	r1,(r0)
+	add	sp,6
 
 _hi_ret:
 	mov	sp,fp
@@ -7237,14 +7398,55 @@ _hi_ret:
 ; _handle_copy: COPY name -- HLASM-style alias for named source include.
 _handle_copy:
 	push	fp
+	push	r2
 	push	r1
 	mov	fp,sp
 
-	la	r0,_handle_include
+	la	r0,_extract_kw_arg
 	jal	r1,(r0)
+	la	r0,_kw_copy
+	push	r0
+	la	r0,786576
+	push	r0
+	la	r0,_emit_list_line1
+	jal	r1,(r0)
+	add	sp,6
+	la	r0,_lookup_include_slot
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hc_missing
 
+	la	r0,_push_src_return
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hc_ret
+
+	la	r1,787804
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_select_src_slot
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brf	_hc_ret
+
+	la	r0,_pop_src_return
+	jal	r1,(r0)
+	bra	_hc_ret
+
+_hc_missing:
+	la	r0,_missing_txt
+	push	r0
+	la	r0,786576
+	push	r0
+	la	r0,_emit_list_line1
+	jal	r1,(r0)
+	add	sp,6
+
+_hc_ret:
 	mov	sp,fp
 	pop	r1
+	pop	r2
 	pop	fp
 	jmp	(r1)
 
@@ -9582,6 +9784,9 @@ _kw_prefix_table:
 _kw_set:
 	.byte	83,69,84,0
 
+_kw_equ:
+	.byte	69,81,85,0
+
 _kw_include:
 	.byte	73,78,67,76,85,68,69,0
 
@@ -9766,8 +9971,17 @@ _r2_txt:
 _ann_symbol_name:
 	.byte	72,76,65,78,78,0
 
+_list_symbol_name:
+	.byte	72,76,73,83,84,0
+
 _ann_prefix_txt:
 	.byte	59,32,72,76,65,83,77,32,0
+
+_expand_txt:
+	.byte	69,88,80,65,78,68,0
+
+_missing_txt:
+	.byte	77,73,83,83,73,78,71,0
 
 _cc_eq_txt:
 	.byte	99,99,95,101,113,0

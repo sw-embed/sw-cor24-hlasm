@@ -1,4 +1,4 @@
-Assembled 15600 bytes
+Assembled 15955 bytes
 Loaded 120 bytes from 'demos/d15_realistic.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -8,30 +8,30 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 50000] 'p'  (0x70)
 [UART TX @ 50000] ''  (0x0D)
 [UART TX @ 50000] '\n'
-[UART TX @ 57027] ' '  (0x20)
-[UART TX @ 57027] 'p'  (0x70)
-[UART TX @ 57027] 'u'  (0x75)
-[UART TX @ 57027] 's'  (0x73)
-[UART TX @ 57027] 'h'  (0x68)
-[UART TX @ 57027] ' '  (0x20)
-[UART TX @ 57027] 'r'  (0x72)
-[UART TX @ 57027] '0'  (0x30)
-[UART TX @ 57027] ''  (0x0D)
-[UART TX @ 57027] '\n'
-[UART TX @ 57027] ' '  (0x20)
-[UART TX @ 57027] 'p'  (0x70)
-[UART TX @ 57027] 'o'  (0x6F)
-[UART TX @ 57027] 'p'  (0x70)
-[UART TX @ 57027] ' '  (0x20)
-[UART TX @ 57027] 'r'  (0x72)
-[UART TX @ 57027] '0'  (0x30)
-[UART TX @ 57027] ''  (0x0D)
-[UART TX @ 57027] '\n'
+[UART TX @ 59155] ' '  (0x20)
+[UART TX @ 59155] 'p'  (0x70)
+[UART TX @ 59155] 'u'  (0x75)
+[UART TX @ 59155] 's'  (0x73)
+[UART TX @ 59155] 'h'  (0x68)
+[UART TX @ 59155] ' '  (0x20)
+[UART TX @ 59155] 'r'  (0x72)
+[UART TX @ 59155] '0'  (0x30)
+[UART TX @ 59155] ''  (0x0D)
+[UART TX @ 59155] '\n'
+[UART TX @ 59155] ' '  (0x20)
+[UART TX @ 59155] 'p'  (0x70)
+[UART TX @ 59155] 'o'  (0x6F)
+[UART TX @ 59155] 'p'  (0x70)
+[UART TX @ 59155] ' '  (0x20)
+[UART TX @ 59155] 'r'  (0x72)
+[UART TX @ 59155] '0'  (0x30)
+[UART TX @ 59155] ''  (0x0D)
+[UART TX @ 59155] '\n'
 
 UART output:  nop
  push r0
  pop r0
 
 
-Executed 57027 instructions
+Executed 59155 instructions
 CPU halted (self-branch detected)

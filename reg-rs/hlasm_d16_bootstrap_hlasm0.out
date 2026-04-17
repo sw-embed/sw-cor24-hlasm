@@ -1,4 +1,4 @@
-Assembled 15600 bytes
+Assembled 15955 bytes
 Loaded 284 bytes from 'bootstrap/hlasm0.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -26,12 +26,12 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 60000] 'v'  (0x76)
 [UART TX @ 60000] ' '  (0x20)
 [UART TX @ 60000] 'f'  (0x66)
-[UART TX @ 60000] 'p'  (0x70)
-[UART TX @ 60000] ','  (0x2C)
-[UART TX @ 60000] 's'  (0x73)
-[UART TX @ 60000] 'p'  (0x70)
-[UART TX @ 60000] ''  (0x0D)
-[UART TX @ 60000] '\n'
+[UART TX @ 70000] 'p'  (0x70)
+[UART TX @ 70000] ','  (0x2C)
+[UART TX @ 70000] 's'  (0x73)
+[UART TX @ 70000] 'p'  (0x70)
+[UART TX @ 70000] ''  (0x0D)
+[UART TX @ 70000] '\n'
 [UART TX @ 70000] ' '  (0x20)
 [UART TX @ 70000] 'p'  (0x70)
 [UART TX @ 70000] 'u'  (0x75)

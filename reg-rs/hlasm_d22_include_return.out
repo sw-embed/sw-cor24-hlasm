@@ -1,4 +1,4 @@
-Assembled 15600 bytes
+Assembled 15955 bytes
 Loaded 33 bytes from 'demos/d22_include_return_main.bin' at 0x090000
 Loaded 33 bytes from 'demos/d22_include_return_extra.bin' at 0x081000
 Loaded 27 bytes from 'reg-rs/s14_include_return.cfg' at 0x07F000

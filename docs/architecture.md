@@ -66,6 +66,12 @@ is treated as an explicit HLASM-style alias for that path, so macro and symbol
 libraries can be packaged as source-set members without adding a second runtime
 resolver.
 
+An opt-in listing layer also exists at source level: `SET HLIST,1` causes the
+runtime to emit semicolon comment records for copied members, macro definition
+sites, macro expansion sites, and selected consumed directives. This is kept
+separate from `SET HLANN,1`, which only annotates structured control-flow
+lowering.
+
 ## Components
 
 ### Scanner

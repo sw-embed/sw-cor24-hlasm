@@ -1,0 +1,5 @@
+# Demo 35 listing/xref-friendly output through composed source-set fragments.
+PROFILE default.profile
+ROOT .
+MAIN d35_listing_xref.hlasm
+SOURCESET d34_copy_macro_library_members.sourceset

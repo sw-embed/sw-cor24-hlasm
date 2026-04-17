@@ -1,0 +1,12 @@
+; Demo 35: opt-in listing/xref-friendly output
+SET HLIST,1
+COPY libmac
+COPY libsym
+
+PUSH2 r0,r1
+
+IF cc_eq, r0, 0
+ lc r2,7
+ENDIF
+
+POP2 r1,r0

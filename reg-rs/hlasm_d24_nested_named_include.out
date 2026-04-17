@@ -1,8 +1,8 @@
-Assembled 15600 bytes
+Assembled 15955 bytes
 Loaded 29 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d24_nested_named_include_main.bin' at 0x090000
 Loaded 43 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d24_nested_named_include_mid.bin' at 0x081000
 Loaded 13 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d24_nested_named_include_tail.bin' at 0x081100
-Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-7430.cfg' at 0x07F000
+Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-30750.cfg' at 0x07F000
 Running (speed: max IPS, time limit: 10s)...
 
 [UART TX @ 40000] 'm'  (0x6D)
@@ -44,37 +44,37 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 50000] ':'  (0x3A)
 [UART TX @ 50000] ''  (0x0D)
 [UART TX @ 50000] '\n'
-[UART TX @ 59981] ' '  (0x20)
-[UART TX @ 59981] 'b'  (0x62)
-[UART TX @ 59981] 'r'  (0x72)
-[UART TX @ 59981] 'a'  (0x61)
-[UART TX @ 59981] ' '  (0x20)
-[UART TX @ 59981] 't'  (0x74)
-[UART TX @ 59981] 'a'  (0x61)
-[UART TX @ 59981] 'i'  (0x69)
-[UART TX @ 59981] 'l'  (0x6C)
-[UART TX @ 59981] ''  (0x0D)
-[UART TX @ 59981] '\n'
-[UART TX @ 59981] '_'  (0x5F)
-[UART TX @ 59981] 'h'  (0x68)
-[UART TX @ 59981] ':'  (0x3A)
-[UART TX @ 59981] ''  (0x0D)
-[UART TX @ 59981] '\n'
-[UART TX @ 59981] ' '  (0x20)
-[UART TX @ 59981] 'b'  (0x62)
-[UART TX @ 59981] 'r'  (0x72)
-[UART TX @ 59981] 'a'  (0x61)
-[UART TX @ 59981] ' '  (0x20)
-[UART TX @ 59981] 'm'  (0x6D)
-[UART TX @ 59981] 'i'  (0x69)
-[UART TX @ 59981] 'd'  (0x64)
-[UART TX @ 59981] '_'  (0x5F)
-[UART TX @ 59981] 'd'  (0x64)
-[UART TX @ 59981] 'o'  (0x6F)
-[UART TX @ 59981] 'n'  (0x6E)
-[UART TX @ 59981] 'e'  (0x65)
-[UART TX @ 59981] ''  (0x0D)
-[UART TX @ 59981] '\n'
+[UART TX @ 60000] ' '  (0x20)
+[UART TX @ 60000] 'b'  (0x62)
+[UART TX @ 60000] 'r'  (0x72)
+[UART TX @ 60000] 'a'  (0x61)
+[UART TX @ 60000] ' '  (0x20)
+[UART TX @ 60000] 't'  (0x74)
+[UART TX @ 60000] 'a'  (0x61)
+[UART TX @ 60000] 'i'  (0x69)
+[UART TX @ 60000] 'l'  (0x6C)
+[UART TX @ 60000] ''  (0x0D)
+[UART TX @ 60000] '\n'
+[UART TX @ 60000] '_'  (0x5F)
+[UART TX @ 60000] 'h'  (0x68)
+[UART TX @ 60000] ':'  (0x3A)
+[UART TX @ 60000] ''  (0x0D)
+[UART TX @ 60000] '\n'
+[UART TX @ 60927] ' '  (0x20)
+[UART TX @ 60927] 'b'  (0x62)
+[UART TX @ 60927] 'r'  (0x72)
+[UART TX @ 60927] 'a'  (0x61)
+[UART TX @ 60927] ' '  (0x20)
+[UART TX @ 60927] 'm'  (0x6D)
+[UART TX @ 60927] 'i'  (0x69)
+[UART TX @ 60927] 'd'  (0x64)
+[UART TX @ 60927] '_'  (0x5F)
+[UART TX @ 60927] 'd'  (0x64)
+[UART TX @ 60927] 'o'  (0x6F)
+[UART TX @ 60927] 'n'  (0x6E)
+[UART TX @ 60927] 'e'  (0x65)
+[UART TX @ 60927] ''  (0x0D)
+[UART TX @ 60927] '\n'
 
 UART output: mid_entry:
 tail:
@@ -85,5 +85,5 @@ _h:
  bra mid_done
 
 
-Executed 59981 instructions
+Executed 60927 instructions
 CPU halted (self-branch detected)
