@@ -559,6 +559,15 @@ _rl_loop:
 	bra	_rl_loop
 
 _rl_eof:
+	lw	r0,0(fp)
+	ceq	r0,z
+	brt	_rl_eof_switch
+
+	la	r0,0
+	sb	r0,0(r1)
+	bra	_rl_ret_len
+
+_rl_eof_switch:
 	push	r1
 	la	r0,_pop_src_return
 	jal	r1,(r0)
@@ -2291,7 +2300,7 @@ _sss_ret:
 	pop	fp
 	jmp	(r1)
 
-; _push_src_return: Save current source slot and position for include return.
+; _push_src_return: Save current source slot for include return.
 ; Returns: r0 = 1 if pushed, 0 if stack full
 _push_src_return:
 	push	fp
@@ -2299,7 +2308,7 @@ _push_src_return:
 	push	r2
 	mov	fp,sp
 
-	la	r1,787753
+	la	r1,787734
 	lw	r0,0(r1)
 	la	r2,8
 	clu	r0,r2
@@ -2309,7 +2318,7 @@ _push_src_return:
 	la	r0,_mul6
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,787756
+	la	r1,787737
 	add	r1,r0
 	mov	r2,r1
 
@@ -2317,12 +2326,7 @@ _push_src_return:
 	lw	r0,0(r1)
 	sw	r0,0(r2)
 
-	la	r0,_current_src_desc
-	jal	r1,(r0)
-	lw	r0,6(r0)
-	sw	r0,3(r2)
-
-	la	r1,787753
+	la	r1,787734
 	lw	r0,0(r1)
 	add	r0,1
 	sw	r0,0(r1)
@@ -2339,7 +2343,7 @@ _psr_ret:
 	pop	fp
 	jmp	(r1)
 
-; _pop_src_return: Restore the caller source slot and position after include EOF.
+; _pop_src_return: Restore the caller source slot after include EOF.
 ; Returns: r0 = 1 if restored, 0 if stack empty
 _pop_src_return:
 	push	fp
@@ -2347,7 +2351,7 @@ _pop_src_return:
 	push	r2
 	mov	fp,sp
 
-	la	r1,787753
+	la	r1,787734
 	lw	r0,0(r1)
 	ceq	r0,z
 	brt	_prr_no
@@ -2359,22 +2363,13 @@ _pop_src_return:
 	la	r0,_mul6
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,787756
+	la	r1,787737
 	add	r1,r0
 	mov	r2,r1
 
 	lw	r0,0(r2)
 	la	r1,786600
 	sw	r0,0(r1)
-
-	push	r0
-	la	r0,_mul9
-	jal	r1,(r0)
-	add	sp,3
-	la	r1,786606
-	add	r1,r0
-	lw	r0,3(r2)
-	sw	r0,6(r1)
 
 	la	r0,1
 	bra	_prr_ret

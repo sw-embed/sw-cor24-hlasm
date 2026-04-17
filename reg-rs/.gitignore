@@ -1,2 +1,4 @@
 # reg-rs test outputs
 *.out
+*.tdb
+*.tdb.lock

@@ -30,6 +30,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d21 | Directive-driven source switch | WORKS |
 | d22 | Include-return source stack | WORKS |
 | d23 | Named include table | WORKS |
+| d24 | Nested named includes | WORKS |
 
 ## Demo Policy
 

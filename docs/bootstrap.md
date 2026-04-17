@@ -137,6 +137,11 @@ stack path as `INCBUF`. Numeric `SRCBUF` and `INCBUF` remain available for the
 lowest-level bootstrap flows, while `INCLUDE` is the first readable layer for
 self-hosting source splits.
 
+Step 16 keeps that same config block and runtime arena layout, but proves the
+named-include path can nest: a patched main buffer can `INCLUDE mid`, `mid`
+can `INCLUDE tail`, and the assembler unwinds from `tail` back into `mid`
+before returning to the main source stream.
+
 ## Step 8 Deliverable
 
 This step introduces the first bootstrap-oriented split:

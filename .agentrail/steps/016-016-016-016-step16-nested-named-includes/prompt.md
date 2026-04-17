@@ -1,0 +1,1 @@
+Extend the named-include path to prove nested include chaining for bootstrap use. Keep the current config block and runtime arena map, reuse the existing source-return stack, and add a demo/regression proof where a patched main source INCLUDEs one named buffer that then INCLUDEs a second named buffer before unwinding back through both caller sources in order.

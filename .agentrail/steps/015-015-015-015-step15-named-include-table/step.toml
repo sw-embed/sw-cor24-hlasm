@@ -1,8 +1,9 @@
 number = 15
 slug = "015-015-015-step15-named-include-table"
-status = "in-progress"
+status = "completed"
 description = "Build the first named-include layer on top of the new INCBUF return stack. De..."
 role = "legacy"
 context_files = []
 created_at = "2026-04-16T19:39:35"
-commits = []
+completed_at = "2026-04-16T19:44:56"
+commits = ["8c1e8a2919cbd37ad8b3ba91dde47c4f244e2914"]

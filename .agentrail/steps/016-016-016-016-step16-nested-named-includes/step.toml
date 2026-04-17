@@ -1,0 +1,8 @@
+number = 16
+slug = "016-016-016-step16-nested-named-includes"
+status = "in-progress"
+description = "Extend the named-include path to prove nested include chaining for bootstrap ..."
+role = "legacy"
+context_files = []
+created_at = "2026-04-16T19:44:56"
+commits = []
