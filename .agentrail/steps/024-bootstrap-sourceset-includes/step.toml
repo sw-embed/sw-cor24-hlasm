@@ -1,0 +1,8 @@
+number = 24
+slug = "bootstrap-sourceset-includes"
+status = "in-progress"
+description = "Extend the bootstrap source-set grammar so larger source trees can be compose..."
+role = "legacy"
+context_files = []
+created_at = "2026-04-16T20:27:47"
+commits = []

@@ -1,0 +1,1 @@
+Extend the bootstrap source-set grammar so larger source trees can be composed from smaller source-set fragments instead of one flat file. Keep the low-SRAM config layout and runtime INCLUDE lookup unchanged, but make the host-side definition of bigger bootstrap trees easier to organize and reuse.

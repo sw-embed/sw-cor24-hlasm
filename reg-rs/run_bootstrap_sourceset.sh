@@ -16,6 +16,7 @@ if [[ ! -f "$SRCSET" ]]; then
 fi
 
 loader_spec="/tmp/sw-cor24-hlasm-sourceset-$$.loader"
+spec_stack="|"
 
 root_dir="."
 main_addr=589824
@@ -54,6 +55,16 @@ process_sourceset() {
     local spec_file="$1"
     local spec_dir
     spec_dir="$(cd "$(dirname "$spec_file")" && pwd)"
+    spec_file="$(cd "$spec_dir" && pwd)/$(basename "$spec_file")"
+
+    case "$spec_stack" in
+        *"|$spec_file|"*)
+            echo "ERROR: recursive sourceset include detected: $spec_file"
+            exit 1
+            ;;
+    esac
+
+    spec_stack="${spec_stack}${spec_file}|"
 
     while IFS= read -r line || [[ -n "$line" ]]; do
         line="${line%%;*}"
@@ -69,6 +80,14 @@ process_sourceset() {
             PROFILE)
                 if [[ $# -ne 2 ]]; then
                     echo "ERROR: PROFILE expects: PROFILE <file>"
+                    exit 1
+                fi
+
+                process_sourceset "$(resolve_path_from "$spec_dir" "$2")"
+                ;;
+            SOURCESET)
+                if [[ $# -ne 2 ]]; then
+                    echo "ERROR: SOURCESET expects: SOURCESET <file>"
                     exit 1
                 fi
 
@@ -151,6 +170,8 @@ process_sourceset() {
                 ;;
         esac
     done < "$spec_file"
+
+    spec_stack="${spec_stack%$spec_file|}"
 }
 
 process_sourceset "$SRCSET"

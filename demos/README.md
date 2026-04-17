@@ -112,9 +112,10 @@ loader spec that declares the host-side buffer map in assembler-flavored text:
 
 Larger bootstrap proofs can now use a source-set manifest instead:
 optional `PROFILE file`, then `ROOT dir`, optional `MAINADDR` / `EXTRAADDR` /
-`ALIGN`, then `MAIN file.hlasm` plus repeated `INCLUDE name file.hlasm`. The
-host-side runner builds the `.bin` files, packs include buffers from their real
-sizes, and feeds the same low-SRAM include table into `hlasm.s`.
+`ALIGN`, `SOURCESET child.sourceset`, then `MAIN file.hlasm` plus repeated
+`INCLUDE name file.hlasm`. The host-side runner builds the `.bin` files, packs
+include buffers from their real sizes, and feeds the same low-SRAM include
+table into `hlasm.s`.
 
 Conditionals can nest:
 ```

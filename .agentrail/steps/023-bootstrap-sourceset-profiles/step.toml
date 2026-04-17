@@ -1,8 +1,9 @@
 number = 23
 slug = "bootstrap-sourceset-profiles"
-status = "in-progress"
+status = "completed"
 description = "Add a small profile layer on top of the bootstrap source-set workflow so diff..."
 role = "legacy"
 context_files = []
 created_at = "2026-04-16T20:25:19"
-commits = []
+completed_at = "2026-04-16T20:27:47"
+commits = ["9ffeab3c20e750be3acfe1f526fc31067fa688b2"]

@@ -1,6 +1,5 @@
 # Split hlasm0 bootstrap source set.
 PROFILE default.profile
 ROOT .
-MAIN hlasm0_split_main.hlasm
-INCLUDE common hlasm0_common.hlasm
-INCLUDE io hlasm0_io.hlasm
+SOURCESET hlasm0-main.sourceset
+SOURCESET hlasm0-includes.sourceset

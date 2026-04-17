@@ -152,6 +152,12 @@ set can now start with `PROFILE default.profile` to pull in shared host-side
 layout defaults such as the standard main/extra windows and buffer alignment,
 then override only the pieces that differ for a particular bootstrap tree.
 
+Step 24 extends that grammar with `SOURCESET child.sourceset`, so a larger
+bootstrap tree can be assembled from smaller source-set fragments instead of
+one flat file. The split `hlasm0` proof now composes separate main/include
+fragments while still driving the same unchanged low-SRAM config image and
+runtime INCLUDE path.
+
 `hlasm.s` currently walks the source portion of that table into a small
 in-memory descriptor set, which is enough to model include-like source
 chaining with multiple preloaded ASCII buffers. That keeps the input side

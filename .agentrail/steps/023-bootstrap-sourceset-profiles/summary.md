@@ -1,0 +1,1 @@
+Added PROFILE support to bootstrap source sets so shared host-side layout defaults can live in reusable files instead of being repeated in each sourceset.
