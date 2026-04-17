@@ -1,8 +1,9 @@
 number = 1
 slug = "structured-control-flow-dogfood-blocker"
-status = "in-progress"
+status = "completed"
 description = "Fix the structured control-flow blocker exposed by sw-cor24-rpg-ii dogfooding..."
 role = "production"
 context_files = []
 created_at = "2026-04-17T12:24:28"
-commits = []
+completed_at = "2026-04-17T12:43:09"
+commits = ["576373d2187a0a77c4b75fe5f58a7f01237627d2"]

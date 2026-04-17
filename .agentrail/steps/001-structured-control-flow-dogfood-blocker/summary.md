@@ -1,0 +1,1 @@
+Fixed structured IF/ELSEIF lowering so ENDIF always emits the shared _hlif_*_end label, unblocking IF/ELSEIF/ENDIF chains without ELSE. Added demo d36 and regression coverage, refreshed affected baselines, and verified the downstream-style RPG-II stage-0 build succeeds again; downstream only needs to vendor/pull this commit rather than patch sibling source files.
