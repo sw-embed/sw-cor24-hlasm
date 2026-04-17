@@ -102,12 +102,18 @@ The current source-switch path uses a small config block at `0x07F000` with:
 - `+0`: extra-buffer count
 - `+3`: first extra `(base,len)` record
 - then additional 6-byte `(base,len)` records
+- `+21`: optional main-source base override
+- `+24`: optional main-source length override
 
 `hlasm.s` currently walks that table into a small in-memory descriptor set,
 which is enough to model include-like source chaining with multiple preloaded
 ASCII buffers. That keeps the input side compatible with repeated
 `cor24-run --load-binary ...@addr` flags today while leaving room for a later
 named include table or heap-backed descriptor arena.
+
+When the main override words are zero, stage0 keeps the default main window at
+`0x080000/4096`. When they are non-zero, stage0 uses the patched main source
+window and still appends extra source buffers from the legacy record area.
 
 ## Step 8 Deliverable
 

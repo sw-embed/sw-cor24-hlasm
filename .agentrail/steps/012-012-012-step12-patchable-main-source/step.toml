@@ -1,6 +1,6 @@
 number = 12
 slug = "012-012-step12-patchable-main-source"
-status = "pending"
+status = "in-progress"
 description = "Make the primary source descriptor fully config-driven for bootstrap use. Ext..."
 role = "legacy"
 context_files = []

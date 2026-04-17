@@ -13,6 +13,17 @@
 ;   EBR stack: prefer cor24-run --stack-kilobytes 3 unless a future SRAM
 ;              fallback stack is explicitly needed
 ;
+; Source config block at 0x07F000:
+;   +0   extra source count (legacy-compatible)
+;   +3   extra source 1 base
+;   +6   extra source 1 len
+;   +9   extra source 2 base
+;   +12  extra source 2 len
+;   +15  extra source 3 base
+;   +18  extra source 3 len
+;   +21  optional main source base override (0 = default)
+;   +24  optional main source len override  (0 = default)
+;
 ; Token types (word-sized):
 ;   0=EOF 1=NEWLINE 2=KEYWORD 3=MNEMONIC 4=REGISTER 5=NUMBER
 ;   6=IDENT 7=LABEL 8=COMMENT 9=COMMA 10=LPAREN 11=RPAREN
@@ -2061,6 +2072,21 @@ _init_src_table:
 	sw	r0,6(r1)
 
 	la	r2,520192
+
+	lw	r0,21(r2)
+	ceq	r0,z
+	brt	_ist_main_len
+	la	r1,786606
+	sw	r0,0(r1)
+
+_ist_main_len:
+	lw	r0,24(r2)
+	ceq	r0,z
+	brt	_ist_extra_count
+	la	r1,786606
+	sw	r0,3(r1)
+
+_ist_extra_count:
 	lw	r0,0(r2)
 	ceq	r0,z
 	brt	_ist_ret
