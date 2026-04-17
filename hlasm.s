@@ -504,7 +504,11 @@ _ml_is_struct_endsel_near2:
 	add	sp,3
 
 	ceq	r0,z
-	brf	_ml_is_macro
+	brt	_ml_macro_near
+	la	r1,_ml_is_macro
+	jmp	(r1)
+
+_ml_macro_near:
 
 	la	r1,_kw_mend
 	push	r1
@@ -513,7 +517,11 @@ _ml_is_struct_endsel_near2:
 	add	sp,3
 
 	ceq	r0,z
-	brf	_ml_is_mend_skip
+	brt	_ml_mend_near
+	la	r1,_ml_is_mend_skip
+	jmp	(r1)
+
+_ml_mend_near:
 
 	lw	r0,0(fp)
 	push	r0
@@ -522,15 +530,83 @@ _ml_is_struct_endsel_near2:
 	add	sp,3
 
 	ceq	r0,z
-	brf	_ml_skip_kw
+	brt	_ml_skipkw_near
+	la	r1,_ml_skip_kw
+	jmp	(r1)
+
+_ml_skipkw_near:
 
 	la	r1,_ml_nf4
 	jmp	(r1)
 
-_ml_nf4:
-	lw	r0,0(fp)
-	push	r0
-	la	r0,_lookup_macro
+	_ml_nf4:
+		la	r1,_dot_ascii_txt
+		push	r1
+		la	r0,_starts_with
+		jal	r1,(r0)
+		add	sp,3
+
+		ceq	r0,z
+		brt	_ml_is_ascii_near
+
+		la	r0,_handle_dot_ascii
+		jal	r1,(r0)
+		la	r1,_ml_loop
+		jmp	(r1)
+
+	_ml_is_ascii_near:
+
+		la	r1,_dot_asciz_txt
+		push	r1
+		la	r0,_starts_with
+		jal	r1,(r0)
+		add	sp,3
+
+		ceq	r0,z
+		brt	_ml_is_asciz_near
+
+		la	r0,_handle_dot_asciz
+		jal	r1,(r0)
+		la	r1,_ml_loop
+		jmp	(r1)
+
+	_ml_is_asciz_near:
+
+		la	r1,_dot_space_txt
+		push	r1
+		la	r0,_starts_with
+		jal	r1,(r0)
+		add	sp,3
+
+		ceq	r0,z
+		brt	_ml_is_fill_near
+
+		la	r0,_handle_dot_space
+		jal	r1,(r0)
+		la	r1,_ml_loop
+		jmp	(r1)
+
+	_ml_is_fill_near:
+
+		la	r1,_dot_fill_txt
+		push	r1
+		la	r0,_starts_with
+		jal	r1,(r0)
+		add	sp,3
+
+		ceq	r0,z
+		brt	_ml_nf4b
+
+		la	r0,_handle_dot_fill
+		jal	r1,(r0)
+		la	r1,_ml_loop
+		jmp	(r1)
+
+	_ml_nf4b:
+
+		lw	r0,0(fp)
+		push	r0
+		la	r0,_lookup_macro
 	jal	r1,(r0)
 	add	sp,3
 
@@ -2836,50 +2912,69 @@ _emit_dec24:
 	push	r1
 	push	r2
 	mov	fp,sp
+	add	sp,-6
 
 	lw	r0,9(fp)
+	sw	r0,-3(fp)
+	la	r0,0
+	sw	r0,-6(fp)
 
+	lw	r0,-3(fp)
 	ceq	r0,z
-	brt	_ed24_z
+	brf	_ed24_hundreds
+	lc	r0,48
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+	bra	_ed24_ret
 
-	lc	r1,100
-	clu	r0,r1
-	brt	_ed24_t
-
+_ed24_hundreds:
 	la	r2,0
 
 _ed24_hl:
+	lw	r0,-3(fp)
+	lc	r1,100
 	clu	r0,r1
 	brt	_ed24_hd
-
 	sub	r0,r1
+	sw	r0,-3(fp)
 	add	r2,1
 	bra	_ed24_hl
 
 _ed24_hd:
+	ceq	r2,z
+	brt	_ed24_tens
 	lc	r0,48
 	add	r0,r2
 	push	r0
 	la	r0,_emit_char
 	jal	r1,(r0)
 	add	sp,3
+	la	r0,1
+	sw	r0,-6(fp)
 
-_ed24_t:
-	lc	r1,10
-	clu	r0,r1
-	brt	_ed24_o
-
+_ed24_tens:
 	la	r2,0
 
 _ed24_tl:
+	lw	r0,-3(fp)
+	lc	r1,10
 	clu	r0,r1
 	brt	_ed24_td
-
 	sub	r0,r1
+	sw	r0,-3(fp)
 	add	r2,1
 	bra	_ed24_tl
 
 _ed24_td:
+	ceq	r2,z
+	brf	_ed24_td_emit
+	lw	r0,-6(fp)
+	ceq	r0,z
+	brt	_ed24_ones
+
+_ed24_td_emit:
 	lc	r0,48
 	add	r0,r2
 	push	r0
@@ -2887,18 +2982,10 @@ _ed24_td:
 	jal	r1,(r0)
 	add	sp,3
 
-_ed24_o:
+_ed24_ones:
+	lw	r0,-3(fp)
 	lc	r1,48
 	add	r0,r1
-	push	r0
-	la	r0,_emit_char
-	jal	r1,(r0)
-	add	sp,3
-
-	bra	_ed24_ret
-
-_ed24_z:
-	lc	r0,48
 	push	r0
 	la	r0,_emit_char
 	jal	r1,(r0)
@@ -5245,6 +5332,380 @@ _eeb_done:
 	pop	fp
 	jmp	(r1)
 
+; _skip_ws_ptr: Advance pointer past spaces and tabs.
+; Arg on stack: ptr
+; Returns: r0 = advanced ptr
+_skip_ws_ptr:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	lw	r2,9(fp)
+
+_swp_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_swp_ret_ptr
+	la	r1,32
+	ceq	r0,r1
+	brt	_swp_advance
+	la	r1,9
+	ceq	r0,r1
+	brt	_swp_advance
+	bra	_swp_ret_ptr
+
+_swp_advance:
+	add	r2,1
+	bra	_swp_loop
+
+_swp_ret_ptr:
+	mov	r0,r2
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _emit_byte_list_value: Emit one decimal item into a lowered .byte list.
+; Args on stack: flag_ptr (9 fp), value (12 fp)
+_emit_byte_list_value:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	lw	r2,9(fp)
+	lw	r0,0(r2)
+	ceq	r0,z
+	brt	_eblv_first
+
+	lc	r0,44
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+	bra	_eblv_emit
+
+_eblv_first:
+	la	r0,_dot_byte_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,1
+	sw	r0,0(r2)
+
+_eblv_emit:
+	lw	r0,12(fp)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _emit_fill_line: Lower count/value to one .byte list line.
+; Args on stack: count (9 fp), value (12 fp)
+_emit_fill_line:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+	la	r0,0
+	sw	r0,-3(fp)
+
+	lw	r2,9(fp)
+	ceq	r2,z
+	brt	_efl_ret
+
+	_efl_loop:
+		lw	r0,12(fp)
+		push	r0
+		la	r0,0
+		add	r0,fp
+		add	r0,-3
+		push	r0
+		la	r0,_emit_byte_list_value
+	jal	r1,(r0)
+	add	sp,6
+	add	r2,-1
+	ceq	r2,z
+	brt	_efl_done
+	bra	_efl_loop
+
+_efl_done:
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+_efl_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _handle_dot_space: Lower .space N to .byte 0,...
+_handle_dot_space:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r2,786432
+	add	r2,6
+	push	r2
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	push	r0
+	la	r0,_atoi
+	jal	r1,(r0)
+	add	sp,3
+		mov	r2,r0
+		la	r0,0
+		push	r0
+		push	r2
+		la	r0,_emit_fill_line
+		jal	r1,(r0)
+	add	sp,6
+
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _handle_dot_fill: Lower .fill N,V to .byte V,V,...
+_handle_dot_fill:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-6
+
+	la	r2,786432
+	add	r2,5
+	push	r2
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+
+	push	r2
+	la	r0,_atoi
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-3(fp)
+
+_hdf_find_comma:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_hdf_ret
+	la	r1,44
+	ceq	r0,r1
+	brt	_hdf_after_comma
+	add	r2,1
+	bra	_hdf_find_comma
+
+_hdf_after_comma:
+	add	r2,1
+	push	r2
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	push	r0
+	la	r0,_atoi
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-6(fp)
+
+	lw	r0,-6(fp)
+	push	r0
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_emit_fill_line
+	jal	r1,(r0)
+	add	sp,6
+
+_hdf_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _emit_ascii_escape: Map simple escape char to byte value.
+; Arg on stack: escaped char
+; Returns: r0 = mapped byte
+_emit_ascii_escape:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	lw	r0,6(fp)
+	la	r1,110
+	ceq	r0,r1
+	brt	_eae_n
+	la	r1,114
+	ceq	r0,r1
+	brt	_eae_r
+	la	r1,116
+	ceq	r0,r1
+	brt	_eae_t
+	la	r1,48
+	ceq	r0,r1
+	brt	_eae_z
+	bra	_eae_ret
+
+_eae_n:
+	la	r0,10
+	bra	_eae_ret
+_eae_r:
+	la	r0,13
+	bra	_eae_ret
+_eae_t:
+	la	r0,9
+	bra	_eae_ret
+_eae_z:
+	la	r0,0
+
+_eae_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_ascii_line: Lower a quoted string to a .byte list.
+; Args on stack: add_zero (9 fp), ptr (12 fp)
+_emit_ascii_line:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+	la	r0,0
+	sw	r0,-3(fp)
+	lw	r2,12(fp)
+
+_eal_find_quote:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_eal_done
+	la	r1,34
+	ceq	r0,r1
+	brt	_eal_string
+	add	r2,1
+	bra	_eal_find_quote
+
+_eal_string:
+	add	r2,1
+
+_eal_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_eal_done
+	la	r1,34
+	ceq	r0,r1
+	brt	_eal_done_chars
+	la	r1,92
+	ceq	r0,r1
+	brt	_eal_escape
+	bra	_eal_emit
+
+_eal_escape:
+	add	r2,1
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_eal_done_chars
+	push	r0
+	la	r0,_emit_ascii_escape
+	jal	r1,(r0)
+	add	sp,3
+
+	_eal_emit:
+		push	r0
+		la	r0,0
+		add	r0,fp
+		add	r0,-3
+		push	r0
+	la	r0,_emit_byte_list_value
+	jal	r1,(r0)
+	add	sp,6
+	add	r2,1
+	bra	_eal_loop
+
+_eal_done_chars:
+	lw	r0,9(fp)
+	ceq	r0,z
+	brt	_eal_done
+	la	r0,0
+	push	r0
+	la	r0,0
+	add	r0,fp
+	add	r0,-3
+	push	r0
+	la	r0,_emit_byte_list_value
+	jal	r1,(r0)
+	add	sp,6
+
+_eal_done:
+	lw	r0,-3(fp)
+	ceq	r0,z
+	brt	_eal_ret
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+_eal_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _handle_dot_ascii: Lower .ascii "..." to .byte ...
+_handle_dot_ascii:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,786432
+	push	r0
+	la	r0,0
+	push	r0
+	la	r0,_emit_ascii_line
+	jal	r1,(r0)
+	add	sp,6
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _handle_dot_asciz: Lower .asciz "..." to .byte ...,0
+_handle_dot_asciz:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,786432
+	push	r0
+	la	r0,1
+	push	r0
+	la	r0,_emit_ascii_line
+	jal	r1,(r0)
+	add	sp,6
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
 ; --- Step 7: Conditional assembly ---
 ; Following the standard calling convention from fib.s/sieve.s:
 ;   push fp; push r2; push r1; mov fp,sp
@@ -5252,7 +5713,134 @@ _eeb_done:
 ;   mov sp,fp; pop r1; pop r2; pop fp; jmp (r1)
 ; r0 = scratch/return, r1 = return address, r2 = callee-saved register var
 
-; _atoi: Parse decimal number from null-terminated string.
+; _is_hex_digit: r0 = 1 if 0-9, A-F, or a-f
+; Arg on stack: char
+_is_hex_digit:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_is_digit
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brf	_ihd_yes
+
+	lw	r0,6(fp)
+	la	r1,65
+	clu	r0,r1
+	brt	_ihd_lower
+	la	r1,71
+	clu	r0,r1
+	brt	_ihd_yes
+
+_ihd_lower:
+	lw	r0,6(fp)
+	la	r1,97
+	clu	r0,r1
+	brt	_ihd_no
+	la	r1,103
+	clu	r0,r1
+	brt	_ihd_yes
+
+_ihd_no:
+	la	r0,0
+	bra	_ihd_ret
+
+_ihd_yes:
+	la	r0,1
+
+_ihd_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _hex_digit_val: Convert 0-9, A-F, a-f to integer value.
+; Arg on stack: char
+; Returns: r0 = 0..15, or 0 for unsupported input
+_hex_digit_val:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_is_digit
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brf	_hdv_digit
+
+	lw	r0,6(fp)
+	la	r1,97
+	clu	r0,r1
+	brt	_hdv_upper
+	la	r1,103
+	clu	r0,r1
+	brf	_hdv_upper
+	la	r1,87
+	lw	r0,6(fp)
+	sub	r0,r1
+	bra	_hdv_ret
+
+_hdv_upper:
+	lw	r0,6(fp)
+	la	r1,65
+	clu	r0,r1
+	brt	_hdv_bad
+	la	r1,71
+	clu	r0,r1
+	brf	_hdv_bad
+	la	r1,55
+	lw	r0,6(fp)
+	sub	r0,r1
+	bra	_hdv_ret
+
+_hdv_digit:
+	lw	r0,6(fp)
+	la	r1,48
+	sub	r0,r1
+	bra	_hdv_ret
+
+_hdv_bad:
+	la	r0,0
+
+_hdv_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _is_bin_digit: r0 = 1 if 0 or 1
+; Arg on stack: char
+_is_bin_digit:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	lw	r0,6(fp)
+	la	r1,48
+	ceq	r0,r1
+	brt	_ibd_yes
+	la	r1,49
+	ceq	r0,r1
+	brt	_ibd_yes
+	la	r0,0
+	bra	_ibd_ret
+
+_ibd_yes:
+	la	r0,1
+
+_ibd_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _atoi: Parse decimal, 0x-prefixed hex, 0b-prefixed binary, or h-suffixed hex.
 ; Arg on stack: string pointer (9 fp)
 ; Returns: r0 = integer value
 _atoi:
@@ -5260,35 +5848,207 @@ _atoi:
 	push	r2
 	push	r1
 	mov	fp,sp
-	add	sp,-3
+	add	sp,-12
 	lw	r2,9(fp)
 	la	r0,0
 	sw	r0,-3(fp)
-atoi_loop:
+	la	r0,10
+	sw	r0,-6(fp)
+	la	r0,0
+	sw	r0,-9(fp)
+
 	lbu	r0,0(r2)
-	ceq	r0,z
-	brt	atoi_done
+	la	r1,45
+	ceq	r0,r1
+	brt	atoi_neg
+	bra	atoi_prefix
+
+atoi_neg:
+	la	r0,1
+	sw	r0,-9(fp)
+	add	r2,1
+
+atoi_prefix:
+	lbu	r0,0(r2)
 	la	r1,48
-	clu	r0,r1
-	brt	atoi_done
-	la	r1,58
-	clu	r0,r1
-	brf	atoi_done
+	ceq	r0,r1
+	brt	atoi_pref_0
+	bra	atoi_suffix_check
+
+atoi_pref_0:
+	lbu	r0,1(r2)
+	la	r1,120
+	ceq	r0,r1
+	brt	atoi_hex_prefix
+	la	r1,88
+	ceq	r0,r1
+	brt	atoi_hex_prefix
+	la	r1,98
+	ceq	r0,r1
+	brt	atoi_bin_prefix
+	la	r1,66
+	ceq	r0,r1
+	brt	atoi_bin_prefix
+	bra	atoi_suffix_check
+
+atoi_hex_prefix:
+	la	r0,16
+	sw	r0,-6(fp)
+	add	r2,2
+	bra	atoi_loop
+
+atoi_bin_prefix:
+	la	r0,2
+	sw	r0,-6(fp)
+	add	r2,2
+	bra	atoi_loop
+
+atoi_suffix_check:
+	push	r2
+	la	r0,_strlen24
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	atoi_loop
+	add	r0,-1
+	add	r0,r2
+	lbu	r0,0(r0)
+	la	r1,104
+	ceq	r0,r1
+	brt	atoi_hex_suffix
+	la	r1,72
+	ceq	r0,r1
+	brt	atoi_hex_suffix
+	bra	atoi_loop
+
+atoi_hex_suffix:
+	la	r0,16
+	sw	r0,-6(fp)
+
+	atoi_loop:
+		lbu	r0,0(r2)
+		ceq	r0,z
+		brf	atoi_loop_not_done
+		la	r1,atoi_done
+		jmp	(r1)
+
+atoi_loop_not_done:
+
+	lw	r1,-6(fp)
+	la	r0,16
+	ceq	r0,r1
+	brt	atoi_hex_digit
+	la	r0,2
+	ceq	r0,r1
+	brt	atoi_bin_digit
+
+		lbu	r0,0(r2)
+		la	r1,48
+		clu	r0,r1
+		brf	atoi_dec_ge_48
+		la	r1,atoi_done
+		jmp	(r1)
+
+atoi_dec_ge_48:
+		la	r1,58
+		clu	r0,r1
+		brt	atoi_dec_lt_58
+		la	r1,atoi_done
+		jmp	(r1)
+
+atoi_dec_lt_58:
 	la	r1,48
 	sub	r0,r1
-	push	r0
+	sw	r0,-12(fp)
 	lw	r0,-3(fp)
 	push	r0
 	la	r0,_mul10
 	jal	r1,(r0)
 	add	sp,3
-	pop	r1
+	lw	r1,-12(fp)
 	add	r0,r1
 	sw	r0,-3(fp)
 	add	r2,1
-	bra	atoi_loop
+	la	r1,atoi_loop
+	jmp	(r1)
+
+atoi_hex_digit:
+		lbu	r0,0(r2)
+		la	r1,104
+		ceq	r0,r1
+		brf	atoi_hex_chk_upper
+		la	r1,atoi_done
+		jmp	(r1)
+
+atoi_hex_chk_upper:
+		la	r1,72
+		ceq	r0,r1
+		brf	atoi_hex_chk_digit
+		la	r1,atoi_done
+		jmp	(r1)
+
+atoi_hex_chk_digit:
+	push	r0
+	la	r0,_is_hex_digit
+		jal	r1,(r0)
+		add	sp,3
+		ceq	r0,z
+		brf	atoi_hex_accum
+		la	r1,atoi_done
+		jmp	(r1)
+
+atoi_hex_accum:
+	lbu	r0,0(r2)
+	push	r0
+	la	r0,_hex_digit_val
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-12(fp)
+	lw	r0,-3(fp)
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	lw	r1,-12(fp)
+	add	r0,r1
+		sw	r0,-3(fp)
+		add	r2,1
+		la	r1,atoi_loop
+		jmp	(r1)
+
+atoi_bin_digit:
+	lbu	r0,0(r2)
+	push	r0
+	la	r0,_is_bin_digit
+		jal	r1,(r0)
+		add	sp,3
+		ceq	r0,z
+		brf	atoi_bin_accum
+		la	r1,atoi_done
+		jmp	(r1)
+
+atoi_bin_accum:
+	lbu	r0,0(r2)
+	la	r1,48
+	sub	r0,r1
+	sw	r0,-12(fp)
+	lw	r0,-3(fp)
+	add	r0,r0
+	lw	r1,-12(fp)
+	add	r0,r1
+		sw	r0,-3(fp)
+		add	r2,1
+		la	r1,atoi_loop
+		jmp	(r1)
 atoi_done:
 	lw	r0,-3(fp)
+	lw	r1,-9(fp)
+	ceq	r1,z
+	brt	atoi_ret
+	la	r1,0
+	sub	r1,r0
+	mov	r0,r1
+atoi_ret:
 	mov	sp,fp
 	pop	r1
 	pop	r2
@@ -6407,7 +7167,34 @@ _psi_ret:
 	pop	fp
 	jmp	(r1)
 
-; _is_number_str: Return 1 if string is decimal digits only.
+; _strlen24: Return length of null-terminated string.
+; Arg on stack: ptr
+; Returns: r0 = length
+_strlen24:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	lw	r2,9(fp)
+	la	r0,0
+
+_sl24_loop:
+	lbu	r1,0(r2)
+	ceq	r1,z
+	brt	_sl24_ret
+	add	r0,1
+	add	r2,1
+	bra	_sl24_loop
+
+_sl24_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _is_number_str: Return 1 if string is decimal, 0x hex, 0b binary, or h-suffix hex.
 ; Arg on stack: ptr
 _is_number_str:
 	push	fp
@@ -6418,9 +7205,119 @@ _is_number_str:
 	lw	r2,9(fp)
 	lbu	r0,0(r2)
 	ceq	r0,z
-	brt	_ins_no
+	brf	_ins_not_empty
+	la	r1,_ins_no
+	jmp	(r1)
 
-_ins_loop:
+_ins_not_empty:
+
+	la	r1,45
+	ceq	r0,r1
+	brt	_ins_skip_minus
+	bra	_ins_prefix
+
+	_ins_skip_minus:
+	add	r2,1
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brf	_ins_after_minus
+	la	r1,_ins_no
+	jmp	(r1)
+
+_ins_after_minus:
+
+_ins_prefix:
+	lbu	r0,0(r2)
+	la	r1,48
+	ceq	r0,r1
+	brt	_ins_pref0
+	bra	_ins_suffix
+
+_ins_pref0:
+	lbu	r0,1(r2)
+	la	r1,120
+	ceq	r0,r1
+	brt	_ins_hex_pref
+	la	r1,88
+	ceq	r0,r1
+	brt	_ins_hex_pref
+	la	r1,98
+	ceq	r0,r1
+	brt	_ins_bin_pref
+	la	r1,66
+	ceq	r0,r1
+	brt	_ins_bin_pref
+	bra	_ins_suffix
+
+	_ins_hex_pref:
+	add	r2,2
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brf	_ins_hex_pref_loop
+	la	r1,_ins_no
+	jmp	(r1)
+
+	_ins_hex_pref_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brf	_ins_hex_pref_chk
+	la	r1,_ins_yes
+	jmp	(r1)
+
+_ins_hex_pref_chk:
+	push	r0
+	la	r0,_is_hex_digit
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brf	_ins_hex_pref_next
+	la	r1,_ins_no
+	jmp	(r1)
+
+_ins_hex_pref_next:
+	add	r2,1
+	bra	_ins_hex_pref_loop
+
+	_ins_bin_pref:
+	add	r2,2
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brf	_ins_bin_pref_loop
+	la	r1,_ins_no
+	jmp	(r1)
+
+_ins_bin_pref_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_ins_yes
+	push	r0
+	la	r0,_is_bin_digit
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_ins_no
+	add	r2,1
+	bra	_ins_bin_pref_loop
+
+_ins_suffix:
+	push	r2
+	la	r0,_strlen24
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_ins_no
+	add	r0,-1
+	add	r0,r2
+	lbu	r0,0(r0)
+	la	r1,104
+	ceq	r0,r1
+	brt	_ins_hex_suffix
+	la	r1,72
+	ceq	r0,r1
+	brt	_ins_hex_suffix
+	bra	_ins_loop
+
+	_ins_loop:
 	lbu	r0,0(r2)
 	ceq	r0,z
 	brt	_ins_yes
@@ -6432,6 +7329,37 @@ _ins_loop:
 	brt	_ins_no
 	add	r2,1
 	bra	_ins_loop
+
+_ins_hex_suffix:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_ins_no
+
+_ins_hex_suffix_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_ins_no
+	la	r1,104
+	ceq	r0,r1
+	brt	_ins_hex_suffix_last
+	la	r1,72
+	ceq	r0,r1
+	brt	_ins_hex_suffix_last
+	push	r0
+	la	r0,_is_hex_digit
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_ins_no
+	add	r2,1
+	bra	_ins_hex_suffix_loop
+
+_ins_hex_suffix_last:
+	add	r2,1
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_ins_yes
+	bra	_ins_no
 
 _ins_yes:
 	la	r0,1
@@ -8099,6 +9027,21 @@ _kw_incbuf:
 
 _kw_srcbuf:
 	.byte	83,82,67,66,85,70,0
+
+_dot_ascii_txt:
+	.byte	46,97,115,99,105,105,0
+
+_dot_asciz_txt:
+	.byte	46,97,115,99,105,122,0
+
+_dot_space_txt:
+	.byte	46,115,112,97,99,101,0
+
+_dot_fill_txt:
+	.byte	46,102,105,108,108,0
+
+_dot_byte_txt:
+	.byte	46,98,121,116,101,32,0
 
 _kw_ifdef:
 	.byte	73,70,68,69,70,0

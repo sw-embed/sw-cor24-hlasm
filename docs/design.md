@@ -19,7 +19,10 @@ line by line, recognizing:
 - **Labels**: name followed by colon on own line
 - **Instructions**: standard COR24 mnemonics
 - **Comments**: semicolon or hash to end of line
-- **Directives**: .byte, .word, .comm, .org (passed through)
+- **Directives**: `.byte`, `.word`, `.comm`, `.org` (passed through),
+  `.ascii`, `.asciz`, `.space`, `.fill` (lowered to `.byte` lists)
+- **Numeric literals**: decimal plus `0x` hex, `0b` binary, and `h`/`H`
+  hex suffix forms for assembly-time parsing
 
 ### Structured Control-Flow Syntax
 

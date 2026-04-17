@@ -38,6 +38,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d29 | Control-flow integration proof | WORKS |
 | d30 | Structured annotation comments | WORKS |
 | d31 | Large source + macro capacity | WORKS |
+| d32 | Literals and data ergonomics | WORKS |
 
 ## Demo Policy
 
@@ -126,6 +127,32 @@ ENDIFASM
 IFNE VER,2          ; include if VER does NOT equal 2
  sub r0,1
 ENDIFASM
+```
+
+Assembly-time numeric literals accepted by `SET`, `IFEQ`, `IFNE`, and
+structured compare lowering:
+```
+SET COUNT,42
+SET MASK,0x2A
+SET BITS,0b101010
+SET SAME,2Ah
+```
+
+### Data Directives
+
+Current practical data-directive conveniences:
+
+- `.ascii "text"` lowers to a `.byte` list
+- `.asciz "text"` lowers to a `.byte` list with trailing `0`
+- `.space N` lowers to `N` zero bytes
+- `.fill N,V` lowers to `N` copies of byte value `V`
+
+Examples:
+```
+.ascii "HI\n"
+.asciz "OK"
+.space 4
+.fill 3,0x7F
 ```
 
 ### Source Buffer Control

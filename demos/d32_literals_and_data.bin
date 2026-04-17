@@ -1,0 +1,32 @@
+; Demo 32: richer literals and lowered data directives
+SET HEXVAL,0x2A
+SET BINVAL,0b101
+SET HEXSUF,2Ah
+
+IFEQ HEXVAL,0x2A
+ nop
+ENDIFASM
+
+IFEQ BINVAL,5
+ add r0,1
+ENDIFASM
+
+IFEQ HEXSUF,42
+ sub r0,1
+ENDIFASM
+
+IF cc_eq, r0,0x2A
+ xor r0,r0
+ENDIF
+
+SELECT r0
+WHEN 0b10
+ shl r0,1
+OTHERWISE
+ srl r0,1
+ENDSEL
+
+.ascii "HI\n"
+.asciz "OK"
+.space 4
+.fill 3,0x7F

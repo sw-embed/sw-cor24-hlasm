@@ -1,4 +1,4 @@
-Assembled 13435 bytes
+Assembled 14851 bytes
 Loaded 197 bytes from 'demos/d11_structured_if.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -48,14 +48,14 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 40000] 'g'  (0x67)
 [UART TX @ 40000] ''  (0x0D)
 [UART TX @ 40000] '\n'
-[UART TX @ 40000] ' '  (0x20)
-[UART TX @ 40000] 'p'  (0x70)
-[UART TX @ 40000] 'u'  (0x75)
-[UART TX @ 40000] 's'  (0x73)
-[UART TX @ 40000] 'h'  (0x68)
-[UART TX @ 40000] ' '  (0x20)
-[UART TX @ 40000] 'r'  (0x72)
-[UART TX @ 40000] '2'  (0x32)
+[UART TX @ 50000] ' '  (0x20)
+[UART TX @ 50000] 'p'  (0x70)
+[UART TX @ 50000] 'u'  (0x75)
+[UART TX @ 50000] 's'  (0x73)
+[UART TX @ 50000] 'h'  (0x68)
+[UART TX @ 50000] ' '  (0x20)
+[UART TX @ 50000] 'r'  (0x72)
+[UART TX @ 50000] '2'  (0x32)
 [UART TX @ 50000] ''  (0x0D)
 [UART TX @ 50000] '\n'
 [UART TX @ 50000] ' '  (0x20)
@@ -165,20 +165,20 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 50000] 'z'  (0x7A)
 [UART TX @ 50000] ''  (0x0D)
 [UART TX @ 50000] '\n'
-[UART TX @ 50000] ' '  (0x20)
-[UART TX @ 50000] 'b'  (0x62)
-[UART TX @ 50000] 'r'  (0x72)
-[UART TX @ 50000] 'f'  (0x66)
-[UART TX @ 50000] ' '  (0x20)
-[UART TX @ 50000] '_'  (0x5F)
-[UART TX @ 50000] 'h'  (0x68)
-[UART TX @ 50000] 'l'  (0x6C)
-[UART TX @ 50000] 'i'  (0x69)
-[UART TX @ 50000] 'f'  (0x66)
-[UART TX @ 50000] '_'  (0x5F)
-[UART TX @ 50000] '6'  (0x36)
-[UART TX @ 50000] '_'  (0x5F)
-[UART TX @ 50000] 's'  (0x73)
+[UART TX @ 60000] ' '  (0x20)
+[UART TX @ 60000] 'b'  (0x62)
+[UART TX @ 60000] 'r'  (0x72)
+[UART TX @ 60000] 'f'  (0x66)
+[UART TX @ 60000] ' '  (0x20)
+[UART TX @ 60000] '_'  (0x5F)
+[UART TX @ 60000] 'h'  (0x68)
+[UART TX @ 60000] 'l'  (0x6C)
+[UART TX @ 60000] 'i'  (0x69)
+[UART TX @ 60000] 'f'  (0x66)
+[UART TX @ 60000] '_'  (0x5F)
+[UART TX @ 60000] '6'  (0x36)
+[UART TX @ 60000] '_'  (0x5F)
+[UART TX @ 60000] 's'  (0x73)
 [UART TX @ 60000] 'k'  (0x6B)
 [UART TX @ 60000] 'i'  (0x69)
 [UART TX @ 60000] 'p'  (0x70)
@@ -266,24 +266,24 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 60000] ':'  (0x3A)
 [UART TX @ 60000] ''  (0x0D)
 [UART TX @ 60000] '\n'
-[UART TX @ 60000] ' '  (0x20)
-[UART TX @ 60000] 'p'  (0x70)
-[UART TX @ 60000] 'u'  (0x75)
-[UART TX @ 60000] 's'  (0x73)
-[UART TX @ 60000] 'h'  (0x68)
-[UART TX @ 60000] ' '  (0x20)
-[UART TX @ 60000] 'r'  (0x72)
-[UART TX @ 60000] '1'  (0x31)
-[UART TX @ 60000] ''  (0x0D)
-[UART TX @ 60000] '\n'
-[UART TX @ 60000] ' '  (0x20)
-[UART TX @ 60000] 'l'  (0x6C)
-[UART TX @ 60000] 'c'  (0x63)
-[UART TX @ 60000] ' '  (0x20)
-[UART TX @ 60000] 'r'  (0x72)
-[UART TX @ 60000] '1'  (0x31)
-[UART TX @ 60000] ','  (0x2C)
-[UART TX @ 60000] '1'  (0x31)
+[UART TX @ 70000] ' '  (0x20)
+[UART TX @ 70000] 'p'  (0x70)
+[UART TX @ 70000] 'u'  (0x75)
+[UART TX @ 70000] 's'  (0x73)
+[UART TX @ 70000] 'h'  (0x68)
+[UART TX @ 70000] ' '  (0x20)
+[UART TX @ 70000] 'r'  (0x72)
+[UART TX @ 70000] '1'  (0x31)
+[UART TX @ 70000] ''  (0x0D)
+[UART TX @ 70000] '\n'
+[UART TX @ 70000] ' '  (0x20)
+[UART TX @ 70000] 'l'  (0x6C)
+[UART TX @ 70000] 'c'  (0x63)
+[UART TX @ 70000] ' '  (0x20)
+[UART TX @ 70000] 'r'  (0x72)
+[UART TX @ 70000] '1'  (0x31)
+[UART TX @ 70000] ','  (0x2C)
+[UART TX @ 70000] '1'  (0x31)
 [UART TX @ 70000] '0'  (0x30)
 [UART TX @ 70000] ''  (0x0D)
 [UART TX @ 70000] '\n'
@@ -475,7 +475,7 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 80000] 'f'  (0x66)
 [UART TX @ 80000] '_'  (0x5F)
 [UART TX @ 80000] '1'  (0x31)
-[UART TX @ 80000] 'a'  (0x61)
+[UART TX @ 80000] '0'  (0x30)
 [UART TX @ 80000] '_'  (0x5F)
 [UART TX @ 80000] 's'  (0x73)
 [UART TX @ 80000] 'k'  (0x6B)
@@ -498,27 +498,27 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 80000] '_'  (0x5F)
 [UART TX @ 80000] 'f'  (0x66)
 [UART TX @ 80000] 'a'  (0x61)
-[UART TX @ 80000] 'l'  (0x6C)
-[UART TX @ 80000] 's'  (0x73)
-[UART TX @ 80000] 'e'  (0x65)
-[UART TX @ 80000] ''  (0x0D)
-[UART TX @ 80000] '\n'
-[UART TX @ 80000] '_'  (0x5F)
-[UART TX @ 80000] 'h'  (0x68)
-[UART TX @ 80000] 'l'  (0x6C)
-[UART TX @ 80000] 'i'  (0x69)
-[UART TX @ 80000] 'f'  (0x66)
-[UART TX @ 80000] '_'  (0x5F)
-[UART TX @ 80000] '1'  (0x31)
-[UART TX @ 80000] 'a'  (0x61)
-[UART TX @ 80000] '_'  (0x5F)
-[UART TX @ 80000] 's'  (0x73)
-[UART TX @ 80000] 'k'  (0x6B)
-[UART TX @ 80000] 'i'  (0x69)
-[UART TX @ 80000] 'p'  (0x70)
-[UART TX @ 80000] ':'  (0x3A)
-[UART TX @ 80000] ''  (0x0D)
-[UART TX @ 80000] '\n'
+[UART TX @ 90000] 'l'  (0x6C)
+[UART TX @ 90000] 's'  (0x73)
+[UART TX @ 90000] 'e'  (0x65)
+[UART TX @ 90000] ''  (0x0D)
+[UART TX @ 90000] '\n'
+[UART TX @ 90000] '_'  (0x5F)
+[UART TX @ 90000] 'h'  (0x68)
+[UART TX @ 90000] 'l'  (0x6C)
+[UART TX @ 90000] 'i'  (0x69)
+[UART TX @ 90000] 'f'  (0x66)
+[UART TX @ 90000] '_'  (0x5F)
+[UART TX @ 90000] '1'  (0x31)
+[UART TX @ 90000] '0'  (0x30)
+[UART TX @ 90000] '_'  (0x5F)
+[UART TX @ 90000] 's'  (0x73)
+[UART TX @ 90000] 'k'  (0x6B)
+[UART TX @ 90000] 'i'  (0x69)
+[UART TX @ 90000] 'p'  (0x70)
+[UART TX @ 90000] ':'  (0x3A)
+[UART TX @ 90000] ''  (0x0D)
+[UART TX @ 90000] '\n'
 [UART TX @ 90000] ' '  (0x20)
 [UART TX @ 90000] 'a'  (0x61)
 [UART TX @ 90000] 'd'  (0x64)
@@ -575,20 +575,20 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 90000] '2'  (0x32)
 [UART TX @ 90000] ''  (0x0D)
 [UART TX @ 90000] '\n'
-[UART TX @ 90000] '_'  (0x5F)
-[UART TX @ 90000] 'h'  (0x68)
-[UART TX @ 90000] 'l'  (0x6C)
-[UART TX @ 90000] 'i'  (0x69)
-[UART TX @ 90000] 'f'  (0x66)
-[UART TX @ 90000] '_'  (0x5F)
-[UART TX @ 90000] '2'  (0x32)
-[UART TX @ 90000] '_'  (0x5F)
-[UART TX @ 90000] 'e'  (0x65)
-[UART TX @ 90000] 'n'  (0x6E)
-[UART TX @ 90000] 'd'  (0x64)
-[UART TX @ 90000] ':'  (0x3A)
-[UART TX @ 90000] ''  (0x0D)
-[UART TX @ 90000] '\n'
+[UART TX @ 91992] '_'  (0x5F)
+[UART TX @ 91992] 'h'  (0x68)
+[UART TX @ 91992] 'l'  (0x6C)
+[UART TX @ 91992] 'i'  (0x69)
+[UART TX @ 91992] 'f'  (0x66)
+[UART TX @ 91992] '_'  (0x5F)
+[UART TX @ 91992] '2'  (0x32)
+[UART TX @ 91992] '_'  (0x5F)
+[UART TX @ 91992] 'e'  (0x65)
+[UART TX @ 91992] 'n'  (0x6E)
+[UART TX @ 91992] 'd'  (0x64)
+[UART TX @ 91992] ':'  (0x3A)
+[UART TX @ 91992] ''  (0x0D)
+[UART TX @ 91992] '\n'
 
 UART output: ; Demo 11: IF/ELSEIF/ELSE/ENDIF with nesting
  push r2
@@ -620,9 +620,9 @@ _hlif_7_false:
 _hlif_5_end:
  jmp _hlif_2_end
 _hlif_1_false:
- brf _hlif_1a_skip
+ brf _hlif_10_skip
  jmp _hlif_9_false
-_hlif_1a_skip:
+_hlif_10_skip:
  add r0,1
  jmp _hlif_2_end
 _hlif_9_false:
@@ -630,5 +630,5 @@ _hlif_9_false:
 _hlif_2_end:
 
 
-Executed 90000 instructions
+Executed 91992 instructions
 CPU halted (self-branch detected)

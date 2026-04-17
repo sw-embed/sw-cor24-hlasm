@@ -1,4 +1,4 @@
-Assembled 13435 bytes
+Assembled 14851 bytes
 Loaded 61 bytes from 'demos/d14_ifndef.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -17,5 +17,5 @@ Running (speed: max IPS, time limit: 10s)...
 UART output:  add r0,1
 
 
-Executed 40576 instructions
+Executed 40780 instructions
 CPU halted (self-branch detected)

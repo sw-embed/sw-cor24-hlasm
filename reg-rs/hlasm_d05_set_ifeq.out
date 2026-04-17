@@ -1,4 +1,4 @@
-Assembled 13435 bytes
+Assembled 14851 bytes
 Loaded 124 bytes from 'demos/d05_set_ifeq.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -24,5 +24,5 @@ UART output:  nop
  sub r0,1
 
 
-Executed 52057 instructions
+Executed 52785 instructions
 CPU halted (self-branch detected)
