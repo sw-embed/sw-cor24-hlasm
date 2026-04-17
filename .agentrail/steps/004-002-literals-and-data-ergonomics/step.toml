@@ -1,4 +1,4 @@
-number = 3
+number = 4
 slug = "002-literals-and-data-ergonomics"
 status = "pending"
 description = "Improve assembler ergonomics for literals and data definition relative to as2..."
