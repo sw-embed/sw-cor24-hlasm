@@ -1,6 +1,0 @@
-; Host-side bootstrap loader spec for split hlasm0 input.
-MAIN bootstrap/hlasm0_split_main.bin@589824
-SRCBUF 1,bootstrap/hlasm0_common.bin@528384
-SRCBUF 2,bootstrap/hlasm0_io.bin@532480
-INCLUDE common,1
-INCLUDE io,2

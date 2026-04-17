@@ -31,7 +31,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d22 | Include-return source stack | WORKS |
 | d23 | Named include table | WORKS |
 | d24 | Nested named includes | WORKS |
-| d25 | Split bootstrap loader spec | WORKS |
+| d25 | Split bootstrap sourceset proof | WORKS |
 
 ## Demo Policy
 
@@ -106,16 +106,12 @@ INCLUDE tail        ; resolve "tail" through the low-SRAM include-name table,
                     ; then include that slot and resume the caller source
 ```
 
-Named-include bootstrap demos now pair the `.hlasm` source with a small
-loader spec that declares the host-side buffer map in assembler-flavored text:
-`MAIN file@addr`, `SRCBUF slot,file@addr`, `INCLUDE name,slot`.
-
-Larger bootstrap proofs can now use a source-set manifest instead:
+Bootstrap-facing include demos and proofs now use a source-set manifest:
 optional `PROFILE file`, then `ROOT dir`, optional `MAINADDR` / `EXTRAADDR` /
 `ALIGN`, `SOURCESET child.sourceset`, then `MAIN file.hlasm` plus repeated
 `INCLUDE name file.hlasm`. The host-side runner builds the `.bin` files, packs
-include buffers from their real sizes, and feeds the same low-SRAM include
-table into `hlasm.s`.
+include buffers from their real sizes, emits the unchanged low-SRAM config
+image, and feeds the same runtime include table into `hlasm.s`.
 
 Demo 24 now uses that composed source-set path directly, so the fragment model
 is exercised on a named-include proof as well as the split `hlasm0` bootstrap

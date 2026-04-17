@@ -1,0 +1,1 @@
+Converted the second named-include proof to the composed source-set workflow so both d23 and d24 now use the shared demo profile and fragment model instead of one-off loader specs.

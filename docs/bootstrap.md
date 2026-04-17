@@ -115,19 +115,16 @@ same config image from readable manifest files with `main`, `extra`, and
 source-friendly text while `hlasm.s` continues to consume the unchanged binary
 format at `0x07F000`.
 
-Step 18 adds one more layer above that builder for bootstrap runs: a loader
-spec written in assembler-flavored text. The current named-include demos use
-`MAIN file@addr`, `SRCBUF slot,file@addr`, and `INCLUDE name,slot`, and the
-host-side runner derives lengths from the loaded `.bin` files before emitting
-the same binary config block. That keeps `hlasm.s` and the runtime INCLUDE
-path unchanged while moving the named-buffer declarations out of `reg-rs`
-internals and into demo-adjacent source files.
+Step 18 briefly added one more layer above that builder for bootstrap runs: a
+loader spec written in assembler-flavored text. That intermediate host-side
+format proved the include table could be described outside `reg-rs` internals,
+but it is now only a historical stepping stone rather than the maintained
+entry point.
 
-Step 19 applies that same loader workflow to a larger bootstrap-shaped source
-set instead of only tiny demos. The split `hlasm0` proof carries its named
-include declarations in `bootstrap/hlasm0_loader.hlasm`, loads separate source
-buffers for the macro block and I/O block, and still feeds the unchanged
-binary config image plus the normal runtime INCLUDE path in `hlasm.s`.
+Step 19 applied that same idea to a larger bootstrap-shaped source set instead
+of only tiny demos. The split `hlasm0` proof first carried explicit named
+include declarations beside the bootstrap source itself before the host-side
+workflow was generalized again.
 
 Step 20 generalizes that pattern again with a bootstrap source-set runner.
 `bootstrap/hlasm0.sourceset` names one main `.hlasm` source and any number of
@@ -157,6 +154,11 @@ bootstrap tree can be assembled from smaller source-set fragments instead of
 one flat file. The split `hlasm0` proof now composes separate main/include
 fragments while still driving the same unchanged low-SRAM config image and
 runtime INCLUDE path.
+
+Step 27 folds the last remaining loader-spec behavior into the maintained
+source-set runner. Bootstrap proofs and named-include demos now share one
+host-side path: build `.bin` files from `.hlasm`, pack extra buffers by size,
+emit the unchanged config image at `0x07F000`, and run `hlasm.s` directly.
 
 `hlasm.s` currently walks the source portion of that table into a small
 in-memory descriptor set, which is enough to model include-like source

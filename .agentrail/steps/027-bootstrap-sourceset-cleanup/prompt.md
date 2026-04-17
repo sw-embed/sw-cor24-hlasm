@@ -1,0 +1,1 @@
+Tighten the remaining demo/bootstrap host-side workflow now that the composed source-set model is used on multiple proof paths. Keep the low-SRAM config layout and runtime INCLUDE lookup unchanged, but simplify or consolidate the older host-side loader path where it no longer adds value.

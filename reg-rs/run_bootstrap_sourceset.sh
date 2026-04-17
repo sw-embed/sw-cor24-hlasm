@@ -15,7 +15,8 @@ if [[ ! -f "$SRCSET" ]]; then
     exit 1
 fi
 
-loader_spec="/tmp/sw-cor24-hlasm-sourceset-$$.loader"
+cfg_txt="/tmp/sw-cor24-hlasm-sourceset-$$.cfg.txt"
+cfg_bin="/tmp/sw-cor24-hlasm-sourceset-$$.cfg"
 spec_stack="|"
 
 root_dir="."
@@ -23,8 +24,9 @@ main_addr=589824
 next_addr=528384
 align_bytes=256
 slot_count=0
+load_args=()
 
-: > "$loader_spec"
+: > "$cfg_txt"
 
 align_up() {
     local value="$1"
@@ -140,7 +142,9 @@ process_sourceset() {
                 fi
 
                 bash demos/make_bin.sh "$src_part" "$bin_part" >/dev/null
-                printf 'MAIN %s@%s\n' "$bin_part" "$main_addr" >> "$loader_spec"
+                size_part="$(wc -c < "$bin_part")"
+                printf 'main %s %s\n' "$main_addr" "$size_part" >> "$cfg_txt"
+                load_args+=("--load-binary" "${bin_part}@${main_addr}")
                 ;;
             INCLUDE)
                 if [[ $# -ne 3 ]]; then
@@ -160,8 +164,9 @@ process_sourceset() {
                 size_part="$(wc -c < "$bin_part")"
 
                 slot_count=$(( slot_count + 1 ))
-                printf 'SRCBUF %s,%s@%s\n' "$slot_count" "$bin_part" "$next_addr" >> "$loader_spec"
-                printf 'INCLUDE %s,%s\n' "$2" "$slot_count" >> "$loader_spec"
+                printf 'extra %s %s\n' "$next_addr" "$size_part" >> "$cfg_txt"
+                printf 'include %s %s\n' "$slot_count" "$2" >> "$cfg_txt"
+                load_args+=("--load-binary" "${bin_part}@${next_addr}")
                 next_addr="$(align_up $(( next_addr + size_part )) "$align_bytes")"
                 ;;
             *)
@@ -176,4 +181,12 @@ process_sourceset() {
 
 process_sourceset "$SRCSET"
 
-exec bash reg-rs/run_bootstrap_loader.sh "$loader_spec" "$MAX_INSNS" "$@"
+bash reg-rs/make_cfg.sh "$cfg_txt" "$cfg_bin"
+
+exec cor24-run --run hlasm.s \
+    "${load_args[@]}" \
+    --load-binary "${cfg_bin}@520192" \
+    --stack-kilobytes 3 \
+    --speed 0 \
+    -n "$MAX_INSNS" \
+    "$@"

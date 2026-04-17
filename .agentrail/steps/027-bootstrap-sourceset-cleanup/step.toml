@@ -1,0 +1,8 @@
+number = 27
+slug = "bootstrap-sourceset-cleanup"
+status = "in-progress"
+description = "Tighten the remaining demo/bootstrap host-side workflow now that the composed..."
+role = "legacy"
+context_files = []
+created_at = "2026-04-16T20:47:27"
+commits = []
