@@ -230,6 +230,40 @@ work normally — use snapshot only as belt-and-suspenders insurance.
 
 ## Project-specific rules
 
+### Branch workflow
+
+Do not work directly on `main` or `dev`.
+
+- `main` is read-only to agents. Never commit, rebase, or push to it.
+- `dev` is the integration branch that accepts merges from `pr-<slug>`
+  branches. Do not commit to it directly either.
+- Feature work starts in a `feature-<slug>` branch off of `dev`. Bug
+  fixes start in a `fix-<slug>` branch off of `dev`.
+- A session starting on `main` or `dev` must switch to the correct
+  feature/fix branch before doing any work. If that branch does not
+  exist yet, create it.
+- One saga lives on one feature branch. One fix lives on one fix
+  branch. Do not mix sagas or fixes across branches.
+- When the work completes successfully, rename the branch to
+  `pr-<slug>` and push it. This signals the external merge process that
+  the branch is ready to merge to `dev`:
+
+  ```bash
+  git branch -m feature-<slug> pr-<slug>   # or fix-<slug> -> pr-<slug>
+  git push -u origin pr-<slug>
+  ```
+
+- "Completes successfully" means:
+  - For a saga: the final step ran with `--done`, its commit landed,
+    the saga was archived with `agentrail archive`, and the archive
+    commit landed.
+  - For a fix: the single fix step completed with reward 1 and its
+    commit landed.
+- If the work did not complete successfully (step aborted, saga
+  archived for any reason other than success), leave the branch named
+  `feature-*` or `fix-*` and report status to the user — do not
+  rename.
+
 ### Commit checklist after each step
 
 After `agentrail complete`, verify:
@@ -245,7 +279,8 @@ If anything is uncommitted, commit it now.
 1. `git add -A && git commit` -- ensure everything is committed
 2. `agentrail archive --reason "saga complete"` -- archive the saga
 3. `git add -A && git commit` -- commit the archive
-4. `git push` -- push all commits to remote
+4. `git branch -m feature-<slug> pr-<slug>` -- signal merge readiness
+5. `git push -u origin pr-<slug>` -- push the renamed branch
 
 ### This is a .s project
 
