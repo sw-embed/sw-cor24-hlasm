@@ -16,7 +16,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d07 | Nested conditionals | WORKS |
 | d08 | Macros + conditionals | WORKS |
 | d09 | Comments (; and #) | WORKS (pass through) |
-| d10 | Multiple macros | BUG: second overwrites first |
+| d10 | Multiple macros | WORKS |
 | d11 | IF/ELSEIF/ELSE/ENDIF | WORKS |
 | d12 | DO/DOEXIT/ENDDO loops | WORKS |
 | d13 | SELECT/WHEN/ENDSEL | WORKS |
@@ -34,6 +34,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d25 | Split bootstrap sourceset proof | WORKS |
 | d26 | Structured branch-range hardening | WORKS |
 | d27 | Positional macro parameters | WORKS |
+| d28 | Macro robustness stress | WORKS |
 
 ## Demo Policy
 
@@ -65,6 +66,7 @@ Current supported baseline:
 - positional parameters `&1`, `&2`, ... expand stably
 - HLASM-style named parameters `&name` in both the definition header and body
   expand stably
+- macro names up to 31 characters are supported
 - multi-macro/local-label robustness is not complete yet
 
 ```

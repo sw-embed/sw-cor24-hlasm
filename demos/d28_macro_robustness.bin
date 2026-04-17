@@ -1,0 +1,12 @@
+MACRO macro_name_len_31_chars_abcdefg &r
+L\@: push &r
+ b L\@
+MEND
+MACRO store_name_len_31_chars_abcdefg &r
+L\@: st &r
+ b L\@
+MEND
+macro_name_len_31_chars_abcdefg r0
+store_name_len_31_chars_abcdefg r1
+macro_name_len_31_chars_abcdefg r2
+incx

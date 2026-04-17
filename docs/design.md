@@ -94,6 +94,9 @@ Current baseline:
 - positional parameters `&1`, `&2`, ... expand
 - HLASM-style named parameters `&name` in the definition header and body
   expand
+- macro names up to 31 characters are supported
+- repeated macro invocation and `\@` local-label expansion are stable across
+  multiple macro definitions
 - local-label behavior is still a partial subset, not full HLASM compatibility
 
 Near-term compatibility target:

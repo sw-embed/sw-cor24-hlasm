@@ -3567,6 +3567,7 @@ _extract_macro_name:
 	push	r1
 	push	r2
 	mov	fp,sp
+	add	sp,-3
 
 ; Skip "MACRO" (5 chars) in _line_buf
 	la	r1,786432
@@ -3605,13 +3606,15 @@ _emn_copy:
 	lw	r2,0(r2)
 
 	push	r2
-	la	r0,_mul15
+	la	r0,_mul39
 	jal	r1,(r0)
 	add	sp,3
 
 	la	r2,786648
 	add	r2,r0
 	pop	r1
+	la	r0,31
+	sw	r0,-3(fp)
 
 ; r2 = &macro_table[index], r1 = name ptr in _line_buf
 _emn_cloop:
@@ -3624,11 +3627,37 @@ _emn_cloop:
 	ceq	r0,r2
 	brt	_emn_ne_pop
 
+	lc	r2,9
+	ceq	r0,r2
+	brt	_emn_ne_pop
+
+	lw	r2,-3(fp)
+	ceq	r2,z
+	brt	_emn_long_pop
+
 	pop	r2
 	sb	r0,0(r2)
 	add	r1,1
 	add	r2,1
+	lw	r0,-3(fp)
+	add	r0,-1
+	sw	r0,-3(fp)
 	bra	_emn_cloop
+
+_emn_long_pop:
+	pop	r2
+_emn_long_skip:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_emn_name_end
+	lc	r2,32
+	ceq	r0,r2
+	brt	_emn_name_end
+	lc	r2,9
+	ceq	r0,r2
+	brt	_emn_name_end
+	add	r1,1
+	bra	_emn_long_skip
 
 _emn_ne_pop:
 	pop	r2
@@ -3657,7 +3686,7 @@ _emn_name_end:
 	la	r1,787554
 	lw	r0,0(r1)
 	push	r0
-	la	r0,_mul15
+	la	r0,_mul39
 	jal	r1,(r0)
 	add	sp,3
 	la	r1,786648
@@ -3665,7 +3694,7 @@ _emn_name_end:
 
 	la	r0,787557
 	lw	r0,0(r0)
-	sw	r0,9(r1)
+	sw	r0,33(r1)
 
 	la	r0,_parse_macro_params
 	jal	r1,(r0)
@@ -4055,7 +4084,7 @@ _mul3:
 	pop	fp
 	jmp	(r1)
 
-_mul15:
+_mul39:
 	push	fp
 	push	r1
 	push	r2
@@ -4065,7 +4094,10 @@ _mul15:
 	add	r0,r0
 	add	r0,r0
 	add	r0,r0
+	mov	r1,r0
 	add	r0,r0
+	add	r0,r0
+	add	r0,r1
 	sub	r0,r2
 	mov	sp,fp
 	pop	r2
@@ -4304,7 +4336,7 @@ _finish_macro:
 	la	r1,787554
 	lw	r0,0(r1)
 	push	r0
-	la	r0,_mul15
+	la	r0,_mul39
 	jal	r1,(r0)
 	add	sp,3
 	la	r1,786648
@@ -4313,7 +4345,7 @@ _finish_macro:
 ; Store body end position
 	la	r0,787557
 	lw	r0,0(r0)
-	sw	r0,12(r1)
+	sw	r0,36(r1)
 
 ; Clear macro state
 	la	r1,787551
@@ -4383,7 +4415,7 @@ _lm_tbl_loop:
 ; Save index on stack for later use in _lm_found
 	push	r0
 	push	r0
-	la	r0,_mul15
+	la	r0,_mul39
 	jal	r1,(r0)
 	add	sp,3
 
@@ -4396,13 +4428,10 @@ _lm_tbl_loop:
 
 _lm_name_check:
 	lbu	r0,0(r1)
-	ceq	r0,z
-	brt	_lm_found_pop_idx
-
 	push	r2
 	lbu	r2,0(r2)
-	ceq	r2,z
-	brt	_lm_found_pop2_idx
+	ceq	r0,z
+	brt	_lm_tail_check
 
 	ceq	r0,r2
 	brf	_lm_next_entry2
@@ -4411,6 +4440,16 @@ _lm_name_check:
 	add	r1,1
 	add	r2,1
 	bra	_lm_name_check
+
+_lm_tail_check:
+	push	r2
+	la	r0,_is_macro_name_char
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_lm_found_pop2_idx
+	la	r1,_lm_next_entry2
+	jmp	(r1)
 
 _lm_found_pop2_idx:
 	pop	r2
@@ -4453,14 +4492,14 @@ _expand_macro:
 	lw	r0,12(fp)
 	add	r0,-1
 	push	r0
-	la	r0,_mul15
+	la	r0,_mul39
 	jal	r1,(r0)
 	add	sp,3
 	la	r1,786648
 	add	r1,r0
 
-	lw	r2,9(r1)
-	lw	r0,12(r1)
+	lw	r2,33(r1)
+	lw	r0,36(r1)
 	sw	r0,0(fp)
 
 	la	r1,786642
@@ -7616,22 +7655,19 @@ _macro_count:
 	.word	0
 
 _macro_table:
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 _macro_buf:
 	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

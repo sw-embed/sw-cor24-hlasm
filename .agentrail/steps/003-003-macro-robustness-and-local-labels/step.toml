@@ -1,6 +1,6 @@
 number = 3
 slug = "003-macro-robustness-and-local-labels"
-status = "pending"
+status = "in-progress"
 description = "Harden multiple macro definitions, repeated invocations, and local-label beha..."
 role = "production"
 context_files = []

@@ -1,7 +1,7 @@
-Assembled 12457 bytes
+Assembled 12901 bytes
 Loaded 37 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d23_named_include_main.bin' at 0x090000
 Loaded 33 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d23_named_include_extra.bin' at 0x081000
-Loaded 42 bytes from '/tmp/sw-cor24-hlasm-sourceset-57277.cfg' at 0x07F000
+Loaded 42 bytes from '/tmp/sw-cor24-hlasm-sourceset-71267.cfg' at 0x07F000
 Running (speed: max IPS, time limit: 10s)...
 
 [UART TX @ 30000] 't'  (0x74)

@@ -1,8 +1,8 @@
-Assembled 12457 bytes
+Assembled 12901 bytes
 Loaded 29 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d24_nested_named_include_main.bin' at 0x090000
 Loaded 43 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d24_nested_named_include_mid.bin' at 0x081000
 Loaded 13 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d24_nested_named_include_tail.bin' at 0x081100
-Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-57236.cfg' at 0x07F000
+Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-71283.cfg' at 0x07F000
 Running (speed: max IPS, time limit: 10s)...
 
 [UART TX @ 20000] 'm'  (0x6D)

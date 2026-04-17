@@ -1,27 +1,27 @@
-Assembled 12457 bytes
+Assembled 12901 bytes
 Loaded 47 bytes from 'demos/d21_directed_switch_main.bin' at 0x090000
 Loaded 24 bytes from 'demos/d21_directed_switch_extra.bin' at 0x081000
 Loaded 29 bytes from 'reg-rs/s13_directed_switch.cfg' at 0x07F000
 Running (speed: max IPS, time limit: 10s)...
 
-[UART TX @ 25744] '_'  (0x5F)
-[UART TX @ 25744] 'h'  (0x68)
-[UART TX @ 25744] ':'  (0x3A)
-[UART TX @ 25744] ''  (0x0D)
-[UART TX @ 25744] '\n'
-[UART TX @ 25744] ' '  (0x20)
-[UART TX @ 25744] 'b'  (0x62)
-[UART TX @ 25744] 'r'  (0x72)
-[UART TX @ 25744] 'a'  (0x61)
-[UART TX @ 25744] ' '  (0x20)
-[UART TX @ 25744] '_'  (0x5F)
-[UART TX @ 25744] 'h'  (0x68)
-[UART TX @ 25744] ''  (0x0D)
-[UART TX @ 25744] '\n'
+[UART TX @ 25826] '_'  (0x5F)
+[UART TX @ 25826] 'h'  (0x68)
+[UART TX @ 25826] ':'  (0x3A)
+[UART TX @ 25826] ''  (0x0D)
+[UART TX @ 25826] '\n'
+[UART TX @ 25826] ' '  (0x20)
+[UART TX @ 25826] 'b'  (0x62)
+[UART TX @ 25826] 'r'  (0x72)
+[UART TX @ 25826] 'a'  (0x61)
+[UART TX @ 25826] ' '  (0x20)
+[UART TX @ 25826] '_'  (0x5F)
+[UART TX @ 25826] 'h'  (0x68)
+[UART TX @ 25826] ''  (0x0D)
+[UART TX @ 25826] '\n'
 
 UART output: _h:
  bra _h
 
 
-Executed 25744 instructions
+Executed 25826 instructions
 CPU halted (self-branch detected)

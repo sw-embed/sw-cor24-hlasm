@@ -78,6 +78,8 @@ invocation-by-name expansion is stable, positional `&1`/`&2` substitution
 works, and HLASM-style named `&arg` substitution works. Full local-label
 compatibility and broader macro robustness are still being hardened in later
 steps.
+Macro names up to 31 characters are supported, and repeated `\@` local-label
+expansion now stays distinct across multiple macro definitions and invocations.
 
 ### Macro Expander
 Substitutes positional `&N` and named `&name` parameters, with named

@@ -1,5 +1,5 @@
 === Assembling hlasm.s ===
-Assembled 12457 bytes
+Assembled 12901 bytes
 Running (speed: max IPS, time limit: 10s)...
 
 
@@ -7,11 +7,11 @@ Executed 1000 instructions
 Assemble check OK.
 
 === Bootstrap Source Set ===
-Assembled 12457 bytes
+Assembled 12901 bytes
 Loaded 151 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/bootstrap/./hlasm0_split_main.bin' at 0x090000
 Loaded 112 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/bootstrap/./hlasm0_common.bin' at 0x081000
 Loaded 45 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/bootstrap/./hlasm0_io.bin' at 0x081100
-Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-58120.cfg' at 0x07F000
+Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-72120.cfg' at 0x07F000
 Running (speed: max IPS, time limit: 10s)...
 
 [UART TX @ 40000] '_'  (0x5F)
@@ -210,23 +210,23 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 80000] ':'  (0x3A)
 [UART TX @ 80000] ''  (0x0D)
 [UART TX @ 80000] '\n'
-[UART TX @ 84104] ' '  (0x20)
-[UART TX @ 84104] '.'  (0x2E)
-[UART TX @ 84104] 'w'  (0x77)
-[UART TX @ 84104] 'o'  (0x6F)
-[UART TX @ 84104] 'r'  (0x72)
-[UART TX @ 84104] 'd'  (0x64)
-[UART TX @ 84104] ' '  (0x20)
-[UART TX @ 84104] '1'  (0x31)
-[UART TX @ 84104] '6'  (0x36)
-[UART TX @ 84104] '7'  (0x37)
-[UART TX @ 84104] '1'  (0x31)
-[UART TX @ 84104] '1'  (0x31)
-[UART TX @ 84104] '9'  (0x39)
-[UART TX @ 84104] '3'  (0x33)
-[UART TX @ 84104] '6'  (0x36)
-[UART TX @ 84104] ''  (0x0D)
-[UART TX @ 84104] '\n'
+[UART TX @ 84277] ' '  (0x20)
+[UART TX @ 84277] '.'  (0x2E)
+[UART TX @ 84277] 'w'  (0x77)
+[UART TX @ 84277] 'o'  (0x6F)
+[UART TX @ 84277] 'r'  (0x72)
+[UART TX @ 84277] 'd'  (0x64)
+[UART TX @ 84277] ' '  (0x20)
+[UART TX @ 84277] '1'  (0x31)
+[UART TX @ 84277] '6'  (0x36)
+[UART TX @ 84277] '7'  (0x37)
+[UART TX @ 84277] '1'  (0x31)
+[UART TX @ 84277] '1'  (0x31)
+[UART TX @ 84277] '9'  (0x39)
+[UART TX @ 84277] '3'  (0x33)
+[UART TX @ 84277] '6'  (0x36)
+[UART TX @ 84277] ''  (0x0D)
+[UART TX @ 84277] '\n'
 
 UART output: _main:
  push fp
@@ -250,5 +250,5 @@ _tx:
  .word 16711936
 
 
-Executed 84104 instructions
+Executed 84277 instructions
 CPU halted (self-branch detected)

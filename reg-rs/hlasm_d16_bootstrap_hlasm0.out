@@ -1,4 +1,4 @@
-Assembled 12457 bytes
+Assembled 12901 bytes
 Loaded 284 bytes from 'bootstrap/hlasm0.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -213,8 +213,8 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 80000] '9'  (0x39)
 [UART TX @ 80000] '3'  (0x33)
 [UART TX @ 80000] '6'  (0x36)
-[UART TX @ 80000] ''  (0x0D)
-[UART TX @ 80000] '\n'
+[UART TX @ 80191] ''  (0x0D)
+[UART TX @ 80191] '\n'
 
 UART output: _main:
  push fp
@@ -238,5 +238,5 @@ _tx:
  .word 16711936
 
 
-Executed 80018 instructions
+Executed 80191 instructions
 CPU halted (self-branch detected)
