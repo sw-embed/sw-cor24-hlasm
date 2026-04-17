@@ -1,6 +1,6 @@
 name = "hlasm-compat-and-control-flow"
 status = "active"
-current_step = 1
+current_step = 2
 created_at = "2026-04-16T22:34:40"
 plan_file = ".agentrail/plan.md"
 retroactive = false

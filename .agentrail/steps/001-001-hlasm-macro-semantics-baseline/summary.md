@@ -1,0 +1,1 @@
+Documented the currently supported HLASM-like macro baseline, clarified that MACRO/MEND definitions are suppressed from output while simple invocation expansion is stable, and kept the suite green.

@@ -1,8 +1,9 @@
 number = 1
 slug = "001-hlasm-macro-semantics-baseline"
-status = "in-progress"
+status = "completed"
 description = "Tighten macro-definition and invocation behavior toward HLASM-like expectatio..."
 role = "production"
 context_files = []
 created_at = "2026-04-16T22:35:11"
-commits = []
+completed_at = "2026-04-16T22:37:17"
+commits = ["6a20bf5c2314b7cfc485ed03951d9244412b1786"]
