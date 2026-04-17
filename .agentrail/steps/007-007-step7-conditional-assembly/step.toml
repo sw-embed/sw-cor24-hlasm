@@ -1,0 +1,11 @@
+number = 7
+slug = "007-step7-conditional-assembly"
+status = "in-progress"
+description = """
+Step 7: Conditional assembly (SET, IFDEF, IFEQ)
+
+Implement SET symbol definit..."""
+role = "legacy"
+context_files = []
+created_at = "2026-04-16T14:09:44"
+commits = []

@@ -1,0 +1,7 @@
+nop
+; this is a comment
+ add r0,1
+# this is also a comment
+ bra halt
+halt:
+ bra halt

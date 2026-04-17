@@ -1,5 +1,5 @@
 ; hlasm.s -- HLASM-Inspired Macro-Assembler for COR24
-; Step 006: Macro expansion with parameter substitution and \@ labels.
+; Step 007: Conditional assembly (SET, IFDEF, IFEQ, IFNDEF, IFNE).
 ;
 ; UART at 0xFF0100 (-65280). TX busy: bit 7 of status (sign-extended).
 ;
@@ -27,6 +27,14 @@ _main:
 	la	r0,0
 	sw	r0,0(r1)
 
+	la	r1,_symbol_count
+	la	r0,0
+	sw	r0,0(r1)
+
+	la	r1,_cond_depth
+	la	r0,0
+	sw	r0,0(r1)
+
 _ml_loop:
 	push	r0
 	la	r0,_read_line
@@ -45,12 +53,221 @@ _halt:
 _ml_go:
 	sw	r0,0(fp)
 
+	la	r1,_cond_depth
+	lw	r0,0(r1)
+	ceq	r0,z
+	brf	_ml_cond_active
+
+	la	r1,_ml_not_recording
+	jmp	(r1)
+
+_ml_cond_active:
+	la	r0,_cond_top
+	jal	r1,(r0)
+
+	ceq	r0,z
+	brf	_ml_cond_active_skip
+
+	la	r1,_ml_not_recording
+	jmp	(r1)
+
+_ml_cond_active_skip:
+	la	r1,_kw_endifasm
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_mc_skip_else
+
+	la	r0,_ml_is_endifasm
+	jal	r1,(r0)
+	bra	_mc_skip_end
+
+_mc_skip_else:
+	la	r1,_kw_elseasm
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_mc_skip_ifdef
+
+	la	r0,_ml_is_elseasm
+	jal	r1,(r0)
+	bra	_mc_skip_end
+
+_mc_skip_ifdef:
+	la	r1,_kw_ifdef
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_mc_skip_ifndef
+
+	la	r0,_ml_is_ifdef
+	jal	r1,(r0)
+	bra	_mc_skip_end
+
+_mc_skip_ifndef:
+	la	r1,_kw_ifndef
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_mc_skip_ifeq
+
+	la	r0,_ml_is_ifndef
+	jal	r1,(r0)
+	bra	_mc_skip_end
+
+_mc_skip_ifeq:
+	la	r1,_kw_ifeq
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_mc_skip_ifne
+
+	la	r0,_ml_is_ifeq
+	jal	r1,(r0)
+	bra	_mc_skip_end
+
+_mc_skip_ifne:
+	la	r1,_kw_ifne
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_mc_skip_ifne_handler
+
+	la	r0,_ml_is_ifne
+	jal	r1,(r0)
+	bra	_mc_skip_end
+
+_mc_skip_ifne_handler:
+
+_mc_skip_end:
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_not_recording:
 	la	r1,_macro_state
 	lw	r0,0(r1)
 	ceq	r0,z
-	brf	_ml_recording
+	brt	_mlnr_directives
+	la	r1,_ml_recording
+	jmp	(r1)
 
-; Not recording: check for MACRO, MEND, structured keywords, macro invocations
+_mlnr_directives:
+	la	r1,_kw_set
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_set_near
+
+	la	r1,_ml_is_set
+	jmp	(r1)
+
+_ml_is_set_near:
+
+	la	r1,_kw_endifasm
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_endifasm_near
+
+	la	r1,_ml_is_endifasm
+	jmp	(r1)
+
+_ml_is_endifasm_near:
+
+	la	r1,_kw_elseasm
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_elseasm_near
+
+	la	r1,_ml_is_elseasm
+	jmp	(r1)
+
+_ml_is_elseasm_near:
+
+	la	r1,_kw_ifdef
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_ifdef_near
+
+	la	r1,_ml_is_ifdef
+	jmp	(r1)
+
+_ml_is_ifdef_near:
+
+	la	r1,_kw_ifndef
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_ifndef_near
+
+	la	r1,_ml_is_ifndef
+	jmp	(r1)
+
+_ml_is_ifndef_near:
+
+	la	r1,_kw_ifeq
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_ifeq_near
+
+	la	r1,_ml_is_ifeq
+	jmp	(r1)
+
+_ml_is_ifeq_near:
+
+	la	r1,_kw_ifne
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_ifne_near
+
+	la	r1,_ml_is_ifne
+	jmp	(r1)
+
+_ml_is_ifne_near:
+
 	la	r1,_kw_macro
 	push	r1
 	la	r0,_starts_with
@@ -122,6 +339,84 @@ _ml_is_macro:
 	jmp	(r1)
 
 _ml_is_mend_skip:
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_set:
+	la	r0,_set_symbol
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_endifasm:
+	la	r1,_cond_depth
+	lw	r0,0(r1)
+	add	r0,-1
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_cond_stack
+	add	r1,r0
+	la	r0,0
+	sw	r0,0(r1)
+
+	la	r1,_cond_depth
+	lw	r0,0(r1)
+	add	r0,-1
+	sw	r0,0(r1)
+
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_elseasm:
+	la	r1,_cond_depth
+	lw	r0,0(r1)
+	add	r0,-1
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_cond_stack
+	add	r1,r0
+	lw	r0,0(r1)
+
+	ceq	r0,z
+	brf	_mle_was_skip
+
+	la	r0,1
+	sw	r0,0(r1)
+	bra	_mle_done
+
+_mle_was_skip:
+	la	r0,0
+	sw	r0,0(r1)
+
+_mle_done:
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_ifdef:
+	la	r0,_handle_ifdef
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_ifndef:
+	la	r0,_handle_ifndef
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_ifeq:
+	la	r0,_handle_ifeq
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_ifne:
+	la	r0,_handle_ifne
+	jal	r1,(r0)
 	la	r1,_ml_loop
 	jmp	(r1)
 
@@ -2083,16 +2378,9 @@ _mul3:
 	mov	fp,sp
 
 	lw	r0,6(fp)
-	la	r1,0
-_m3_loop:
-	la	r2,3
-	clu	r0,r2
-	brt	_m3_done
-	la	r2,3
-	sub	r0,r2
-	add	r1,1
-	bra	_m3_loop
-_m3_done:
+	mov	r2,r0
+	add	r0,r2
+	add	r0,r2
 	mov	sp,fp
 	pop	r1
 	pop	fp
@@ -2102,18 +2390,13 @@ _mul15:
 	push	fp
 	push	r1
 	mov	fp,sp
-
 	lw	r0,6(fp)
-	la	r1,0
-_m15_loop:
-	la	r2,15
-	clu	r0,r2
-	brt	_m15_done
-	la	r2,15
+	mov	r2,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
 	sub	r0,r2
-	add	r1,1
-	bra	_m15_loop
-_m15_done:
 	mov	sp,fp
 	pop	r1
 	pop	fp
@@ -2843,7 +3126,659 @@ _eeb_done:
 	pop	fp
 	jmp	(r1)
 
-_kw_prefix_table:
+; --- Step 7: Conditional assembly ---
+; Following the standard calling convention from fib.s/sieve.s:
+;   push fp; push r2; push r1; mov fp,sp
+;   ... body (args at 9(fp), 12(fp), ...) ...
+;   mov sp,fp; pop r1; pop r2; pop fp; jmp (r1)
+; r0 = scratch/return, r1 = return address, r2 = callee-saved register var
+
+; _atoi: Parse decimal number from null-terminated string.
+; Arg on stack: string pointer (9 fp)
+; Returns: r0 = integer value
+_atoi:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+	lw	r2,9(fp)
+	la	r0,0
+	sw	r0,-3(fp)
+atoi_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	atoi_done
+	la	r1,48
+	clu	r0,r1
+	brt	atoi_done
+	la	r1,58
+	clu	r0,r1
+	brf	atoi_done
+	la	r1,48
+	sub	r0,r1
+	push	r0
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_mul10
+	jal	r1,(r0)
+	add	sp,3
+	pop	r1
+	add	r0,r1
+	sw	r0,-3(fp)
+	add	r2,1
+	bra	atoi_loop
+atoi_done:
+	lw	r0,-3(fp)
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _extract_kw_arg: Skip keyword (alpha chars) and whitespace in _line_buf,
+; then copy identifier to _parse_name_buf.
+_extract_kw_arg:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+	la	r2,_line_buf
+eka_skip:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	eka_done
+	push	r0
+	la	r0,_is_alpha
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	eka_ws
+	add	r2,1
+	bra	eka_skip
+eka_ws:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	eka_done
+	la	r1,32
+	ceq	r0,r1
+	brt	eka_ws2
+	la	r1,9
+	ceq	r0,r1
+	brt	eka_ws2
+	bra	eka_copy
+eka_ws2:
+	add	r2,1
+	bra	eka_ws
+eka_copy:
+	la	r0,_parse_name_buf
+	sw	r0,-3(fp)
+eka_cn:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	eka_cn_done
+	la	r1,44
+	ceq	r0,r1
+	brt	eka_cn_done
+	la	r1,32
+	ceq	r0,r1
+	brt	eka_cn_done
+	lw	r1,-3(fp)
+	sb	r0,0(r1)
+	add	r1,1
+	sw	r1,-3(fp)
+	add	r2,1
+	bra	eka_cn
+eka_cn_done:
+	lw	r1,-3(fp)
+	la	r0,0
+	sb	r0,0(r1)
+eka_done:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _parse_cond_value: Find comma in _line_buf, parse integer after it.
+; Returns: r0 = integer value
+_parse_cond_value:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	la	r2,_line_buf
+pcv_find:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	pcv_zero
+	la	r1,44
+	ceq	r0,r1
+	brt	pcv_after
+	add	r2,1
+	bra	pcv_find
+pcv_zero:
+	la	r0,0
+	bra	pcv_ret
+pcv_after:
+	add	r2,1
+pcv_ws:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	pcv_zero
+	la	r1,32
+	ceq	r0,r1
+	brt	pcv_ws2
+	la	r1,9
+	ceq	r0,r1
+	brt	pcv_ws2
+	bra	pcv_call
+pcv_ws2:
+	add	r2,1
+	bra	pcv_ws
+pcv_call:
+	push	r2
+	la	r0,_atoi
+	jal	r1,(r0)
+	add	sp,3
+pcv_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _sym_find: Search symbol table for _parse_name_buf.
+; Returns: r0 = index if found, symbol_count if not found
+_sym_find:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+	la	r0,0
+	sw	r0,-3(fp)
+sf_loop:
+	la	r1,_symbol_count
+	lw	r1,0(r1)
+	lw	r0,-3(fp)
+	clu	r0,r1
+	brf	sf_not_found
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_mul9
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_symbol_table
+	add	r1,r0
+	push	r1
+	la	r1,_parse_name_buf
+	push	r1
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	sf_found
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+	bra	sf_loop
+sf_not_found:
+	la	r1,_symbol_count
+	lw	r0,0(r1)
+	bra	sf_ret
+sf_found:
+	lw	r0,-3(fp)
+sf_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _set_symbol: Parse 'SET name,value' from _line_buf, store/update in table.
+_set_symbol:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-9
+	la	r2,_line_buf
+	add	r2,4
+ss_sw:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brf	ss_sw_cont
+	la	r1,ss_ret
+	jmp	(r1)
+ss_sw_cont:
+	la	r1,32
+	ceq	r0,r1
+	brt	ss_sw2
+	la	r1,9
+	ceq	r0,r1
+	brt	ss_sw2
+	bra	ss_cn
+ss_sw2:
+	add	r2,1
+	bra	ss_sw
+ss_cn:
+	la	r0,_parse_name_buf
+	sw	r0,-6(fp)
+ss_cn_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	ss_cn_done
+	la	r1,44
+	ceq	r0,r1
+	brt	ss_cn_done
+	la	r1,32
+	ceq	r0,r1
+	brt	ss_cn_done
+	lw	r1,-6(fp)
+	sb	r0,0(r1)
+	add	r1,1
+	sw	r1,-6(fp)
+	add	r2,1
+	bra	ss_cn_loop
+ss_cn_done:
+	lw	r1,-6(fp)
+	la	r0,0
+	sb	r0,0(r1)
+	lbu	r0,0(r2)
+	la	r1,44
+	ceq	r0,r1
+	brf	ss_no_val
+	add	r2,1
+ss_vsw:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	ss_no_val
+	la	r1,32
+	ceq	r0,r1
+	brt	ss_vsw2
+	la	r1,9
+	ceq	r0,r1
+	brt	ss_vsw2
+	bra	ss_call_atoi
+ss_vsw2:
+	add	r2,1
+	bra	ss_vsw
+ss_call_atoi:
+	push	r2
+	la	r0,_atoi
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-3(fp)
+	bra	ss_search
+ss_no_val:
+	la	r0,0
+	sw	r0,-3(fp)
+ss_search:
+	la	r0,_sym_find
+	jal	r1,(r0)
+	la	r1,_symbol_count
+	lw	r1,0(r1)
+	clu	r0,r1
+	brf	ss_new
+	push	r0
+	la	r0,_mul9
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_symbol_table
+	add	r1,r0
+	bra	ss_store
+ss_new:
+	la	r1,_symbol_count
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_mul9
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_symbol_table
+	add	r1,r0
+	la	r2,_symbol_count
+	lw	r0,0(r2)
+	add	r0,1
+	sw	r0,0(r2)
+ss_store:
+	la	r2,_parse_name_buf
+	sw	r1,-9(fp)
+ss_cname:
+	lbu	r0,0(r2)
+	sb	r0,0(r1)
+	ceq	r0,z
+	brt	ss_after_name
+	add	r1,1
+	add	r2,1
+	bra	ss_cname
+ss_after_name:
+	lw	r0,-3(fp)
+	lw	r1,-9(fp)
+	sw	r0,6(r1)
+ss_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _lookup_symbol: Check if _parse_name_buf is in symbol table.
+; Returns: r0 = 1 if found, 0 if not. Sets _lookup_sym_val.
+_lookup_symbol:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+	la	r0,_sym_find
+	jal	r1,(r0)
+	sw	r0,-3(fp)
+	la	r1,_symbol_count
+	lw	r1,0(r1)
+	lw	r0,-3(fp)
+	clu	r0,r1
+	brf	ls_no
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_mul9
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_symbol_table
+	add	r1,r0
+	lw	r0,6(r1)
+	la	r1,_lookup_sym_val
+	sw	r0,0(r1)
+	la	r0,1
+	bra	ls_ret
+ls_no:
+	la	r0,0
+ls_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _cond_push: Push state onto cond stack, increment depth.
+; Arg on stack: state (0=include, 1=skip)
+_cond_push:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	lw	r0,9(fp)
+	la	r1,_cond_depth
+	lw	r2,0(r1)
+	push	r2
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_cond_stack
+	add	r1,r0
+	lw	r0,9(fp)
+	sw	r0,0(r1)
+	la	r1,_cond_depth
+	lw	r0,0(r1)
+	add	r0,1
+	sw	r0,0(r1)
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _cond_top: Get top cond stack state.
+; Returns: r0 = state (0 or 1), or 0 if depth==0
+_cond_top:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	la	r1,_cond_depth
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	ct_zero
+	add	r0,-1
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_cond_stack
+	add	r1,r0
+	lw	r0,0(r1)
+	bra	ct_ret
+ct_zero:
+	la	r0,0
+ct_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _cond_set_top: Set top cond stack state.
+; Arg on stack: new state
+_cond_set_top:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	la	r1,_cond_depth
+	lw	r0,0(r1)
+	add	r0,-1
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_cond_stack
+	add	r1,r0
+	lw	r0,9(fp)
+	sw	r0,0(r1)
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _cond_pop: Pop cond stack (clear top, decrement depth).
+_cond_pop:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	la	r1,_cond_depth
+	lw	r0,0(r1)
+	add	r0,-1
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_cond_stack
+	add	r1,r0
+	la	r0,0
+	sw	r0,0(r1)
+	la	r1,_cond_depth
+	lw	r0,0(r1)
+	add	r0,-1
+	sw	r0,0(r1)
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _handle_ifdef: IFDEF -- include if symbol defined and nonzero, skip if not.
+_handle_ifdef:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+	la	r0,_extract_kw_arg
+	jal	r1,(r0)
+	la	r0,_lookup_symbol
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	hif_not_found
+	la	r1,_lookup_sym_val
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	hif_zero_val
+	la	r0,0
+	bra	hif_do_push
+hif_zero_val:
+	la	r0,1
+	bra	hif_do_push
+hif_not_found:
+	la	r0,1
+hif_do_push:
+	push	r0
+	la	r0,_cond_push
+	jal	r1,(r0)
+	add	sp,3
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _handle_ifndef: IFNDEF -- include if symbol not defined.
+_handle_ifndef:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+	la	r0,_extract_kw_arg
+	jal	r1,(r0)
+	la	r0,_lookup_symbol
+	jal	r1,(r0)
+	sw	r0,-3(fp)
+	lw	r0,-3(fp)
+	ceq	r0,z
+	brt	hinf_notdef
+	la	r0,1
+	bra	hinf_do_push
+hinf_notdef:
+	la	r0,0
+hinf_do_push:
+	push	r0
+	la	r0,_cond_push
+	jal	r1,(r0)
+	add	sp,3
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _handle_ifeq: IFEQ name,value -- include if symbol value == literal.
+_handle_ifeq:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+	la	r0,_extract_kw_arg
+	jal	r1,(r0)
+	la	r0,_lookup_symbol
+	jal	r1,(r0)
+	la	r1,_lookup_sym_val
+	lw	r0,0(r1)
+	sw	r0,-3(fp)
+	la	r0,_parse_cond_value
+	jal	r1,(r0)
+	lw	r1,-3(fp)
+	ceq	r0,r1
+	brf	hieq_skip
+	la	r0,0
+	bra	hieq_push
+hieq_skip:
+	la	r0,1
+hieq_push:
+	push	r0
+	la	r0,_cond_push
+	jal	r1,(r0)
+	add	sp,3
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _handle_ifne: IFNE name,value -- opposite of IFEQ.
+_handle_ifne:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+	la	r0,_extract_kw_arg
+	jal	r1,(r0)
+	la	r0,_lookup_symbol
+	jal	r1,(r0)
+	la	r1,_lookup_sym_val
+	lw	r0,0(r1)
+	sw	r0,-3(fp)
+	la	r0,_parse_cond_value
+	jal	r1,(r0)
+	lw	r1,-3(fp)
+	ceq	r0,r1
+	brt	hine_skip
+	la	r0,0
+	bra	hine_push
+hine_skip:
+	la	r0,1
+hine_push:
+	push	r0
+	la	r0,_cond_push
+	jal	r1,(r0)
+	add	sp,3
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _mul9: Multiply arg by 9 (symbol table entry offset).
+; Arg on stack: value
+; Returns: r0 = value * 9
+_mul9:
+	push	fp
+	push	r1
+	mov	fp,sp
+	lw	r0,6(fp)
+	mov	r2,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r2
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _mul10: Multiply arg by 10.
+; Arg on stack: value
+; Returns: r0 = value * 10
+_mul10:
+	push	fp
+	push	r1
+	mov	fp,sp
+	lw	r0,6(fp)
+	mov	r2,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r2
+	add	r0,r0
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+_kw_mend:
 	.byte 77,65,67,82,79,0
 	.byte 77,69,78,68,0
 	.byte 73,70,0
@@ -2875,7 +3810,7 @@ _id_buf:
 ; --- Source descriptor ---
 _src_desc:
 	.word	524288
-	.word	64
+	.word	128
 	.word	0
 
 ; --- Step 5: Macro data ---
@@ -2978,3 +3913,82 @@ _kw_macro:
 _kw_mend:
 	.byte	77,69,78,68,0
 
+_kw_prefix_table:
+	.byte	77,65,67,82,79,0
+	.byte	77,69,78,68,0
+	.byte	73,70,0
+	.byte	69,76,83,69,73,70,0
+	.byte	69,76,83,69,0
+	.byte	69,78,68,73,70,0
+	.byte	68,79,0
+	.byte	68,79,69,88,73,84,0
+	.byte	73,84,69,82,65,84,69,0
+	.byte	69,78,68,68,79,0
+	.byte	83,69,76,69,67,84,0
+	.byte	87,72,69,78,0
+	.byte	79,84,72,69,82,87,73,83,69,0
+	.byte	69,78,68,83,69,76,0
+	.byte	0
+
+; --- Step 7: Conditional assembly data ---
+_kw_set:
+	.byte	83,69,84,0
+
+_kw_ifdef:
+	.byte	73,70,68,69,70,0
+
+_kw_ifndef:
+	.byte	73,70,78,68,69,70,0
+
+_kw_ifeq:
+	.byte	73,70,69,81,0
+
+_kw_ifne:
+	.byte	73,70,78,69,0
+
+_kw_elseasm:
+	.byte	69,76,83,69,65,83,77,0
+
+_kw_endifasm:
+	.byte	69,78,68,73,70,65,83,77,0
+
+_symbol_count:
+	.word	0
+
+_symbol_table:
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0
+
+_cond_depth:
+	.word	0
+
+_cond_stack:
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+	.word	0
+
+_parse_name_buf:
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+	.byte	0, 0, 0, 0, 0, 0, 0, 0
+
+_lookup_sym_val:
+	.word	0

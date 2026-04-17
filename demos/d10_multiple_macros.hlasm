@@ -1,0 +1,9 @@
+MACRO inc
+ add r0,1
+MEND
+MACRO dec
+ sub r0,1
+MEND
+inc
+dec
+inc

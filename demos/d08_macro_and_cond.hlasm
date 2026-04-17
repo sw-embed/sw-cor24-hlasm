@@ -1,0 +1,7 @@
+SET DEBUG,1
+MACRO trace
+IFDEF DEBUG
+ nop
+ENDIFASM
+MEND
+trace

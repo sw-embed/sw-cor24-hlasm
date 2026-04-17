@@ -1,0 +1,6 @@
+SET MODE,0
+IFDEF MODE
+ nop
+ELSEASM
+ add r0,1
+ENDIFASM

@@ -1,0 +1,12 @@
+SET DEBUG,1
+MACRO save reg
+ push \reg
+MEND
+MACRO restore reg
+ pop \reg
+MEND
+IFDEF DEBUG
+ nop
+ENDIFASM
+save r0
+restore r0

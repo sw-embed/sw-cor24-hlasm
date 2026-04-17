@@ -1,0 +1,1 @@
+implemented macro expansion with positional parameter substitution (&N) and unique \@ label generation. expanded macro table to 15-byte entries, added _expand_macro/_expand_body_line/_get_arg_start subroutines, and 3 regression tests. all 9 tests pass.
