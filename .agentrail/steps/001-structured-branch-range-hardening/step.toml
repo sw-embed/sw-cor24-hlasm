@@ -1,0 +1,8 @@
+number = 1
+slug = "structured-branch-range-hardening"
+status = "pending"
+description = "Harden structured control-flow lowering for branch distance limits. Audit IF/..."
+role = "production"
+context_files = []
+created_at = "2026-04-16T21:46:24"
+commits = []

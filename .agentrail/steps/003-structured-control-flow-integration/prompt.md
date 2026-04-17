@@ -1,0 +1,1 @@
+Run an integration pass across structured IF, DO, and SELECT once branch-range hardening is in place. Tighten docs, demos, and combined proofs around the supported subset.

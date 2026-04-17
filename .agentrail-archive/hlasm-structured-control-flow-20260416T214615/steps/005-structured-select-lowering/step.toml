@@ -1,0 +1,8 @@
+number = 5
+slug = "structured-select-lowering"
+status = "pending"
+description = "Implement structured SELECT/WHEN/OTHERWISE/ENDSEL lowering in hlasm.s using the established label/stack model after branch-range hardening."
+role = "legacy"
+context_files = []
+created_at = "2026-04-16T21:43:18"
+commits = []

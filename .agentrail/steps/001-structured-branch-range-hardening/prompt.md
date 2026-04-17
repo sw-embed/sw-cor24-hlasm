@@ -1,0 +1,1 @@
+Harden structured control-flow lowering for branch distance limits. Audit IF/ELSEIF/DO/DOEXIT/ITERATE/ENDDO emission paths, add long-range-safe branch patterns where short bra/brt/brf targets may overflow, prove the behavior with demos/regressions that force longer blocks, and update docs to record the correctness-first range-handling model.

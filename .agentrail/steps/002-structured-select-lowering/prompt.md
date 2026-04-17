@@ -1,0 +1,1 @@
+Implement structured SELECT/WHEN/OTHERWISE/ENDSEL lowering in hlasm.s using the hardened structured-control-flow emission model. Add a demo plus reg-rs proof for multi-arm dispatch and update docs.

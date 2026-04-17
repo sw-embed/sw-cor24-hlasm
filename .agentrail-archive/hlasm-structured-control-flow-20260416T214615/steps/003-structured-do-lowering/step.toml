@@ -1,8 +1,9 @@
 number = 3
 slug = "structured-do-lowering"
-status = "in-progress"
+status = "completed"
 description = "Implement structured DO/DOEXIT/ITERATE/ENDDO lowering in hlasm.s. Preserve ex..."
 role = "production"
 context_files = []
 created_at = "2026-04-16T20:54:08"
-commits = []
+completed_at = "2026-04-16T21:43:18"
+commits = ["4ddca5534587ebdd9a8c909aa2786557215963d8"]

@@ -1,0 +1,1 @@
+Implemented structured DO/DOEXIT/ITERATE/ENDDO lowering in hlasm.s, added the d12 demo/regression proof, and preserved the existing structured-IF and helper-ABI behavior while introducing a loop-frame stack and DO label emission helpers.
