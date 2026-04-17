@@ -1,4 +1,4 @@
-command = 'bash reg-rs/make_cfg.sh reg-rs/s15_named_include.cfg.txt /tmp/sw-cor24-hlasm-s15.cfg && cor24-run --run hlasm.s --load-binary demos/d23_named_include_main.bin@589824 --load-binary demos/d23_named_include_extra.bin@528384 --load-binary /tmp/sw-cor24-hlasm-s15.cfg@520192 --stack-kilobytes 3 --speed 0 -n 120000 2>&1'
+command = 'bash reg-rs/run_bootstrap_loader.sh demos/d23_named_include_loader.hlasm 120000 2>&1'
 timeout = 15
 preprocess = "grep -A 100 '^UART output:' || true"
 exit_code = 0

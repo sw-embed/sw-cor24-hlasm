@@ -1,0 +1,1 @@
+Replaced hand-authored named-include config blobs with a shell builder and readable manifest files, while keeping the low-SRAM config layout and runtime include lookup unchanged.

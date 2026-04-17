@@ -1,0 +1,6 @@
+; Host-side bootstrap loader spec for Demo 24.
+MAIN demos/d24_nested_named_include_main.bin@589824
+SRCBUF 1,demos/d24_nested_named_include_mid.bin@528384
+SRCBUF 2,demos/d24_nested_named_include_tail.bin@532480
+INCLUDE mid,1
+INCLUDE tail,2

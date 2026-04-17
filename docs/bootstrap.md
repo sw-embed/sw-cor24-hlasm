@@ -115,6 +115,14 @@ same config image from readable manifest files with `main`, `extra`, and
 source-friendly text while `hlasm.s` continues to consume the unchanged binary
 format at `0x07F000`.
 
+Step 18 adds one more layer above that builder for bootstrap runs: a loader
+spec written in assembler-flavored text. The current named-include demos use
+`MAIN file@addr`, `SRCBUF slot,file@addr`, and `INCLUDE name,slot`, and the
+host-side runner derives lengths from the loaded `.bin` files before emitting
+the same binary config block. That keeps `hlasm.s` and the runtime INCLUDE
+path unchanged while moving the named-buffer declarations out of `reg-rs`
+internals and into demo-adjacent source files.
+
 `hlasm.s` currently walks the source portion of that table into a small
 in-memory descriptor set, which is enough to model include-like source
 chaining with multiple preloaded ASCII buffers. That keeps the input side

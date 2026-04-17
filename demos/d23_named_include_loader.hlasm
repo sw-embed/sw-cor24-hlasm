@@ -1,0 +1,4 @@
+; Host-side bootstrap loader spec for Demo 23.
+MAIN demos/d23_named_include_main.bin@589824
+SRCBUF 1,demos/d23_named_include_extra.bin@528384
+INCLUDE tail,1

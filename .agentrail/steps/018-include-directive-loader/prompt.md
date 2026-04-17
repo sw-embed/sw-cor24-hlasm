@@ -1,0 +1,1 @@
+Build a source-level way to load include-table entries for bootstrap runs without hand-editing reg-rs manifests. Keep the current binary config layout and the runtime INCLUDE lookup path unchanged, but define a more assembler-facing workflow for declaring named include buffers.

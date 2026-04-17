@@ -105,6 +105,10 @@ INCLUDE tail        ; resolve "tail" through the low-SRAM include-name table,
                     ; then include that slot and resume the caller source
 ```
 
+Named-include bootstrap demos now pair the `.hlasm` source with a small
+loader spec that declares the host-side buffer map in assembler-flavored text:
+`MAIN file@addr`, `SRCBUF slot,file@addr`, `INCLUDE name,slot`.
+
 Conditionals can nest:
 ```
 SET OUTER,1

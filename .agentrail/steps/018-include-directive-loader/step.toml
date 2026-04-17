@@ -1,0 +1,8 @@
+number = 18
+slug = "include-directive-loader"
+status = "in-progress"
+description = "Build a source-level way to load include-table entries for bootstrap runs wit..."
+role = "legacy"
+context_files = []
+created_at = "2026-04-16T20:05:33"
+commits = []
