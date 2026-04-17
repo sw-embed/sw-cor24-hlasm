@@ -1,0 +1,1 @@
+Tighten macro-definition and invocation behavior toward HLASM-like expectations. Suppress MACRO/MEND definition lines from emitted output, keep simple invocation expansion stable, document the currently supported macro subset, and add or refresh proofs only after behavior is correct. Verify with targeted macro regressions and ./build.sh test.

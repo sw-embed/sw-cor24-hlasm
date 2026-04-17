@@ -1,0 +1,8 @@
+number = 4
+slug = "004-structured-control-flow-integration"
+status = "pending"
+description = "Resume the structured IF/DO/SELECT integration pass only after macro compatib..."
+role = "production"
+context_files = []
+created_at = "2026-04-16T22:35:32"
+commits = []

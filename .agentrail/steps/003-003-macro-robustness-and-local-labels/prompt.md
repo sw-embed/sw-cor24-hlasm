@@ -1,0 +1,1 @@
+Harden multiple macro definitions, repeated invocations, and local-label behavior toward HLASM-like expectations. Fix remaining macro-state edge cases, refresh proofs, and keep the full suite green. Verify with focused macro stress regressions and ./build.sh test.

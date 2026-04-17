@@ -1,0 +1,1 @@
+Resume the structured IF/DO/SELECT integration pass only after macro compatibility is stable. Tighten combined proofs and docs around the supported HLASM-like subset, and keep the full suite green throughout. Verify with a combined macro + conditional assembly + structured control-flow regression and ./build.sh test.

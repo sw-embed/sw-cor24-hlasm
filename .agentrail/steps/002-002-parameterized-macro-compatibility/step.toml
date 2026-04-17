@@ -1,0 +1,8 @@
+number = 2
+slug = "002-parameterized-macro-compatibility"
+status = "pending"
+description = "Implement reliable parameterized macro substitution in the supported HLASM-li..."
+role = "production"
+context_files = []
+created_at = "2026-04-16T22:35:21"
+commits = []

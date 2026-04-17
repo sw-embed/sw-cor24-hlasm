@@ -1,0 +1,1 @@
+Implement reliable parameterized macro substitution in the supported HLASM-like form. Remove known-bug status from the parameterized macro demos/regressions only when behavior is correct and the suite stays green. Verify with targeted parameterized-macro proofs and ./build.sh test.
