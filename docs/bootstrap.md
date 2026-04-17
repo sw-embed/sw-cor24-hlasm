@@ -135,6 +135,12 @@ named include-source files, the host-side runner builds the corresponding
 `.bin` files, assigns the standard bootstrap load addresses, emits the same
 low-SRAM config image, and then invokes the unchanged runtime INCLUDE path.
 
+Step 21 folds that workflow into the repo's normal entry points. The split
+bootstrap proof can now be launched with `./build.sh bootstrap` or
+`just bootstrap`, so larger multi-file bootstrap trees do not need custom
+host-side command strings in order to build source images, map include
+buffers, and run stage0 with the unchanged config layout and INCLUDE path.
+
 `hlasm.s` currently walks the source portion of that table into a small
 in-memory descriptor set, which is enough to model include-like source
 chaining with multiple preloaded ASCII buffers. That keeps the input side

@@ -1,5 +1,5 @@
-command = 'bash reg-rs/run_bootstrap_sourceset.sh bootstrap/hlasm0.sourceset 120000 2>&1'
+command = './build.sh bootstrap bootstrap/hlasm0.sourceset 120000 2>&1'
 timeout = 15
 preprocess = "grep -A 100 '^UART output:' || true"
 exit_code = 0
-desc = "Demo 25: split bootstrap source set runs through the reusable host-side source-set runner"
+desc = "Demo 25: split bootstrap source set runs through the top-level bootstrap workflow"

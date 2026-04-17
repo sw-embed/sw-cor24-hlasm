@@ -1,0 +1,8 @@
+number = 21
+slug = "bootstrap-source-autobuild"
+status = "in-progress"
+description = "Extend the bootstrap source-set workflow so richer bootstrap runs can be laun..."
+role = "legacy"
+context_files = []
+created_at = "2026-04-16T20:20:07"
+commits = []

@@ -1,0 +1,1 @@
+Extend the bootstrap source-set workflow so richer bootstrap runs can be launched from source files alone, with less duplicated host-side setup. Keep the low-SRAM config layout and runtime INCLUDE lookup unchanged, but reduce the remaining friction around building and running larger multi-file bootstrap source trees.

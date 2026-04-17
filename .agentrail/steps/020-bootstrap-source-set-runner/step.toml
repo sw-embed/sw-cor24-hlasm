@@ -1,8 +1,9 @@
 number = 20
 slug = "bootstrap-source-set-runner"
-status = "in-progress"
+status = "completed"
 description = "Generalize the host-side bootstrap source-set runner so larger multi-file boo..."
 role = "legacy"
 context_files = []
 created_at = "2026-04-16T20:14:11"
-commits = []
+completed_at = "2026-04-16T20:20:07"
+commits = ["79ceb287e4ebee7c9c8ee702cb95be10e8a43e51"]

@@ -5,6 +5,7 @@ set -euo pipefail
 # Usage:
 #   ./build.sh              Assemble check only
 #   ./build.sh run          Build and run on emulator
+#   ./build.sh bootstrap    Build and run a bootstrap source set
 #   ./build.sh test         Run test suite
 #   ./build.sh clean        Remove build artifacts
 
@@ -37,6 +38,16 @@ run() {
     $RUN --run "$HLASM" --speed 0 "${@:2}"
 }
 
+bootstrap_run() {
+    local sourceset="${2:-bootstrap/hlasm0.sourceset}"
+    local max_insns="${3:-120000}"
+
+    build
+    echo ""
+    echo "=== Bootstrap Source Set ==="
+    bash reg-rs/run_bootstrap_sourceset.sh "$sourceset" "$max_insns"
+}
+
 test_suite() {
     echo "=== sw-cor24-hlasm Test Suite ==="
     if ! command -v reg-rs &>/dev/null; then
@@ -56,7 +67,8 @@ CMD="${1:-build}"
 case "$CMD" in
     build)  build ;;
     run)    shift; run "$@" ;;
+    bootstrap) bootstrap_run "$@" ;;
     test)   test_suite ;;
     clean)  clean ;;
-    *)      echo "Usage: $0 {build|run|test|clean}"; exit 1 ;;
+    *)      echo "Usage: $0 {build|run|bootstrap|test|clean}"; exit 1 ;;
 esac

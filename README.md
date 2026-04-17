@@ -45,6 +45,9 @@ just demo
 # Run tests
 just test
 
+# Run the split bootstrap proof
+just bootstrap
+
 # Or use shell scripts directly:
 ./build.sh          # build / test / run
 ./demo.sh           # demo / test / repl
