@@ -3810,7 +3810,7 @@ _id_buf:
 ; --- Source descriptor ---
 _src_desc:
 	.word	524288
-	.word	128
+	.word	4096
 	.word	0
 
 ; --- Step 5: Macro data ---

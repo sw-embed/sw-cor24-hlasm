@@ -22,6 +22,15 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d13 | SELECT/WHEN/ENDSEL | NOT IMPLEMENTED |
 | d14 | IFNDEF (not defined) | WORKS |
 | d15 | Realistic program | WORKS |
+| d16 | Bootstrap `hlasm0` subset | WORKS |
+
+## Demo Policy
+
+Every new HLASM feature or bootstrap milestone should add:
+
+- one source demo
+- one `reg-rs` regression test
+- one README status entry
 
 ## Running a Demo
 

@@ -1,0 +1,24 @@
+UART output: _main:
+ push fp
+ mov fp,sp
+ push r2
+ mov fp,sp
+ la r0,_ban
+ jal r1,(r0)
+_ban:
+ push fp
+ push r2
+ push r1
+ mov fp,sp
+ la r0,_tx
+ mov sp,fp
+ pop r1
+ pop r2
+ pop fp
+ jmp (r1)
+_tx:
+ .word 16711936
+
+
+Executed 45183 instructions
+CPU halted (self-branch detected)

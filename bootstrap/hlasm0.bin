@@ -1,0 +1,32 @@
+SET TR,1
+SET IO,1
+MACRO ENT
+ push fp
+ push r2
+ push r1
+ mov fp,sp
+MEND
+MACRO RET
+ mov sp,fp
+ pop r1
+ pop r2
+ pop fp
+ jmp (r1)
+MEND
+_main:
+ push fp
+ mov fp,sp
+ push r2
+ mov fp,sp
+IFDEF TR
+ la r0,_ban
+ jal r1,(r0)
+ENDIFASM
+IFDEF IO
+_ban:
+ENT
+ la r0,_tx
+RET
+ENDIFASM
+_tx:
+ .word 16711936

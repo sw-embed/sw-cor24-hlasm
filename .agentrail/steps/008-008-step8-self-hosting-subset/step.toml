@@ -1,0 +1,8 @@
+number = 8
+slug = "008-step8-self-hosting-subset"
+status = "in-progress"
+description = "Define the first self-hosting milestone for sw-cor24-hlasm. Identify the mini..."
+role = "legacy"
+context_files = []
+created_at = "2026-04-16T18:29:15"
+commits = []

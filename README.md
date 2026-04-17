@@ -54,6 +54,7 @@ just test
 
 ```
 hlasm.s        -- COR24 assembly source (the macro-assembler)
+bootstrap/     -- reduced self-hosting subset sources and proof points
 build.sh       -- build / test / run script
 demo.sh        -- demo script
 justfile       -- just targets
@@ -64,6 +65,7 @@ reg-rs/        -- reg-rs test specifications and baselines
 ## Documentation
 
 - [Architecture](docs/architecture.md) -- system overview and memory layout
+- [Bootstrap Plan](docs/bootstrap.md) -- staged self-hosting path and blockers
 - [PRD](docs/prd.md) -- product requirements and scope
 - [Design](docs/design.md) -- syntax, lowering rules, data structures
 - [Plan](docs/plan.md) -- step-by-step implementation roadmap
