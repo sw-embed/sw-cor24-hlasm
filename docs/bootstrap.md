@@ -141,6 +141,12 @@ bootstrap proof can now be launched with `./build.sh bootstrap` or
 host-side command strings in order to build source images, map include
 buffers, and run stage0 with the unchanged config layout and INCLUDE path.
 
+Step 22 makes the source-set model less brittle for growth. Source sets can
+now set a shared `ROOT`, override the main/extra base windows when needed, and
+choose an alignment for packed include buffers. The host-side runner assigns
+extra-buffer addresses from the actual built `.bin` sizes instead of assuming
+every include file needs the next fixed 4 KB window.
+
 `hlasm.s` currently walks the source portion of that table into a small
 in-memory descriptor set, which is enough to model include-like source
 chaining with multiple preloaded ASCII buffers. That keeps the input side

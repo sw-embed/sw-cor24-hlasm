@@ -1,0 +1,1 @@
+Added a top-level bootstrap workflow so the split bootstrap source-set proof can be launched through normal repo commands instead of bespoke helper invocations.

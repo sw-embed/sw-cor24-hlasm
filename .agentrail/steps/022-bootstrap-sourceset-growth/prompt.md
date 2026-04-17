@@ -1,0 +1,1 @@
+Extend the bootstrap workflow so larger source sets can grow without brittle per-run assumptions. Keep the low-SRAM config layout and runtime INCLUDE lookup unchanged, but improve the source-set model and host-side build/run path for more realistic multi-file bootstrap trees.

@@ -1,0 +1,8 @@
+number = 22
+slug = "bootstrap-sourceset-growth"
+status = "in-progress"
+description = "Extend the bootstrap workflow so larger source sets can grow without brittle ..."
+role = "legacy"
+context_files = []
+created_at = "2026-04-16T20:23:38"
+commits = []
