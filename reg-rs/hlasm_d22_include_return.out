@@ -1,41 +1,41 @@
-Assembled 12901 bytes
+Assembled 13435 bytes
 Loaded 33 bytes from 'demos/d22_include_return_main.bin' at 0x090000
 Loaded 33 bytes from 'demos/d22_include_return_extra.bin' at 0x081000
 Loaded 27 bytes from 'reg-rs/s14_include_return.cfg' at 0x07F000
 Running (speed: max IPS, time limit: 10s)...
 
-[UART TX @ 20000] 't'  (0x74)
-[UART TX @ 20000] 'a'  (0x61)
-[UART TX @ 20000] 'i'  (0x69)
-[UART TX @ 20000] 'l'  (0x6C)
-[UART TX @ 30000] ':'  (0x3A)
-[UART TX @ 30000] ''  (0x0D)
-[UART TX @ 30000] '\n'
-[UART TX @ 30000] ' '  (0x20)
-[UART TX @ 30000] 'b'  (0x62)
-[UART TX @ 30000] 'r'  (0x72)
-[UART TX @ 30000] 'a'  (0x61)
-[UART TX @ 30000] ' '  (0x20)
-[UART TX @ 30000] '_'  (0x5F)
-[UART TX @ 30000] 'h'  (0x68)
-[UART TX @ 30000] ''  (0x0D)
-[UART TX @ 30000] '\n'
-[UART TX @ 30000] '_'  (0x5F)
-[UART TX @ 30000] 'h'  (0x68)
-[UART TX @ 30000] ':'  (0x3A)
-[UART TX @ 30000] ''  (0x0D)
-[UART TX @ 30000] '\n'
-[UART TX @ 30000] ' '  (0x20)
-[UART TX @ 30000] 'b'  (0x62)
-[UART TX @ 30000] 'r'  (0x72)
-[UART TX @ 30000] 'a'  (0x61)
-[UART TX @ 30000] ' '  (0x20)
-[UART TX @ 30000] 't'  (0x74)
-[UART TX @ 30000] 'a'  (0x61)
-[UART TX @ 30000] 'i'  (0x69)
-[UART TX @ 30000] 'l'  (0x6C)
-[UART TX @ 30000] ''  (0x0D)
-[UART TX @ 30000] '\n'
+[UART TX @ 40000] 't'  (0x74)
+[UART TX @ 40000] 'a'  (0x61)
+[UART TX @ 40000] 'i'  (0x69)
+[UART TX @ 40000] 'l'  (0x6C)
+[UART TX @ 40000] ':'  (0x3A)
+[UART TX @ 40000] ''  (0x0D)
+[UART TX @ 40000] '\n'
+[UART TX @ 47814] ' '  (0x20)
+[UART TX @ 47814] 'b'  (0x62)
+[UART TX @ 47814] 'r'  (0x72)
+[UART TX @ 47814] 'a'  (0x61)
+[UART TX @ 47814] ' '  (0x20)
+[UART TX @ 47814] '_'  (0x5F)
+[UART TX @ 47814] 'h'  (0x68)
+[UART TX @ 47814] ''  (0x0D)
+[UART TX @ 47814] '\n'
+[UART TX @ 47814] '_'  (0x5F)
+[UART TX @ 47814] 'h'  (0x68)
+[UART TX @ 47814] ':'  (0x3A)
+[UART TX @ 47814] ''  (0x0D)
+[UART TX @ 47814] '\n'
+[UART TX @ 47814] ' '  (0x20)
+[UART TX @ 47814] 'b'  (0x62)
+[UART TX @ 47814] 'r'  (0x72)
+[UART TX @ 47814] 'a'  (0x61)
+[UART TX @ 47814] ' '  (0x20)
+[UART TX @ 47814] 't'  (0x74)
+[UART TX @ 47814] 'a'  (0x61)
+[UART TX @ 47814] 'i'  (0x69)
+[UART TX @ 47814] 'l'  (0x6C)
+[UART TX @ 47814] ''  (0x0D)
+[UART TX @ 47814] '\n'
 
 UART output: tail:
  bra _h
@@ -43,5 +43,5 @@ _h:
  bra tail
 
 
-Executed 30244 instructions
+Executed 47814 instructions
 CPU halted (self-branch detected)

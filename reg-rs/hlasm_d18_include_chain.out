@@ -1,4 +1,4 @@
-Assembled 12901 bytes
+Assembled 13435 bytes
 Loaded 43 bytes from 'demos/d18_include_main.bin' at 0x080000
 Loaded 45 bytes from 'demos/d18_include_mid.bin' at 0x081000
 Loaded 38 bytes from 'demos/d18_include_tail.bin' at 0x082000
@@ -6,5 +6,5 @@ Loaded 15 bytes from 'reg-rs/s10_include.cfg' at 0x07F000
 Running (speed: max IPS, time limit: 10s)...
 
 
-Executed 29161 instructions
+Executed 46731 instructions
 CPU halted (self-branch detected)

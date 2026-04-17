@@ -1,27 +1,27 @@
-Assembled 12901 bytes
+Assembled 13435 bytes
 Loaded 37 bytes from 'demos/d17_multi_buffer_main.bin' at 0x080000
 Loaded 23 bytes from 'demos/d17_multi_buffer_extra.bin' at 0x081000
 Loaded 9 bytes from 'reg-rs/s9_multibuf.cfg' at 0x07F000
 Running (speed: max IPS, time limit: 10s)...
 
-[UART TX @ 24474] '_'  (0x5F)
-[UART TX @ 24474] 'h'  (0x68)
-[UART TX @ 24474] ':'  (0x3A)
-[UART TX @ 24474] ''  (0x0D)
-[UART TX @ 24474] '\n'
-[UART TX @ 24474] ' '  (0x20)
-[UART TX @ 24474] 'b'  (0x62)
-[UART TX @ 24474] 'r'  (0x72)
-[UART TX @ 24474] 'a'  (0x61)
-[UART TX @ 24474] ' '  (0x20)
-[UART TX @ 24474] '_'  (0x5F)
-[UART TX @ 24474] 'h'  (0x68)
-[UART TX @ 24474] ''  (0x0D)
-[UART TX @ 24474] '\n'
+[UART TX @ 42044] '_'  (0x5F)
+[UART TX @ 42044] 'h'  (0x68)
+[UART TX @ 42044] ':'  (0x3A)
+[UART TX @ 42044] ''  (0x0D)
+[UART TX @ 42044] '\n'
+[UART TX @ 42044] ' '  (0x20)
+[UART TX @ 42044] 'b'  (0x62)
+[UART TX @ 42044] 'r'  (0x72)
+[UART TX @ 42044] 'a'  (0x61)
+[UART TX @ 42044] ' '  (0x20)
+[UART TX @ 42044] '_'  (0x5F)
+[UART TX @ 42044] 'h'  (0x68)
+[UART TX @ 42044] ''  (0x0D)
+[UART TX @ 42044] '\n'
 
 UART output: _h:
  bra _h
 
 
-Executed 24474 instructions
+Executed 42044 instructions
 CPU halted (self-branch detected)

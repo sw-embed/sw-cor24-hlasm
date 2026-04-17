@@ -1,0 +1,5 @@
+command = "cor24-run --run hlasm.s --load-binary demos/d31_large_source_macro_capacity.bin@524288 --speed 0 -n 12000000 2>&1"
+timeout = 20
+preprocess = "grep -A 40 '^_tail_ok:' || true"
+exit_code = 0
+desc = "Demo 31: large source window and high macro-count expansion"

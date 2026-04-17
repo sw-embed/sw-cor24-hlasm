@@ -181,7 +181,7 @@ _mc_skip_end:
 	jmp	(r1)
 
 _ml_not_recording:
-	la	r1,787551
+	la	r1,790710
 	lw	r0,0(r1)
 	ceq	r0,z
 	brt	_mlnr_directives
@@ -2965,7 +2965,7 @@ _init_runtime_arena:
 	push	r2
 	mov	fp,sp
 
-		la	r0,1840
+		la	r0,4350
 	push	r0
 	la	r0,786432
 	push	r0
@@ -2980,25 +2980,25 @@ _init_runtime_arena:
 	la	r1,786606
 	la	r0,524288
 	sw	r0,0(r1)
-	la	r0,4096
+	la	r0,32767
 	sw	r0,3(r1)
 	la	r0,0
 	sw	r0,6(r1)
 
 	la	r1,786642
-	la	r0,786888
+	la	r0,789552
 	sw	r0,0(r1)
 
-	la	r1,787545
-	la	r0,787416
+	la	r1,790704
+	la	r0,790575
 	sw	r0,0(r1)
 
-	la	r1,787548
+	la	r1,790707
 	la	r0,1
 	sw	r0,0(r1)
 
-	la	r1,787557
-	la	r0,786888
+	la	r1,790716
+	la	r0,789552
 	sw	r0,0(r1)
 
 	la	r1,787810
@@ -3840,7 +3840,7 @@ _emn_copy:
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r2,786648
+	la	r2,788304
 	add	r2,r0
 	pop	r1
 	la	r0,31
@@ -3902,27 +3902,27 @@ _emn_name_end:
 	pop	r1
 
 ; Set macro state to recording
-	la	r1,787551
+	la	r1,790710
 	la	r0,1
 	sw	r0,0(r1)
 
 ; Save current macro index
-	la	r1,787554
+	la	r1,790713
 	la	r2,786645
 	lw	r0,0(r2)
 	sw	r0,0(r1)
 
 ; Set body ptr to current _macro_body_start
-	la	r1,787554
+	la	r1,790713
 	lw	r0,0(r1)
 	push	r0
 	la	r0,_mul39
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,786648
+	la	r1,788304
 	add	r1,r0
 
-	la	r0,787557
+	la	r0,790716
 	lw	r0,0(r0)
 	sw	r0,33(r1)
 
@@ -4353,7 +4353,7 @@ _rml_has_len:
 
 	la	r0,786432
 	sw	r0,-3(fp)
-	la	r1,787557
+	la	r1,790716
 	lw	r0,0(r1)
 	sw	r0,-6(fp)
 
@@ -4545,7 +4545,7 @@ _rml_copy_amp:
 		sb	r0,0(r2)
 		add	r2,1
 
-		la	r1,787557
+		la	r1,790716
 		sw	r2,0(r1)
 
 	_rml_done:
@@ -4563,22 +4563,22 @@ _finish_macro:
 	mov	fp,sp
 
 ; Get macro table entry for current recording index
-	la	r1,787554
+	la	r1,790713
 	lw	r0,0(r1)
 	push	r0
 	la	r0,_mul39
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,786648
+	la	r1,788304
 	add	r1,r0
 
 ; Store body end position
-	la	r0,787557
+	la	r0,790716
 	lw	r0,0(r0)
 	sw	r0,36(r1)
 
 ; Clear macro state
-	la	r1,787551
+	la	r1,790710
 	la	r0,0
 	sw	r0,0(r1)
 
@@ -4649,7 +4649,7 @@ _lm_tbl_loop:
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r1,786648
+	la	r1,788304
 	add	r1,r0
 
 ; Compare table name (r1) with line_buf name (saved at 0(fp))
@@ -4725,7 +4725,7 @@ _expand_macro:
 	la	r0,_mul39
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,786648
+	la	r1,788304
 	add	r1,r0
 
 	lw	r2,33(r1)
@@ -4761,7 +4761,7 @@ _exm_loop:
 	bra	_exm_loop
 
 _exm_done:
-	la	r1,787548
+	la	r1,790707
 	lw	r0,0(r1)
 	add	r0,1
 	sw	r0,0(r1)
@@ -4786,7 +4786,7 @@ _expand_body_line:
 	push	r2
 	mov	fp,sp
 
-	la	r1,787416
+	la	r1,790575
 	sw	r1,0(fp)
 
 	lw	r2,15(fp)
@@ -4900,18 +4900,18 @@ _ebl_bslash:
 
 	push	r2
 
-	la	r1,787545
+	la	r1,790704
 	lw	r0,0(fp)
 	sw	r0,0(r1)
 
-	la	r0,787548
+	la	r0,790707
 	lw	r0,0(r0)
 	push	r0
 	la	r0,_emit_num4_to_buf
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r1,787545
+	la	r1,790704
 	lw	r0,0(r1)
 	sw	r0,0(fp)
 
@@ -4968,7 +4968,7 @@ _emit_char_to_buf:
 	push	r2
 	mov	fp,sp
 
-	la	r2,787545
+	la	r2,790704
 	lw	r1,0(r2)
 
 	lw	r0,9(fp)
@@ -5218,7 +5218,7 @@ _emit_expand_buf:
 	push	r2
 	mov	fp,sp
 
-	la	r1,787416
+	la	r1,790575
 
 _eeb_loop:
 	lbu	r0,0(r1)
@@ -7955,7 +7955,7 @@ _src_copy_idx:
 
 _src_desc:
 	.word	524288
-	.word	4096
+	.word	32767
 	.word	0
 
 _src_desc2:

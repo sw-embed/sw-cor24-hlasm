@@ -37,6 +37,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d28 | Macro robustness stress | WORKS |
 | d29 | Control-flow integration proof | WORKS |
 | d30 | Structured annotation comments | WORKS |
+| d31 | Large source + macro capacity | WORKS |
 
 ## Demo Policy
 

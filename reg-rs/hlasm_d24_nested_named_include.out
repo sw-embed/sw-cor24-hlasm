@@ -1,80 +1,80 @@
-Assembled 12901 bytes
+Assembled 13435 bytes
 Loaded 29 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d24_nested_named_include_main.bin' at 0x090000
 Loaded 43 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d24_nested_named_include_mid.bin' at 0x081000
 Loaded 13 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d24_nested_named_include_tail.bin' at 0x081100
-Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-71283.cfg' at 0x07F000
+Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-42421.cfg' at 0x07F000
 Running (speed: max IPS, time limit: 10s)...
 
-[UART TX @ 20000] 'm'  (0x6D)
-[UART TX @ 20000] 'i'  (0x69)
-[UART TX @ 20000] 'd'  (0x64)
-[UART TX @ 20000] '_'  (0x5F)
-[UART TX @ 20000] 'e'  (0x65)
-[UART TX @ 20000] 'n'  (0x6E)
-[UART TX @ 20000] 't'  (0x74)
-[UART TX @ 20000] 'r'  (0x72)
-[UART TX @ 20000] 'y'  (0x79)
-[UART TX @ 20000] ':'  (0x3A)
-[UART TX @ 20000] ''  (0x0D)
-[UART TX @ 20000] '\n'
-[UART TX @ 30000] 't'  (0x74)
-[UART TX @ 30000] 'a'  (0x61)
-[UART TX @ 30000] 'i'  (0x69)
-[UART TX @ 30000] 'l'  (0x6C)
-[UART TX @ 30000] ':'  (0x3A)
-[UART TX @ 30000] ''  (0x0D)
-[UART TX @ 30000] '\n'
-[UART TX @ 30000] ' '  (0x20)
-[UART TX @ 30000] 'b'  (0x62)
-[UART TX @ 30000] 'r'  (0x72)
-[UART TX @ 30000] 'a'  (0x61)
-[UART TX @ 30000] ' '  (0x20)
-[UART TX @ 30000] '_'  (0x5F)
-[UART TX @ 30000] 'h'  (0x68)
-[UART TX @ 30000] ''  (0x0D)
-[UART TX @ 30000] '\n'
-[UART TX @ 30000] 'm'  (0x6D)
-[UART TX @ 30000] 'i'  (0x69)
-[UART TX @ 30000] 'd'  (0x64)
-[UART TX @ 30000] '_'  (0x5F)
-[UART TX @ 30000] 'd'  (0x64)
-[UART TX @ 30000] 'o'  (0x6F)
-[UART TX @ 30000] 'n'  (0x6E)
-[UART TX @ 30000] 'e'  (0x65)
-[UART TX @ 30000] ':'  (0x3A)
-[UART TX @ 30000] ''  (0x0D)
-[UART TX @ 30000] '\n'
-[UART TX @ 38115] ' '  (0x20)
-[UART TX @ 38115] 'b'  (0x62)
-[UART TX @ 38115] 'r'  (0x72)
-[UART TX @ 38115] 'a'  (0x61)
-[UART TX @ 38115] ' '  (0x20)
-[UART TX @ 38115] 't'  (0x74)
-[UART TX @ 38115] 'a'  (0x61)
-[UART TX @ 38115] 'i'  (0x69)
-[UART TX @ 38115] 'l'  (0x6C)
-[UART TX @ 38115] ''  (0x0D)
-[UART TX @ 38115] '\n'
-[UART TX @ 38115] '_'  (0x5F)
-[UART TX @ 38115] 'h'  (0x68)
-[UART TX @ 38115] ':'  (0x3A)
-[UART TX @ 38115] ''  (0x0D)
-[UART TX @ 38115] '\n'
-[UART TX @ 38115] ' '  (0x20)
-[UART TX @ 38115] 'b'  (0x62)
-[UART TX @ 38115] 'r'  (0x72)
-[UART TX @ 38115] 'a'  (0x61)
-[UART TX @ 38115] ' '  (0x20)
-[UART TX @ 38115] 'm'  (0x6D)
-[UART TX @ 38115] 'i'  (0x69)
-[UART TX @ 38115] 'd'  (0x64)
-[UART TX @ 38115] '_'  (0x5F)
-[UART TX @ 38115] 'd'  (0x64)
-[UART TX @ 38115] 'o'  (0x6F)
-[UART TX @ 38115] 'n'  (0x6E)
-[UART TX @ 38115] 'e'  (0x65)
-[UART TX @ 38115] ''  (0x0D)
-[UART TX @ 38115] '\n'
+[UART TX @ 40000] 'm'  (0x6D)
+[UART TX @ 40000] 'i'  (0x69)
+[UART TX @ 40000] 'd'  (0x64)
+[UART TX @ 40000] '_'  (0x5F)
+[UART TX @ 40000] 'e'  (0x65)
+[UART TX @ 40000] 'n'  (0x6E)
+[UART TX @ 40000] 't'  (0x74)
+[UART TX @ 40000] 'r'  (0x72)
+[UART TX @ 40000] 'y'  (0x79)
+[UART TX @ 40000] ':'  (0x3A)
+[UART TX @ 40000] ''  (0x0D)
+[UART TX @ 40000] '\n'
+[UART TX @ 40000] 't'  (0x74)
+[UART TX @ 40000] 'a'  (0x61)
+[UART TX @ 40000] 'i'  (0x69)
+[UART TX @ 40000] 'l'  (0x6C)
+[UART TX @ 40000] ':'  (0x3A)
+[UART TX @ 40000] ''  (0x0D)
+[UART TX @ 40000] '\n'
+[UART TX @ 50000] ' '  (0x20)
+[UART TX @ 50000] 'b'  (0x62)
+[UART TX @ 50000] 'r'  (0x72)
+[UART TX @ 50000] 'a'  (0x61)
+[UART TX @ 50000] ' '  (0x20)
+[UART TX @ 50000] '_'  (0x5F)
+[UART TX @ 50000] 'h'  (0x68)
+[UART TX @ 50000] ''  (0x0D)
+[UART TX @ 50000] '\n'
+[UART TX @ 50000] 'm'  (0x6D)
+[UART TX @ 50000] 'i'  (0x69)
+[UART TX @ 50000] 'd'  (0x64)
+[UART TX @ 50000] '_'  (0x5F)
+[UART TX @ 50000] 'd'  (0x64)
+[UART TX @ 50000] 'o'  (0x6F)
+[UART TX @ 50000] 'n'  (0x6E)
+[UART TX @ 50000] 'e'  (0x65)
+[UART TX @ 50000] ':'  (0x3A)
+[UART TX @ 50000] ''  (0x0D)
+[UART TX @ 50000] '\n'
+[UART TX @ 50000] ' '  (0x20)
+[UART TX @ 50000] 'b'  (0x62)
+[UART TX @ 50000] 'r'  (0x72)
+[UART TX @ 50000] 'a'  (0x61)
+[UART TX @ 50000] ' '  (0x20)
+[UART TX @ 50000] 't'  (0x74)
+[UART TX @ 50000] 'a'  (0x61)
+[UART TX @ 50000] 'i'  (0x69)
+[UART TX @ 50000] 'l'  (0x6C)
+[UART TX @ 50000] ''  (0x0D)
+[UART TX @ 50000] '\n'
+[UART TX @ 55685] '_'  (0x5F)
+[UART TX @ 55685] 'h'  (0x68)
+[UART TX @ 55685] ':'  (0x3A)
+[UART TX @ 55685] ''  (0x0D)
+[UART TX @ 55685] '\n'
+[UART TX @ 55685] ' '  (0x20)
+[UART TX @ 55685] 'b'  (0x62)
+[UART TX @ 55685] 'r'  (0x72)
+[UART TX @ 55685] 'a'  (0x61)
+[UART TX @ 55685] ' '  (0x20)
+[UART TX @ 55685] 'm'  (0x6D)
+[UART TX @ 55685] 'i'  (0x69)
+[UART TX @ 55685] 'd'  (0x64)
+[UART TX @ 55685] '_'  (0x5F)
+[UART TX @ 55685] 'd'  (0x64)
+[UART TX @ 55685] 'o'  (0x6F)
+[UART TX @ 55685] 'n'  (0x6E)
+[UART TX @ 55685] 'e'  (0x65)
+[UART TX @ 55685] ''  (0x0D)
+[UART TX @ 55685] '\n'
 
 UART output: mid_entry:
 tail:
@@ -85,5 +85,5 @@ _h:
  bra mid_done
 
 
-Executed 38115 instructions
+Executed 55685 instructions
 CPU halted (self-branch detected)

@@ -1,6 +1,6 @@
 number = 2
 slug = "rpg2-generated-emission-fix"
-status = "pending"
+status = "in-progress"
 description = "Fix the blocker exposed by ../sw-cor24-rpg-ii: ./build.sh build is generating..."
 role = "production"
 context_files = []

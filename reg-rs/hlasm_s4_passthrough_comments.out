@@ -1,37 +1,37 @@
-Assembled 12901 bytes
+Assembled 13435 bytes
 Loaded 24 bytes from 'reg-rs/s4_comments.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
-[UART TX @ 19572] 'n'  (0x6E)
-[UART TX @ 19572] 'o'  (0x6F)
-[UART TX @ 19572] 'p'  (0x70)
-[UART TX @ 19572] ' '  (0x20)
-[UART TX @ 19572] ';'  (0x3B)
-[UART TX @ 19572] ' '  (0x20)
-[UART TX @ 19572] 'c'  (0x63)
-[UART TX @ 19572] 'o'  (0x6F)
-[UART TX @ 19572] 'm'  (0x6D)
-[UART TX @ 19572] 'm'  (0x6D)
-[UART TX @ 19572] 'e'  (0x65)
-[UART TX @ 19572] 'n'  (0x6E)
-[UART TX @ 19572] 't'  (0x74)
-[UART TX @ 19572] ''  (0x0D)
-[UART TX @ 19572] '\n'
-[UART TX @ 19572] 'a'  (0x61)
-[UART TX @ 19572] 'd'  (0x64)
-[UART TX @ 19572] 'd'  (0x64)
-[UART TX @ 19572] ' '  (0x20)
-[UART TX @ 19572] 'r'  (0x72)
-[UART TX @ 19572] '0'  (0x30)
-[UART TX @ 19572] ','  (0x2C)
-[UART TX @ 19572] 'r'  (0x72)
-[UART TX @ 19572] '1'  (0x31)
-[UART TX @ 19572] ''  (0x0D)
-[UART TX @ 19572] '\n'
+[UART TX @ 37142] 'n'  (0x6E)
+[UART TX @ 37142] 'o'  (0x6F)
+[UART TX @ 37142] 'p'  (0x70)
+[UART TX @ 37142] ' '  (0x20)
+[UART TX @ 37142] ';'  (0x3B)
+[UART TX @ 37142] ' '  (0x20)
+[UART TX @ 37142] 'c'  (0x63)
+[UART TX @ 37142] 'o'  (0x6F)
+[UART TX @ 37142] 'm'  (0x6D)
+[UART TX @ 37142] 'm'  (0x6D)
+[UART TX @ 37142] 'e'  (0x65)
+[UART TX @ 37142] 'n'  (0x6E)
+[UART TX @ 37142] 't'  (0x74)
+[UART TX @ 37142] ''  (0x0D)
+[UART TX @ 37142] '\n'
+[UART TX @ 37142] 'a'  (0x61)
+[UART TX @ 37142] 'd'  (0x64)
+[UART TX @ 37142] 'd'  (0x64)
+[UART TX @ 37142] ' '  (0x20)
+[UART TX @ 37142] 'r'  (0x72)
+[UART TX @ 37142] '0'  (0x30)
+[UART TX @ 37142] ','  (0x2C)
+[UART TX @ 37142] 'r'  (0x72)
+[UART TX @ 37142] '1'  (0x31)
+[UART TX @ 37142] ''  (0x0D)
+[UART TX @ 37142] '\n'
 
 UART output: nop ; comment
 add r0,r1
 
 
-Executed 19572 instructions
+Executed 37142 instructions
 CPU halted (self-branch detected)

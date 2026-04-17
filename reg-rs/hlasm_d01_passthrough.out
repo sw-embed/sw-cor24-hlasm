@@ -1,35 +1,35 @@
-Assembled 12901 bytes
+Assembled 13435 bytes
 Loaded 19 bytes from 'demos/d01_passthrough.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
-[UART TX @ 20000] 'n'  (0x6E)
-[UART TX @ 20000] 'o'  (0x6F)
-[UART TX @ 20000] 'p'  (0x70)
-[UART TX @ 20000] ''  (0x0D)
-[UART TX @ 20000] '\n'
-[UART TX @ 20000] 'h'  (0x68)
-[UART TX @ 20000] 'a'  (0x61)
-[UART TX @ 20000] 'l'  (0x6C)
-[UART TX @ 20000] 't'  (0x74)
-[UART TX @ 20000] ':'  (0x3A)
-[UART TX @ 20000] ''  (0x0D)
-[UART TX @ 20000] '\n'
-[UART TX @ 21434] ' '  (0x20)
-[UART TX @ 21434] 'b'  (0x62)
-[UART TX @ 21434] 'r'  (0x72)
-[UART TX @ 21434] 'a'  (0x61)
-[UART TX @ 21434] ' '  (0x20)
-[UART TX @ 21434] 'h'  (0x68)
-[UART TX @ 21434] 'a'  (0x61)
-[UART TX @ 21434] 'l'  (0x6C)
-[UART TX @ 21434] 't'  (0x74)
-[UART TX @ 21434] ''  (0x0D)
-[UART TX @ 21434] '\n'
+[UART TX @ 39004] 'n'  (0x6E)
+[UART TX @ 39004] 'o'  (0x6F)
+[UART TX @ 39004] 'p'  (0x70)
+[UART TX @ 39004] ''  (0x0D)
+[UART TX @ 39004] '\n'
+[UART TX @ 39004] 'h'  (0x68)
+[UART TX @ 39004] 'a'  (0x61)
+[UART TX @ 39004] 'l'  (0x6C)
+[UART TX @ 39004] 't'  (0x74)
+[UART TX @ 39004] ':'  (0x3A)
+[UART TX @ 39004] ''  (0x0D)
+[UART TX @ 39004] '\n'
+[UART TX @ 39004] ' '  (0x20)
+[UART TX @ 39004] 'b'  (0x62)
+[UART TX @ 39004] 'r'  (0x72)
+[UART TX @ 39004] 'a'  (0x61)
+[UART TX @ 39004] ' '  (0x20)
+[UART TX @ 39004] 'h'  (0x68)
+[UART TX @ 39004] 'a'  (0x61)
+[UART TX @ 39004] 'l'  (0x6C)
+[UART TX @ 39004] 't'  (0x74)
+[UART TX @ 39004] ''  (0x0D)
+[UART TX @ 39004] '\n'
 
 UART output: nop
 halt:
  bra halt
 
 
-Executed 21434 instructions
+Executed 39004 instructions
 CPU halted (self-branch detected)
