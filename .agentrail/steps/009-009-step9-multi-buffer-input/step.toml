@@ -1,6 +1,6 @@
 number = 9
 slug = "009-step9-multi-buffer-input"
-status = "pending"
+status = "in-progress"
 description = "Implement multi-buffer source input for sw-cor24-hlasm using the cor24-run mo..."
 role = "legacy"
 context_files = []
