@@ -74,6 +74,11 @@ That means `hlasm` does not need a host-side include mechanism to get started.
 Stage0 can consume source and include-file buffers entirely through the
 existing emulator interface.
 
+The current step-9 proof point uses a small fixed config block at `0x07F000`
+to advertise an optional second source buffer. That is intentionally simple:
+it proves the multi-buffer path now, and a future include mechanism can build
+on the same descriptor idea without changing the target-native loading model.
+
 ## Step 8 Deliverable
 
 This step introduces the first bootstrap-oriented split:

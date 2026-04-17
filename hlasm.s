@@ -35,6 +35,9 @@ _main:
 	la	r0,0
 	sw	r0,0(r1)
 
+	la	r0,_init_src_table
+	jal	r1,(r0)
+
 _ml_loop:
 	push	r0
 	la	r0,_read_line
@@ -448,7 +451,7 @@ _ml_finish:
 ; Returns: r0 = line length (0 on EOF)
 ; Frame: push fp, r1, r2, r2 = 12 bytes.
 ; 0(fp) = current length counter
-; Uses _line_buf for storage, _src_desc for input.
+; Uses _line_buf for storage, _src_desc table for input.
 _read_line:
 	push	fp
 	push	r1
@@ -484,6 +487,14 @@ _rl_loop:
 	bra	_rl_loop
 
 _rl_eof:
+	push	r1
+	la	r0,_advance_src_desc
+	jal	r1,(r0)
+	pop	r1
+
+	ceq	r0,z
+	brf	_rl_loop
+
 	lw	r0,0(fp)
 	ceq	r0,z
 	brt	_rl_empty
@@ -1937,8 +1948,86 @@ _ed24_ret:
 	pop	fp
 	jmp	(r1)
 
+; _init_src_table: Initialize source descriptors and optional secondary buffer
+; config from 0x07F000.
+_init_src_table:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	la	r1,_src_count
+	la	r0,1
+	sw	r0,0(r1)
+
+	la	r1,_src_active_idx
+	la	r0,0
+	sw	r0,0(r1)
+
+	la	r1,_src_desc
+	la	r0,0
+	sw	r0,6(r1)
+
+	la	r1,_src_desc2
+	la	r0,0
+	sw	r0,0(r1)
+	sw	r0,3(r1)
+	sw	r0,6(r1)
+
+	la	r2,520192
+	lw	r0,0(r2)
+	ceq	r0,z
+	brt	_ist_ret
+
+	la	r1,_src_desc2
+	lw	r0,3(r2)
+	sw	r0,0(r1)
+	lw	r0,6(r2)
+	sw	r0,3(r1)
+
+	la	r1,_src_count
+	la	r0,2
+	sw	r0,0(r1)
+
+_ist_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _advance_src_desc: Switch to the next configured source buffer.
+; Returns: r0 = 1 if switched, 0 if no additional source exists.
+_advance_src_desc:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	la	r1,_src_count
+	lw	r1,0(r1)
+	la	r2,_src_active_idx
+	lw	r0,0(r2)
+	add	r0,1
+	clu	r0,r1
+	brf	_asd_no
+
+	sw	r0,0(r2)
+	la	r0,1
+	bra	_asd_ret
+
+_asd_no:
+	la	r0,0
+
+_asd_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
 ; _read_char: Read next byte from source buffer.
-; Arg (on stack): pointer to source descriptor
+; Arg (on stack): pointer to source descriptor table
 ; Returns: r0 = byte value (0-255), or 0 on EOF
 _read_char:
 	push	fp
@@ -1946,7 +2035,17 @@ _read_char:
 	push	r2
 	mov	fp,sp
 
-	lw	r2,9(fp)
+	la	r2,_src_active_idx
+	lw	r0,0(r2)
+	ceq	r0,z
+	brt	_rc_main
+	la	r2,_src_desc2
+	bra	_rc_have_desc
+
+_rc_main:
+	la	r2,_src_desc
+
+_rc_have_desc:
 
 	lw	r0,6(r2)
 	lw	r1,3(r2)
@@ -1975,7 +2074,7 @@ _read_ret:
 	jmp	(r1)
 
 ; _peek_char: Read current byte without advancing.
-; Arg (on stack): pointer to source descriptor
+; Arg (on stack): pointer to source descriptor table
 ; Returns: r0 = byte value (0-255), or 0 on EOF
 _peek_char:
 	push	fp
@@ -1983,7 +2082,17 @@ _peek_char:
 	push	r2
 	mov	fp,sp
 
-	lw	r2,9(fp)
+	la	r2,_src_active_idx
+	lw	r0,0(r2)
+	ceq	r0,z
+	brt	_pc_main
+	la	r2,_src_desc2
+	bra	_pc_have_desc
+
+_pc_main:
+	la	r2,_src_desc
+
+_pc_have_desc:
 
 	lw	r0,6(r2)
 	lw	r1,3(r2)
@@ -3807,10 +3916,26 @@ _id_buf:
 	.byte 0, 0, 0, 0, 0, 0, 0, 0
 	.byte 0, 0, 0, 0, 0, 0, 0, 0
 
-; --- Source descriptor ---
+; --- Source descriptor table ---
+; Main source buffer is loaded at 0x080000.
+; Optional source buffer 2 is enabled by a small config block at 0x07F000:
+;   +0 non-zero enables buffer 2
+;   +3 base address of buffer 2
+;   +6 length of buffer 2
+_src_count:
+	.word	1
+
+_src_active_idx:
+	.word	0
+
 _src_desc:
 	.word	524288
 	.word	4096
+	.word	0
+
+_src_desc2:
+	.word	0
+	.word	0
 	.word	0
 
 ; --- Step 5: Macro data ---

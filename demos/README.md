@@ -23,6 +23,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d14 | IFNDEF (not defined) | WORKS |
 | d15 | Realistic program | WORKS |
 | d16 | Bootstrap `hlasm0` subset | WORKS |
+| d17 | Multi-buffer source input | WORKS |
 
 ## Demo Policy
 
