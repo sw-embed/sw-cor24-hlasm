@@ -98,6 +98,9 @@ Current baseline:
 - repeated macro invocation and `\@` local-label expansion are stable across
   multiple macro definitions
 - local-label behavior is still a partial subset, not full HLASM compatibility
+- macro bodies expand directly to plain output lines; conditional assembly and
+  structured IF/DO/SELECT are currently supported as source-level forms rather
+  than directives re-evaluated from inside macro bodies
 
 Near-term compatibility target:
 

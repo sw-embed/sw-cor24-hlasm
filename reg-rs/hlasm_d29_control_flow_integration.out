@@ -1,0 +1,44 @@
+UART output:  push r0
+ push r1
+nop
+ push r2
+ lc r2,0
+ ceq r0,r2
+ pop r2
+ brt _hlif_3_skip
+ jmp _hlif_1_false
+_hlif_3_skip:
+ push r2
+ jmp _hlif_2_end
+_hlif_1_false:
+ pop r2
+_hlif_2_end:
+_hldo_4_top:
+ add r0,1
+ push r2
+ lc r2,10
+ ceq r0,r2
+ pop r2
+ brt _hldo_6_skip
+ jmp _hldo_5_end
+_hldo_6_skip:
+ jmp _hldo_4_top
+ add r1,1
+ jmp _hldo_4_top
+_hldo_5_end:
+ push r2
+ lc r2,0
+ ceq r1,r2
+ pop r2
+ brt _hlsel_9_skip
+ jmp _hlsel_8_next
+_hlsel_9_skip:
+  nop
+ jmp _hlsel_7_end
+_hlsel_8_next:
+  sub r2,r2
+_hlsel_7_end:
+
+
+Executed 82906 instructions
+CPU halted (self-branch detected)

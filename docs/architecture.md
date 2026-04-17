@@ -80,6 +80,9 @@ compatibility and broader macro robustness are still being hardened in later
 steps.
 Macro names up to 31 characters are supported, and repeated `\@` local-label
 expansion now stays distinct across multiple macro definitions and invocations.
+Macro bodies still expand directly to emitted plain-text lines; the assembler
+does not yet reparse conditional-assembly or structured-control-flow
+directives that appear inside macro bodies.
 
 ### Macro Expander
 Substitutes positional `&N` and named `&name` parameters, with named

@@ -35,6 +35,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d26 | Structured branch-range hardening | WORKS |
 | d27 | Positional macro parameters | WORKS |
 | d28 | Macro robustness stress | WORKS |
+| d29 | Control-flow integration proof | WORKS |
 
 ## Demo Policy
 
@@ -68,6 +69,9 @@ Current supported baseline:
   expand stably
 - macro names up to 31 characters are supported
 - multi-macro/local-label robustness is not complete yet
+- macro bodies are plain text expansion; conditional-assembly directives and
+  structured control-flow keywords are supported as top-level source forms,
+  not as reparsed directives nested inside macro bodies
 
 ```
 MACRO name

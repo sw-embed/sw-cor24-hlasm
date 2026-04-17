@@ -1,0 +1,26 @@
+MACRO savepair
+ push r0
+ push r1
+MEND
+savepair
+SET DEBUG,1
+IFDEF DEBUG
+nop
+ENDIFASM
+IF cc_eq, r0, 0
+ push r2
+ELSE
+ pop r2
+ENDIF
+DO
+ add r0,1
+ DOEXIT cc_eq, r0, 10
+ ITERATE
+ add r1,1
+ENDDO
+SELECT r1
+ WHEN 0
+  nop
+ OTHERWISE
+  sub r2,r2
+ENDSEL

@@ -1,6 +1,6 @@
 number = 4
 slug = "004-structured-control-flow-integration"
-status = "pending"
+status = "in-progress"
 description = "Resume the structured IF/DO/SELECT integration pass only after macro compatib..."
 role = "production"
 context_files = []
