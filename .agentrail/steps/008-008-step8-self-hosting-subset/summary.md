@@ -1,0 +1,1 @@
+Defined the first self-hosting milestone, added a bootstrap plan, introduced a reduced hlasm0 proof source, and increased the default source-buffer length so stage0 can read bootstrap-sized ASCII input.

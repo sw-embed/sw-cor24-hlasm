@@ -1,8 +1,9 @@
 number = 8
 slug = "008-step8-self-hosting-subset"
-status = "in-progress"
+status = "completed"
 description = "Define the first self-hosting milestone for sw-cor24-hlasm. Identify the mini..."
 role = "legacy"
 context_files = []
 created_at = "2026-04-16T18:29:15"
-commits = []
+completed_at = "2026-04-16T18:37:41"
+commits = ["c7dd7caef52f6a001d85b37feff6d1c51692d48b"]
