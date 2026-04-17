@@ -1,5 +1,5 @@
-command = 'cor24-run --run hlasm.s --load-binary demos/d21_directed_switch_main.bin@589824 --load-binary demos/d21_directed_switch_extra.bin@528384 --load-binary reg-rs/s13_directed_switch.cfg@520192 --stack-kilobytes 3 --speed 0 -n 120000 2>&1'
+command = "cor24-run --run hlasm.s --load-binary demos/d21_directed_switch_main.bin@589824 --load-binary demos/d21_directed_switch_extra.bin@528384 --load-binary reg-rs/s13_directed_switch.cfg@520192 --stack-kilobytes 3 --speed 0 -n 120000 2>&1"
 timeout = 15
 preprocess = "grep -A 100 '^UART output:' || true"
 exit_code = 0
-desc = 'Demo 21: patched main source explicitly switches to extra buffer slot 1 with SRCBUF'
+desc = "Demo 21: patched main source explicitly switches to extra buffer slot 1 with SRCBUF"

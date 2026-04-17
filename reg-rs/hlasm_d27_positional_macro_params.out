@@ -1,0 +1,53 @@
+Assembled 12457 bytes
+Loaded 58 bytes from 'demos/d27_positional_macro_params.bin' at 0x080000
+Running (speed: max IPS, time limit: 10s)...
+
+[UART TX @ 26334] ' '  (0x20)
+[UART TX @ 26334] 'p'  (0x70)
+[UART TX @ 26334] 'u'  (0x75)
+[UART TX @ 26334] 's'  (0x73)
+[UART TX @ 26334] 'h'  (0x68)
+[UART TX @ 26334] ' '  (0x20)
+[UART TX @ 26334] 'r'  (0x72)
+[UART TX @ 26334] '0'  (0x30)
+[UART TX @ 26334] ''  (0x0D)
+[UART TX @ 26334] '\n'
+[UART TX @ 26334] ' '  (0x20)
+[UART TX @ 26334] 'p'  (0x70)
+[UART TX @ 26334] 'u'  (0x75)
+[UART TX @ 26334] 's'  (0x73)
+[UART TX @ 26334] 'h'  (0x68)
+[UART TX @ 26334] ' '  (0x20)
+[UART TX @ 26334] 'r'  (0x72)
+[UART TX @ 26334] '1'  (0x31)
+[UART TX @ 26334] ''  (0x0D)
+[UART TX @ 26334] '\n'
+[UART TX @ 26334] ' '  (0x20)
+[UART TX @ 26334] 'p'  (0x70)
+[UART TX @ 26334] 'u'  (0x75)
+[UART TX @ 26334] 's'  (0x73)
+[UART TX @ 26334] 'h'  (0x68)
+[UART TX @ 26334] ' '  (0x20)
+[UART TX @ 26334] 'r'  (0x72)
+[UART TX @ 26334] '2'  (0x32)
+[UART TX @ 26334] ''  (0x0D)
+[UART TX @ 26334] '\n'
+[UART TX @ 26334] ' '  (0x20)
+[UART TX @ 26334] 'p'  (0x70)
+[UART TX @ 26334] 'u'  (0x75)
+[UART TX @ 26334] 's'  (0x73)
+[UART TX @ 26334] 'h'  (0x68)
+[UART TX @ 26334] ' '  (0x20)
+[UART TX @ 26334] 'r'  (0x72)
+[UART TX @ 26334] '3'  (0x33)
+[UART TX @ 26334] ''  (0x0D)
+[UART TX @ 26334] '\n'
+
+UART output:  push r0
+ push r1
+ push r2
+ push r3
+
+
+Executed 26334 instructions
+CPU halted (self-branch detected)

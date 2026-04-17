@@ -91,8 +91,10 @@ Current baseline:
 
 - `MACRO name` ... `MEND` definitions are recognized and suppressed from output
 - simple invocations expand by macro name lookup at the start of the line
-- parameter substitution and local-label behavior are still a partial subset,
-  not full HLASM compatibility
+- positional parameters `&1`, `&2`, ... expand
+- HLASM-style named parameters `&name` in the definition header and body
+  expand
+- local-label behavior is still a partial subset, not full HLASM compatibility
 
 Near-term compatibility target:
 
@@ -112,8 +114,21 @@ Invocation:
     PUSHREG
 ```
 
-Parameterized macro examples remain roadmap items rather than guaranteed
-current behavior.
+Named parameters:
+```
+MACRO PUSH2 &LEFT,&RIGHT
+    push &LEFT
+    push &RIGHT
+MEND
+```
+
+Positional parameters:
+```
+MACRO PUSH2
+    push &1
+    push &2
+MEND
+```
 
 ### Conditional Assembly
 

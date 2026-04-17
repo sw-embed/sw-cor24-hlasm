@@ -73,13 +73,17 @@ Stores macro definitions: name, parameter list, body token stream.
 Lookup on macro invocation. Supports nested macros.
 
 Current compatibility baseline is intentionally narrower than full IBM HLASM:
-simple `MACRO ... MEND` definitions are consumed rather than emitted, and
-simple invocation-by-name expansion is stable. Parameter substitution and
-full local-label compatibility are still being hardened in later steps.
+simple `MACRO ... MEND` definitions are consumed rather than emitted, simple
+invocation-by-name expansion is stable, positional `&1`/`&2` substitution
+works, and HLASM-style named `&arg` substitution works. Full local-label
+compatibility and broader macro robustness are still being hardened in later
+steps.
 
 ### Macro Expander
-Substitutes parameters (\name -> argument). Generates unique local labels
-(\@ -> unique counter). Handles nested expansion with depth limit.
+Substitutes positional `&N` and named `&name` parameters, with named
+parameters rewritten onto the positional expansion path at record time.
+Generates unique local labels (`\@` -> unique counter). Handles nested
+expansion with depth limit.
 
 ### Conditional Assembly
 Evaluates SET symbols, IFDEF, IFEQ at assembly time. Includes or excludes

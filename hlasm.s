@@ -2735,7 +2735,7 @@ _init_runtime_arena:
 	push	r2
 	mov	fp,sp
 
-		la	r0,1762
+		la	r0,1840
 	push	r0
 	la	r0,786432
 	push	r0
@@ -3667,7 +3667,372 @@ _emn_name_end:
 	lw	r0,0(r0)
 	sw	r0,9(r1)
 
+	la	r0,_parse_macro_params
+	jal	r1,(r0)
+
 _emn_done:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _parse_macro_params: Parse parameter names from the current MACRO line.
+; Stores count and 9-byte null-terminated names in runtime scratch.
+_parse_macro_params:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-9
+
+	la	r1,788194
+	la	r0,0
+	sw	r0,0(r1)
+	sw	r0,-6(fp)
+
+	la	r0,786432
+	sw	r0,-3(fp)
+	la	r0,5
+	lw	r1,-3(fp)
+	add	r1,r0
+	sw	r1,-3(fp)
+
+_pmp_skip_ws0:
+	lw	r1,-3(fp)
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brf	_pmp_skip_ws0_nz
+	la	r1,_pmp_ret
+	jmp	(r1)
+_pmp_skip_ws0_nz:
+	lc	r1,32
+	ceq	r0,r1
+	brt	_pmp_skip_ws0_1
+	lc	r1,9
+	ceq	r0,r1
+	brt	_pmp_skip_ws0_1
+	bra	_pmp_skip_name
+
+_pmp_skip_ws0_1:
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+	bra	_pmp_skip_ws0
+
+_pmp_skip_name:
+	lw	r1,-3(fp)
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brf	_pmp_skip_name_nz
+	la	r1,_pmp_ret
+	jmp	(r1)
+_pmp_skip_name_nz:
+	lc	r1,32
+	ceq	r0,r1
+	brt	_pmp_after_name
+	lc	r1,9
+	ceq	r0,r1
+	brt	_pmp_after_name
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+	bra	_pmp_skip_name
+
+_pmp_after_name:
+	lw	r1,-3(fp)
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brf	_pmp_after_name_nz
+	la	r1,_pmp_ret
+	jmp	(r1)
+_pmp_after_name_nz:
+	lc	r1,32
+	ceq	r0,r1
+	brt	_pmp_after_name_ws
+	lc	r1,9
+	ceq	r0,r1
+	brt	_pmp_after_name_ws
+	lc	r1,44
+	ceq	r0,r1
+	brt	_pmp_after_name_comma
+	bra	_pmp_param_start
+
+_pmp_after_name_ws:
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+	bra	_pmp_after_name
+
+_pmp_after_name_comma:
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+	bra	_pmp_after_name
+
+_pmp_param_start:
+	lw	r0,-6(fp)
+	lc	r1,8
+	clu	r0,r1
+	brt	_pmp_param_start_ok
+	la	r1,_pmp_ret
+	jmp	(r1)
+_pmp_param_start_ok:
+
+	lw	r1,-3(fp)
+	lbu	r0,0(r1)
+	lc	r2,38
+	ceq	r0,r2
+	brf	_pmp_param_slot
+	add	r1,1
+	sw	r1,-3(fp)
+
+_pmp_param_slot:
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_mul9
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,788197
+	add	r1,r0
+	la	r0,0
+	sw	r0,-9(fp)
+
+_pmp_param_copy:
+	lw	r2,-3(fp)
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_pmp_param_done
+	lc	r1,32
+	ceq	r0,r1
+	brt	_pmp_param_done_pop
+	lc	r1,9
+	ceq	r0,r1
+	brt	_pmp_param_done_pop
+	lc	r1,44
+	ceq	r0,r1
+	brt	_pmp_param_done_pop
+	lw	r1,-9(fp)
+	lc	r2,8
+	clu	r1,r2
+	brf	_pmp_param_skip
+	lw	r1,-3(fp)
+	lbu	r0,0(r1)
+	lw	r2,-6(fp)
+	push	r2
+	la	r2,_mul9
+	jal	r1,(r2)
+	add	sp,3
+	la	r1,788197
+	add	r1,r0
+	lw	r0,-9(fp)
+	add	r1,r0
+	lw	r2,-3(fp)
+	lbu	r0,0(r2)
+	sb	r0,0(r1)
+	lw	r0,-9(fp)
+	add	r0,1
+	sw	r0,-9(fp)
+
+_pmp_param_skip:
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+	bra	_pmp_param_copy
+
+_pmp_param_done_pop:
+_pmp_param_done:
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_mul9
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,788197
+	add	r1,r0
+	lw	r0,-9(fp)
+	add	r1,r0
+	la	r0,0
+	sb	r0,0(r1)
+	lw	r0,-6(fp)
+	add	r0,1
+	sw	r0,-6(fp)
+	la	r1,788194
+	sw	r0,0(r1)
+
+_pmp_seek_next:
+	lw	r1,-3(fp)
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_pmp_ret
+	lc	r1,44
+	ceq	r0,r1
+	brt	_pmp_next_param
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+	bra	_pmp_seek_next
+
+_pmp_next_param:
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+_pmp_next_param_ws:
+	lw	r1,-3(fp)
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_pmp_ret
+	lc	r1,32
+	ceq	r0,r1
+	brt	_pmp_next_param_ws_1
+	lc	r1,9
+	ceq	r0,r1
+	brt	_pmp_next_param_ws_1
+	la	r1,_pmp_param_start
+	jmp	(r1)
+
+_pmp_next_param_ws_1:
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+	bra	_pmp_next_param_ws
+
+_pmp_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _find_named_macro_param: Return 1-based parameter index for name at ptr, else 0.
+; Arg on stack: pointer to identifier start
+_find_named_macro_param:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-9
+
+	lw	r0,9(fp)
+	sw	r0,-3(fp)
+	sw	r0,-9(fp)
+	la	r0,1
+	sw	r0,-6(fp)
+
+_fmp_loop:
+	la	r1,788194
+	lw	r1,0(r1)
+	lw	r0,-6(fp)
+	clu	r1,r0
+	brt	_fmp_nf
+
+	lw	r0,-6(fp)
+	add	r0,-1
+	push	r0
+	la	r0,_mul9
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,788197
+	add	r1,r0
+	lw	r0,-3(fp)
+	sw	r0,-9(fp)
+
+_fmp_cmp:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_fmp_check_tail
+	lw	r2,-9(fp)
+	lbu	r2,0(r2)
+	ceq	r0,r2
+	brf	_fmp_next
+	add	r1,1
+	lw	r2,-9(fp)
+	add	r2,1
+	sw	r2,-9(fp)
+	bra	_fmp_cmp
+
+_fmp_check_tail:
+	lw	r2,-9(fp)
+	lbu	r0,0(r2)
+	push	r0
+	la	r0,_is_macro_name_char
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_fmp_match
+	bra	_fmp_next
+
+_fmp_match:
+	lw	r0,-6(fp)
+	bra	_fmp_ret
+
+_fmp_next:
+	lw	r0,-6(fp)
+	add	r0,1
+	sw	r0,-6(fp)
+	bra	_fmp_loop
+
+_fmp_nf:
+	la	r0,0
+
+_fmp_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _is_macro_name_char: Return 1 if char is [0-9A-Za-z_], else 0.
+; Arg on stack: character value
+_is_macro_name_char:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r0,9(fp)
+	lc	r1,48
+	clu	r0,r1
+	brt	_imnc_upper
+	lc	r1,57
+	clu	r1,r0
+	brt	_imnc_upper
+	la	r0,1
+	bra	_imnc_ret
+
+_imnc_upper:
+	lw	r0,9(fp)
+	lc	r1,65
+	clu	r0,r1
+	brt	_imnc_lower
+	lc	r1,90
+	clu	r1,r0
+	brt	_imnc_lower
+	la	r0,1
+	bra	_imnc_ret
+
+_imnc_lower:
+	lw	r0,9(fp)
+	lc	r1,97
+	clu	r0,r1
+	brt	_imnc_us
+	lc	r1,122
+	clu	r1,r0
+	brt	_imnc_us
+	la	r0,1
+	bra	_imnc_ret
+
+_imnc_us:
+	lw	r0,9(fp)
+	lc	r1,95
+	ceq	r0,r1
+	brt	_imnc_yes
+	la	r0,0
+	bra	_imnc_ret
+
+_imnc_yes:
+	la	r0,1
+
+_imnc_ret:
 	mov	sp,fp
 	pop	r2
 	pop	r1
@@ -3715,34 +4080,213 @@ _record_macro_line:
 	push	r1
 	push	r2
 	mov	fp,sp
+	add	sp,-6
 
 	lw	r0,9(fp)
 	ceq	r0,z
-	brt	_rml_done
+	brf	_rml_has_len
+	la	r1,_rml_done
+	jmp	(r1)
+_rml_has_len:
 
-	la	r1,786432
-	la	r2,787557
-	lw	r2,0(r2)
+	la	r0,786432
+	sw	r0,-3(fp)
+	la	r1,787557
+	lw	r0,0(r1)
+	sw	r0,-6(fp)
 
-_rml_cloop:
+	_rml_cloop:
+		lw	r1,-3(fp)
+		lbu	r0,0(r1)
+		ceq	r0,z
+		brf	_rml_not_end
+		la	r1,_rml_end
+		jmp	(r1)
+_rml_not_end:
+
+		lc	r1,92
+		ceq	r0,r1
+		brf	_rml_not_bslash
+		la	r1,_rml_bslash
+		jmp	(r1)
+_rml_not_bslash:
+
+		lc	r1,38
+		ceq	r0,r1
+		brf	_rml_not_amp
+		la	r1,_rml_amp
+		jmp	(r1)
+_rml_not_amp:
+
+		lw	r2,-6(fp)
+		sb	r0,0(r2)
+		add	r2,1
+		sw	r2,-6(fp)
+		lw	r1,-3(fp)
+		add	r1,1
+		sw	r1,-3(fp)
+		bra	_rml_cloop
+
+_rml_bslash:
+	lw	r1,-3(fp)
+	add	r1,1
+	lbu	r0,0(r1)
+	lc	r2,64
+	ceq	r0,r2
+	brt	_rml_copy_bslash_at
+	ceq	r0,z
+	brt	_rml_copy_bslash
+	push	r0
+	la	r0,_is_macro_name_char
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_rml_copy_bslash
+	lw	r1,-3(fp)
+	add	r1,1
+	push	r1
+	la	r0,_find_named_macro_param
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_rml_copy_bslash
+	lw	r2,-6(fp)
+	lc	r1,38
+	sb	r1,0(r2)
+	add	r2,1
+	lc	r1,48
+	add	r1,r0
+	sb	r1,0(r2)
+	add	r2,1
+	sw	r2,-6(fp)
+	lw	r1,-3(fp)
+	add	r1,1
+_rml_skip_bname:
 	lbu	r0,0(r1)
 	ceq	r0,z
-	brt	_rml_end
-
-	sb	r0,0(r2)
+	brt	_rml_skip_bname_done
+	push	r1
+	push	r0
+	la	r0,_is_macro_name_char
+	jal	r1,(r0)
+	add	sp,3
+	pop	r1
+	ceq	r0,z
+	brt	_rml_skip_bname_done
 	add	r1,1
-	add	r2,1
-	bra	_rml_cloop
+	bra	_rml_skip_bname
+_rml_skip_bname_done:
+	sw	r1,-3(fp)
+	la	r1,_rml_cloop
+	jmp	(r1)
 
-_rml_end:
-	la	r0,10
+_rml_copy_bslash_at:
+	lw	r2,-6(fp)
+	lc	r0,92
 	sb	r0,0(r2)
 	add	r2,1
+	lc	r0,64
+	sb	r0,0(r2)
+	add	r2,1
+	sw	r2,-6(fp)
+	lw	r1,-3(fp)
+	add	r1,2
+	sw	r1,-3(fp)
+	la	r1,_rml_cloop
+	jmp	(r1)
 
-	la	r1,787557
-	sw	r2,0(r1)
+_rml_copy_bslash:
+	lw	r2,-6(fp)
+	lc	r0,92
+	sb	r0,0(r2)
+	add	r2,1
+	sw	r2,-6(fp)
+	lw	r1,-3(fp)
+	add	r1,1
+	sw	r1,-3(fp)
+	la	r1,_rml_cloop
+	jmp	(r1)
 
-_rml_done:
+_rml_amp:
+	lw	r1,-3(fp)
+	add	r1,1
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_rml_copy_amp
+	lc	r2,48
+	clu	r0,r2
+	brt	_rml_try_named_amp
+	lc	r2,57
+	clu	r2,r0
+	brt	_rml_try_named_amp
+	bra	_rml_copy_amp
+_rml_try_named_amp:
+	push	r0
+	la	r0,_is_macro_name_char
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_rml_copy_amp
+	lw	r1,-3(fp)
+	add	r1,1
+	push	r1
+	la	r0,_find_named_macro_param
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_rml_copy_amp
+	lw	r2,-6(fp)
+	lc	r1,38
+	sb	r1,0(r2)
+	add	r2,1
+	lc	r1,48
+	add	r1,r0
+	sb	r1,0(r2)
+	add	r2,1
+	sw	r2,-6(fp)
+	lw	r1,-3(fp)
+	add	r1,1
+_rml_skip_aname:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_rml_skip_aname_done
+	push	r1
+	push	r0
+	la	r0,_is_macro_name_char
+	jal	r1,(r0)
+	add	sp,3
+	pop	r1
+	ceq	r0,z
+	brt	_rml_skip_aname_done
+	add	r1,1
+	bra	_rml_skip_aname
+_rml_skip_aname_done:
+	sw	r1,-3(fp)
+	la	r1,_rml_cloop
+	jmp	(r1)
+
+_rml_copy_amp:
+	lw	r2,-6(fp)
+	lc	r0,38
+	sb	r0,0(r2)
+	add	r2,1
+	sw	r2,-6(fp)
+	lw	r1,-3(fp)
+	add	r1,1
+	sw	r1,-3(fp)
+	la	r1,_rml_cloop
+	jmp	(r1)
+
+	_rml_end:
+		lw	r2,-6(fp)
+		la	r0,10
+		sb	r0,0(r2)
+		add	r2,1
+
+		la	r1,787557
+		sw	r2,0(r1)
+
+	_rml_done:
 	mov	sp,fp
 	pop	r2
 	pop	r1

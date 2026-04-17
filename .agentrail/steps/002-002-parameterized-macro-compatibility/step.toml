@@ -1,6 +1,6 @@
 number = 2
 slug = "002-parameterized-macro-compatibility"
-status = "pending"
+status = "in-progress"
 description = "Implement reliable parameterized macro substitution in the supported HLASM-li..."
 role = "production"
 context_files = []

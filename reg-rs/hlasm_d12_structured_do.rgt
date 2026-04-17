@@ -1,4 +1,4 @@
-command = 'cor24-run --run hlasm.s --load-binary demos/d12_structured_do.bin@524288 --speed 0 -n 200000 2>&1'
+command = "cor24-run --run hlasm.s --load-binary demos/d12_structured_do.bin@524288 --speed 0 -n 200000 2>&1"
 timeout = 15
 preprocess = "grep -A 160 '^UART output:' || true"
 exit_code = 0

@@ -1,5 +1,15 @@
+Assembled 12457 bytes
+Loaded 19 bytes from 'reg-rs/s4_skip.bin' at 0x080000
+Running (speed: max IPS, time limit: 10s)...
+
+[UART TX @ 18142] 'n'  (0x6E)
+[UART TX @ 18142] 'o'  (0x6F)
+[UART TX @ 18142] 'p'  (0x70)
+[UART TX @ 18142] ''  (0x0D)
+[UART TX @ 18142] '\n'
+
 UART output: nop
 
 
-Executed 17504 instructions
+Executed 18142 instructions
 CPU halted (self-branch detected)

@@ -1,5 +1,5 @@
-command = 'cor24-run --run hlasm.s --load-binary demos/d22_include_return_main.bin@589824 --load-binary demos/d22_include_return_extra.bin@528384 --load-binary reg-rs/s14_include_return.cfg@520192 --stack-kilobytes 3 --speed 0 -n 120000 2>&1'
+command = "cor24-run --run hlasm.s --load-binary demos/d22_include_return_main.bin@589824 --load-binary demos/d22_include_return_extra.bin@528384 --load-binary reg-rs/s14_include_return.cfg@520192 --stack-kilobytes 3 --speed 0 -n 120000 2>&1"
 timeout = 15
 preprocess = "grep -A 100 '^UART output:' || true"
 exit_code = 0
-desc = 'Demo 22: INCBUF reads a preloaded source buffer and resumes the patched main source after include EOF'
+desc = "Demo 22: INCBUF reads a preloaded source buffer and resumes the patched main source after include EOF"

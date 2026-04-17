@@ -1,6 +1,33 @@
+Assembled 12457 bytes
+Loaded 33 bytes from 'reg-rs/s5_macro.bin' at 0x080000
+Running (speed: max IPS, time limit: 10s)...
+
+[UART TX @ 20000] ' '  (0x20)
+[UART TX @ 20000] 'a'  (0x61)
+[UART TX @ 20000] 'd'  (0x64)
+[UART TX @ 20000] 'd'  (0x64)
+[UART TX @ 20000] ' '  (0x20)
+[UART TX @ 20000] 'r'  (0x72)
+[UART TX @ 20000] '0'  (0x30)
+[UART TX @ 20000] ','  (0x2C)
+[UART TX @ 20000] '1'  (0x31)
+[UART TX @ 20000] ''  (0x0D)
+[UART TX @ 20000] '\n'
+[UART TX @ 22592] ' '  (0x20)
+[UART TX @ 22592] 'a'  (0x61)
+[UART TX @ 22592] 'd'  (0x64)
+[UART TX @ 22592] 'd'  (0x64)
+[UART TX @ 22592] ' '  (0x20)
+[UART TX @ 22592] 'r'  (0x72)
+[UART TX @ 22592] '0'  (0x30)
+[UART TX @ 22592] ','  (0x2C)
+[UART TX @ 22592] '1'  (0x31)
+[UART TX @ 22592] ''  (0x0D)
+[UART TX @ 22592] '\n'
+
 UART output:  add r0,1
  add r0,1
 
 
-Executed 21848 instructions
+Executed 22592 instructions
 CPU halted (self-branch detected)

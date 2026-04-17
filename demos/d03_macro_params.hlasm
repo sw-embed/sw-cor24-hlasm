@@ -1,6 +1,6 @@
-MACRO push2 a,b
- push \a
- push \b
+MACRO push2 &a,&b
+ push &a
+ push &b
 MEND
 push2 r0,r1
 push2 r2,r3

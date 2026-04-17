@@ -1,0 +1,6 @@
+MACRO push2
+ push &1
+ push &2
+MEND
+push2 r0,r1
+push2 r2,r3

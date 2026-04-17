@@ -1,7 +1,41 @@
+Assembled 12457 bytes
+Loaded 60 bytes from 'demos/d08_macro_and_cond.bin' at 0x080000
+Running (speed: max IPS, time limit: 10s)...
+
+[UART TX @ 23948] 'I'  (0x49)
+[UART TX @ 23948] 'F'  (0x46)
+[UART TX @ 23948] 'D'  (0x44)
+[UART TX @ 23948] 'E'  (0x45)
+[UART TX @ 23948] 'F'  (0x46)
+[UART TX @ 23948] ' '  (0x20)
+[UART TX @ 23948] 'D'  (0x44)
+[UART TX @ 23948] 'E'  (0x45)
+[UART TX @ 23948] 'B'  (0x42)
+[UART TX @ 23948] 'U'  (0x55)
+[UART TX @ 23948] 'G'  (0x47)
+[UART TX @ 23948] ''  (0x0D)
+[UART TX @ 23948] '\n'
+[UART TX @ 23948] ' '  (0x20)
+[UART TX @ 23948] 'n'  (0x6E)
+[UART TX @ 23948] 'o'  (0x6F)
+[UART TX @ 23948] 'p'  (0x70)
+[UART TX @ 23948] ''  (0x0D)
+[UART TX @ 23948] '\n'
+[UART TX @ 23948] 'E'  (0x45)
+[UART TX @ 23948] 'N'  (0x4E)
+[UART TX @ 23948] 'D'  (0x44)
+[UART TX @ 23948] 'I'  (0x49)
+[UART TX @ 23948] 'F'  (0x46)
+[UART TX @ 23948] 'A'  (0x41)
+[UART TX @ 23948] 'S'  (0x53)
+[UART TX @ 23948] 'M'  (0x4D)
+[UART TX @ 23948] ''  (0x0D)
+[UART TX @ 23948] '\n'
+
 UART output: IFDEF DEBUG
  nop
 ENDIFASM
 
 
-Executed 23008 instructions
+Executed 23948 instructions
 CPU halted (self-branch detected)

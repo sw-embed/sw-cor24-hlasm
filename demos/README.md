@@ -9,7 +9,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 |------|---------|--------|
 | d01 | Basic passthrough | WORKS |
 | d02 | Simple macro (no params) | WORKS |
-| d03 | Macro with parameters | BUG: params not substituted |
+| d03 | HLASM-style named macro parameters | WORKS |
 | d04 | SET / IFDEF / ENDIFASM | WORKS |
 | d05 | IFEQ / IFNE comparison | WORKS |
 | d06 | ELSEASM toggle | WORKS |
@@ -33,6 +33,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d24 | Nested named includes | WORKS |
 | d25 | Split bootstrap sourceset proof | WORKS |
 | d26 | Structured branch-range hardening | WORKS |
+| d27 | Positional macro parameters | WORKS |
 
 ## Demo Policy
 
@@ -61,7 +62,9 @@ Current supported baseline:
 - `MACRO name` starts a definition and `MEND` ends it
 - definition lines are consumed by the assembler and are not emitted to output
 - simple no-parameter invocations expand stably
-- parameterized substitution is not complete yet
+- positional parameters `&1`, `&2`, ... expand stably
+- HLASM-style named parameters `&name` in both the definition header and body
+  expand stably
 - multi-macro/local-label robustness is not complete yet
 
 ```
@@ -75,12 +78,22 @@ This repo is aiming toward HLASM-like behavior on the MVS lineage, but the
 currently implemented macro subset is still narrower than full HLASM macro
 semantics.
 
+Named parameters:
 ```
-MACRO name param1,param2
- push \param1
- push \param2
+MACRO PUSH2 &LEFT,&RIGHT
+ push &LEFT
+ push &RIGHT
 MEND
-<name> r0,r1        ; invoke with arguments
+PUSH2 r0,r1
+```
+
+Positional parameters:
+```
+MACRO PUSH2
+ push &1
+ push &2
+MEND
+PUSH2 r0,r1
 ```
 
 ### Conditional Assembly (SET / IFDEF / IFNDEF / IFEQ / IFNE / ELSEASM / ENDIFASM)

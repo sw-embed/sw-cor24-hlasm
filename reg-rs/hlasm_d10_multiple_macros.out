@@ -1,7 +1,45 @@
+Assembled 12457 bytes
+Loaded 61 bytes from 'demos/d10_multiple_macros.bin' at 0x080000
+Running (speed: max IPS, time limit: 10s)...
+
+[UART TX @ 29134] ' '  (0x20)
+[UART TX @ 29134] 'a'  (0x61)
+[UART TX @ 29134] 'd'  (0x64)
+[UART TX @ 29134] 'd'  (0x64)
+[UART TX @ 29134] ' '  (0x20)
+[UART TX @ 29134] 'r'  (0x72)
+[UART TX @ 29134] '0'  (0x30)
+[UART TX @ 29134] ','  (0x2C)
+[UART TX @ 29134] '1'  (0x31)
+[UART TX @ 29134] ''  (0x0D)
+[UART TX @ 29134] '\n'
+[UART TX @ 29134] ' '  (0x20)
+[UART TX @ 29134] 's'  (0x73)
+[UART TX @ 29134] 'u'  (0x75)
+[UART TX @ 29134] 'b'  (0x62)
+[UART TX @ 29134] ' '  (0x20)
+[UART TX @ 29134] 'r'  (0x72)
+[UART TX @ 29134] '0'  (0x30)
+[UART TX @ 29134] ','  (0x2C)
+[UART TX @ 29134] '1'  (0x31)
+[UART TX @ 29134] ''  (0x0D)
+[UART TX @ 29134] '\n'
+[UART TX @ 29134] ' '  (0x20)
+[UART TX @ 29134] 'a'  (0x61)
+[UART TX @ 29134] 'd'  (0x64)
+[UART TX @ 29134] 'd'  (0x64)
+[UART TX @ 29134] ' '  (0x20)
+[UART TX @ 29134] 'r'  (0x72)
+[UART TX @ 29134] '0'  (0x30)
+[UART TX @ 29134] ','  (0x2C)
+[UART TX @ 29134] '1'  (0x31)
+[UART TX @ 29134] ''  (0x0D)
+[UART TX @ 29134] '\n'
+
 UART output:  add r0,1
  sub r0,1
  add r0,1
 
 
-Executed 28192 instructions
+Executed 29134 instructions
 CPU halted (self-branch detected)
