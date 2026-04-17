@@ -1,0 +1,1 @@
+Added the SRCBUF slot directive for explicit source-buffer switching, kept the Step 12 config format intact, and added a proof demo where a patched main source at 0x090000 explicitly pulls in extra slot 1.
