@@ -67,7 +67,7 @@ The first explicit bootstrap-oriented map is now:
 
 - `0x07F000`: source-switch config block
 - `0x080000-0x0BFFFF`: preloaded ASCII source/include buffers
-- `0x0C0000-0x0C055B`: `hlasm` runtime arena
+- `0x0C0000-0x0C055E`: `hlasm` runtime arena
 - `0xFEE000-0xFEEBFF`: preferred 3K EBR stack (`cor24-run --stack-kilobytes 3`)
 
 The current runtime arena packs the mutable assembler state into middle SRAM:
@@ -105,12 +105,14 @@ The current source-switch path uses a small config block at `0x07F000` with:
 - then additional 6-byte `(base,len)` records
 - `+21`: optional main-source base override
 - `+24`: optional main-source length override
+- `+27`: include-name count
+- `+30`: first include record as `(slot,name[9])`
 
-`hlasm.s` currently walks that table into a small in-memory descriptor set,
-which is enough to model include-like source chaining with multiple preloaded
-ASCII buffers. That keeps the input side compatible with repeated
-`cor24-run --load-binary ...@addr` flags today while leaving room for a later
-named include table or heap-backed descriptor arena.
+`hlasm.s` currently walks the source portion of that table into a small
+in-memory descriptor set, which is enough to model include-like source
+chaining with multiple preloaded ASCII buffers. That keeps the input side
+compatible with repeated `cor24-run --load-binary ...@addr` flags today while
+leaving room for a later heap-backed descriptor arena.
 
 When the main override words are zero, stage0 keeps the default main window at
 `0x080000/4096`. When they are non-zero, stage0 uses the patched main source
@@ -128,6 +130,12 @@ current `(slot, position)` onto a tiny runtime source-return stack, rewinds the
 target slot, and switches into it. When the included buffer reaches EOF,
 `hlasm` restores the caller slot/position and resumes reading the original
 source stream. Plain `SRCBUF` still behaves as a direct non-returning switch.
+
+Step 15 adds `INCLUDE <name>`, which resolves a short ASCII include name
+through the appended low-SRAM include table and then reuses the same return
+stack path as `INCBUF`. Numeric `SRCBUF` and `INCBUF` remain available for the
+lowest-level bootstrap flows, while `INCLUDE` is the first readable layer for
+self-hosting source splits.
 
 ## Step 8 Deliverable
 

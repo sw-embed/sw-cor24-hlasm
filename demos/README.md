@@ -29,6 +29,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d20 | Patchable main source window | WORKS |
 | d21 | Directive-driven source switch | WORKS |
 | d22 | Include-return source stack | WORKS |
+| d23 | Named include table | WORKS |
 
 ## Demo Policy
 
@@ -98,6 +99,9 @@ SRCBUF 1            ; jump directly to preloaded source slot 1
 
 INCBUF 1            ; push current slot/position, read slot 1, then
                     ; return to the caller source when slot 1 hits EOF
+
+INCLUDE tail        ; resolve "tail" through the low-SRAM include-name table,
+                    ; then include that slot and resume the caller source
 ```
 
 Conditionals can nest:

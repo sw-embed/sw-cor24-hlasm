@@ -24,6 +24,8 @@
 ;   +18  extra source 3 len
 ;   +21  optional main source base override (0 = default)
 ;   +24  optional main source len override  (0 = default)
+;   +27  include-name count
+;   +30  first include record: slot word + 9-byte null-terminated name
 ;
 ; Token types (word-sized):
 ;   0=EOF 1=NEWLINE 2=KEYWORD 3=MNEMONIC 4=REGISTER 5=NUMBER
@@ -182,7 +184,21 @@ _ml_not_recording:
 	la	r1,_ml_recording
 	jmp	(r1)
 
-_mlnr_directives:
+	_mlnr_directives:
+	la	r1,_kw_include
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_include_near
+
+	la	r1,_ml_is_include
+	jmp	(r1)
+
+_ml_is_include_near:
+
 	la	r1,_kw_incbuf
 	push	r1
 	la	r0,_starts_with
@@ -385,6 +401,12 @@ _ml_is_mend_skip:
 
 _ml_is_set:
 	la	r0,_set_symbol
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_include:
+	la	r0,_handle_include
 	jal	r1,(r0)
 	la	r1,_ml_loop
 	jmp	(r1)
@@ -2041,7 +2063,7 @@ _init_runtime_arena:
 	push	r2
 	mov	fp,sp
 
-	la	r0,1372
+	la	r0,1375
 	push	r0
 	la	r0,786432
 	push	r0
@@ -2361,6 +2383,77 @@ _prr_no:
 	la	r0,0
 
 _prr_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _lookup_include_slot: Resolve _parse_name_buf through the low-SRAM include table.
+; Returns: r0 = 1 if found, 0 if not. Stores slot in _include_lookup_slot.
+_lookup_include_slot:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-3
+
+	la	r1,787804
+	la	r0,0
+	sw	r0,0(r1)
+	sw	r0,-3(fp)
+
+	la	r2,520192
+	lw	r1,27(r2)
+	lw	r0,-3(fp)
+	clu	r0,r1
+	brf	_lis_no
+
+_lis_loop:
+	lw	r0,-3(fp)
+	lw	r1,27(r2)
+	clu	r0,r1
+	brf	_lis_no
+
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_mul6
+	jal	r1,(r0)
+	add	sp,3
+	add	r0,r0
+	la	r1,520222
+	add	r1,r0
+	mov	r2,r1
+
+	push	r2
+	add	r2,3
+	push	r2
+	la	r2,786576
+	push	r2
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	pop	r2
+	ceq	r0,z
+	brt	_lis_next
+
+	lw	r0,0(r2)
+	la	r1,787804
+	sw	r0,0(r1)
+	la	r0,1
+	bra	_lis_ret
+
+_lis_next:
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+	la	r2,520192
+	bra	_lis_loop
+
+_lis_no:
+	la	r0,0
+
+_lis_ret:
 	mov	sp,fp
 	pop	r2
 	pop	r1
@@ -4223,6 +4316,44 @@ _handle_srcbuf:
 	pop	fp
 	jmp	(r1)
 
+; _handle_include: INCLUDE name -- resolve include name to slot and return on EOF.
+_handle_include:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r0,_extract_kw_arg
+	jal	r1,(r0)
+	la	r0,_lookup_include_slot
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hi_ret
+
+	la	r0,_push_src_return
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hi_ret
+
+	la	r1,787804
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_select_src_slot
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brf	_hi_ret
+
+	la	r0,_pop_src_return
+	jal	r1,(r0)
+
+_hi_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; _handle_incbuf: INCBUF slot -- push current source state, switch, return on EOF.
 _handle_incbuf:
 	push	fp
@@ -4497,6 +4628,9 @@ _kw_prefix_table:
 _kw_set:
 	.byte	83,69,84,0
 
+_kw_include:
+	.byte	73,78,67,76,85,68,69,0
+
 _kw_incbuf:
 	.byte	73,78,67,66,85,70,0
 
@@ -4560,4 +4694,7 @@ _parse_name_buf:
 	.byte	0, 0, 0, 0, 0, 0, 0, 0
 
 _lookup_sym_val:
+	.word	0
+
+_include_lookup_slot:
 	.word	0
