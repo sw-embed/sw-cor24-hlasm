@@ -1,0 +1,8 @@
+number = 2
+slug = "001-hlxref-core"
+status = "blocked"
+description = "Add an opt-in HLXREF report for hlasm-generated output. Keep it text-only and..."
+role = "production"
+context_files = []
+created_at = "2026-04-17T12:17:08"
+commits = []

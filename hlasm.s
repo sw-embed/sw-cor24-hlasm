@@ -8688,6 +8688,13 @@ _hsend_false:
 	la	r0,_emit_label_def
 	jal	r1,(r0)
 	add	sp,6
+	lw	r0,3(r2)
+	push	r0
+	la	r0,_if_end_suffix
+	push	r0
+	la	r0,_emit_label_def
+	jal	r1,(r0)
+	add	sp,6
 
 _hsend_clear:
 	la	r1,787807

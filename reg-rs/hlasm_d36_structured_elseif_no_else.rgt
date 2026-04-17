@@ -1,0 +1,5 @@
+command = "cor24-run --run hlasm.s --load-binary demos/d36_structured_elseif_no_else.bin@524288 --speed 0 -n 1000000 2>&1"
+timeout = 15
+preprocess = "grep -A 320 '^UART output:' || true"
+exit_code = 0
+desc = "Demo 36: IF/ELSEIF/ENDIF without ELSE emits the shared end label and long-range-safe structured jumps"

@@ -42,6 +42,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d33 | Symbols and expressions | WORKS |
 | d34 | COPY macro library workflow | WORKS |
 | d35 | Listing/xref comments | WORKS |
+| d36 | IF/ELSEIF/ENDIF without ELSE | WORKS |
 
 ## Demo Policy
 

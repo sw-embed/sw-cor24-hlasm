@@ -1,0 +1,1 @@
+Add opt-in cross-reference visibility for hlasm-generated output while keeping normal output compact and preserving full regression stability. Start with a text-only HLXREF report, then grow diagnostics only if the first slice proves useful.

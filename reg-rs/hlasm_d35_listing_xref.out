@@ -1,8 +1,8 @@
-Assembled 15955 bytes
+Assembled 15970 bytes
 Loaded 139 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d35_listing_xref.bin' at 0x090000
 Loaded 109 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d34_copy_macro_library_macros.bin' at 0x081000
 Loaded 40 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d34_copy_macro_library_symbols.bin' at 0x081100
-Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-30728.cfg' at 0x07F000
+Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-85125.cfg' at 0x07F000
 Running (speed: max IPS, time limit: 10s)...
 
 [UART TX @ 40000] ';'  (0x3B)
@@ -374,47 +374,61 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 110000] ':'  (0x3A)
 [UART TX @ 110000] ''  (0x0D)
 [UART TX @ 110000] '\n'
+[UART TX @ 110000] '_'  (0x5F)
+[UART TX @ 110000] 'h'  (0x68)
+[UART TX @ 110000] 'l'  (0x6C)
+[UART TX @ 110000] 'i'  (0x69)
+[UART TX @ 110000] 'f'  (0x66)
+[UART TX @ 110000] '_'  (0x5F)
+[UART TX @ 110000] '2'  (0x32)
+[UART TX @ 110000] '_'  (0x5F)
+[UART TX @ 110000] 'e'  (0x65)
+[UART TX @ 110000] 'n'  (0x6E)
+[UART TX @ 110000] 'd'  (0x64)
+[UART TX @ 110000] ':'  (0x3A)
 [UART TX @ 110000] ''  (0x0D)
 [UART TX @ 110000] '\n'
-[UART TX @ 114002] ';'  (0x3B)
-[UART TX @ 114002] ' '  (0x20)
-[UART TX @ 114002] 'H'  (0x48)
-[UART TX @ 114002] 'L'  (0x4C)
-[UART TX @ 114002] 'A'  (0x41)
-[UART TX @ 114002] 'S'  (0x53)
-[UART TX @ 114002] 'M'  (0x4D)
-[UART TX @ 114002] ' '  (0x20)
-[UART TX @ 114002] 'E'  (0x45)
-[UART TX @ 114002] 'X'  (0x58)
-[UART TX @ 114002] 'P'  (0x50)
-[UART TX @ 114002] 'A'  (0x41)
-[UART TX @ 114002] 'N'  (0x4E)
-[UART TX @ 114002] 'D'  (0x44)
-[UART TX @ 114002] ' '  (0x20)
-[UART TX @ 114002] 'P'  (0x50)
-[UART TX @ 114002] 'O'  (0x4F)
-[UART TX @ 114002] 'P'  (0x50)
-[UART TX @ 114002] '2'  (0x32)
-[UART TX @ 114002] ''  (0x0D)
-[UART TX @ 114002] '\n'
-[UART TX @ 114002] ' '  (0x20)
-[UART TX @ 114002] 'p'  (0x70)
-[UART TX @ 114002] 'o'  (0x6F)
-[UART TX @ 114002] 'p'  (0x70)
-[UART TX @ 114002] ' '  (0x20)
-[UART TX @ 114002] 'r'  (0x72)
-[UART TX @ 114002] '1'  (0x31)
-[UART TX @ 114002] ''  (0x0D)
-[UART TX @ 114002] '\n'
-[UART TX @ 114002] ' '  (0x20)
-[UART TX @ 114002] 'p'  (0x70)
-[UART TX @ 114002] 'o'  (0x6F)
-[UART TX @ 114002] 'p'  (0x70)
-[UART TX @ 114002] ' '  (0x20)
-[UART TX @ 114002] 'r'  (0x72)
-[UART TX @ 114002] '0'  (0x30)
-[UART TX @ 114002] ''  (0x0D)
-[UART TX @ 114002] '\n'
+[UART TX @ 110000] ''  (0x0D)
+[UART TX @ 110000] '\n'
+[UART TX @ 114442] ';'  (0x3B)
+[UART TX @ 114442] ' '  (0x20)
+[UART TX @ 114442] 'H'  (0x48)
+[UART TX @ 114442] 'L'  (0x4C)
+[UART TX @ 114442] 'A'  (0x41)
+[UART TX @ 114442] 'S'  (0x53)
+[UART TX @ 114442] 'M'  (0x4D)
+[UART TX @ 114442] ' '  (0x20)
+[UART TX @ 114442] 'E'  (0x45)
+[UART TX @ 114442] 'X'  (0x58)
+[UART TX @ 114442] 'P'  (0x50)
+[UART TX @ 114442] 'A'  (0x41)
+[UART TX @ 114442] 'N'  (0x4E)
+[UART TX @ 114442] 'D'  (0x44)
+[UART TX @ 114442] ' '  (0x20)
+[UART TX @ 114442] 'P'  (0x50)
+[UART TX @ 114442] 'O'  (0x4F)
+[UART TX @ 114442] 'P'  (0x50)
+[UART TX @ 114442] '2'  (0x32)
+[UART TX @ 114442] ''  (0x0D)
+[UART TX @ 114442] '\n'
+[UART TX @ 114442] ' '  (0x20)
+[UART TX @ 114442] 'p'  (0x70)
+[UART TX @ 114442] 'o'  (0x6F)
+[UART TX @ 114442] 'p'  (0x70)
+[UART TX @ 114442] ' '  (0x20)
+[UART TX @ 114442] 'r'  (0x72)
+[UART TX @ 114442] '1'  (0x31)
+[UART TX @ 114442] ''  (0x0D)
+[UART TX @ 114442] '\n'
+[UART TX @ 114442] ' '  (0x20)
+[UART TX @ 114442] 'p'  (0x70)
+[UART TX @ 114442] 'o'  (0x6F)
+[UART TX @ 114442] 'p'  (0x70)
+[UART TX @ 114442] ' '  (0x20)
+[UART TX @ 114442] 'r'  (0x72)
+[UART TX @ 114442] '0'  (0x30)
+[UART TX @ 114442] ''  (0x0D)
+[UART TX @ 114442] '\n'
 
 UART output: ; Demo 35: opt-in listing/xref-friendly output
 ; HLASM COPY libmac
@@ -440,11 +454,12 @@ UART output: ; Demo 35: opt-in listing/xref-friendly output
 _hlif_3_skip:
  lc r2,7
 _hlif_1_false:
+_hlif_2_end:
 
 ; HLASM EXPAND POP2
  pop r1
  pop r0
 
 
-Executed 114002 instructions
+Executed 114442 instructions
 CPU halted (self-branch detected)
