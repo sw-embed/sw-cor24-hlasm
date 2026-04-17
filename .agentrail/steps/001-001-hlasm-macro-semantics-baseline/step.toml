@@ -1,6 +1,6 @@
 number = 1
 slug = "001-hlasm-macro-semantics-baseline"
-status = "pending"
+status = "in-progress"
 description = "Tighten macro-definition and invocation behavior toward HLASM-like expectatio..."
 role = "production"
 context_files = []

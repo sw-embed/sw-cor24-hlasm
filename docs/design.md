@@ -87,20 +87,33 @@ Lowering produces a compare-and-branch chain.
 
 ### Macro Syntax
 
+Current baseline:
+
+- `MACRO name` ... `MEND` definitions are recognized and suppressed from output
+- simple invocations expand by macro name lookup at the start of the line
+- parameter substitution and local-label behavior are still a partial subset,
+  not full HLASM compatibility
+
+Near-term compatibility target:
+
+- move toward IBM HLASM-like behavior on the MVS lineage
+- keep the currently supported syntax documented explicitly until the fuller
+  parameter and local-label model is implemented
+
 ```
-PUSHREG MACRO reg
-    push \reg
+MACRO PUSHREG
+    push r0
 MEND
 ```
 
-Parameters referenced with backslash: `\reg`, `\dst`.
-Local labels: `\@` generates unique label per expansion.
-
 Invocation:
 ```
-    PUSHREG r0
-    PUSHREG r1
+    PUSHREG
+    PUSHREG
 ```
+
+Parameterized macro examples remain roadmap items rather than guaranteed
+current behavior.
 
 ### Conditional Assembly
 

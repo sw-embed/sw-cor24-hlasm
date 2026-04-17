@@ -56,12 +56,24 @@ cor24-run --run hlasm.s --load-binary demos/d01_passthrough.bin@524288 --speed 0
 
 ### Macros
 
+Current supported baseline:
+
+- `MACRO name` starts a definition and `MEND` ends it
+- definition lines are consumed by the assembler and are not emitted to output
+- simple no-parameter invocations expand stably
+- parameterized substitution is not complete yet
+- multi-macro/local-label robustness is not complete yet
+
 ```
 MACRO name
  <body>
 MEND
 <name>              ; invoke macro
 ```
+
+This repo is aiming toward HLASM-like behavior on the MVS lineage, but the
+currently implemented macro subset is still narrower than full HLASM macro
+semantics.
 
 ```
 MACRO name param1,param2

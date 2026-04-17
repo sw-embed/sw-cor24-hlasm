@@ -72,6 +72,11 @@ Produces a token stream in memory.
 Stores macro definitions: name, parameter list, body token stream.
 Lookup on macro invocation. Supports nested macros.
 
+Current compatibility baseline is intentionally narrower than full IBM HLASM:
+simple `MACRO ... MEND` definitions are consumed rather than emitted, and
+simple invocation-by-name expansion is stable. Parameter substitution and
+full local-label compatibility are still being hardened in later steps.
+
 ### Macro Expander
 Substitutes parameters (\name -> argument). Generates unique local labels
 (\@ -> unique counter). Handles nested expansion with depth limit.
