@@ -1,0 +1,1 @@
+Extended the bootstrap source-set grammar with SOURCESET fragments so larger bootstrap trees can be composed from smaller reusable source-set files instead of one flat manifest.

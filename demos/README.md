@@ -117,6 +117,10 @@ optional `PROFILE file`, then `ROOT dir`, optional `MAINADDR` / `EXTRAADDR` /
 include buffers from their real sizes, and feeds the same low-SRAM include
 table into `hlasm.s`.
 
+Demo 24 now uses that composed source-set path directly, so the fragment model
+is exercised on a named-include proof as well as the split `hlasm0` bootstrap
+proof.
+
 Conditionals can nest:
 ```
 SET OUTER,1

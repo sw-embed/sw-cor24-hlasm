@@ -1,0 +1,1 @@
+Convert another bootstrap-facing proof or named-include demo to the new composed source-set workflow so the fragment model is exercised beyond the split hlasm0 case. Keep the low-SRAM config layout and runtime INCLUDE lookup unchanged, but use the host-side composition grammar on a second proof path.

@@ -1,5 +1,5 @@
-command = 'bash reg-rs/run_bootstrap_loader.sh demos/d24_nested_named_include_loader.hlasm 140000 2>&1'
+command = 'bash reg-rs/run_bootstrap_sourceset.sh demos/d24_nested_named_include.sourceset 140000 2>&1'
 timeout = 15
 preprocess = "grep -A 100 '^UART output:' || true"
 exit_code = 0
-desc = 'Demo 24: named INCLUDE chains through two table entries and unwinds back through mid then main'
+desc = 'Demo 24: named INCLUDE chains through two table entries and unwinds back through mid then main via composed source-set fragments'

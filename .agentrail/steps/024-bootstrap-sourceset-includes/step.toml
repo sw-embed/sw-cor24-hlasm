@@ -1,8 +1,9 @@
 number = 24
 slug = "bootstrap-sourceset-includes"
-status = "in-progress"
+status = "completed"
 description = "Extend the bootstrap source-set grammar so larger source trees can be compose..."
 role = "legacy"
 context_files = []
 created_at = "2026-04-16T20:27:47"
-commits = []
+completed_at = "2026-04-16T20:41:39"
+commits = ["99fd4af83d4d2e6f7586300906b18620912acfd1"]

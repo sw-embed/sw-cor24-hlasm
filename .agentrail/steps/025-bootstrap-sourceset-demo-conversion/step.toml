@@ -1,0 +1,8 @@
+number = 25
+slug = "bootstrap-sourceset-demo-conversion"
+status = "in-progress"
+description = "Convert another bootstrap-facing proof or named-include demo to the new compo..."
+role = "legacy"
+context_files = []
+created_at = "2026-04-16T20:41:39"
+commits = []
