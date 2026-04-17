@@ -1,11 +1,15 @@
-; Demo 11: IF/ELSE/ENDIF (single-level structured control flow core)
+; Demo 11: IF/ELSEIF/ELSE/ENDIF with nesting
 IF cc_eq, r0, 0
  add r1,1
+ IF cc_ne, r1, z
+  sub r0,r0
+ ELSEIF cc_lt, r2, 10
+  add r2,1
+ ELSE
+  nop
+ ENDIF
+ELSEIF cc_zclr
+ add r0,1
 ELSE
- add r2,1
-ENDIF
-IF cc_ne, r1, z
- sub r0,r0
-ELSE
- nop
+ add r2,2
 ENDIF

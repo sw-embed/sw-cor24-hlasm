@@ -2,4 +2,4 @@ command = 'cor24-run --run hlasm.s --load-binary demos/d11_structured_if.bin@524
 timeout = 15
 preprocess = "grep -A 120 '^UART output:' || true"
 exit_code = 0
-desc = "Demo 11: structured IF/ELSE/ENDIF core"
+desc = "Demo 11: structured IF/ELSEIF/ELSE/ENDIF with nested IF blocks"

@@ -1,22 +1,34 @@
-UART output: ; Demo 11: IF/ELSE/ENDIF (single-level structured control flow core)
+UART output: ; Demo 11: IF/ELSEIF/ELSE/ENDIF with nesting
  push r2
  lc r2,0
  ceq r0,r2
  pop r2
  brf _hlif_1_false
  add r1,1
- bra _hlif_2_end
-_hlif_1_false:
- add r2,1
-_hlif_2_end:
  ceq r1,z
  brt _hlif_3_false
- sub r0,r0
+  sub r0,r0
  bra _hlif_4_end
 _hlif_3_false:
- nop
+ push r1
+ lc r1,10
+ cls r2,r1
+ pop r1
+ brf _hlif_5_false
+  add r2,1
+ bra _hlif_4_end
+_hlif_5_false:
+  nop
 _hlif_4_end:
+ bra _hlif_2_end
+_hlif_1_false:
+ brt _hlif_6_false
+ add r0,1
+ bra _hlif_2_end
+_hlif_6_false:
+ add r2,2
+_hlif_2_end:
 
 
-Executed 45212 instructions
+Executed 61510 instructions
 CPU halted (self-branch detected)

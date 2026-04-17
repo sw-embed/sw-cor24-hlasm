@@ -1,0 +1,41 @@
+Assembled 6968 bytes
+Loaded 120 bytes from 'demos/d15_realistic.bin' at 0x080000
+Running (speed: max IPS, time limit: 10s)...
+
+[UART TX @ 18047] ' '  (0x20)
+[UART TX @ 18047] 'n'  (0x6E)
+[UART TX @ 18047] 'o'  (0x6F)
+[UART TX @ 18047] 'p'  (0x70)
+[UART TX @ 18047] ''  (0x0D)
+[UART TX @ 18047] '\n'
+[UART TX @ 18047] ' '  (0x20)
+[UART TX @ 18047] 'p'  (0x70)
+[UART TX @ 18047] 'u'  (0x75)
+[UART TX @ 18047] 's'  (0x73)
+[UART TX @ 18047] 'h'  (0x68)
+[UART TX @ 18047] ' '  (0x20)
+[UART TX @ 18047] '\'  (0x5C)
+[UART TX @ 18047] 'r'  (0x72)
+[UART TX @ 18047] 'e'  (0x65)
+[UART TX @ 18047] 'g'  (0x67)
+[UART TX @ 18047] ''  (0x0D)
+[UART TX @ 18047] '\n'
+[UART TX @ 18047] ' '  (0x20)
+[UART TX @ 18047] 'p'  (0x70)
+[UART TX @ 18047] 'o'  (0x6F)
+[UART TX @ 18047] 'p'  (0x70)
+[UART TX @ 18047] ' '  (0x20)
+[UART TX @ 18047] '\'  (0x5C)
+[UART TX @ 18047] 'r'  (0x72)
+[UART TX @ 18047] 'e'  (0x65)
+[UART TX @ 18047] 'g'  (0x67)
+[UART TX @ 18047] ''  (0x0D)
+[UART TX @ 18047] '\n'
+
+UART output:  nop
+ push \reg
+ pop \reg
+
+
+Executed 18047 instructions
+CPU halted (self-branch detected)

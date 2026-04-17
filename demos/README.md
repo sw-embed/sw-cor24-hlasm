@@ -17,7 +17,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d08 | Macros + conditionals | WORKS |
 | d09 | Comments (; and #) | WORKS (pass through) |
 | d10 | Multiple macros | BUG: second overwrites first |
-| d11 | IF/ELSEIF/ELSE/ENDIF | PARTIAL: IF/ELSE/ENDIF core works |
+| d11 | IF/ELSEIF/ELSE/ENDIF | WORKS |
 | d12 | DO/DOEXIT/ENDDO loops | NOT IMPLEMENTED |
 | d13 | SELECT/WHEN/ENDSEL | NOT IMPLEMENTED |
 | d14 | IFNDEF (not defined) | WORKS |
@@ -135,17 +135,25 @@ ELSEASM
 ENDIFASM
 ```
 
-### Structured Control Flow (NOT YET IMPLEMENTED)
+### Structured Control Flow
 
 #### IF / ELSEIF / ELSE / ENDIF
-Single-level `IF / ELSE / ENDIF` now works. `ELSEIF` and nested structured `IF`
-blocks land in the next step.
+Nested `IF` blocks and `ELSEIF` chains now lower to plain labels and branches.
 
 ```
 IF cc_eq, r0, 0
     add r1,1
+    IF cc_ne, r1, z
+        sub r0,r0
+    ELSEIF cc_lt, r2, 10
+        add r2,1
+    ELSE
+        nop
+    ENDIF
+ELSEIF cc_zclr
+    add r0,1
 ELSE
-    add r2,1
+    add r2,2
 ENDIF
 ```
 Condition codes: cc_eq, cc_ne, cc_lt (signed), cc_lu (unsigned),

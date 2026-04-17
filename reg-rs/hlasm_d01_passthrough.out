@@ -1,0 +1,35 @@
+Assembled 6968 bytes
+Loaded 19 bytes from 'demos/d01_passthrough.bin' at 0x080000
+Running (speed: max IPS, time limit: 10s)...
+
+[UART TX @ 6465] 'n'  (0x6E)
+[UART TX @ 6465] 'o'  (0x6F)
+[UART TX @ 6465] 'p'  (0x70)
+[UART TX @ 6465] ''  (0x0D)
+[UART TX @ 6465] '\n'
+[UART TX @ 6465] 'h'  (0x68)
+[UART TX @ 6465] 'a'  (0x61)
+[UART TX @ 6465] 'l'  (0x6C)
+[UART TX @ 6465] 't'  (0x74)
+[UART TX @ 6465] ':'  (0x3A)
+[UART TX @ 6465] ''  (0x0D)
+[UART TX @ 6465] '\n'
+[UART TX @ 6465] ' '  (0x20)
+[UART TX @ 6465] 'b'  (0x62)
+[UART TX @ 6465] 'r'  (0x72)
+[UART TX @ 6465] 'a'  (0x61)
+[UART TX @ 6465] ' '  (0x20)
+[UART TX @ 6465] 'h'  (0x68)
+[UART TX @ 6465] 'a'  (0x61)
+[UART TX @ 6465] 'l'  (0x6C)
+[UART TX @ 6465] 't'  (0x74)
+[UART TX @ 6465] ''  (0x0D)
+[UART TX @ 6465] '\n'
+
+UART output: nop
+halt:
+ bra halt
+
+
+Executed 6465 instructions
+CPU halted (self-branch detected)

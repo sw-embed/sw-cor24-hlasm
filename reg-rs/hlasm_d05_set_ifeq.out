@@ -1,0 +1,28 @@
+Assembled 6968 bytes
+Loaded 124 bytes from 'demos/d05_set_ifeq.bin' at 0x080000
+Running (speed: max IPS, time limit: 10s)...
+
+[UART TX @ 10000] ' '  (0x20)
+[UART TX @ 10000] 'n'  (0x6E)
+[UART TX @ 10000] 'o'  (0x6F)
+[UART TX @ 10000] 'p'  (0x70)
+[UART TX @ 10000] ''  (0x0D)
+[UART TX @ 10000] '\n'
+[UART TX @ 18705] ' '  (0x20)
+[UART TX @ 18705] 's'  (0x73)
+[UART TX @ 18705] 'u'  (0x75)
+[UART TX @ 18705] 'b'  (0x62)
+[UART TX @ 18705] ' '  (0x20)
+[UART TX @ 18705] 'r'  (0x72)
+[UART TX @ 18705] '0'  (0x30)
+[UART TX @ 18705] ','  (0x2C)
+[UART TX @ 18705] '1'  (0x31)
+[UART TX @ 18705] ''  (0x0D)
+[UART TX @ 18705] '\n'
+
+UART output:  nop
+ sub r0,1
+
+
+Executed 18705 instructions
+CPU halted (self-branch detected)

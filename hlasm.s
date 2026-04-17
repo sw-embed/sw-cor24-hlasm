@@ -339,6 +339,20 @@ _ml_is_ifne_near:
 
 _ml_is_struct_if_near:
 
+	la	r1,_kw_elseif
+	push	r1
+	la	r0,_line_is_keyword
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_struct_elseif_near
+
+	la	r1,_ml_is_struct_elseif
+	jmp	(r1)
+
+_ml_is_struct_elseif_near:
+
 	la	r1,_kw_else
 	push	r1
 	la	r0,_line_is_keyword
@@ -539,6 +553,12 @@ _ml_is_ifne:
 
 _ml_is_struct_if:
 	la	r0,_handle_struct_if
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_struct_elseif:
+	la	r0,_handle_struct_elseif
 	jal	r1,(r0)
 	la	r1,_ml_loop
 	jmp	(r1)
@@ -2346,7 +2366,7 @@ _init_runtime_arena:
 	push	r2
 	mov	fp,sp
 
-	la	r0,1438
+	la	r0,1501
 	push	r0
 	la	r0,786432
 	push	r0
@@ -4765,12 +4785,12 @@ _parse_struct_if:
 	push	r1
 	mov	fp,sp
 
-	la	r1,787822
+	la	r1,787885
 	la	r0,0
 	sb	r0,0(r1)
-	la	r1,787838
+	la	r1,787901
 	sb	r0,0(r1)
-	la	r1,787854
+	la	r1,787917
 	sb	r0,0(r1)
 
 	la	r2,786432
@@ -4829,7 +4849,7 @@ _psi_after_kw_ret:
 	jmp	(r1)
 
 _psi_cc:
-	la	r1,787822
+	la	r1,787885
 
 _psi_cc_loop:
 	lbu	r0,0(r2)
@@ -4884,7 +4904,7 @@ _psi_sep1_ret:
 _psi_check_flag:
 	la	r0,_cc_zset_txt
 	push	r0
-	la	r0,787822
+	la	r0,787885
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -4894,7 +4914,7 @@ _psi_check_flag:
 
 	la	r0,_cc_zclr_txt
 	push	r0
-	la	r0,787822
+	la	r0,787885
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -4902,7 +4922,7 @@ _psi_check_flag:
 	ceq	r0,z
 	brf	_psi_ret
 
-	la	r1,787838
+	la	r1,787901
 
 _psi_lhs_loop:
 	lbu	r0,0(r2)
@@ -4951,7 +4971,7 @@ _psi_sep2_skip:
 	bra	_psi_sep2
 
 _psi_rhs:
-	la	r1,787854
+	la	r1,787917
 
 _psi_rhs_loop:
 	lbu	r0,0(r2)
@@ -5059,100 +5079,103 @@ _sit_ret:
 	pop	fp
 	jmp	(r1)
 
-; _handle_struct_if: Lower single-level IF/ELSE/ENDIF core.
-_handle_struct_if:
+; _struct_if_top_ptr: Return ptr to top structured-IF frame, or 0 if empty.
+; Frame layout: false label +0, end label +3, else seen +6.
+_struct_if_top_ptr:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r1,787807
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_sitp_empty
+
+	add	r0,-1
+	push	r0
+	la	r0,_mul9
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,787813
+	add	r0,r1
+	bra	_sitp_ret
+
+_sitp_empty:
+	la	r0,0
+
+_sitp_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _emit_struct_if_test: Emit compare/test sequence that branches to false label.
+; Arg on stack: false_label_id
+_emit_struct_if_test:
 	push	fp
 	push	r2
 	push	r1
 	mov	fp,sp
 	add	sp,-3
 
-	la	r1,787807
-	lw	r0,0(r1)
-	ceq	r0,z
-	brt	_hsi_start
-	la	r1,_hsi_ret
-	jmp	(r1)
-
-_hsi_start:
-	la	r0,_parse_struct_if
-	jal	r1,(r0)
-
-	la	r1,787810
-	lw	r0,0(r1)
-	sw	r0,-3(fp)
-	la	r2,787813
-	sw	r0,0(r2)
-	add	r0,1
-	la	r2,787816
-	sw	r0,0(r2)
-	add	r0,1
-	sw	r0,0(r1)
-
-	la	r1,787807
-	la	r0,1
-	sw	r0,0(r1)
-	la	r1,787819
-	la	r0,0
-	sw	r0,0(r1)
-
 	la	r0,_cc_zset_txt
 	push	r0
-	la	r0,787822
+	la	r0,787885
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
 	add	sp,6
 	ceq	r0,z
-	brt	_hsi_zclr
+	brt	_esit_zclr
 
 	la	r0,_brf_txt
 	push	r0
-	la	r0,787813
-	lw	r0,0(r0)
+	lw	r0,9(fp)
 	push	r0
 	la	r0,_if_false_suffix
 	push	r0
 	la	r0,_emit_branch_label
 	jal	r1,(r0)
 	add	sp,9
-	la	r1,_hsi_ret
+	la	r1,_esit_ret
 	jmp	(r1)
 
-_hsi_zclr:
+_esit_zclr:
 	la	r0,_cc_zclr_txt
 	push	r0
-	la	r0,787822
+	la	r0,787885
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
 	add	sp,6
 	ceq	r0,z
-	brt	_hsi_cmp_setup
+	brt	_esit_cmp_setup
 
 	la	r0,_brt_txt
 	push	r0
-	la	r0,787813
-	lw	r0,0(r0)
+	lw	r0,9(fp)
 	push	r0
 	la	r0,_if_false_suffix
 	push	r0
 	la	r0,_emit_branch_label
 	jal	r1,(r0)
 	add	sp,9
-	la	r1,_hsi_ret
+	la	r1,_esit_ret
 	jmp	(r1)
 
-_hsi_cmp_setup:
-	la	r0,787854
+_esit_cmp_setup:
+	la	r0,787917
 	push	r0
 	la	r0,_is_number_str
 	jal	r1,(r0)
 	add	sp,3
 	ceq	r0,z
-	brt	_hsi_cmp_direct
+	brt	_esit_cmp_direct
 
-	la	r0,787838
+	la	r0,787901
 	push	r0
 	la	r0,_select_if_temp
 	jal	r1,(r0)
@@ -5171,84 +5194,84 @@ _hsi_cmp_setup:
 	push	r0
 	lw	r0,-3(fp)
 	push	r0
-	la	r0,787854
+	la	r0,787917
 	push	r0
 	la	r0,_emit_inst2
 	jal	r1,(r0)
 	add	sp,9
-	bra	_hsi_cmp_emit
+	bra	_esit_cmp_emit
 
-_hsi_cmp_direct:
+_esit_cmp_direct:
 	la	r0,0
 	sw	r0,-3(fp)
 
-_hsi_cmp_emit:
+_esit_cmp_emit:
 	la	r0,_cc_eq_txt
 	push	r0
-	la	r0,787822
+	la	r0,787885
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
 	add	sp,6
 	ceq	r0,z
-	brt	_hsi_cmp_ne
+	brt	_esit_cmp_ne
 
 	la	r0,_ceq_txt
-	bra	_hsi_emit_cmp
+	bra	_esit_emit_cmp
 
-_hsi_cmp_ne:
+_esit_cmp_ne:
 	la	r0,_cc_ne_txt
 	push	r0
-	la	r0,787822
+	la	r0,787885
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
 	add	sp,6
 	ceq	r0,z
-	brt	_hsi_cmp_lt
+	brt	_esit_cmp_lt
 
 	la	r0,_ceq_txt
-	bra	_hsi_emit_cmp
+	bra	_esit_emit_cmp
 
-_hsi_cmp_lt:
+_esit_cmp_lt:
 	la	r0,_cc_lt_txt
 	push	r0
-	la	r0,787822
+	la	r0,787885
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
 	add	sp,6
 	ceq	r0,z
-	brt	_hsi_cmp_lu
+	brt	_esit_cmp_lu
 
 	la	r0,_cls_txt
-	bra	_hsi_emit_cmp
+	bra	_esit_emit_cmp
 
-_hsi_cmp_lu:
+_esit_cmp_lu:
 	la	r0,_clu_txt
 
-_hsi_emit_cmp:
+_esit_emit_cmp:
 	push	r0
-	la	r0,787838
+	la	r0,787901
 	push	r0
 	lw	r0,-3(fp)
 	ceq	r0,z
-	brt	_hsi_emit_cmp_rhs
+	brt	_esit_emit_cmp_rhs
 	push	r0
-	bra	_hsi_emit_cmp_call
+	bra	_esit_emit_cmp_call
 
-_hsi_emit_cmp_rhs:
-	la	r0,787854
+_esit_emit_cmp_rhs:
+	la	r0,787917
 	push	r0
 
-_hsi_emit_cmp_call:
+_esit_emit_cmp_call:
 	la	r0,_emit_inst2
 	jal	r1,(r0)
 	add	sp,9
 
 	lw	r0,-3(fp)
 	ceq	r0,z
-	brt	_hsi_branch
+	brt	_esit_branch
 
 	la	r0,_pop_txt
 	push	r0
@@ -5258,33 +5281,92 @@ _hsi_emit_cmp_call:
 	jal	r1,(r0)
 	add	sp,6
 
-_hsi_branch:
+_esit_branch:
 	la	r0,_cc_ne_txt
 	push	r0
-	la	r0,787822
+	la	r0,787885
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
 	add	sp,6
 	ceq	r0,z
-	brt	_hsi_branch_false
+	brt	_esit_branch_false
 
 	la	r0,_brt_txt
-	bra	_hsi_branch_emit
+	bra	_esit_branch_emit
 
-_hsi_branch_false:
+_esit_branch_false:
 	la	r0,_brf_txt
 
-_hsi_branch_emit:
+_esit_branch_emit:
 	push	r0
-	la	r0,787813
-	lw	r0,0(r0)
+	lw	r0,9(fp)
 	push	r0
 	la	r0,_if_false_suffix
 	push	r0
 	la	r0,_emit_branch_label
 	jal	r1,(r0)
 	add	sp,9
+
+_esit_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _handle_struct_if: Lower structured IF and push one frame on the IF stack.
+_handle_struct_if:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+
+	la	r1,787807
+	lw	r0,0(r1)
+	lc	r2,8
+	clu	r0,r2
+	brt	_hsi_start
+	la	r1,_hsi_ret
+	jmp	(r1)
+
+_hsi_start:
+	push	r0
+	la	r0,_mul9
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,787813
+	add	r0,r1
+	sw	r0,-3(fp)
+
+	la	r1,787810
+	lw	r0,0(r1)
+	lw	r2,-3(fp)
+	sw	r0,0(r2)
+	add	r0,1
+	sw	r0,3(r2)
+	la	r2,0
+	lw	r1,-3(fp)
+	sw	r2,6(r1)
+	add	r0,1
+	la	r1,787810
+	sw	r0,0(r1)
+
+	la	r1,787807
+	lw	r0,0(r1)
+	add	r0,1
+	sw	r0,0(r1)
+
+	la	r0,_parse_struct_if
+	jal	r1,(r0)
+
+	lw	r0,-3(fp)
+	lw	r0,0(r0)
+	push	r0
+	la	r0,_emit_struct_if_test
+	jal	r1,(r0)
+	add	sp,3
 
 _hsi_ret:
 	mov	sp,fp
@@ -5299,13 +5381,13 @@ _handle_struct_else:
 	push	r1
 	mov	fp,sp
 
-	la	r1,787807
-	lw	r0,0(r1)
+	la	r0,_struct_if_top_ptr
+	jal	r1,(r0)
 	ceq	r0,z
 	brt	_hse_ret
 
-	la	r1,787819
-	lw	r0,0(r1)
+	mov	r2,r0
+	lw	r0,6(r2)
 	ceq	r0,z
 	brt	_hse_emit
 	bra	_hse_ret
@@ -5313,8 +5395,7 @@ _handle_struct_else:
 _hse_emit:
 	la	r0,_bra_txt
 	push	r0
-	la	r0,787816
-	lw	r0,0(r0)
+	lw	r0,3(r2)
 	push	r0
 	la	r0,_if_end_suffix
 	push	r0
@@ -5322,8 +5403,7 @@ _hse_emit:
 	jal	r1,(r0)
 	add	sp,9
 
-	la	r0,787813
-	lw	r0,0(r0)
+	lw	r0,0(r2)
 	push	r0
 	la	r0,_if_false_suffix
 	push	r0
@@ -5331,11 +5411,69 @@ _hse_emit:
 	jal	r1,(r0)
 	add	sp,6
 
-	la	r1,787819
 	la	r0,1
-	sw	r0,0(r1)
+	sw	r0,6(r2)
 
 _hse_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+_handle_struct_elseif:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+
+	la	r0,_struct_if_top_ptr
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hsel_ret
+
+	mov	r2,r0
+	lw	r0,6(r2)
+	ceq	r0,z
+	brt	_hsel_emit
+	bra	_hsel_ret
+
+_hsel_emit:
+	la	r0,_bra_txt
+	push	r0
+	lw	r0,3(r2)
+	push	r0
+	la	r0,_if_end_suffix
+	push	r0
+	la	r0,_emit_branch_label
+	jal	r1,(r0)
+	add	sp,9
+
+	lw	r0,0(r2)
+	push	r0
+	la	r0,_if_false_suffix
+	push	r0
+	la	r0,_emit_label_def
+	jal	r1,(r0)
+	add	sp,6
+
+	la	r1,787810
+	lw	r0,0(r1)
+	sw	r0,0(r2)
+	add	r0,1
+	sw	r0,0(r1)
+
+	la	r0,_parse_struct_if
+	jal	r1,(r0)
+
+	lw	r0,0(r2)
+	push	r0
+	la	r0,_emit_struct_if_test
+	jal	r1,(r0)
+	add	sp,3
+
+_hsel_ret:
 	mov	sp,fp
 	pop	r1
 	pop	r2
@@ -5348,18 +5486,17 @@ _handle_struct_endif:
 	push	r1
 	mov	fp,sp
 
-	la	r1,787807
-	lw	r0,0(r1)
+	la	r0,_struct_if_top_ptr
+	jal	r1,(r0)
 	ceq	r0,z
 	brt	_hsend_ret
 
-	la	r1,787819
-	lw	r0,0(r1)
+	mov	r2,r0
+	lw	r0,6(r2)
 	ceq	r0,z
 	brt	_hsend_false
 
-	la	r0,787816
-	lw	r0,0(r0)
+	lw	r0,3(r2)
 	push	r0
 	la	r0,_if_end_suffix
 	push	r0
@@ -5369,8 +5506,7 @@ _handle_struct_endif:
 	bra	_hsend_clear
 
 _hsend_false:
-	la	r0,787813
-	lw	r0,0(r0)
+	lw	r0,0(r2)
 	push	r0
 	la	r0,_if_false_suffix
 	push	r0
@@ -5380,9 +5516,8 @@ _hsend_false:
 
 _hsend_clear:
 	la	r1,787807
-	la	r0,0
-	sw	r0,0(r1)
-	la	r1,787819
+	lw	r0,0(r1)
+	add	r0,-1
 	sw	r0,0(r1)
 
 _hsend_ret:
@@ -5661,6 +5796,9 @@ _kw_ifne:
 _kw_if:
 	.byte	73,70,0
 
+_kw_elseif:
+	.byte	69,76,83,69,73,70,0
+
 _kw_else:
 	.byte	69,76,83,69,0
 
@@ -5718,14 +5856,13 @@ _include_lookup_slot:
 	.word	0
 
 ; --- Structured IF lowering scratch/state (runtime arena) ---
-; 787807 depth (single-level core for step 1)
+; 787807 active structured-IF depth
 ; 787810 next label id
-; 787813 false label id
-; 787816 end label id
-; 787819 else seen
-; 787822 cc buffer
-; 787838 lhs buffer
-; 787854 rhs buffer
+; 787813 IF frame stack base, 8 entries * 9 bytes
+;        +0 false label id, +3 end label id, +6 else seen
+; 787885 cc buffer
+; 787901 lhs buffer
+; 787917 rhs buffer
 
 _push_txt:
 	.byte	112,117,115,104,0

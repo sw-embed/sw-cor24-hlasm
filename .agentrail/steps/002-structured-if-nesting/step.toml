@@ -1,6 +1,6 @@
 number = 2
 slug = "structured-if-nesting"
-status = "pending"
+status = "in-progress"
 description = "Extend structured IF lowering to support ELSEIF and nested IF blocks. Keep th..."
 role = "production"
 context_files = []

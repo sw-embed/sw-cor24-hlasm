@@ -1,0 +1,35 @@
+Assembled 6968 bytes
+Loaded 20 bytes from 'reg-rs/s4_simple.bin' at 0x080000
+Running (speed: max IPS, time limit: 10s)...
+
+[UART TX @ 6441] 'n'  (0x6E)
+[UART TX @ 6441] 'o'  (0x6F)
+[UART TX @ 6441] 'p'  (0x70)
+[UART TX @ 6441] ''  (0x0D)
+[UART TX @ 6441] '\n'
+[UART TX @ 6441] 'h'  (0x68)
+[UART TX @ 6441] 'a'  (0x61)
+[UART TX @ 6441] 'l'  (0x6C)
+[UART TX @ 6441] 't'  (0x74)
+[UART TX @ 6441] ':'  (0x3A)
+[UART TX @ 6441] ''  (0x0D)
+[UART TX @ 6441] '\n'
+[UART TX @ 6441] ' '  (0x20)
+[UART TX @ 6441] 'b'  (0x62)
+[UART TX @ 6441] 'r'  (0x72)
+[UART TX @ 6441] 'a'  (0x61)
+[UART TX @ 6441] ' '  (0x20)
+[UART TX @ 6441] 'h'  (0x68)
+[UART TX @ 6441] 'a'  (0x61)
+[UART TX @ 6441] 'l'  (0x6C)
+[UART TX @ 6441] 't'  (0x74)
+[UART TX @ 6441] ''  (0x0D)
+[UART TX @ 6441] '\n'
+
+UART output: nop
+halt:
+ bra halt
+
+
+Executed 6441 instructions
+CPU halted (self-branch detected)

@@ -1,0 +1,37 @@
+Assembled 6968 bytes
+Loaded 24 bytes from 'reg-rs/s4_comments.bin' at 0x080000
+Running (speed: max IPS, time limit: 10s)...
+
+[UART TX @ 5292] 'n'  (0x6E)
+[UART TX @ 5292] 'o'  (0x6F)
+[UART TX @ 5292] 'p'  (0x70)
+[UART TX @ 5292] ' '  (0x20)
+[UART TX @ 5292] ';'  (0x3B)
+[UART TX @ 5292] ' '  (0x20)
+[UART TX @ 5292] 'c'  (0x63)
+[UART TX @ 5292] 'o'  (0x6F)
+[UART TX @ 5292] 'm'  (0x6D)
+[UART TX @ 5292] 'm'  (0x6D)
+[UART TX @ 5292] 'e'  (0x65)
+[UART TX @ 5292] 'n'  (0x6E)
+[UART TX @ 5292] 't'  (0x74)
+[UART TX @ 5292] ''  (0x0D)
+[UART TX @ 5292] '\n'
+[UART TX @ 5292] 'a'  (0x61)
+[UART TX @ 5292] 'd'  (0x64)
+[UART TX @ 5292] 'd'  (0x64)
+[UART TX @ 5292] ' '  (0x20)
+[UART TX @ 5292] 'r'  (0x72)
+[UART TX @ 5292] '0'  (0x30)
+[UART TX @ 5292] ','  (0x2C)
+[UART TX @ 5292] 'r'  (0x72)
+[UART TX @ 5292] '1'  (0x31)
+[UART TX @ 5292] ''  (0x0D)
+[UART TX @ 5292] '\n'
+
+UART output: nop ; comment
+add r0,r1
+
+
+Executed 5292 instructions
+CPU halted (self-branch detected)
