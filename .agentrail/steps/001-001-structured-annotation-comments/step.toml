@@ -1,8 +1,9 @@
 number = 1
 slug = "001-structured-annotation-comments"
-status = "in-progress"
+status = "completed"
 description = "Add an opt-in hlasm source switch that emits structured IF/THEN/ELSE, DO/ENDD..."
 role = "production"
 context_files = []
 created_at = "2026-04-16T23:55:37"
-commits = []
+completed_at = "2026-04-17T00:04:00"
+commits = ["97931baf70cee75ce147eacad1e716a7a68ff885"]

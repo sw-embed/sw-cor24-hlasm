@@ -1,0 +1,1 @@
+Added an opt-in HLANN source switch that emits structured-control-flow annotation comments in lowered output, plus a richer d30 demo and refreshed tracked structured baselines with the suite green.
