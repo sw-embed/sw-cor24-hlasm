@@ -1,0 +1,1 @@
+Added assembly-time EQU plus small + and - expression support for SET/IFEQ/IFNE, documented the passthrough boundary for label arithmetic, and added a new d33 proof while keeping the full regression suite green.
