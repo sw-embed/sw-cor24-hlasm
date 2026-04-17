@@ -1,0 +1,1 @@
+Added an opt-in HLIST listing/xref comment layer for COPY, macro definition, macro expansion, and consumed EQU directives, documented how it complements HLANN, and added a d35 proof while keeping the full suite green.

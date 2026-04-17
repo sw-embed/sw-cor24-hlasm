@@ -1,8 +1,9 @@
 number = 7
 slug = "005-listing-xref-and-diagnostics"
-status = "in-progress"
+status = "completed"
 description = "Improve the ergonomics of understanding generated assembly and debugging asse..."
 role = "production"
 context_files = []
 created_at = "2026-04-16T23:55:37"
-commits = []
+completed_at = "2026-04-17T12:14:51"
+commits = ["152b6f0950684328557658099be718dc409f3fe6"]
