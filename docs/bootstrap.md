@@ -123,6 +123,12 @@ the same binary config block. That keeps `hlasm.s` and the runtime INCLUDE
 path unchanged while moving the named-buffer declarations out of `reg-rs`
 internals and into demo-adjacent source files.
 
+Step 19 applies that same loader workflow to a larger bootstrap-shaped source
+set instead of only tiny demos. The split `hlasm0` proof carries its named
+include declarations in `bootstrap/hlasm0_loader.hlasm`, loads separate source
+buffers for the macro block and I/O block, and still feeds the unchanged
+binary config image plus the normal runtime INCLUDE path in `hlasm.s`.
+
 `hlasm.s` currently walks the source portion of that table into a small
 in-memory descriptor set, which is enough to model include-like source
 chaining with multiple preloaded ASCII buffers. That keeps the input side

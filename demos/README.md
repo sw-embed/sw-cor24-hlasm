@@ -31,6 +31,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d22 | Include-return source stack | WORKS |
 | d23 | Named include table | WORKS |
 | d24 | Nested named includes | WORKS |
+| d25 | Split bootstrap loader spec | WORKS |
 
 ## Demo Policy
 

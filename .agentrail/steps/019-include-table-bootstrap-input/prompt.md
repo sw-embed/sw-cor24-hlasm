@@ -1,0 +1,1 @@
+Extend the bootstrap-facing input workflow so include-table declarations can be carried with larger bootstrap source sets, not just demo loader specs. Keep the current binary config layout and runtime INCLUDE lookup unchanged, but make the host-side source mapping scale to more realistic multi-file bootstrap runs.

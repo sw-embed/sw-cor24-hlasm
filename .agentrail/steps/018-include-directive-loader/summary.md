@@ -1,0 +1,1 @@
+Added demo-adjacent bootstrap loader specs for named includes and a runner that derives source-buffer lengths, generates the unchanged low-SRAM config block, and launches cor24-run from assembler-flavored MAIN/SRCBUF/INCLUDE declarations.

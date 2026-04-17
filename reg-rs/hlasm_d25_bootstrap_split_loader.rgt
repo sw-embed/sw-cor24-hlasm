@@ -1,0 +1,5 @@
+command = 'bash reg-rs/run_bootstrap_loader.sh bootstrap/hlasm0_loader.hlasm 120000 2>&1'
+timeout = 15
+preprocess = "grep -A 100 '^UART output:' || true"
+exit_code = 0
+desc = "Demo 25: split bootstrap source set carries named include declarations through the host-side loader spec"

@@ -1,0 +1,15 @@
+SET TR,1
+SET IO,1
+INCLUDE common
+_main:
+ push fp
+ mov fp,sp
+ push r2
+ mov fp,sp
+IFDEF TR
+ la r0,_ban
+ jal r1,(r0)
+ENDIFASM
+IFDEF IO
+INCLUDE io
+ENDIFASM

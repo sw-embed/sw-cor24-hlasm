@@ -1,0 +1,13 @@
+MACRO ENT
+ push fp
+ push r2
+ push r1
+ mov fp,sp
+MEND
+MACRO RET
+ mov sp,fp
+ pop r1
+ pop r2
+ pop fp
+ jmp (r1)
+MEND

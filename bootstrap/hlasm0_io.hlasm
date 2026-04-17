@@ -1,0 +1,6 @@
+_ban:
+ENT
+ la r0,_tx
+RET
+_tx:
+ .word 16711936
