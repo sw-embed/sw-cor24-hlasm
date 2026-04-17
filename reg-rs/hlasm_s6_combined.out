@@ -1,0 +1,8 @@
+UART output: L0001: st r0
+ b L0001
+L0002: st r1
+ b L0002
+
+
+Executed 25021 instructions
+CPU halted (self-branch detected)

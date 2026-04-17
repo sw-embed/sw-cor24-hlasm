@@ -2,4 +2,4 @@ command = 'cor24-run --run hlasm.s --load-binary reg-rs/s6_combined.bin@524288 -
 timeout = 15
 preprocess = "grep -A 100 '^UART output:' || true"
 exit_code = 0
-desc = "Step 6: macro expansion with both params and \@ labels"
+desc = "Step 6: macro expansion with both params and \\@ labels"

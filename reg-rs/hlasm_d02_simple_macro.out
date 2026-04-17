@@ -1,45 +1,7 @@
-Assembled 6968 bytes
-Loaded 36 bytes from 'demos/d02_simple_macro.bin' at 0x080000
-Running (speed: max IPS, time limit: 10s)...
-
-[UART TX @ 9824] ' '  (0x20)
-[UART TX @ 9824] 'a'  (0x61)
-[UART TX @ 9824] 'd'  (0x64)
-[UART TX @ 9824] 'd'  (0x64)
-[UART TX @ 9824] ' '  (0x20)
-[UART TX @ 9824] 'r'  (0x72)
-[UART TX @ 9824] '0'  (0x30)
-[UART TX @ 9824] ','  (0x2C)
-[UART TX @ 9824] '1'  (0x31)
-[UART TX @ 9824] ''  (0x0D)
-[UART TX @ 9824] '\n'
-[UART TX @ 9824] ' '  (0x20)
-[UART TX @ 9824] 'a'  (0x61)
-[UART TX @ 9824] 'd'  (0x64)
-[UART TX @ 9824] 'd'  (0x64)
-[UART TX @ 9824] ' '  (0x20)
-[UART TX @ 9824] 'r'  (0x72)
-[UART TX @ 9824] '0'  (0x30)
-[UART TX @ 9824] ','  (0x2C)
-[UART TX @ 9824] '1'  (0x31)
-[UART TX @ 9824] ''  (0x0D)
-[UART TX @ 9824] '\n'
-[UART TX @ 9824] ' '  (0x20)
-[UART TX @ 9824] 'a'  (0x61)
-[UART TX @ 9824] 'd'  (0x64)
-[UART TX @ 9824] 'd'  (0x64)
-[UART TX @ 9824] ' '  (0x20)
-[UART TX @ 9824] 'r'  (0x72)
-[UART TX @ 9824] '0'  (0x30)
-[UART TX @ 9824] ','  (0x2C)
-[UART TX @ 9824] '1'  (0x31)
-[UART TX @ 9824] ''  (0x0D)
-[UART TX @ 9824] '\n'
-
 UART output:  add r0,1
  add r0,1
  add r0,1
 
 
-Executed 9824 instructions
+Executed 24812 instructions
 CPU halted (self-branch detected)

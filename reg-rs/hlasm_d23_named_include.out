@@ -4,5 +4,5 @@ _h:
  bra tail
 
 
-Executed 24986 instructions
+Executed 30058 instructions
 CPU halted (self-branch detected)

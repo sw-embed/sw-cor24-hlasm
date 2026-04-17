@@ -1,0 +1,8 @@
+UART output:  st r0
+ st r1
+ st r2
+ st fp
+
+
+Executed 25333 instructions
+CPU halted (self-branch detected)

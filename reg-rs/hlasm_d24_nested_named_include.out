@@ -7,5 +7,5 @@ _h:
  bra mid_done
 
 
-Executed 30862 instructions
+Executed 37569 instructions
 CPU halted (self-branch detected)

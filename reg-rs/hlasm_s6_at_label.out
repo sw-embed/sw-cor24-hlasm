@@ -1,0 +1,8 @@
+UART output: L0001: add r0,1
+ b L0001
+L0002: add r0,1
+ b L0002
+
+
+Executed 24914 instructions
+CPU halted (self-branch detected)

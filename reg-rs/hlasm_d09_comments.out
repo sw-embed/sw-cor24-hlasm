@@ -1,100 +1,3 @@
-Assembled 6968 bytes
-Loaded 84 bytes from 'demos/d09_comments.bin' at 0x080000
-Running (speed: max IPS, time limit: 10s)...
-
-[UART TX @ 10000] 'n'  (0x6E)
-[UART TX @ 10000] 'o'  (0x6F)
-[UART TX @ 10000] 'p'  (0x70)
-[UART TX @ 10000] ''  (0x0D)
-[UART TX @ 10000] '\n'
-[UART TX @ 10000] ';'  (0x3B)
-[UART TX @ 10000] ' '  (0x20)
-[UART TX @ 10000] 't'  (0x74)
-[UART TX @ 10000] 'h'  (0x68)
-[UART TX @ 10000] 'i'  (0x69)
-[UART TX @ 10000] 's'  (0x73)
-[UART TX @ 10000] ' '  (0x20)
-[UART TX @ 10000] 'i'  (0x69)
-[UART TX @ 10000] 's'  (0x73)
-[UART TX @ 10000] ' '  (0x20)
-[UART TX @ 10000] 'a'  (0x61)
-[UART TX @ 10000] ' '  (0x20)
-[UART TX @ 10000] 'c'  (0x63)
-[UART TX @ 10000] 'o'  (0x6F)
-[UART TX @ 10000] 'm'  (0x6D)
-[UART TX @ 10000] 'm'  (0x6D)
-[UART TX @ 10000] 'e'  (0x65)
-[UART TX @ 10000] 'n'  (0x6E)
-[UART TX @ 10000] 't'  (0x74)
-[UART TX @ 10000] ''  (0x0D)
-[UART TX @ 10000] '\n'
-[UART TX @ 10000] ' '  (0x20)
-[UART TX @ 10000] 'a'  (0x61)
-[UART TX @ 10000] 'd'  (0x64)
-[UART TX @ 10000] 'd'  (0x64)
-[UART TX @ 10000] ' '  (0x20)
-[UART TX @ 10000] 'r'  (0x72)
-[UART TX @ 10000] '0'  (0x30)
-[UART TX @ 10000] ','  (0x2C)
-[UART TX @ 10000] '1'  (0x31)
-[UART TX @ 10000] ''  (0x0D)
-[UART TX @ 10000] '\n'
-[UART TX @ 18499] '#'  (0x23)
-[UART TX @ 18499] ' '  (0x20)
-[UART TX @ 18499] 't'  (0x74)
-[UART TX @ 18499] 'h'  (0x68)
-[UART TX @ 18499] 'i'  (0x69)
-[UART TX @ 18499] 's'  (0x73)
-[UART TX @ 18499] ' '  (0x20)
-[UART TX @ 18499] 'i'  (0x69)
-[UART TX @ 18499] 's'  (0x73)
-[UART TX @ 18499] ' '  (0x20)
-[UART TX @ 18499] 'a'  (0x61)
-[UART TX @ 18499] 'l'  (0x6C)
-[UART TX @ 18499] 's'  (0x73)
-[UART TX @ 18499] 'o'  (0x6F)
-[UART TX @ 18499] ' '  (0x20)
-[UART TX @ 18499] 'a'  (0x61)
-[UART TX @ 18499] ' '  (0x20)
-[UART TX @ 18499] 'c'  (0x63)
-[UART TX @ 18499] 'o'  (0x6F)
-[UART TX @ 18499] 'm'  (0x6D)
-[UART TX @ 18499] 'm'  (0x6D)
-[UART TX @ 18499] 'e'  (0x65)
-[UART TX @ 18499] 'n'  (0x6E)
-[UART TX @ 18499] 't'  (0x74)
-[UART TX @ 18499] ''  (0x0D)
-[UART TX @ 18499] '\n'
-[UART TX @ 18499] ' '  (0x20)
-[UART TX @ 18499] 'b'  (0x62)
-[UART TX @ 18499] 'r'  (0x72)
-[UART TX @ 18499] 'a'  (0x61)
-[UART TX @ 18499] ' '  (0x20)
-[UART TX @ 18499] 'h'  (0x68)
-[UART TX @ 18499] 'a'  (0x61)
-[UART TX @ 18499] 'l'  (0x6C)
-[UART TX @ 18499] 't'  (0x74)
-[UART TX @ 18499] ''  (0x0D)
-[UART TX @ 18499] '\n'
-[UART TX @ 18499] 'h'  (0x68)
-[UART TX @ 18499] 'a'  (0x61)
-[UART TX @ 18499] 'l'  (0x6C)
-[UART TX @ 18499] 't'  (0x74)
-[UART TX @ 18499] ':'  (0x3A)
-[UART TX @ 18499] ''  (0x0D)
-[UART TX @ 18499] '\n'
-[UART TX @ 18499] ' '  (0x20)
-[UART TX @ 18499] 'b'  (0x62)
-[UART TX @ 18499] 'r'  (0x72)
-[UART TX @ 18499] 'a'  (0x61)
-[UART TX @ 18499] ' '  (0x20)
-[UART TX @ 18499] 'h'  (0x68)
-[UART TX @ 18499] 'a'  (0x61)
-[UART TX @ 18499] 'l'  (0x6C)
-[UART TX @ 18499] 't'  (0x74)
-[UART TX @ 18499] ''  (0x0D)
-[UART TX @ 18499] '\n'
-
 UART output: nop
 ; this is a comment
  add r0,1
@@ -104,5 +7,5 @@ halt:
  bra halt
 
 
-Executed 18499 instructions
+Executed 35854 instructions
 CPU halted (self-branch detected)

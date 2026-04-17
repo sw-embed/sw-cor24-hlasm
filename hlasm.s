@@ -58,6 +58,10 @@ _ml_loop:
 
 	ceq	r0,z
 	brf	_ml_go
+	la	r1,788191
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_ml_go
 
 	mov	sp,fp
 	pop	r2
@@ -486,14 +490,16 @@ _ml_is_struct_otherwise_near:
 	add	sp,3
 
 	ceq	r0,z
-	brt	_ml_nf4
+	brt	_ml_is_struct_endsel_near2
 
 	la	r1,_ml_is_struct_endsel
 	jmp	(r1)
 
+_ml_is_struct_endsel_near2:
+
 	la	r1,_kw_macro
 	push	r1
-	la	r0,_starts_with
+	la	r0,_line_is_keyword
 	jal	r1,(r0)
 	add	sp,3
 
@@ -502,7 +508,7 @@ _ml_is_struct_otherwise_near:
 
 	la	r1,_kw_mend
 	push	r1
-	la	r0,_starts_with
+	la	r0,_line_is_keyword
 	jal	r1,(r0)
 	add	sp,3
 
@@ -772,6 +778,9 @@ _read_line:
 	la	r1,786432
 	la	r0,0
 	sw	r0,0(fp)
+	la	r1,788191
+	sw	r0,0(r1)
+	la	r1,786432
 
 _rl_loop:
 	push	r1
@@ -844,6 +853,9 @@ _rl_ret_len:
 	jmp	(r1)
 
 _rl_empty:
+	la	r1,788191
+	la	r0,1
+	sw	r0,0(r1)
 	la	r0,0
 	mov	sp,fp
 	pop	r2
@@ -863,7 +875,7 @@ _emit_line:
 
 	lw	r0,9(fp)
 	ceq	r0,z
-	brt	_el_done
+	brt	_el_end_str
 
 	la	r1,786432
 
@@ -2723,7 +2735,7 @@ _init_runtime_arena:
 	push	r2
 	mov	fp,sp
 
-	la	r0,1552
+		la	r0,1762
 	push	r0
 	la	r0,786432
 	push	r0
@@ -7011,30 +7023,6 @@ _mul12:
 	pop	r1
 	pop	fp
 	jmp	(r1)
-
-_kw_mend:
-	.byte 77,65,67,82,79,0
-	.byte 77,69,78,68,0
-	.byte 73,70,0
-	.byte 69,76,83,69,73,70,0
-	.byte 69,76,83,69,0
-	.byte 69,78,68,73,70,0
-	.byte 68,79,0
-	.byte 68,79,69,88,73,84,0
-	.byte 73,84,69,82,65,84,69,0
-	.byte 69,78,68,68,79,0
-	.byte 83,69,76,69,67,84,0
-	.byte 87,72,69,78,0
-	.byte 79,84,72,69,82,87,73,83,69,0
-	.byte 69,78,68,83,69,76,0
-	.byte 83,69,84,0
-	.byte 73,70,68,73,70,0
-	.byte 73,70,78,68,73,70,0
-	.byte 73,70,69,81,0
-	.byte 73,70,78,69,0
-	.byte 69,76,83,69,65,83,77,0
-	.byte 69,78,68,73,70,65,83,77,0
-	.byte 0
 
 ; --- Buffers ---
 _id_buf:

@@ -1,6 +1,7 @@
 UART output:  add r0,1
+ sub r0,1
  add r0,1
 
 
-Executed 21848 instructions
+Executed 28192 instructions
 CPU halted (self-branch detected)

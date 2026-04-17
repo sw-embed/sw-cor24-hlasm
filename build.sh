@@ -54,7 +54,7 @@ test_suite() {
         echo "ERROR: reg-rs not found."
         exit 1
     fi
-    reg-rs run -p hlasm_ --parallel
+    REG_RS_DATA_DIR="$SCRIPT_DIR/reg-rs" reg-rs run -p hlasm_ --parallel
 }
 
 clean() {

@@ -1,0 +1,1 @@
+Fix the currently failing regression suite before any new saga work. Repair broken test fixtures, restore basic passthrough and blank-line handling if broken, repair macro-path regressions, and update tracked .out baselines only after the behavior is correct. Verify with ./build.sh test and repo-local reg-rs runs.

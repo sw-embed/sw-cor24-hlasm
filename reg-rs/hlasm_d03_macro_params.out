@@ -1,0 +1,8 @@
+UART output:  push \a
+ push \b
+ push \a
+ push \b
+
+
+Executed 25193 instructions
+CPU halted (self-branch detected)

@@ -3,5 +3,5 @@ UART output: IFDEF DEBUG
 ENDIFASM
 
 
-Executed 7105 instructions
+Executed 23008 instructions
 CPU halted (self-branch detected)

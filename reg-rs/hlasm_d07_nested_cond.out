@@ -1,16 +1,5 @@
-Assembled 6968 bytes
-Loaded 106 bytes from 'demos/d07_nested_cond.bin' at 0x080000
-Running (speed: max IPS, time limit: 10s)...
-
-[UART TX @ 10000] ' '  (0x20)
-[UART TX @ 10000] 'n'  (0x6E)
-[UART TX @ 10000] 'o'  (0x6F)
-[UART TX @ 10000] 'p'  (0x70)
-[UART TX @ 10000] ''  (0x0D)
-[UART TX @ 10000] '\n'
-
 UART output:  nop
 
 
-Executed 13748 instructions
+Executed 28029 instructions
 CPU halted (self-branch detected)
