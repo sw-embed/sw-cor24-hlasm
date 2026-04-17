@@ -1,0 +1,1 @@
+Fixed blank-line handling and the select-induced macro-dispatch regression, repaired repo-local reg-rs configuration and broken fixtures, regenerated tracked baselines, and restored a green test suite.

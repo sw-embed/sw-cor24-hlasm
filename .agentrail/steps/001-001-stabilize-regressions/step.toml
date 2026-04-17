@@ -1,8 +1,9 @@
 number = 1
 slug = "001-stabilize-regressions"
-status = "in-progress"
+status = "completed"
 description = "Fix the currently failing regression suite before any new saga work. Repair b..."
 role = "production"
 context_files = []
 created_at = "2026-04-16T22:20:05"
-commits = []
+completed_at = "2026-04-16T22:31:30"
+commits = ["3b54a0a73498ec2040c8c363dd34d581caddfe0a"]
