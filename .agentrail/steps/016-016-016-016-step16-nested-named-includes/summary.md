@@ -1,0 +1,1 @@
+Added a nested named-include demo and regression, and fixed source-return handling so INCLUDE chains unwind tail -> mid -> main without splicing EOF-terminated lines.

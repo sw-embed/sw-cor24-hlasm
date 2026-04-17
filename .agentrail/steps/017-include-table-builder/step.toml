@@ -1,0 +1,8 @@
+number = 17
+slug = "include-table-builder"
+status = "in-progress"
+description = "Build a bootstrap-friendly way to populate the low-SRAM include-name table fr..."
+role = "legacy"
+context_files = []
+created_at = "2026-04-16T20:01:02"
+commits = []

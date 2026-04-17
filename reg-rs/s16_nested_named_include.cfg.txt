@@ -1,0 +1,6 @@
+# Demo 24 nested named include config
+main 589824 29
+extra 528384 43
+extra 532480 13
+include 1 mid
+include 2 tail

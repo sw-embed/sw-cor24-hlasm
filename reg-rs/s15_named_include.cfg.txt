@@ -1,0 +1,4 @@
+# Demo 23 named include config
+main 589824 37
+extra 528384 33
+include 1 tail

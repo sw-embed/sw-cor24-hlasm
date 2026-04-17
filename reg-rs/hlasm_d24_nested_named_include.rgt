@@ -1,4 +1,4 @@
-command = 'cor24-run --run hlasm.s --load-binary demos/d24_nested_named_include_main.bin@589824 --load-binary demos/d24_nested_named_include_mid.bin@528384 --load-binary demos/d24_nested_named_include_tail.bin@532480 --load-binary reg-rs/s16_nested_named_include.cfg@520192 --stack-kilobytes 3 --speed 0 -n 140000 2>&1'
+command = 'bash reg-rs/make_cfg.sh reg-rs/s16_nested_named_include.cfg.txt /tmp/sw-cor24-hlasm-s16.cfg && cor24-run --run hlasm.s --load-binary demos/d24_nested_named_include_main.bin@589824 --load-binary demos/d24_nested_named_include_mid.bin@528384 --load-binary demos/d24_nested_named_include_tail.bin@532480 --load-binary /tmp/sw-cor24-hlasm-s16.cfg@520192 --stack-kilobytes 3 --speed 0 -n 140000 2>&1'
 timeout = 15
 preprocess = "grep -A 100 '^UART output:' || true"
 exit_code = 0

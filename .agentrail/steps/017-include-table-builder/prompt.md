@@ -1,0 +1,1 @@
+Build a bootstrap-friendly way to populate the low-SRAM include-name table from source-friendly inputs instead of hand-built config blobs. Reuse the current config layout and keep the runtime include lookup path unchanged.

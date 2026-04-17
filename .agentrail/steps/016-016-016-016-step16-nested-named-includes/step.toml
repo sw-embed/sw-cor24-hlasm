@@ -1,8 +1,9 @@
 number = 16
 slug = "016-016-016-step16-nested-named-includes"
-status = "in-progress"
+status = "completed"
 description = "Extend the named-include path to prove nested include chaining for bootstrap ..."
 role = "legacy"
 context_files = []
 created_at = "2026-04-16T19:44:56"
-commits = []
+completed_at = "2026-04-16T20:01:02"
+commits = ["1a47c12a13feb5d1c76c8389aad3401b55d75a86"]

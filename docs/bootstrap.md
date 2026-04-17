@@ -108,6 +108,13 @@ The current source-switch path uses a small config block at `0x07F000` with:
 - `+27`: include-name count
 - `+30`: first include record as `(slot,name[9])`
 
+Step 17 keeps that binary layout, but the named-include demos no longer treat
+the low-SRAM block as hand-authored bytes. A tiny shell builder now emits the
+same config image from readable manifest files with `main`, `extra`, and
+`include` records, so bootstrap demos can describe include-table contents in
+source-friendly text while `hlasm.s` continues to consume the unchanged binary
+format at `0x07F000`.
+
 `hlasm.s` currently walks the source portion of that table into a small
 in-memory descriptor set, which is enough to model include-like source
 chaining with multiple preloaded ASCII buffers. That keeps the input side
