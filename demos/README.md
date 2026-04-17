@@ -110,6 +110,11 @@ Named-include bootstrap demos now pair the `.hlasm` source with a small
 loader spec that declares the host-side buffer map in assembler-flavored text:
 `MAIN file@addr`, `SRCBUF slot,file@addr`, `INCLUDE name,slot`.
 
+Larger bootstrap proofs can now use a source-set manifest instead:
+`MAIN file.hlasm` plus repeated `INCLUDE name file.hlasm`. The host-side
+runner builds the `.bin` files, assigns the standard bootstrap buffer
+addresses, and feeds the same low-SRAM include table into `hlasm.s`.
+
 Conditionals can nest:
 ```
 SET OUTER,1

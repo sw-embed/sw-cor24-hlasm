@@ -129,6 +129,12 @@ include declarations in `bootstrap/hlasm0_loader.hlasm`, loads separate source
 buffers for the macro block and I/O block, and still feeds the unchanged
 binary config image plus the normal runtime INCLUDE path in `hlasm.s`.
 
+Step 20 generalizes that pattern again with a bootstrap source-set runner.
+`bootstrap/hlasm0.sourceset` names one main `.hlasm` source and any number of
+named include-source files, the host-side runner builds the corresponding
+`.bin` files, assigns the standard bootstrap load addresses, emits the same
+low-SRAM config image, and then invokes the unchanged runtime INCLUDE path.
+
 `hlasm.s` currently walks the source portion of that table into a small
 in-memory descriptor set, which is enough to model include-like source
 chaining with multiple preloaded ASCII buffers. That keeps the input side

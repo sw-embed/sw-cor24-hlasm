@@ -1,0 +1,1 @@
+Extended the bootstrap input workflow to a split hlasm0 source set carried by a bootstrap loader spec, with named include declarations living beside the bootstrap files instead of inside demo-only mappings.

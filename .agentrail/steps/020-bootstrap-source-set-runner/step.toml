@@ -1,0 +1,8 @@
+number = 20
+slug = "bootstrap-source-set-runner"
+status = "in-progress"
+description = "Generalize the host-side bootstrap source-set runner so larger multi-file boo..."
+role = "legacy"
+context_files = []
+created_at = "2026-04-16T20:14:11"
+commits = []

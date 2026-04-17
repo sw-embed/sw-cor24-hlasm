@@ -1,0 +1,4 @@
+# Split hlasm0 bootstrap source set.
+MAIN bootstrap/hlasm0_split_main.hlasm
+INCLUDE common bootstrap/hlasm0_common.hlasm
+INCLUDE io bootstrap/hlasm0_io.hlasm

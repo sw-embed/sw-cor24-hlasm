@@ -1,0 +1,1 @@
+Generalize the host-side bootstrap source-set runner so larger multi-file bootstrap runs can share one reusable mapping workflow instead of per-proof loader specs. Keep the low-SRAM config layout and runtime INCLUDE lookup unchanged, but make it practical to define and run richer bootstrap source sets.
