@@ -1193,7 +1193,7 @@ _sc_cloop:
 	ceq	r0,r1
 	brt	_sc_cdone
 
-	lw	r1,0(fp)
+	lw	r1,-3(fp)
 	sb	r0,0(r1)
 	add	r1,1
 	sw	r1,0(fp)
@@ -1948,13 +1948,14 @@ _ed24_ret:
 	pop	fp
 	jmp	(r1)
 
-; _init_src_table: Initialize source descriptors and optional secondary buffer
-; config from 0x07F000.
+; _init_src_table: Initialize source descriptors and optional extra buffers
+; from config at 0x07F000.
 _init_src_table:
 	push	fp
 	push	r1
 	push	r2
 	mov	fp,sp
+	add	sp,-3
 
 	la	r1,_src_count
 	la	r0,1
@@ -1974,20 +1975,72 @@ _init_src_table:
 	sw	r0,3(r1)
 	sw	r0,6(r1)
 
+	la	r1,_src_desc3
+	sw	r0,0(r1)
+	sw	r0,3(r1)
+	sw	r0,6(r1)
+
+	la	r1,_src_desc4
+	sw	r0,0(r1)
+	sw	r0,3(r1)
+	sw	r0,6(r1)
+
 	la	r2,520192
 	lw	r0,0(r2)
 	ceq	r0,z
 	brt	_ist_ret
 
-	la	r1,_src_desc2
-	lw	r0,3(r2)
-	sw	r0,0(r1)
-	lw	r0,6(r2)
-	sw	r0,3(r1)
-
+	sw	r0,0(fp)
 	la	r1,_src_count
-	la	r0,2
+	add	r0,1
 	sw	r0,0(r1)
+
+	la	r1,_src_copy_idx
+	la	r0,0
+	sw	r0,0(r1)
+
+_ist_copy_loop:
+	la	r1,_src_copy_idx
+	lw	r0,0(r1)
+	lw	r1,0(fp)
+	clu	r0,r1
+	brf	_ist_ret
+
+	push	r0
+	la	r0,_mul6
+	jal	r1,(r0)
+	add	sp,3
+	mov	r1,r0
+	la	r0,520195
+	add	r0,r1
+	mov	r2,r0
+
+	la	r1,_src_copy_idx
+	lw	r0,0(r1)
+	add	r0,1
+	push	r2
+	push	r0
+	la	r0,_mul9
+	jal	r1,(r0)
+	add	sp,3
+	pop	r2
+	mov	r1,r0
+	la	r0,_src_desc
+	add	r0,r1
+	mov	r1,r0
+
+	lw	r0,0(r2)
+	sw	r0,0(r1)
+	lw	r0,3(r2)
+	sw	r0,3(r1)
+	la	r0,0
+	sw	r0,6(r1)
+
+	la	r1,_src_copy_idx
+	lw	r0,0(r1)
+	add	r0,1
+	sw	r0,0(r1)
+	bra	_ist_copy_loop
 
 _ist_ret:
 	mov	sp,fp
@@ -2026,6 +2079,27 @@ _asd_ret:
 	pop	fp
 	jmp	(r1)
 
+; _current_src_desc: Return pointer to active source descriptor.
+; Returns: r0 = descriptor pointer
+_current_src_desc:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r1,_src_active_idx
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_mul9
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_src_desc
+	add	r0,r1
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
 ; _read_char: Read next byte from source buffer.
 ; Arg (on stack): pointer to source descriptor table
 ; Returns: r0 = byte value (0-255), or 0 on EOF
@@ -2035,17 +2109,9 @@ _read_char:
 	push	r2
 	mov	fp,sp
 
-	la	r2,_src_active_idx
-	lw	r0,0(r2)
-	ceq	r0,z
-	brt	_rc_main
-	la	r2,_src_desc2
-	bra	_rc_have_desc
-
-_rc_main:
-	la	r2,_src_desc
-
-_rc_have_desc:
+	la	r0,_current_src_desc
+	jal	r1,(r0)
+	mov	r2,r0
 
 	lw	r0,6(r2)
 	lw	r1,3(r2)
@@ -2082,17 +2148,9 @@ _peek_char:
 	push	r2
 	mov	fp,sp
 
-	la	r2,_src_active_idx
-	lw	r0,0(r2)
-	ceq	r0,z
-	brt	_pc_main
-	la	r2,_src_desc2
-	bra	_pc_have_desc
-
-_pc_main:
-	la	r2,_src_desc
-
-_pc_have_desc:
+	la	r0,_current_src_desc
+	jal	r1,(r0)
+	mov	r2,r0
 
 	lw	r0,6(r2)
 	lw	r1,3(r2)
@@ -3869,6 +3927,24 @@ _mul9:
 	pop	fp
 	jmp	(r1)
 
+; _mul6: Multiply arg by 6.
+; Arg on stack: value
+; Returns: r0 = value * 6
+_mul6:
+	push	fp
+	push	r1
+	mov	fp,sp
+	lw	r0,6(fp)
+	mov	r2,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r2
+	add	r0,r2
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
 ; _mul10: Multiply arg by 10.
 ; Arg on stack: value
 ; Returns: r0 = value * 10
@@ -3928,12 +4004,25 @@ _src_count:
 _src_active_idx:
 	.word	0
 
+_src_copy_idx:
+	.word	0
+
 _src_desc:
 	.word	524288
 	.word	4096
 	.word	0
 
 _src_desc2:
+	.word	0
+	.word	0
+	.word	0
+
+_src_desc3:
+	.word	0
+	.word	0
+	.word	0
+
+_src_desc4:
 	.word	0
 	.word	0
 	.word	0

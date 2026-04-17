@@ -1,0 +1,4 @@
+IFDEF FROM_INC1
+tail:
+ bra _h
+ENDIFASM

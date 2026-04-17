@@ -74,10 +74,17 @@ That means `hlasm` does not need a host-side include mechanism to get started.
 Stage0 can consume source and include-file buffers entirely through the
 existing emulator interface.
 
-The current step-9 proof point uses a small fixed config block at `0x07F000`
-to advertise an optional second source buffer. That is intentionally simple:
-it proves the multi-buffer path now, and a future include mechanism can build
-on the same descriptor idea without changing the target-native loading model.
+The current source-switch path uses a small config block at `0x07F000` with:
+
+- `+0`: extra-buffer count
+- `+3`: first extra `(base,len)` record
+- then additional 6-byte `(base,len)` records
+
+`hlasm.s` currently walks that table into a small in-memory descriptor set,
+which is enough to model include-like source chaining with multiple preloaded
+ASCII buffers. That keeps the input side compatible with repeated
+`cor24-run --load-binary ...@addr` flags today while leaving room for a later
+named include table or heap-backed descriptor arena.
 
 ## Step 8 Deliverable
 

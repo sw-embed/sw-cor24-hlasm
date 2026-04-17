@@ -1,6 +1,6 @@
 number = 10
 slug = "010-step10-include-ready-switch"
-status = "pending"
+status = "in-progress"
 description = "Build an include-ready source switcher on top of the new multi-buffer input p..."
 role = "legacy"
 context_files = []

@@ -1,0 +1,5 @@
+SET FROM_MAIN,1
+MACRO HALT
+_h:
+ bra _h
+MEND

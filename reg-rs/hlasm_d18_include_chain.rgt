@@ -1,0 +1,5 @@
+command = 'cor24-run --run hlasm.s --load-binary demos/d18_include_main.bin@524288 --load-binary demos/d18_include_mid.bin@528384 --load-binary demos/d18_include_tail.bin@532480 --load-binary reg-rs/s10_include.cfg@520192 --speed 0 -n 100000 2>&1'
+timeout = 15
+preprocess = "grep -A 100 '^UART output:' || true"
+exit_code = 0
+desc = "Demo 18: include-like chained source buffers preserve macros and symbols across multiple buffers"
