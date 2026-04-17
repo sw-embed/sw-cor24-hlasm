@@ -20,5 +20,5 @@ _tx:
  .word 16711936
 
 
-Executed 63011 instructions
+Executed 64008 instructions
 CPU halted (self-branch detected)

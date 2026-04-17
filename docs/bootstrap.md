@@ -115,6 +115,13 @@ When the main override words are zero, stage0 keeps the default main window at
 `0x080000/4096`. When they are non-zero, stage0 uses the patched main source
 window and still appends extra source buffers from the legacy record area.
 
+The first directive-driven source switch is now `SRCBUF <slot>`. It activates
+the chosen preloaded source-buffer slot directly and rewinds that descriptor to
+position zero. This is still a minimal bootstrap mechanism: slot selection is
+numeric, target-native, and intentionally simple, but it lets a patched main
+source explicitly pull in the next preloaded buffer instead of depending only
+on EOF-driven handoff.
+
 ## Step 8 Deliverable
 
 This step introduces the first bootstrap-oriented split:

@@ -182,6 +182,20 @@ _ml_not_recording:
 	jmp	(r1)
 
 _mlnr_directives:
+	la	r1,_kw_srcbuf
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_srcbuf_near
+
+	la	r1,_ml_is_srcbuf
+	jmp	(r1)
+
+_ml_is_srcbuf_near:
+
 	la	r1,_kw_set
 	push	r1
 	la	r0,_starts_with
@@ -356,6 +370,12 @@ _ml_is_mend_skip:
 
 _ml_is_set:
 	la	r0,_set_symbol
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_srcbuf:
+	la	r0,_handle_srcbuf
 	jal	r1,(r0)
 	la	r1,_ml_loop
 	jmp	(r1)
@@ -2174,6 +2194,46 @@ _asd_no:
 	la	r0,0
 
 _asd_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _select_src_slot: Activate a configured source slot and rewind its position.
+; Arg on stack: slot index (0=main, 1+=extra source)
+; Returns: r0 = 1 if switched, 0 if invalid
+_select_src_slot:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r0,9(fp)
+	la	r1,786597
+	lw	r1,0(r1)
+	clu	r0,r1
+	brf	_sss_no
+
+	push	r0
+	la	r0,_mul9
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,786606
+	add	r1,r0
+	la	r0,0
+	sw	r0,6(r1)
+
+	lw	r0,9(fp)
+	la	r1,786600
+	sw	r0,0(r1)
+	la	r0,1
+	bra	_sss_ret
+
+_sss_no:
+	la	r0,0
+
+_sss_ret:
 	mov	sp,fp
 	pop	r2
 	pop	r1
@@ -4010,6 +4070,32 @@ hine_push:
 	pop	fp
 	jmp	(r1)
 
+; _handle_srcbuf: SRCBUF slot -- switch to configured source slot immediately.
+_handle_srcbuf:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+	la	r0,_extract_kw_arg
+	jal	r1,(r0)
+	la	r0,786576
+	push	r0
+	la	r0,_atoi
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-3(fp)
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_select_src_slot
+	jal	r1,(r0)
+	add	sp,3
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; _mul9: Multiply arg by 9 (symbol table entry offset).
 ; Arg on stack: value
 ; Returns: r0 = value * 9
@@ -4248,6 +4334,9 @@ _kw_prefix_table:
 ; --- Step 7: Conditional assembly data ---
 _kw_set:
 	.byte	83,69,84,0
+
+_kw_srcbuf:
+	.byte	83,82,67,66,85,70,0
 
 _kw_ifdef:
 	.byte	73,70,68,69,70,0

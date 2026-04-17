@@ -1,6 +1,6 @@
 number = 13
 slug = "013-013-step13-directed-source-switch"
-status = "pending"
+status = "in-progress"
 description = "Build the first directive-driven source switch on top of the config-driven bu..."
 role = "legacy"
 context_files = []
