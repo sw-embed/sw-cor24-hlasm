@@ -381,6 +381,62 @@ _ml_is_struct_else_near:
 
 _ml_is_struct_endif_near:
 
+	la	r1,_kw_do
+	push	r1
+	la	r0,_line_is_keyword
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_struct_do_near
+
+	la	r1,_ml_is_struct_do
+	jmp	(r1)
+
+_ml_is_struct_do_near:
+
+	la	r1,_kw_doexit
+	push	r1
+	la	r0,_line_is_keyword
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_struct_doexit_near
+
+	la	r1,_ml_is_struct_doexit
+	jmp	(r1)
+
+_ml_is_struct_doexit_near:
+
+	la	r1,_kw_iterate
+	push	r1
+	la	r0,_line_is_keyword
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_struct_iterate_near
+
+	la	r1,_ml_is_struct_iterate
+	jmp	(r1)
+
+_ml_is_struct_iterate_near:
+
+	la	r1,_kw_enddo
+	push	r1
+	la	r0,_line_is_keyword
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_struct_enddo_near
+
+	la	r1,_ml_is_struct_enddo
+	jmp	(r1)
+
+_ml_is_struct_enddo_near:
+
 	la	r1,_kw_macro
 	push	r1
 	la	r0,_starts_with
@@ -571,6 +627,30 @@ _ml_is_struct_else:
 
 _ml_is_struct_endif:
 	la	r0,_handle_struct_endif
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_struct_do:
+	la	r0,_handle_struct_do
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_struct_doexit:
+	la	r0,_handle_struct_doexit
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_struct_iterate:
+	la	r0,_handle_struct_iterate
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_struct_enddo:
+	la	r0,_handle_struct_enddo
 	jal	r1,(r0)
 	la	r1,_ml_loop
 	jmp	(r1)
@@ -2248,6 +2328,96 @@ _emit_label_def:
 	pop	fp
 	jmp	(r1)
 
+; _emit_do_branch_label: Emit " mnemonic _hldo_<n><suffix>" and CRLF.
+; Args on stack: mnemonic_ptr (12 fp), label_id (9 fp), suffix_ptr (6 fp)
+_emit_do_branch_label:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,12(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_do_label_prefix
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_do_label_def: Emit "_hldo_<n><suffix>:" and CRLF.
+; Args on stack: label_id (9 fp), suffix_ptr (6 fp)
+_emit_do_label_def:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_do_label_prefix
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,58
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
 ; _emit_dec24: Print a small number (0-999) as decimal to UART.
 ; Arg on stack: number
 ; Frame: push fp, r1, r2 = 9 bytes. Arg at 9(fp).
@@ -2366,7 +2536,7 @@ _init_runtime_arena:
 	push	r2
 	mov	fp,sp
 
-	la	r0,1501
+	la	r0,1552
 	push	r0
 	la	r0,786432
 	push	r0
@@ -4778,6 +4948,39 @@ _hib_ret:
 	pop	fp
 	jmp	(r1)
 
+; _struct_do_top_ptr: Return ptr to top structured-DO frame, or 0 if empty.
+; Frame layout: top label +0, end label +3.
+_struct_do_top_ptr:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r1,787933
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_sdtp_empty
+
+	add	r0,-1
+	push	r0
+	la	r0,_mul6
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,787936
+	add	r0,r1
+	bra	_sdtp_ret
+
+_sdtp_empty:
+	la	r0,0
+
+_sdtp_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; _parse_struct_if: Parse IF condition fields into scratch buffers.
 _parse_struct_if:
 	push	fp
@@ -5527,6 +5730,364 @@ _hsend_ret:
 	pop	fp
 	jmp	(r1)
 
+_handle_struct_do:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+
+	la	r1,787933
+	lw	r0,0(r1)
+	lc	r2,8
+	clu	r0,r2
+	brt	_hsd_start
+	la	r1,_hsd_ret
+	jmp	(r1)
+
+_hsd_start:
+	push	r0
+	la	r0,_mul6
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,787936
+	add	r0,r1
+	sw	r0,-3(fp)
+
+	la	r1,787810
+	lw	r0,0(r1)
+	lw	r2,-3(fp)
+	sw	r0,0(r2)
+	add	r0,1
+	sw	r0,3(r2)
+	add	r0,1
+	sw	r0,0(r1)
+
+	la	r1,787933
+	lw	r0,0(r1)
+	add	r0,1
+	sw	r0,0(r1)
+
+	lw	r0,-3(fp)
+	lw	r0,0(r0)
+	push	r0
+	la	r0,_do_top_suffix
+	push	r0
+	la	r0,_emit_do_label_def
+	jal	r1,(r0)
+	add	sp,6
+
+_hsd_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+_handle_struct_doexit:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r0,_struct_do_top_ptr
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hsdx_ret
+
+	mov	r2,r0
+	la	r0,_parse_struct_if
+	jal	r1,(r0)
+
+	lw	r0,3(r2)
+	push	r0
+	la	r0,_do_end_suffix
+	push	r0
+	la	r0,_emit_struct_branch_if_false
+	jal	r1,(r0)
+	add	sp,6
+
+_hsdx_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+_handle_struct_iterate:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r0,_struct_do_top_ptr
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hsdi_ret
+
+	mov	r2,r0
+	la	r0,_bra_txt
+	push	r0
+	lw	r0,0(r2)
+	push	r0
+	la	r0,_do_top_suffix
+	push	r0
+	la	r0,_emit_do_branch_label
+	jal	r1,(r0)
+	add	sp,9
+
+_hsdi_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+_handle_struct_enddo:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r0,_struct_do_top_ptr
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hsdd_ret
+
+	mov	r2,r0
+	la	r0,_bra_txt
+	push	r0
+	lw	r0,0(r2)
+	push	r0
+	la	r0,_do_top_suffix
+	push	r0
+	la	r0,_emit_do_branch_label
+	jal	r1,(r0)
+	add	sp,9
+
+	lw	r0,3(r2)
+	push	r0
+	la	r0,_do_end_suffix
+	push	r0
+	la	r0,_emit_do_label_def
+	jal	r1,(r0)
+	add	sp,6
+
+	la	r1,787933
+	lw	r0,0(r1)
+	add	r0,-1
+	sw	r0,0(r1)
+
+_hsdd_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _emit_struct_branch_if_false: Emit test sequence that branches false to a label.
+; Args on stack: label_id (12 fp), suffix_ptr (9 fp)
+_emit_struct_branch_if_false:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+
+	la	r0,_cc_zset_txt
+	push	r0
+	la	r0,787885
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_esbf_zclr
+
+	la	r0,_brf_txt
+	push	r0
+	lw	r0,12(fp)
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_do_branch_label
+	jal	r1,(r0)
+	add	sp,9
+	la	r1,_esbf_ret
+	jmp	(r1)
+
+_esbf_zclr:
+	la	r0,_cc_zclr_txt
+	push	r0
+	la	r0,787885
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_esbf_cmp_setup
+
+	la	r0,_brt_txt
+	push	r0
+	lw	r0,12(fp)
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_do_branch_label
+	jal	r1,(r0)
+	add	sp,9
+	la	r1,_esbf_ret
+	jmp	(r1)
+
+_esbf_cmp_setup:
+	la	r0,787917
+	push	r0
+	la	r0,_is_number_str
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_esbf_cmp_direct
+
+	la	r0,787901
+	push	r0
+	la	r0,_select_if_temp
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-3(fp)
+
+	la	r0,_push_txt
+	push	r0
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_emit_inst1
+	jal	r1,(r0)
+	add	sp,6
+
+	la	r0,_lc_txt
+	push	r0
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,787917
+	push	r0
+	la	r0,_emit_inst2
+	jal	r1,(r0)
+	add	sp,9
+	bra	_esbf_cmp_emit
+
+_esbf_cmp_direct:
+	la	r0,0
+	sw	r0,-3(fp)
+
+_esbf_cmp_emit:
+	la	r0,_cc_eq_txt
+	push	r0
+	la	r0,787885
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_esbf_cmp_ne
+
+	la	r0,_ceq_txt
+	bra	_esbf_emit_cmp
+
+_esbf_cmp_ne:
+	la	r0,_cc_ne_txt
+	push	r0
+	la	r0,787885
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_esbf_cmp_lt
+
+	la	r0,_ceq_txt
+	bra	_esbf_emit_cmp
+
+_esbf_cmp_lt:
+	la	r0,_cc_lt_txt
+	push	r0
+	la	r0,787885
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_esbf_cmp_lu
+
+	la	r0,_cls_txt
+	bra	_esbf_emit_cmp
+
+_esbf_cmp_lu:
+	la	r0,_clu_txt
+
+_esbf_emit_cmp:
+	push	r0
+	la	r0,787901
+	push	r0
+	lw	r0,-3(fp)
+	ceq	r0,z
+	brt	_esbf_emit_cmp_rhs
+	push	r0
+	bra	_esbf_emit_cmp_call
+
+_esbf_emit_cmp_rhs:
+	la	r0,787917
+	push	r0
+
+_esbf_emit_cmp_call:
+	la	r0,_emit_inst2
+	jal	r1,(r0)
+	add	sp,9
+
+	lw	r0,-3(fp)
+	ceq	r0,z
+	brt	_esbf_branch
+
+	la	r0,_pop_txt
+	push	r0
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_emit_inst1
+	jal	r1,(r0)
+	add	sp,6
+
+_esbf_branch:
+	la	r0,_cc_ne_txt
+	push	r0
+	la	r0,787885
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_esbf_branch_false
+
+	la	r0,_brt_txt
+	bra	_esbf_branch_emit
+
+_esbf_branch_false:
+	la	r0,_brf_txt
+
+_esbf_branch_emit:
+	push	r0
+	lw	r0,12(fp)
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_do_branch_label
+	jal	r1,(r0)
+	add	sp,9
+
+_esbf_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; _mul9: Multiply arg by 9 (symbol table entry offset).
 ; Arg on stack: value
 ; Returns: r0 = value * 9
@@ -5805,6 +6366,18 @@ _kw_else:
 _kw_endif:
 	.byte	69,78,68,73,70,0
 
+_kw_do:
+	.byte	68,79,0
+
+_kw_doexit:
+	.byte	68,79,69,88,73,84,0
+
+_kw_iterate:
+	.byte	73,84,69,82,65,84,69,0
+
+_kw_enddo:
+	.byte	69,78,68,68,79,0
+
 _kw_elseasm:
 	.byte	69,76,83,69,65,83,77,0
 
@@ -5863,6 +6436,9 @@ _include_lookup_slot:
 ; 787885 cc buffer
 ; 787901 lhs buffer
 ; 787917 rhs buffer
+; 787933 active structured-DO depth
+; 787936 DO frame stack base, 8 entries * 6 bytes
+;        +0 top label id, +3 end label id
 
 _push_txt:
 	.byte	112,117,115,104,0
@@ -5922,4 +6498,13 @@ _if_false_suffix:
 	.byte	95,102,97,108,115,101,0
 
 _if_end_suffix:
+	.byte	95,101,110,100,0
+
+_do_label_prefix:
+	.byte	95,104,108,100,111,95,0
+
+_do_top_suffix:
+	.byte	95,116,111,112,0
+
+_do_end_suffix:
 	.byte	95,101,110,100,0

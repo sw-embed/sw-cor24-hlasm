@@ -18,7 +18,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d09 | Comments (; and #) | WORKS (pass through) |
 | d10 | Multiple macros | BUG: second overwrites first |
 | d11 | IF/ELSEIF/ELSE/ENDIF | WORKS |
-| d12 | DO/DOEXIT/ENDDO loops | NOT IMPLEMENTED |
+| d12 | DO/DOEXIT/ENDDO loops | WORKS |
 | d13 | SELECT/WHEN/ENDSEL | NOT IMPLEMENTED |
 | d14 | IFNDEF (not defined) | WORKS |
 | d15 | Realistic program | WORKS |
@@ -159,11 +159,16 @@ ENDIF
 Condition codes: cc_eq, cc_ne, cc_lt (signed), cc_lu (unsigned),
 cc_zset (C flag set), cc_zclr (C flag clear).
 
-#### DO / DOEXIT / ENDDO
+#### DO / DOEXIT / ITERATE / ENDDO
 ```
 DO
     add r0,1
     DOEXIT cc_eq, r0, 10
+    bra _body
+ENDDO
+DO
+    add r1,1
+    ITERATE
 ENDDO
 ```
 

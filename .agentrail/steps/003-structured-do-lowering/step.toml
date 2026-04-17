@@ -1,6 +1,6 @@
 number = 3
 slug = "structured-do-lowering"
-status = "pending"
+status = "in-progress"
 description = "Implement structured DO/DOEXIT/ITERATE/ENDDO lowering in hlasm.s. Preserve ex..."
 role = "production"
 context_files = []

@@ -1,0 +1,21 @@
+UART output: ; Demo 12: DO/DOEXIT/ITERATE/ENDDO
+_hldo_1_top:
+ add r0,1
+ push r2
+ lc r2,10
+ ceq r0,r2
+ pop r2
+ brf _hldo_2_end
+ bra _body
+ bra _hldo_1_top
+_hldo_2_end:
+_hldo_3_top:
+ add r1,1
+ bra _hldo_3_top
+ add r2,1
+ bra _hldo_3_top
+_hldo_4_end:
+
+
+Executed 44038 instructions
+CPU halted (self-branch detected)

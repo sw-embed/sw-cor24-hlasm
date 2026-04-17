@@ -1,10 +1,11 @@
-; Demo 12: DO/DOEXIT/ENDDO (structured loops)
-; NOTE: Not yet implemented. Shows intended syntax.
-;
-; DO
-;     add r0,1
-;     DOEXIT cc_eq, r0, 10
-;     bra _loop_body
-; ENDDO
-;
-; Lowers to a label, body, conditional exit branch, and back-jump.
+; Demo 12: DO/DOEXIT/ITERATE/ENDDO
+DO
+ add r0,1
+ DOEXIT cc_eq, r0, 10
+ bra _body
+ENDDO
+DO
+ add r1,1
+ ITERATE
+ add r2,1
+ENDDO
