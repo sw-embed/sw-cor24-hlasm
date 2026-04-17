@@ -1,1 +1,1 @@
-BLOCKED: Preempted by higher-priority structured control-flow blocker from sw-cor24-rpg-ii
+Added an opt-in HLXREF end-of-run cross-reference section, with separate tracking for copied members, macro definitions, macro expansion counts, and SET/EQU symbols. Added demo d36, updated docs, refreshed tracked baselines, and kept the full test suite green.

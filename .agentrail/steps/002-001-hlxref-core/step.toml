@@ -1,8 +1,9 @@
 number = 2
 slug = "001-hlxref-core"
-status = "in-progress"
+status = "completed"
 description = "Add an opt-in HLXREF report for hlasm-generated output. Keep it text-only and..."
 role = "production"
 context_files = []
 created_at = "2026-04-17T12:17:08"
-commits = []
+completed_at = "2026-04-17T13:00:41"
+commits = ["c3d7e20e58c34d80277099377d7a6db7255ac651"]

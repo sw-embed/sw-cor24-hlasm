@@ -1,5 +1,5 @@
 name = "hlasm-xref"
-status = "active"
+status = "completed"
 current_step = 2
 created_at = "2026-04-17T12:17:08"
 plan_file = ".agentrail/plan.md"
