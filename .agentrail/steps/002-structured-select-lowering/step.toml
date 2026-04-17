@@ -1,6 +1,6 @@
 number = 2
 slug = "structured-select-lowering"
-status = "pending"
+status = "in-progress"
 description = "Implement structured SELECT/WHEN/OTHERWISE/ENDSEL lowering in hlasm.s using t..."
 role = "production"
 context_files = []

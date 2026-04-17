@@ -19,7 +19,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d10 | Multiple macros | BUG: second overwrites first |
 | d11 | IF/ELSEIF/ELSE/ENDIF | WORKS |
 | d12 | DO/DOEXIT/ENDDO loops | WORKS |
-| d13 | SELECT/WHEN/ENDSEL | NOT IMPLEMENTED |
+| d13 | SELECT/WHEN/ENDSEL | WORKS |
 | d14 | IFNDEF (not defined) | WORKS |
 | d15 | Realistic program | WORKS |
 | d16 | Bootstrap `hlasm0` subset | WORKS |

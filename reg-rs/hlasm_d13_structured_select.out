@@ -1,0 +1,39 @@
+UART output: ; Demo 13: SELECT/WHEN/OTHERWISE/ENDSEL
+ push r2
+ lc r2,0
+ ceq r0,r2
+ pop r2
+ brt _hlsel_3_skip
+ jmp _hlsel_2_next
+_hlsel_3_skip:
+  add r1,1
+ jmp _hlsel_1_end
+_hlsel_2_next:
+ push r2
+ lc r2,1
+ ceq r0,r2
+ pop r2
+ brt _hlsel_5_skip
+ jmp _hlsel_4_next
+_hlsel_5_skip:
+  add r2,1
+ jmp _hlsel_1_end
+_hlsel_4_next:
+  sub r0,r0
+_hlsel_1_end:
+ push r2
+ lc r2,2
+ ceq r1,r2
+ pop r2
+ brt _hlsel_8_skip
+ jmp _hlsel_7_next
+_hlsel_8_skip:
+  nop
+ jmp _hlsel_6_end
+_hlsel_7_next:
+  sub r2,r2
+_hlsel_6_end:
+
+
+Executed 59084 instructions
+CPU halted (self-branch detected)

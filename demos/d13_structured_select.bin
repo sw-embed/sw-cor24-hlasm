@@ -1,13 +1,15 @@
-; Demo 13: SELECT/WHEN/OTHERWISE/ENDSEL (switch/case)
-; NOTE: Not yet implemented. Shows intended syntax.
-;
-; SELECT r0
-;     WHEN 0
-;         add r1,1
-;     WHEN 1
-;         add r2,1
-;     OTHERWISE
-;         add r3,1
-; ENDSEL
-;
-; Lowers to a compare-and-branch chain.
+; Demo 13: SELECT/WHEN/OTHERWISE/ENDSEL
+SELECT r0
+ WHEN 0
+  add r1,1
+ WHEN 1
+  add r2,1
+ OTHERWISE
+  sub r0,r0
+ENDSEL
+SELECT r1
+ WHEN 2
+  nop
+ OTHERWISE
+  sub r2,r2
+ENDSEL

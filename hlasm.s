@@ -435,7 +435,61 @@ _ml_is_struct_iterate_near:
 	la	r1,_ml_is_struct_enddo
 	jmp	(r1)
 
-_ml_is_struct_enddo_near:
+	_ml_is_struct_enddo_near:
+
+	la	r1,_kw_select
+	push	r1
+	la	r0,_line_is_keyword
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_struct_select_near
+
+	la	r1,_ml_is_struct_select
+	jmp	(r1)
+
+_ml_is_struct_select_near:
+
+	la	r1,_kw_when
+	push	r1
+	la	r0,_line_is_keyword
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_struct_when_near
+
+	la	r1,_ml_is_struct_when
+	jmp	(r1)
+
+_ml_is_struct_when_near:
+
+	la	r1,_kw_otherwise
+	push	r1
+	la	r0,_line_is_keyword
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_struct_otherwise_near
+
+	la	r1,_ml_is_struct_otherwise
+	jmp	(r1)
+
+_ml_is_struct_otherwise_near:
+
+	la	r1,_kw_endsel
+	push	r1
+	la	r0,_line_is_keyword
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_nf4
+
+	la	r1,_ml_is_struct_endsel
+	jmp	(r1)
 
 	la	r1,_kw_macro
 	push	r1
@@ -649,8 +703,32 @@ _ml_is_struct_iterate:
 	la	r1,_ml_loop
 	jmp	(r1)
 
-_ml_is_struct_enddo:
+	_ml_is_struct_enddo:
 	la	r0,_handle_struct_enddo
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+	_ml_is_struct_select:
+	la	r0,_handle_struct_select
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+	_ml_is_struct_when:
+	la	r0,_handle_struct_when
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+	_ml_is_struct_otherwise:
+	la	r0,_handle_struct_otherwise
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+	_ml_is_struct_endsel:
+	la	r0,_handle_struct_endsel
 	jal	r1,(r0)
 	la	r1,_ml_loop
 	jmp	(r1)
@@ -2387,6 +2465,96 @@ _emit_do_label_def:
 	mov	fp,sp
 
 	la	r0,_do_label_prefix
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,58
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_select_branch_label: Emit " mnemonic _hlsel_<n><suffix>" and CRLF.
+; Args on stack: mnemonic_ptr (12 fp), label_id (9 fp), suffix_ptr (6 fp)
+_emit_select_branch_label:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,12(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_sel_label_prefix
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_select_label_def: Emit "_hlsel_<n><suffix>:" and CRLF.
+; Args on stack: label_id (9 fp), suffix_ptr (6 fp)
+_emit_select_label_def:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_sel_label_prefix
 	push	r0
 	la	r0,_emit_strz
 	jal	r1,(r0)
@@ -4967,6 +5135,191 @@ _hib_ret:
 	pop	fp
 	jmp	(r1)
 
+; _copy_strz: Copy null-terminated string.
+; Args on stack: src_ptr (12 fp), dst_ptr (9 fp)
+_copy_strz:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	lw	r1,12(fp)
+	lw	r2,9(fp)
+
+_csz_loop:
+	lbu	r0,0(r1)
+	sb	r0,0(r2)
+	ceq	r0,z
+	brt	_csz_ret
+	add	r1,1
+	add	r2,1
+	bra	_csz_loop
+
+_csz_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _parse_struct_kw_arg: Parse one token after the leading keyword into dst.
+; Arg on stack: dst_ptr
+_parse_struct_kw_arg:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	lw	r1,9(fp)
+	la	r0,0
+	sb	r0,0(r1)
+	la	r2,786432
+
+_pska_skip:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_pska_ret
+	lc	r1,32
+	ceq	r0,r1
+	brt	_pska_skip_ws
+	lc	r1,9
+	ceq	r0,r1
+	brt	_pska_skip_ws
+	bra	_pska_kw
+
+_pska_skip_ws:
+	add	r2,1
+	bra	_pska_skip
+
+_pska_kw:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_pska_ret
+	push	r0
+	la	r0,_is_alpha
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_pska_after_kw
+	add	r2,1
+	bra	_pska_kw
+
+_pska_after_kw:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_pska_ret
+	lc	r1,32
+	ceq	r0,r1
+	brt	_pska_after_kw_skip
+	lc	r1,9
+	ceq	r0,r1
+	brt	_pska_after_kw_skip
+	bra	_pska_copy
+
+_pska_after_kw_skip:
+	add	r2,1
+	bra	_pska_after_kw
+
+_pska_copy:
+	lw	r1,9(fp)
+
+_pska_copy_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_pska_done
+	lc	r1,32
+	ceq	r0,r1
+	brt	_pska_done
+	lc	r1,9
+	ceq	r0,r1
+	brt	_pska_done
+	lc	r1,44
+	ceq	r0,r1
+	brt	_pska_done
+	lw	r1,9(fp)
+	sb	r0,0(r1)
+	add	r1,1
+	sw	r1,9(fp)
+	add	r2,1
+	bra	_pska_copy_loop
+
+_pska_done:
+	lw	r1,9(fp)
+	la	r0,0
+	sb	r0,0(r1)
+
+_pska_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _struct_select_top_ptr: Return ptr to top structured-SELECT frame, or 0 if empty.
+; Frame layout: next label +0, end label +3, arm open +6, otherwise seen +9.
+_struct_select_top_ptr:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r1,787984
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_sstp_empty
+
+	add	r0,-1
+	push	r0
+	la	r0,_mul12
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,787987
+	add	r0,r1
+	bra	_sstp_ret
+
+_sstp_empty:
+	la	r0,0
+
+_sstp_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _struct_select_top_sel_ptr: Return ptr to top structured-SELECT selector buffer, or 0 if empty.
+_struct_select_top_sel_ptr:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r1,787984
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_sstsp_empty
+
+	add	r0,-1
+	push	r0
+	la	r0,_mul12
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,788083
+	add	r0,r1
+	bra	_sstsp_ret
+
+_sstsp_empty:
+	la	r0,0
+
+_sstsp_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; _struct_do_top_ptr: Return ptr to top structured-DO frame, or 0 if empty.
 ; Frame layout: top label +0, end label +3.
 _struct_do_top_ptr:
@@ -6211,6 +6564,374 @@ _esbf_ret:
 	pop	fp
 	jmp	(r1)
 
+; _emit_struct_select_eq_test: Emit equality test that branches to next SELECT arm on mismatch.
+; Arg on stack: next_label_id
+_emit_struct_select_eq_test:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-6
+
+	la	r0,_alloc_struct_label_id
+	jal	r1,(r0)
+	sw	r0,-6(fp)
+
+	la	r0,787917
+	push	r0
+	la	r0,_is_number_str
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_esst_cmp_direct
+
+	la	r0,787901
+	push	r0
+	la	r0,_select_if_temp
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-3(fp)
+
+	la	r0,_push_txt
+	push	r0
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_emit_inst1
+	jal	r1,(r0)
+	add	sp,6
+
+	la	r0,_lc_txt
+	push	r0
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,787917
+	push	r0
+	la	r0,_emit_inst2
+	jal	r1,(r0)
+	add	sp,9
+	bra	_esst_cmp_emit
+
+_esst_cmp_direct:
+	la	r0,0
+	sw	r0,-3(fp)
+
+_esst_cmp_emit:
+	la	r0,_ceq_txt
+	push	r0
+	la	r0,787901
+	push	r0
+	lw	r0,-3(fp)
+	ceq	r0,z
+	brt	_esst_rhs_direct
+	push	r0
+	bra	_esst_cmp_call
+
+_esst_rhs_direct:
+	la	r0,787917
+	push	r0
+
+_esst_cmp_call:
+	la	r0,_emit_inst2
+	jal	r1,(r0)
+	add	sp,9
+
+	lw	r0,-3(fp)
+	ceq	r0,z
+	brt	_esst_branch
+
+	la	r0,_pop_txt
+	push	r0
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_emit_inst1
+	jal	r1,(r0)
+	add	sp,6
+
+_esst_branch:
+	la	r0,_brt_txt
+	push	r0
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_sel_skip_suffix
+	push	r0
+	la	r0,_emit_select_branch_label
+	jal	r1,(r0)
+	add	sp,9
+	la	r0,_jmp_txt
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_sel_next_suffix
+	push	r0
+	la	r0,_emit_select_branch_label
+	jal	r1,(r0)
+	add	sp,9
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_sel_skip_suffix
+	push	r0
+	la	r0,_emit_select_label_def
+	jal	r1,(r0)
+	add	sp,6
+
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+_handle_struct_select:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-6
+
+	la	r1,787984
+	lw	r0,0(r1)
+	lc	r2,8
+	clu	r0,r2
+	brt	_hss_start
+	la	r1,_hss_ret
+	jmp	(r1)
+
+_hss_start:
+	push	r0
+	la	r0,_mul12
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,787987
+	add	r0,r1
+	sw	r0,-3(fp)
+
+	la	r1,787984
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_mul12
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,788083
+	add	r0,r1
+	sw	r0,-6(fp)
+
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_parse_struct_kw_arg
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_alloc_struct_label_id
+	jal	r1,(r0)
+	lw	r2,-3(fp)
+	la	r1,0
+	sw	r1,0(r2)
+	sw	r0,3(r2)
+	sw	r1,6(r2)
+	sw	r1,9(r2)
+
+	la	r1,787984
+	lw	r0,0(r1)
+	add	r0,1
+	sw	r0,0(r1)
+
+_hss_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+_handle_struct_when:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-6
+
+	la	r0,_struct_select_top_ptr
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hsw_ret
+	sw	r0,-3(fp)
+
+	la	r0,_struct_select_top_sel_ptr
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hsw_ret
+	sw	r0,-6(fp)
+
+	lw	r2,-3(fp)
+	lw	r0,9(r2)
+	ceq	r0,z
+	brt	_hsw_maybe_close
+	bra	_hsw_ret
+
+_hsw_maybe_close:
+	lw	r0,6(r2)
+	ceq	r0,z
+	brt	_hsw_parse
+
+	la	r0,_jmp_txt
+	push	r0
+	lw	r0,3(r2)
+	push	r0
+	la	r0,_sel_end_suffix
+	push	r0
+	la	r0,_emit_select_branch_label
+	jal	r1,(r0)
+	add	sp,9
+
+	lw	r0,0(r2)
+	push	r0
+	la	r0,_sel_next_suffix
+	push	r0
+	la	r0,_emit_select_label_def
+	jal	r1,(r0)
+	add	sp,6
+
+_hsw_parse:
+	la	r0,788179
+	push	r0
+	la	r0,_parse_struct_kw_arg
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,787901
+	push	r0
+	la	r0,_copy_strz
+	jal	r1,(r0)
+	add	sp,6
+
+	la	r0,788179
+	push	r0
+	la	r0,787917
+	push	r0
+	la	r0,_copy_strz
+	jal	r1,(r0)
+	add	sp,6
+
+	la	r0,_alloc_struct_label_id
+	jal	r1,(r0)
+	lw	r2,-3(fp)
+	sw	r0,0(r2)
+	push	r0
+	la	r0,_emit_struct_select_eq_test
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,1
+	sw	r0,6(r2)
+
+_hsw_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+_handle_struct_otherwise:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r0,_struct_select_top_ptr
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hso_ret
+
+	mov	r2,r0
+	lw	r0,9(r2)
+	ceq	r0,z
+	brt	_hso_maybe_close
+	bra	_hso_ret
+
+_hso_maybe_close:
+	lw	r0,6(r2)
+	ceq	r0,z
+	brt	_hso_mark
+
+	la	r0,_jmp_txt
+	push	r0
+	lw	r0,3(r2)
+	push	r0
+	la	r0,_sel_end_suffix
+	push	r0
+	la	r0,_emit_select_branch_label
+	jal	r1,(r0)
+	add	sp,9
+
+	lw	r0,0(r2)
+	push	r0
+	la	r0,_sel_next_suffix
+	push	r0
+	la	r0,_emit_select_label_def
+	jal	r1,(r0)
+	add	sp,6
+
+_hso_mark:
+	la	r0,1
+	sw	r0,6(r2)
+	sw	r0,9(r2)
+
+_hso_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+_handle_struct_endsel:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r0,_struct_select_top_ptr
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hsse_ret
+
+	mov	r2,r0
+	lw	r0,6(r2)
+	ceq	r0,z
+	brt	_hsse_end
+
+	lw	r0,9(r2)
+	ceq	r0,z
+	brf	_hsse_end
+
+	lw	r0,0(r2)
+	push	r0
+	la	r0,_sel_next_suffix
+	push	r0
+	la	r0,_emit_select_label_def
+	jal	r1,(r0)
+	add	sp,6
+
+_hsse_end:
+	lw	r0,3(r2)
+	push	r0
+	la	r0,_sel_end_suffix
+	push	r0
+	la	r0,_emit_select_label_def
+	jal	r1,(r0)
+	add	sp,6
+
+	la	r1,787984
+	lw	r0,0(r1)
+	add	r0,-1
+	sw	r0,0(r1)
+
+_hsse_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; _mul9: Multiply arg by 9 (symbol table entry offset).
 ; Arg on stack: value
 ; Returns: r0 = value * 9
@@ -6264,6 +6985,26 @@ _mul10:
 	add	r0,r0
 	add	r0,r0
 	add	r0,r2
+	add	r0,r0
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _mul12: Multiply arg by 12.
+; Arg on stack: value
+; Returns: r0 = value * 12
+_mul12:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	lw	r0,9(fp)
+	mov	r2,r0
+	add	r0,r0
+	add	r0,r2
+	add	r0,r0
 	add	r0,r0
 	mov	sp,fp
 	pop	r2
@@ -6501,6 +7242,18 @@ _kw_iterate:
 _kw_enddo:
 	.byte	69,78,68,68,79,0
 
+_kw_select:
+	.byte	83,69,76,69,67,84,0
+
+_kw_when:
+	.byte	87,72,69,78,0
+
+_kw_otherwise:
+	.byte	79,84,72,69,82,87,73,83,69,0
+
+_kw_endsel:
+	.byte	69,78,68,83,69,76,0
+
 _kw_elseasm:
 	.byte	69,76,83,69,65,83,77,0
 
@@ -6562,6 +7315,11 @@ _include_lookup_slot:
 ; 787933 active structured-DO depth
 ; 787936 DO frame stack base, 8 entries * 6 bytes
 ;        +0 top label id, +3 end label id
+; 787984 active structured-SELECT depth
+; 787987 SELECT frame stack base, 8 entries * 12 bytes
+;        +0 next label id, +3 end label id, +6 arm open, +9 otherwise seen
+; 788083 SELECT selector buffer base, 8 entries * 12 bytes
+; 788179 SELECT WHEN scratch buffer
 
 _push_txt:
 	.byte	112,117,115,104,0
@@ -6639,4 +7397,16 @@ _do_end_suffix:
 	.byte	95,101,110,100,0
 
 _do_skip_suffix:
+	.byte	95,115,107,105,112,0
+
+_sel_label_prefix:
+	.byte	95,104,108,115,101,108,95,0
+
+_sel_next_suffix:
+	.byte	95,110,101,120,116,0
+
+_sel_end_suffix:
+	.byte	95,101,110,100,0
+
+_sel_skip_suffix:
 	.byte	95,115,107,105,112,0
