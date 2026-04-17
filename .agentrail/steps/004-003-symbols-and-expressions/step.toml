@@ -1,4 +1,4 @@
-number = 3
+number = 4
 slug = "003-symbols-and-expressions"
 status = "pending"
 description = "Add ergonomic symbol and expression support that keeps hlasm squarely in asse..."

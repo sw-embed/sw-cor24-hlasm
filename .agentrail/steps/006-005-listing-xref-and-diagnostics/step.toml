@@ -1,4 +1,4 @@
-number = 5
+number = 6
 slug = "005-listing-xref-and-diagnostics"
 status = "pending"
 description = "Improve the ergonomics of understanding generated assembly and debugging asse..."
