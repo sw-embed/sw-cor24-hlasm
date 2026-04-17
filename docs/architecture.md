@@ -93,15 +93,25 @@ Writes expanded, lowered assembly text to the output buffer. Flushes to UART.
 
 ## Register Allocation
 
-Follows Forth/RPG-II convention (frozen):
+External code generation still follows the Forth/RPG-II style register roles,
+but internal `hlasm.s` helper routines now use a stricter calling convention
+for correctness and predictability.
 
 | Register | Use |
 |----------|-----|
-| r0 | Work register / scratch |
-| r1 | Return address / temp pointer |
-| r2 | Pointer to current input position / working area |
+| r0 | Return value / caller-saved scratch |
+| r1 | Return address from `jal`, volatile scratch |
+| r2 | Callee-saved working register |
 | fp | Frame pointer for subroutines |
 | sp | Data stack (hardware push/pop) |
+
+Internal helper ABI rules:
+
+- A helper that writes `r2` must save and restore it before returning.
+- Callers must assume `r0` and `r1` are clobbered by any helper call.
+- `fp` and `sp` must always be restored by the callee.
+- This convention is defensive rather than minimal: helper composition should
+  stay correct even as implementations change internally.
 
 ## I/O Model
 

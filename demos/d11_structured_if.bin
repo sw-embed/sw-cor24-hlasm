@@ -1,12 +1,11 @@
-; Demo 11: IF/ELSEIF/ELSE/ENDIF (structured control flow)
-; NOTE: Not yet implemented. Shows intended syntax.
-;
-; IF cc_eq, r0, 0
-;     add r1,1
-; ELSEIF cc_lt, r1, 10
-;     add r2,1
-; ELSE
-;     add r3,1
-; ENDIF
-;
-; Lowers to compare-and-branch chains with auto-generated labels.
+; Demo 11: IF/ELSE/ENDIF (single-level structured control flow core)
+IF cc_eq, r0, 0
+ add r1,1
+ELSE
+ add r2,1
+ENDIF
+IF cc_ne, r1, z
+ sub r0,r0
+ELSE
+ nop
+ENDIF

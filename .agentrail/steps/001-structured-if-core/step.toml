@@ -1,6 +1,6 @@
 number = 1
 slug = "structured-if-core"
-status = "pending"
+status = "in-progress"
 description = "Implement the first lowering path for structured IF/ELSE/ENDIF in hlasm.s. Ke..."
 role = "production"
 context_files = []

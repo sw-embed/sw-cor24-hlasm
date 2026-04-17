@@ -325,6 +325,48 @@ _ml_is_ifeq_near:
 
 _ml_is_ifne_near:
 
+	la	r1,_kw_if
+	push	r1
+	la	r0,_line_is_keyword
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_struct_if_near
+
+	la	r1,_ml_is_struct_if
+	jmp	(r1)
+
+_ml_is_struct_if_near:
+
+	la	r1,_kw_else
+	push	r1
+	la	r0,_line_is_keyword
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_struct_else_near
+
+	la	r1,_ml_is_struct_else
+	jmp	(r1)
+
+_ml_is_struct_else_near:
+
+	la	r1,_kw_endif
+	push	r1
+	la	r0,_line_is_keyword
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_struct_endif_near
+
+	la	r1,_ml_is_struct_endif
+	jmp	(r1)
+
+_ml_is_struct_endif_near:
+
 	la	r1,_kw_macro
 	push	r1
 	la	r0,_starts_with
@@ -491,6 +533,24 @@ _ml_is_ifeq:
 
 _ml_is_ifne:
 	la	r0,_handle_ifne
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_struct_if:
+	la	r0,_handle_struct_if
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_struct_else:
+	la	r0,_handle_struct_else
+	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_struct_endif:
+	la	r0,_handle_struct_endif
 	jal	r1,(r0)
 	la	r1,_ml_loop
 	jmp	(r1)
@@ -1914,9 +1974,10 @@ _ste_done:
 _emit_char:
 	push	fp
 	push	r1
+	push	r2
 	mov	fp,sp
 
-	lw	r0,6(fp)
+	lw	r0,9(fp)
 	la	r2,-65280
 
 _poll:
@@ -1927,6 +1988,7 @@ _poll:
 	sb	r0,0(r2)
 
 	mov	sp,fp
+	pop	r2
 	pop	r1
 	pop	fp
 	jmp	(r1)
@@ -1951,6 +2013,218 @@ _emit_crlf:
 
 	pop	r1
 	mov	sp,fp
+	pop	fp
+	jmp	(r1)
+
+; _emit_strz: Emit a null-terminated string.
+; Arg on stack: ptr
+_emit_strz:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r2,9(fp)
+
+_esz_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_esz_ret
+
+	push	r2
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+	pop	r2
+
+	add	r2,1
+	bra	_esz_loop
+
+_esz_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_inst1: Emit " mnemonic operand" and CRLF.
+; Args on stack: mnemonic_ptr (9 fp), operand_ptr (6 fp)
+_emit_inst1:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_inst2: Emit " mnemonic op1,op2" and CRLF.
+; Args on stack: mnemonic_ptr (12 fp), op1_ptr (9 fp), op2_ptr (6 fp)
+_emit_inst2:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,12(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,44
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_branch_label: Emit " mnemonic _hlif_<n><suffix>" and CRLF.
+; Args on stack: mnemonic_ptr (12 fp), label_id (9 fp), suffix_ptr (6 fp)
+_emit_branch_label:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,12(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_if_label_prefix
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_label_def: Emit "_hlif_<n><suffix>:" and CRLF.
+; Args on stack: label_id (9 fp), suffix_ptr (6 fp)
+_emit_label_def:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_if_label_prefix
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,58
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	mov	sp,fp
+	pop	r1
 	pop	fp
 	jmp	(r1)
 
@@ -2072,7 +2346,7 @@ _init_runtime_arena:
 	push	r2
 	mov	fp,sp
 
-	la	r0,1375
+	la	r0,1438
 	push	r0
 	la	r0,786432
 	push	r0
@@ -2106,6 +2380,10 @@ _init_runtime_arena:
 
 	la	r1,787557
 	la	r0,786888
+	sw	r0,0(r1)
+
+	la	r1,787810
+	la	r0,1
 	sw	r0,0(r1)
 
 	mov	sp,fp
@@ -2722,6 +3000,98 @@ _line_buf:
 
 ; --- Step 5: Macro functions ---
 
+; _line_is_keyword: Check if first word in _line_buf matches keyword exactly.
+; Arg on stack: keyword_ptr
+; Returns: r0 = 1 if exact word match, 0 if not
+_line_is_keyword:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	la	r2,786432
+
+_lik_skip:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_lik_no
+
+	lc	r1,32
+	ceq	r0,r1
+	brt	_lik_skip_ws
+
+	lc	r1,9
+	ceq	r0,r1
+	brt	_lik_skip_ws
+
+	bra	_lik_cmp
+
+_lik_skip_ws:
+	add	r2,1
+	bra	_lik_skip
+
+_lik_cmp:
+	lw	r1,9(fp)
+
+_lik_loop:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_lik_done
+
+	push	r2
+	lbu	r2,0(r2)
+	ceq	r2,z
+	brt	_lik_no_pop
+
+	ceq	r0,r2
+	brf	_lik_no_pop
+
+	pop	r2
+	add	r1,1
+	add	r2,1
+	bra	_lik_loop
+
+_lik_no_pop:
+	pop	r2
+	bra	_lik_no
+
+_lik_done:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_lik_yes
+
+	lc	r1,32
+	ceq	r0,r1
+	brt	_lik_yes
+
+	lc	r1,9
+	ceq	r0,r1
+	brt	_lik_yes
+
+	lc	r1,59
+	ceq	r0,r1
+	brt	_lik_yes
+
+	lc	r1,35
+	ceq	r0,r1
+	brt	_lik_yes
+
+	bra	_lik_no
+
+_lik_yes:
+	la	r0,1
+	bra	_lik_ret
+
+_lik_no:
+	la	r0,0
+
+_lik_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
 ; _starts_with: Check if _line_buf starts with the given prefix.
 ; Arg on stack: prefix_ptr
 ; Returns: r0 = 1 if match, 0 if not
@@ -2918,13 +3288,15 @@ _emn_done:
 _mul3:
 	push	fp
 	push	r1
+	push	r2
 	mov	fp,sp
 
-	lw	r0,6(fp)
+	lw	r0,9(fp)
 	mov	r2,r0
 	add	r0,r2
 	add	r0,r2
 	mov	sp,fp
+	pop	r2
 	pop	r1
 	pop	fp
 	jmp	(r1)
@@ -2932,8 +3304,9 @@ _mul3:
 _mul15:
 	push	fp
 	push	r1
+	push	r2
 	mov	fp,sp
-	lw	r0,6(fp)
+	lw	r0,9(fp)
 	mov	r2,r0
 	add	r0,r0
 	add	r0,r0
@@ -2941,6 +3314,7 @@ _mul15:
 	add	r0,r0
 	sub	r0,r2
 	mov	sp,fp
+	pop	r2
 	pop	r1
 	pop	fp
 	jmp	(r1)
@@ -4384,20 +4758,656 @@ _hib_ret:
 	pop	fp
 	jmp	(r1)
 
+; _parse_struct_if: Parse IF condition fields into scratch buffers.
+_parse_struct_if:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r1,787822
+	la	r0,0
+	sb	r0,0(r1)
+	la	r1,787838
+	sb	r0,0(r1)
+	la	r1,787854
+	sb	r0,0(r1)
+
+	la	r2,786432
+
+_psi_skip:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_psi_early_ret
+	lc	r1,32
+	ceq	r0,r1
+	brt	_psi_skip_ws
+	lc	r1,9
+	ceq	r0,r1
+	brt	_psi_skip_ws
+	bra	_psi_kw
+
+_psi_skip_ws:
+	add	r2,1
+	bra	_psi_skip
+
+_psi_early_ret:
+	la	r1,_psi_ret
+	jmp	(r1)
+
+_psi_kw:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_psi_early_ret
+	push	r0
+	la	r0,_is_alpha
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_psi_after_kw
+	add	r2,1
+	bra	_psi_kw
+
+_psi_after_kw:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_psi_after_kw_ret
+	lc	r1,32
+	ceq	r0,r1
+	brt	_psi_after_kw_skip
+	lc	r1,9
+	ceq	r0,r1
+	brt	_psi_after_kw_skip
+	bra	_psi_cc
+
+_psi_after_kw_skip:
+	add	r2,1
+	bra	_psi_after_kw
+
+_psi_after_kw_ret:
+	la	r1,_psi_ret
+	jmp	(r1)
+
+_psi_cc:
+	la	r1,787822
+
+_psi_cc_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_psi_cc_done
+	push	r1
+	lc	r1,44
+	ceq	r0,r1
+	brt	_psi_cc_done_pop
+	lc	r1,32
+	ceq	r0,r1
+	brt	_psi_cc_done_pop
+	lc	r1,9
+	ceq	r0,r1
+	brt	_psi_cc_done_pop
+	pop	r1
+	sb	r0,0(r1)
+	add	r1,1
+	add	r2,1
+	bra	_psi_cc_loop
+
+_psi_cc_done_pop:
+	pop	r1
+
+_psi_cc_done:
+	la	r0,0
+	sb	r0,0(r1)
+
+_psi_sep1:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_psi_sep1_ret
+	lc	r1,44
+	ceq	r0,r1
+	brt	_psi_sep1_skip
+	lc	r1,32
+	ceq	r0,r1
+	brt	_psi_sep1_skip
+	lc	r1,9
+	ceq	r0,r1
+	brt	_psi_sep1_skip
+	bra	_psi_check_flag
+
+_psi_sep1_skip:
+	add	r2,1
+	bra	_psi_sep1
+
+_psi_sep1_ret:
+	la	r1,_psi_ret
+	jmp	(r1)
+
+_psi_check_flag:
+	la	r0,_cc_zset_txt
+	push	r0
+	la	r0,787822
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	_psi_ret
+
+	la	r0,_cc_zclr_txt
+	push	r0
+	la	r0,787822
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	_psi_ret
+
+	la	r1,787838
+
+_psi_lhs_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_psi_lhs_done
+	push	r1
+	lc	r1,44
+	ceq	r0,r1
+	brt	_psi_lhs_done_pop
+	lc	r1,32
+	ceq	r0,r1
+	brt	_psi_lhs_done_pop
+	lc	r1,9
+	ceq	r0,r1
+	brt	_psi_lhs_done_pop
+	pop	r1
+	sb	r0,0(r1)
+	add	r1,1
+	add	r2,1
+	bra	_psi_lhs_loop
+
+_psi_lhs_done_pop:
+	pop	r1
+
+_psi_lhs_done:
+	la	r0,0
+	sb	r0,0(r1)
+
+_psi_sep2:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_psi_ret
+	lc	r1,44
+	ceq	r0,r1
+	brt	_psi_sep2_skip
+	lc	r1,32
+	ceq	r0,r1
+	brt	_psi_sep2_skip
+	lc	r1,9
+	ceq	r0,r1
+	brt	_psi_sep2_skip
+	bra	_psi_rhs
+
+_psi_sep2_skip:
+	add	r2,1
+	bra	_psi_sep2
+
+_psi_rhs:
+	la	r1,787854
+
+_psi_rhs_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_psi_rhs_done
+	push	r1
+	lc	r1,44
+	ceq	r0,r1
+	brt	_psi_rhs_done_pop
+	lc	r1,32
+	ceq	r0,r1
+	brt	_psi_rhs_done_pop
+	lc	r1,9
+	ceq	r0,r1
+	brt	_psi_rhs_done_pop
+	pop	r1
+	sb	r0,0(r1)
+	add	r1,1
+	add	r2,1
+	bra	_psi_rhs_loop
+
+_psi_rhs_done_pop:
+	pop	r1
+
+_psi_rhs_done:
+	la	r0,0
+	sb	r0,0(r1)
+
+_psi_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _is_number_str: Return 1 if string is decimal digits only.
+; Arg on stack: ptr
+_is_number_str:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	lw	r2,9(fp)
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_ins_no
+
+_ins_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_ins_yes
+	push	r0
+	la	r0,_is_digit
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_ins_no
+	add	r2,1
+	bra	_ins_loop
+
+_ins_yes:
+	la	r0,1
+	bra	_ins_ret
+
+_ins_no:
+	la	r0,0
+
+_ins_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _select_if_temp: Choose a scratch register string for literal compares.
+; Arg on stack: lhs_ptr
+; Returns: r0 = ptr to "r1" or "r2"
+_select_if_temp:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r0,_r2_txt
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_sit_r2
+
+	la	r0,_r1_txt
+	bra	_sit_ret
+
+_sit_r2:
+	la	r0,_r2_txt
+
+_sit_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _handle_struct_if: Lower single-level IF/ELSE/ENDIF core.
+_handle_struct_if:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+
+	la	r1,787807
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_hsi_start
+	la	r1,_hsi_ret
+	jmp	(r1)
+
+_hsi_start:
+	la	r0,_parse_struct_if
+	jal	r1,(r0)
+
+	la	r1,787810
+	lw	r0,0(r1)
+	sw	r0,-3(fp)
+	la	r2,787813
+	sw	r0,0(r2)
+	add	r0,1
+	la	r2,787816
+	sw	r0,0(r2)
+	add	r0,1
+	sw	r0,0(r1)
+
+	la	r1,787807
+	la	r0,1
+	sw	r0,0(r1)
+	la	r1,787819
+	la	r0,0
+	sw	r0,0(r1)
+
+	la	r0,_cc_zset_txt
+	push	r0
+	la	r0,787822
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_hsi_zclr
+
+	la	r0,_brf_txt
+	push	r0
+	la	r0,787813
+	lw	r0,0(r0)
+	push	r0
+	la	r0,_if_false_suffix
+	push	r0
+	la	r0,_emit_branch_label
+	jal	r1,(r0)
+	add	sp,9
+	la	r1,_hsi_ret
+	jmp	(r1)
+
+_hsi_zclr:
+	la	r0,_cc_zclr_txt
+	push	r0
+	la	r0,787822
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_hsi_cmp_setup
+
+	la	r0,_brt_txt
+	push	r0
+	la	r0,787813
+	lw	r0,0(r0)
+	push	r0
+	la	r0,_if_false_suffix
+	push	r0
+	la	r0,_emit_branch_label
+	jal	r1,(r0)
+	add	sp,9
+	la	r1,_hsi_ret
+	jmp	(r1)
+
+_hsi_cmp_setup:
+	la	r0,787854
+	push	r0
+	la	r0,_is_number_str
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_hsi_cmp_direct
+
+	la	r0,787838
+	push	r0
+	la	r0,_select_if_temp
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-3(fp)
+
+	la	r0,_push_txt
+	push	r0
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_emit_inst1
+	jal	r1,(r0)
+	add	sp,6
+
+	la	r0,_lc_txt
+	push	r0
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,787854
+	push	r0
+	la	r0,_emit_inst2
+	jal	r1,(r0)
+	add	sp,9
+	bra	_hsi_cmp_emit
+
+_hsi_cmp_direct:
+	la	r0,0
+	sw	r0,-3(fp)
+
+_hsi_cmp_emit:
+	la	r0,_cc_eq_txt
+	push	r0
+	la	r0,787822
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_hsi_cmp_ne
+
+	la	r0,_ceq_txt
+	bra	_hsi_emit_cmp
+
+_hsi_cmp_ne:
+	la	r0,_cc_ne_txt
+	push	r0
+	la	r0,787822
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_hsi_cmp_lt
+
+	la	r0,_ceq_txt
+	bra	_hsi_emit_cmp
+
+_hsi_cmp_lt:
+	la	r0,_cc_lt_txt
+	push	r0
+	la	r0,787822
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_hsi_cmp_lu
+
+	la	r0,_cls_txt
+	bra	_hsi_emit_cmp
+
+_hsi_cmp_lu:
+	la	r0,_clu_txt
+
+_hsi_emit_cmp:
+	push	r0
+	la	r0,787838
+	push	r0
+	lw	r0,-3(fp)
+	ceq	r0,z
+	brt	_hsi_emit_cmp_rhs
+	push	r0
+	bra	_hsi_emit_cmp_call
+
+_hsi_emit_cmp_rhs:
+	la	r0,787854
+	push	r0
+
+_hsi_emit_cmp_call:
+	la	r0,_emit_inst2
+	jal	r1,(r0)
+	add	sp,9
+
+	lw	r0,-3(fp)
+	ceq	r0,z
+	brt	_hsi_branch
+
+	la	r0,_pop_txt
+	push	r0
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_emit_inst1
+	jal	r1,(r0)
+	add	sp,6
+
+_hsi_branch:
+	la	r0,_cc_ne_txt
+	push	r0
+	la	r0,787822
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_hsi_branch_false
+
+	la	r0,_brt_txt
+	bra	_hsi_branch_emit
+
+_hsi_branch_false:
+	la	r0,_brf_txt
+
+_hsi_branch_emit:
+	push	r0
+	la	r0,787813
+	lw	r0,0(r0)
+	push	r0
+	la	r0,_if_false_suffix
+	push	r0
+	la	r0,_emit_branch_label
+	jal	r1,(r0)
+	add	sp,9
+
+_hsi_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+_handle_struct_else:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r1,787807
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_hse_ret
+
+	la	r1,787819
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_hse_emit
+	bra	_hse_ret
+
+_hse_emit:
+	la	r0,_bra_txt
+	push	r0
+	la	r0,787816
+	lw	r0,0(r0)
+	push	r0
+	la	r0,_if_end_suffix
+	push	r0
+	la	r0,_emit_branch_label
+	jal	r1,(r0)
+	add	sp,9
+
+	la	r0,787813
+	lw	r0,0(r0)
+	push	r0
+	la	r0,_if_false_suffix
+	push	r0
+	la	r0,_emit_label_def
+	jal	r1,(r0)
+	add	sp,6
+
+	la	r1,787819
+	la	r0,1
+	sw	r0,0(r1)
+
+_hse_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+_handle_struct_endif:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r1,787807
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_hsend_ret
+
+	la	r1,787819
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_hsend_false
+
+	la	r0,787816
+	lw	r0,0(r0)
+	push	r0
+	la	r0,_if_end_suffix
+	push	r0
+	la	r0,_emit_label_def
+	jal	r1,(r0)
+	add	sp,6
+	bra	_hsend_clear
+
+_hsend_false:
+	la	r0,787813
+	lw	r0,0(r0)
+	push	r0
+	la	r0,_if_false_suffix
+	push	r0
+	la	r0,_emit_label_def
+	jal	r1,(r0)
+	add	sp,6
+
+_hsend_clear:
+	la	r1,787807
+	la	r0,0
+	sw	r0,0(r1)
+	la	r1,787819
+	sw	r0,0(r1)
+
+_hsend_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; _mul9: Multiply arg by 9 (symbol table entry offset).
 ; Arg on stack: value
 ; Returns: r0 = value * 9
 _mul9:
 	push	fp
 	push	r1
+	push	r2
 	mov	fp,sp
-	lw	r0,6(fp)
+	lw	r0,9(fp)
 	mov	r2,r0
 	add	r0,r0
 	add	r0,r0
 	add	r0,r0
 	add	r0,r2
 	mov	sp,fp
+	pop	r2
 	pop	r1
 	pop	fp
 	jmp	(r1)
@@ -4408,14 +5418,16 @@ _mul9:
 _mul6:
 	push	fp
 	push	r1
+	push	r2
 	mov	fp,sp
-	lw	r0,6(fp)
+	lw	r0,9(fp)
 	mov	r2,r0
 	add	r0,r0
 	add	r0,r0
 	add	r0,r2
 	add	r0,r2
 	mov	sp,fp
+	pop	r2
 	pop	r1
 	pop	fp
 	jmp	(r1)
@@ -4426,14 +5438,16 @@ _mul6:
 _mul10:
 	push	fp
 	push	r1
+	push	r2
 	mov	fp,sp
-	lw	r0,6(fp)
+	lw	r0,9(fp)
 	mov	r2,r0
 	add	r0,r0
 	add	r0,r0
 	add	r0,r2
 	add	r0,r0
 	mov	sp,fp
+	pop	r2
 	pop	r1
 	pop	fp
 	jmp	(r1)
@@ -4644,6 +5658,15 @@ _kw_ifeq:
 _kw_ifne:
 	.byte	73,70,78,69,0
 
+_kw_if:
+	.byte	73,70,0
+
+_kw_else:
+	.byte	69,76,83,69,0
+
+_kw_endif:
+	.byte	69,78,68,73,70,0
+
 _kw_elseasm:
 	.byte	69,76,83,69,65,83,77,0
 
@@ -4693,3 +5716,73 @@ _lookup_sym_val:
 
 _include_lookup_slot:
 	.word	0
+
+; --- Structured IF lowering scratch/state (runtime arena) ---
+; 787807 depth (single-level core for step 1)
+; 787810 next label id
+; 787813 false label id
+; 787816 end label id
+; 787819 else seen
+; 787822 cc buffer
+; 787838 lhs buffer
+; 787854 rhs buffer
+
+_push_txt:
+	.byte	112,117,115,104,0
+
+_pop_txt:
+	.byte	112,111,112,0
+
+_lc_txt:
+	.byte	108,99,0
+
+_ceq_txt:
+	.byte	99,101,113,0
+
+_cls_txt:
+	.byte	99,108,115,0
+
+_clu_txt:
+	.byte	99,108,117,0
+
+_bra_txt:
+	.byte	98,114,97,0
+
+_brf_txt:
+	.byte	98,114,102,0
+
+_brt_txt:
+	.byte	98,114,116,0
+
+_r1_txt:
+	.byte	114,49,0
+
+_r2_txt:
+	.byte	114,50,0
+
+_cc_eq_txt:
+	.byte	99,99,95,101,113,0
+
+_cc_ne_txt:
+	.byte	99,99,95,110,101,0
+
+_cc_lt_txt:
+	.byte	99,99,95,108,116,0
+
+_cc_lu_txt:
+	.byte	99,99,95,108,117,0
+
+_cc_zset_txt:
+	.byte	99,99,95,122,115,101,116,0
+
+_cc_zclr_txt:
+	.byte	99,99,95,122,99,108,114,0
+
+_if_label_prefix:
+	.byte	95,104,108,105,102,95,0
+
+_if_false_suffix:
+	.byte	95,102,97,108,115,101,0
+
+_if_end_suffix:
+	.byte	95,101,110,100,0
