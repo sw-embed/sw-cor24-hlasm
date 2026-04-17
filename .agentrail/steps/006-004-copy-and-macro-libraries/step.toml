@@ -1,8 +1,9 @@
 number = 6
 slug = "004-copy-and-macro-libraries"
-status = "in-progress"
+status = "completed"
 description = "Add a stronger COPY / macro-library workflow on top of the current include pa..."
 role = "production"
 context_files = []
 created_at = "2026-04-16T23:55:37"
-commits = []
+completed_at = "2026-04-17T12:00:52"
+commits = ["5b3114526d25beb3e8ff9d0ecb443a999449a608"]
