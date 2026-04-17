@@ -1,8 +1,9 @@
 number = 4
 slug = "004-structured-control-flow-integration"
-status = "in-progress"
+status = "completed"
 description = "Resume the structured IF/DO/SELECT integration pass only after macro compatib..."
 role = "production"
 context_files = []
 created_at = "2026-04-16T22:35:32"
-commits = []
+completed_at = "2026-04-16T23:06:37"
+commits = ["20ada00cae14f8faf17e47280e8465e769da79d5"]

@@ -1,0 +1,1 @@
+Added a combined proof source for top-level macros, conditional assembly, and structured IF/DO/SELECT, and tightened docs to describe the supported integration subset while keeping the suite green.
