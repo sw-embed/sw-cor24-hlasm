@@ -5,17 +5,19 @@ _hldo_1_top:
  lc r2,10
  ceq r0,r2
  pop r2
- brf _hldo_2_end
+ brt _hldo_3_skip
+ jmp _hldo_2_end
+_hldo_3_skip:
  bra _body
- bra _hldo_1_top
+ jmp _hldo_1_top
 _hldo_2_end:
-_hldo_3_top:
+_hldo_4_top:
  add r1,1
- bra _hldo_3_top
+ jmp _hldo_4_top
  add r2,1
- bra _hldo_3_top
-_hldo_4_end:
+ jmp _hldo_4_top
+_hldo_5_end:
 
 
-Executed 44038 instructions
+Executed 45073 instructions
 CPU halted (self-branch detected)

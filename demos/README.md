@@ -32,6 +32,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d23 | Named include table | WORKS |
 | d24 | Nested named includes | WORKS |
 | d25 | Split bootstrap sourceset proof | WORKS |
+| d26 | Structured branch-range hardening | WORKS |
 
 ## Demo Policy
 
@@ -139,6 +140,9 @@ ENDIFASM
 
 #### IF / ELSEIF / ELSE / ENDIF
 Nested `IF` blocks and `ELSEIF` chains now lower to plain labels and branches.
+Structured conditionals are emitted in a long-range-safe form: a short
+reversed conditional branch skips over an unconditional `jmp`, so generated
+control flow does not depend on raw `bra` reach.
 
 ```
 IF cc_eq, r0, 0
@@ -160,6 +164,9 @@ Condition codes: cc_eq, cc_ne, cc_lt (signed), cc_lu (unsigned),
 cc_zset (C flag set), cc_zclr (C flag clear).
 
 #### DO / DOEXIT / ITERATE / ENDDO
+Loop lowering uses the same long-range-safe pattern for generated exits and
+back-edges, with unconditional structured transfers emitted as `jmp`.
+
 ```
 DO
     add r0,1

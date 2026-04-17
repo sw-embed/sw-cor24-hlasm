@@ -1,6 +1,6 @@
 number = 1
 slug = "structured-branch-range-hardening"
-status = "pending"
+status = "in-progress"
 description = "Harden structured control-flow lowering for branch distance limits. Audit IF/..."
 role = "production"
 context_files = []

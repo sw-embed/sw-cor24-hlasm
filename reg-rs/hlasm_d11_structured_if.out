@@ -3,32 +3,40 @@ UART output: ; Demo 11: IF/ELSEIF/ELSE/ENDIF with nesting
  lc r2,0
  ceq r0,r2
  pop r2
- brf _hlif_1_false
+ brt _hlif_3_skip
+ jmp _hlif_1_false
+_hlif_3_skip:
  add r1,1
  ceq r1,z
- brt _hlif_3_false
+ brf _hlif_6_skip
+ jmp _hlif_4_false
+_hlif_6_skip:
   sub r0,r0
- bra _hlif_4_end
-_hlif_3_false:
+ jmp _hlif_5_end
+_hlif_4_false:
  push r1
  lc r1,10
  cls r2,r1
  pop r1
- brf _hlif_5_false
+ brt _hlif_8_skip
+ jmp _hlif_7_false
+_hlif_8_skip:
   add r2,1
- bra _hlif_4_end
-_hlif_5_false:
+ jmp _hlif_5_end
+_hlif_7_false:
   nop
-_hlif_4_end:
- bra _hlif_2_end
+_hlif_5_end:
+ jmp _hlif_2_end
 _hlif_1_false:
- brt _hlif_6_false
+ brf _hlif_1a_skip
+ jmp _hlif_9_false
+_hlif_1a_skip:
  add r0,1
- bra _hlif_2_end
-_hlif_6_false:
+ jmp _hlif_2_end
+_hlif_9_false:
  add r2,2
 _hlif_2_end:
 
 
-Executed 61510 instructions
+Executed 67473 instructions
 CPU halted (self-branch detected)

@@ -1,0 +1,5 @@
+command = 'cor24-run --run hlasm.s --load-binary demos/d26_branch_range_hardening.bin@524288 --speed 0 -n 180000 2>&1'
+timeout = 15
+preprocess = "grep -A 200 '^UART output:' || true"
+exit_code = 0
+desc = "Demo 26: structured IF/DO lowering uses long-range-safe branch patterns"

@@ -2501,6 +2501,25 @@ _ed24_ret:
 	pop	fp
 	jmp	(r1)
 
+; _alloc_struct_label_id: Return next structured-control-flow label id and bump it.
+_alloc_struct_label_id:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r2,787810
+	lw	r0,0(r2)
+	mov	r1,r0
+	add	r1,1
+	sw	r1,0(r2)
+
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; _zero_bytes: Zero a byte range in SRAM.
 ; Args on stack: ptr (9 fp), len (12 fp)
 _zero_bytes:
@@ -5322,7 +5341,11 @@ _emit_struct_if_test:
 	push	r2
 	push	r1
 	mov	fp,sp
-	add	sp,-3
+	add	sp,-6
+
+	la	r0,_alloc_struct_label_id
+	jal	r1,(r0)
+	sw	r0,-6(fp)
 
 	la	r0,_cc_zset_txt
 	push	r0
@@ -5334,7 +5357,16 @@ _emit_struct_if_test:
 	ceq	r0,z
 	brt	_esit_zclr
 
-	la	r0,_brf_txt
+	la	r0,_brt_txt
+	push	r0
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_if_skip_suffix
+	push	r0
+	la	r0,_emit_branch_label
+	jal	r1,(r0)
+	add	sp,9
+	la	r0,_jmp_txt
 	push	r0
 	lw	r0,9(fp)
 	push	r0
@@ -5343,6 +5375,13 @@ _emit_struct_if_test:
 	la	r0,_emit_branch_label
 	jal	r1,(r0)
 	add	sp,9
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_if_skip_suffix
+	push	r0
+	la	r0,_emit_label_def
+	jal	r1,(r0)
+	add	sp,6
 	la	r1,_esit_ret
 	jmp	(r1)
 
@@ -5357,7 +5396,16 @@ _esit_zclr:
 	ceq	r0,z
 	brt	_esit_cmp_setup
 
-	la	r0,_brt_txt
+	la	r0,_brf_txt
+	push	r0
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_if_skip_suffix
+	push	r0
+	la	r0,_emit_branch_label
+	jal	r1,(r0)
+	add	sp,9
+	la	r0,_jmp_txt
 	push	r0
 	lw	r0,9(fp)
 	push	r0
@@ -5366,6 +5414,13 @@ _esit_zclr:
 	la	r0,_emit_branch_label
 	jal	r1,(r0)
 	add	sp,9
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_if_skip_suffix
+	push	r0
+	la	r0,_emit_label_def
+	jal	r1,(r0)
+	add	sp,6
 	la	r1,_esit_ret
 	jmp	(r1)
 
@@ -5495,13 +5550,22 @@ _esit_branch:
 	ceq	r0,z
 	brt	_esit_branch_false
 
-	la	r0,_brt_txt
+	la	r0,_brf_txt
 	bra	_esit_branch_emit
 
 _esit_branch_false:
-	la	r0,_brf_txt
+	la	r0,_brt_txt
 
-_esit_branch_emit:
+	_esit_branch_emit:
+	push	r0
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_if_skip_suffix
+	push	r0
+	la	r0,_emit_branch_label
+	jal	r1,(r0)
+	add	sp,9
+	la	r0,_jmp_txt
 	push	r0
 	lw	r0,9(fp)
 	push	r0
@@ -5510,6 +5574,13 @@ _esit_branch_emit:
 	la	r0,_emit_branch_label
 	jal	r1,(r0)
 	add	sp,9
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_if_skip_suffix
+	push	r0
+	la	r0,_emit_label_def
+	jal	r1,(r0)
+	add	sp,6
 
 _esit_ret:
 	mov	sp,fp
@@ -5596,7 +5667,7 @@ _handle_struct_else:
 	bra	_hse_ret
 
 _hse_emit:
-	la	r0,_bra_txt
+	la	r0,_jmp_txt
 	push	r0
 	lw	r0,3(r2)
 	push	r0
@@ -5643,7 +5714,7 @@ _handle_struct_elseif:
 	bra	_hsel_ret
 
 _hsel_emit:
-	la	r0,_bra_txt
+	la	r0,_jmp_txt
 	push	r0
 	lw	r0,3(r2)
 	push	r0
@@ -5826,7 +5897,7 @@ _handle_struct_iterate:
 	brt	_hsdi_ret
 
 	mov	r2,r0
-	la	r0,_bra_txt
+	la	r0,_jmp_txt
 	push	r0
 	lw	r0,0(r2)
 	push	r0
@@ -5855,7 +5926,7 @@ _handle_struct_enddo:
 	brt	_hsdd_ret
 
 	mov	r2,r0
-	la	r0,_bra_txt
+	la	r0,_jmp_txt
 	push	r0
 	lw	r0,0(r2)
 	push	r0
@@ -5892,7 +5963,11 @@ _emit_struct_branch_if_false:
 	push	r2
 	push	r1
 	mov	fp,sp
-	add	sp,-3
+	add	sp,-6
+
+	la	r0,_alloc_struct_label_id
+	jal	r1,(r0)
+	sw	r0,-6(fp)
 
 	la	r0,_cc_zset_txt
 	push	r0
@@ -5904,7 +5979,16 @@ _emit_struct_branch_if_false:
 	ceq	r0,z
 	brt	_esbf_zclr
 
-	la	r0,_brf_txt
+	la	r0,_brt_txt
+	push	r0
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_do_skip_suffix
+	push	r0
+	la	r0,_emit_do_branch_label
+	jal	r1,(r0)
+	add	sp,9
+	la	r0,_jmp_txt
 	push	r0
 	lw	r0,12(fp)
 	push	r0
@@ -5913,6 +5997,13 @@ _emit_struct_branch_if_false:
 	la	r0,_emit_do_branch_label
 	jal	r1,(r0)
 	add	sp,9
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_do_skip_suffix
+	push	r0
+	la	r0,_emit_do_label_def
+	jal	r1,(r0)
+	add	sp,6
 	la	r1,_esbf_ret
 	jmp	(r1)
 
@@ -5927,7 +6018,16 @@ _esbf_zclr:
 	ceq	r0,z
 	brt	_esbf_cmp_setup
 
-	la	r0,_brt_txt
+	la	r0,_brf_txt
+	push	r0
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_do_skip_suffix
+	push	r0
+	la	r0,_emit_do_branch_label
+	jal	r1,(r0)
+	add	sp,9
+	la	r0,_jmp_txt
 	push	r0
 	lw	r0,12(fp)
 	push	r0
@@ -5936,6 +6036,13 @@ _esbf_zclr:
 	la	r0,_emit_do_branch_label
 	jal	r1,(r0)
 	add	sp,9
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_do_skip_suffix
+	push	r0
+	la	r0,_emit_do_label_def
+	jal	r1,(r0)
+	add	sp,6
 	la	r1,_esbf_ret
 	jmp	(r1)
 
@@ -6065,13 +6172,22 @@ _esbf_branch:
 	ceq	r0,z
 	brt	_esbf_branch_false
 
-	la	r0,_brt_txt
+	la	r0,_brf_txt
 	bra	_esbf_branch_emit
 
 _esbf_branch_false:
-	la	r0,_brf_txt
+	la	r0,_brt_txt
 
-_esbf_branch_emit:
+	_esbf_branch_emit:
+	push	r0
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_do_skip_suffix
+	push	r0
+	la	r0,_emit_do_branch_label
+	jal	r1,(r0)
+	add	sp,9
+	la	r0,_jmp_txt
 	push	r0
 	lw	r0,12(fp)
 	push	r0
@@ -6080,6 +6196,13 @@ _esbf_branch_emit:
 	la	r0,_emit_do_branch_label
 	jal	r1,(r0)
 	add	sp,9
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_do_skip_suffix
+	push	r0
+	la	r0,_emit_do_label_def
+	jal	r1,(r0)
+	add	sp,6
 
 _esbf_ret:
 	mov	sp,fp
@@ -6461,6 +6584,9 @@ _clu_txt:
 _bra_txt:
 	.byte	98,114,97,0
 
+_jmp_txt:
+	.byte	106,109,112,0
+
 _brf_txt:
 	.byte	98,114,102,0
 
@@ -6500,6 +6626,9 @@ _if_false_suffix:
 _if_end_suffix:
 	.byte	95,101,110,100,0
 
+_if_skip_suffix:
+	.byte	95,115,107,105,112,0
+
 _do_label_prefix:
 	.byte	95,104,108,100,111,95,0
 
@@ -6508,3 +6637,6 @@ _do_top_suffix:
 
 _do_end_suffix:
 	.byte	95,101,110,100,0
+
+_do_skip_suffix:
+	.byte	95,115,107,105,112,0

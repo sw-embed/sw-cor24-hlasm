@@ -1,0 +1,31 @@
+; Demo 26: structured control flow emits long-range-safe lowering
+IF cc_eq, r0, 0
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ELSE
+ add r1,1
+ENDIF
+DO
+ add r2,1
+ DOEXIT cc_eq, r2, 3
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ ITERATE
+ add r0,1
+ENDDO

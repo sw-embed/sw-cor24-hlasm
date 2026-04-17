@@ -82,7 +82,11 @@ source sections based on conditions.
 
 ### Structured Lowering
 Transforms IF/ELSEIF/ELSE/ENDIF, DO/ENDDO, SELECT/WHEN/ENDSEL into plain
-labels and branches. Generates unique branch target labels.
+labels and branches. Generates unique branch target labels. Because raw COR24
+branches only have an 8-bit PC-relative reach, structured lowering uses
+long-range-safe forms for generated control flow: reversed short conditional
+branches skip over unconditional `jmp` instructions, and generated
+unconditional structured transfers emit `jmp` directly instead of `bra`.
 
 ### Symbol Table
 Tracks labels, SET symbols, and macro names. Symbol lookup during expansion

@@ -1,0 +1,49 @@
+UART output: ; Demo 26: structured control flow emits long-range-safe lowering
+ push r2
+ lc r2,0
+ ceq r0,r2
+ pop r2
+ brt _hlif_3_skip
+ jmp _hlif_1_false
+_hlif_3_skip:
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ jmp _hlif_2_end
+_hlif_1_false:
+ add r1,1
+_hlif_2_end:
+_hldo_4_top:
+ add r2,1
+ push r1
+ lc r1,3
+ ceq r2,r1
+ pop r1
+ brt _hldo_6_skip
+ jmp _hldo_5_end
+_hldo_6_skip:
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ nop
+ jmp _hldo_4_top
+ add r0,1
+ jmp _hldo_4_top
+_hldo_5_end:
+
+
+Executed 101657 instructions
+CPU halted (self-branch detected)
