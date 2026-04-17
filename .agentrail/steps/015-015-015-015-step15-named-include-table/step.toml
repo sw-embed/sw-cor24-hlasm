@@ -1,0 +1,8 @@
+number = 15
+slug = "015-015-015-step15-named-include-table"
+status = "pending"
+description = "Build the first named-include layer on top of the new INCBUF return stack. De..."
+role = "legacy"
+context_files = []
+created_at = "2026-04-16T19:39:35"
+commits = []

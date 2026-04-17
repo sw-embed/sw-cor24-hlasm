@@ -1,0 +1,1 @@
+Added INCBUF-backed include return with a small source stack, preserved direct SRCBUF switching, and added a patched-main demo plus regression proof for include-then-resume behavior.

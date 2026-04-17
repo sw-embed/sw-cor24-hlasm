@@ -1,8 +1,9 @@
 number = 14
 slug = "014-014-step14-include-return-stack"
-status = "in-progress"
+status = "completed"
 description = "Build the first true include-return mechanism on top of SRCBUF. Add a small s..."
 role = "legacy"
 context_files = []
 created_at = "2026-04-16T19:26:29"
-commits = []
+completed_at = "2026-04-16T19:39:35"
+commits = ["e8a8ed5ac8ea57f8d440fab36ff1b9ffe1591ca1"]
