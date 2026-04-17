@@ -1,0 +1,1 @@
+Hardened macro name lookup and table storage for 31-character names, added a combined long-name/local-label stress proof, and refreshed tracked regressions on the green 35-test suite.

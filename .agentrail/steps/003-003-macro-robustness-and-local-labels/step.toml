@@ -1,8 +1,9 @@
 number = 3
 slug = "003-macro-robustness-and-local-labels"
-status = "in-progress"
+status = "completed"
 description = "Harden multiple macro definitions, repeated invocations, and local-label beha..."
 role = "production"
 context_files = []
 created_at = "2026-04-16T22:35:27"
-commits = []
+completed_at = "2026-04-16T23:03:18"
+commits = ["c5ca849609e2b1368ab4bdd46e67089e4fe8dc33"]
