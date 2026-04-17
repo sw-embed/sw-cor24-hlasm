@@ -1,0 +1,1 @@
+Folded the last bootstrap loader-spec behavior into the sourceset runner, removed obsolete loader artifacts, and updated bootstrap/demo docs to describe the single maintained host-side path.
