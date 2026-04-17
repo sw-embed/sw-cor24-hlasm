@@ -1,6 +1,6 @@
 number = 2
 slug = "001-hlxref-core"
-status = "blocked"
+status = "in-progress"
 description = "Add an opt-in HLXREF report for hlasm-generated output. Keep it text-only and..."
 role = "production"
 context_files = []

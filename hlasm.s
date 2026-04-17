@@ -63,6 +63,9 @@ _ml_loop:
 	ceq	r0,z
 	brt	_ml_go
 
+	la	r0,_emit_xref_report
+	jal	r1,(r0)
+
 	mov	sp,fp
 	pop	r2
 	pop	fp
@@ -2493,6 +2496,28 @@ _listing_enabled:
 	pop	fp
 	jmp	(r1)
 
+; _xref_enabled: Return 1 if SET HLXREF,<nonzero> is active.
+_xref_enabled:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r1,_xref_switch
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_xre_off
+	la	r0,1
+	bra	_xre_ret
+
+_xre_off:
+	la	r0,0
+
+_xre_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
 ; _emit_ann_prefix: Emit "; HLASM ".
 _emit_ann_prefix:
 	push	fp
@@ -2619,6 +2644,107 @@ _emit_list_line1:
 	jal	r1,(r0)
 
 _ell1_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_xref_prefix: Emit "; HLASM XREF ".
+_emit_xref_prefix:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_xref_prefix_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_xref_line1: Emit "; HLASM XREF <kind> <name>".
+; Args on stack: kind_ptr (9 fp), name_ptr (6 fp)
+_emit_xref_line1:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_emit_xref_prefix
+	jal	r1,(r0)
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_xref_line_count: Emit "; HLASM XREF <kind> <name> <count>".
+; Args on stack: kind_ptr (12 fp), name_ptr (9 fp), count (6 fp)
+_emit_xref_line_count:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_emit_xref_prefix
+	jal	r1,(r0)
+
+	lw	r0,12(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
 	mov	sp,fp
 	pop	r1
 	pop	fp
@@ -3267,7 +3393,7 @@ _init_runtime_arena:
 	push	r2
 	mov	fp,sp
 
-		la	r0,4350
+		la	r0,4700
 	push	r0
 	la	r0,786432
 	push	r0
@@ -4767,6 +4893,24 @@ _mul39:
 	pop	fp
 	jmp	(r1)
 
+_mul16:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r0,9(fp)
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
 ; _record_macro_line: Append current _line_buf to _macro_buf.
 ; Arg on stack: line length
 _record_macro_line:
@@ -5150,6 +5294,12 @@ _expand_macro:
 	push	r2
 	push	r2
 	mov	fp,sp
+
+	lw	r0,12(fp)
+	push	r0
+	la	r0,_xref_mark_macro_expand
+	jal	r1,(r0)
+	add	sp,3
 
 	lw	r0,12(fp)
 	add	r0,-1
@@ -6863,7 +7013,7 @@ _handle_equ:
 	push	r2
 	push	r1
 	mov	fp,sp
-	add	sp,-12
+	add	sp,-24
 
 	la	r2,786432
 	push	r2
@@ -6890,7 +7040,7 @@ _handle_equ:
 	la	r1,786576
 	la	r2,0
 	add	r2,fp
-	add	r2,-12
+	add	r2,-24
 _heq_save_name:
 	lbu	r0,0(r1)
 	sb	r0,0(r2)
@@ -6921,7 +7071,7 @@ _heq_saved:
 
 	la	r1,0
 	add	r1,fp
-	add	r1,-12
+	add	r1,-24
 	la	r2,786576
 _heq_restore_name:
 	lbu	r0,0(r1)
@@ -6933,6 +7083,15 @@ _heq_restore_name:
 	bra	_heq_restore_name
 
 _heq_name_restored:
+	la	r0,_xref_mark_symbol_current
+	jal	r1,(r0)
+
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_xref_update_switch_current
+	jal	r1,(r0)
+	add	sp,3
+
 	lw	r0,-3(fp)
 	push	r0
 	la	r0,_store_parse_name_value
@@ -6951,7 +7110,7 @@ _set_symbol:
 	push	r2
 	push	r1
 	mov	fp,sp
-	add	sp,-12
+	add	sp,-24
 	la	r2,786432
 	add	r2,3
 	push	r2
@@ -6970,7 +7129,7 @@ _set_symbol:
 	la	r1,786576
 	la	r2,0
 	add	r2,fp
-	add	r2,-12
+	add	r2,-24
 _ss_save_name:
 	lbu	r0,0(r1)
 	sb	r0,0(r2)
@@ -7012,7 +7171,7 @@ _ss_no_val:
 _ss_store:
 	la	r1,0
 	add	r1,fp
-	add	r1,-12
+	add	r1,-24
 	la	r2,786576
 _ss_restore_name:
 	lbu	r0,0(r1)
@@ -7024,6 +7183,15 @@ _ss_restore_name:
 	bra	_ss_restore_name
 
 _ss_name_restored:
+	la	r0,_xref_mark_symbol_current
+	jal	r1,(r0)
+
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_xref_update_switch_current
+	jal	r1,(r0)
+	add	sp,3
+
 	lw	r0,-3(fp)
 	push	r0
 	la	r0,_store_parse_name_value
@@ -7033,6 +7201,113 @@ ss_ret:
 	mov	sp,fp
 	pop	r1
 	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _xref_mark_symbol_current: Add current _parse_name_buf to xref symbol table if absent.
+_xref_mark_symbol_current:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+	la	r0,0
+	sw	r0,-3(fp)
+
+_xmsc_loop:
+	la	r1,_xref_symbol_count
+	lw	r1,0(r1)
+	lw	r0,-3(fp)
+	clu	r0,r1
+	brf	_xmsc_add
+
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_mul16
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_xref_symbol_table
+	add	r1,r0
+	push	r1
+	la	r1,786576
+	push	r1
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	_xmsc_ret
+
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+	bra	_xmsc_loop
+
+_xmsc_add:
+	la	r1,_xref_symbol_count
+	lw	r0,0(r1)
+	lc	r2,16
+	clu	r0,r2
+	brf	_xmsc_ret
+
+	push	r0
+	la	r0,_mul16
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_xref_symbol_table
+	add	r1,r0
+	la	r2,786576
+	lc	r0,16
+	sw	r0,-3(fp)
+
+_xmsc_copy:
+	lbu	r0,0(r2)
+	sb	r0,0(r1)
+	add	r1,1
+	add	r2,1
+	lw	r0,-3(fp)
+	add	r0,-1
+	sw	r0,-3(fp)
+	ceq	r0,z
+	brt	_xmsc_inc
+	bra	_xmsc_copy
+
+_xmsc_inc:
+	la	r1,_xref_symbol_count
+	lw	r0,0(r1)
+	add	r0,1
+	sw	r0,0(r1)
+
+_xmsc_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _xref_update_switch_current: Update HLXREF switch when current symbol name matches.
+; Arg on stack: value
+_xref_update_switch_current:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_xref_symbol_name
+	push	r0
+	la	r0,786576
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_xusc_ret
+
+	la	r1,_xref_switch
+	lw	r0,6(fp)
+	sw	r0,0(r1)
+
+_xusc_ret:
+	mov	sp,fp
+	pop	r1
 	pop	fp
 	jmp	(r1)
 
@@ -7361,6 +7636,13 @@ _handle_include:
 	ceq	r0,z
 	brt	_hi_missing
 
+	la	r1,787804
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_xref_mark_copy_slot
+	jal	r1,(r0)
+	add	sp,3
+
 	la	r0,_push_src_return
 	jal	r1,(r0)
 	ceq	r0,z
@@ -7416,6 +7698,13 @@ _handle_copy:
 	ceq	r0,z
 	brt	_hc_missing
 
+	la	r1,787804
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_xref_mark_copy_slot
+	jal	r1,(r0)
+	add	sp,3
+
 	la	r0,_push_src_return
 	jal	r1,(r0)
 	ceq	r0,z
@@ -7447,6 +7736,231 @@ _hc_ret:
 	mov	sp,fp
 	pop	r1
 	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _xref_mark_copy_slot: Mark used COPY/INCLUDE slot (1-based).
+; Arg on stack: slot
+_xref_mark_copy_slot:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	lw	r0,6(fp)
+	add	r0,-1
+	la	r1,_xref_copy_used
+	add	r1,r0
+	la	r0,1
+	sb	r0,0(r1)
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _xref_mark_macro_expand: Increment expansion count for macro index (1-based).
+; Arg on stack: macro index
+_xref_mark_macro_expand:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	lw	r0,6(fp)
+	add	r0,-1
+	la	r1,_xref_expand_counts
+	add	r1,r0
+	lbu	r0,0(r1)
+	add	r0,1
+	sb	r0,0(r1)
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_xref_report: Emit end-of-run xref section when HLXREF is enabled.
+_emit_xref_report:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-6
+
+	la	r0,_xref_enabled
+	jal	r1,(r0)
+	ceq	r0,z
+	brf	_exr_go
+	la	r1,_exr_ret
+	jmp	(r1)
+
+_exr_go:
+	la	r0,_xref_begin_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	la	r2,520192
+	lw	r0,27(r2)
+	sw	r0,-3(fp)
+	la	r0,0
+	sw	r0,-6(fp)
+
+_exr_copy_loop:
+	lw	r0,-6(fp)
+	lw	r1,-3(fp)
+	clu	r0,r1
+	brf	_exr_macro_defs
+
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_mul12
+	jal	r1,(r0)
+	add	sp,3
+	la	r2,520222
+	add	r2,r0
+	lw	r0,0(r2)
+	add	r0,-1
+	la	r1,_xref_copy_used
+	add	r1,r0
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_exr_copy_next
+
+	la	r0,_xref_copy_txt
+	push	r0
+	add	r2,3
+	push	r2
+	la	r0,_emit_xref_line1
+	jal	r1,(r0)
+	add	sp,6
+
+_exr_copy_next:
+	lw	r0,-6(fp)
+	add	r0,1
+	sw	r0,-6(fp)
+	bra	_exr_copy_loop
+
+_exr_macro_defs:
+	la	r1,786645
+	lw	r0,0(r1)
+	sw	r0,-3(fp)
+	la	r0,0
+	sw	r0,-6(fp)
+
+_exr_macro_loop:
+	lw	r0,-6(fp)
+	lw	r1,-3(fp)
+	clu	r0,r1
+	brf	_exr_expand_defs
+
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_mul39
+	jal	r1,(r0)
+	add	sp,3
+	la	r2,788304
+	add	r2,r0
+	la	r0,_xref_macro_txt
+	push	r0
+	push	r2
+	la	r0,_emit_xref_line1
+	jal	r1,(r0)
+	add	sp,6
+
+	lw	r0,-6(fp)
+	add	r0,1
+	sw	r0,-6(fp)
+	bra	_exr_macro_loop
+
+_exr_expand_defs:
+	la	r1,786645
+	lw	r0,0(r1)
+	sw	r0,-3(fp)
+	la	r0,0
+	sw	r0,-6(fp)
+
+_exr_expand_loop:
+	lw	r0,-6(fp)
+	lw	r1,-3(fp)
+	clu	r0,r1
+	brf	_exr_symbols
+
+	la	r1,_xref_expand_counts
+	lw	r0,-6(fp)
+	add	r1,r0
+	lbu	r2,0(r1)
+	ceq	r2,z
+	brt	_exr_expand_next
+
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_mul39
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,788304
+	add	r1,r0
+	la	r0,_xref_expand_txt
+	push	r0
+	push	r1
+	push	r2
+	la	r0,_emit_xref_line_count
+	jal	r1,(r0)
+	add	sp,9
+
+_exr_expand_next:
+	lw	r0,-6(fp)
+	add	r0,1
+	sw	r0,-6(fp)
+	bra	_exr_expand_loop
+
+_exr_symbols:
+	la	r1,_xref_symbol_count
+	lw	r0,0(r1)
+	sw	r0,-3(fp)
+	la	r0,0
+	sw	r0,-6(fp)
+
+_exr_symbol_loop:
+	lw	r0,-6(fp)
+	lw	r1,-3(fp)
+	clu	r0,r1
+	brf	_exr_end
+
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_mul16
+	jal	r1,(r0)
+	add	sp,3
+	la	r2,_xref_symbol_table
+	add	r2,r0
+	la	r0,_xref_symbol_txt
+	push	r0
+	push	r2
+	la	r0,_emit_xref_line1
+	jal	r1,(r0)
+	add	sp,6
+
+	lw	r0,-6(fp)
+	add	r0,1
+	sw	r0,-6(fp)
+	bra	_exr_symbol_loop
+
+_exr_end:
+	la	r0,_xref_end_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+_exr_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
 	pop	fp
 	jmp	(r1)
 
@@ -10043,3 +10557,58 @@ _sel_end_suffix:
 
 _sel_skip_suffix:
 	.byte	95,115,107,105,112,0
+
+_xref_copy_used:
+	.byte	0,0,0,0,0,0,0,0
+
+_xref_expand_counts:
+	.byte	0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0
+
+_xref_symbol_count:
+	.word	0
+
+_xref_symbol_table:
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
+_xref_symbol_name:
+	.byte	72,76,88,82,69,70,0
+
+_xref_switch:
+	.word	0
+
+_xref_prefix_txt:
+	.byte	59,32,72,76,65,83,77,32,88,82,69,70,32,0
+
+_xref_begin_txt:
+	.byte	59,32,72,76,65,83,77,32,88,82,69,70,32,66,69,71,73,78,0
+
+_xref_end_txt:
+	.byte	59,32,72,76,65,83,77,32,88,82,69,70,32,69,78,68,0
+
+_xref_copy_txt:
+	.byte	67,79,80,89,0
+
+_xref_macro_txt:
+	.byte	77,65,67,82,79,0
+
+_xref_expand_txt:
+	.byte	69,88,80,65,78,68,0
+
+_xref_symbol_txt:
+	.byte	83,89,77,66,79,76,0

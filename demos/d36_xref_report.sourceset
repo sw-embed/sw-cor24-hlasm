@@ -1,0 +1,5 @@
+# Demo 36 end-of-run xref report through composed source-set fragments.
+PROFILE default.profile
+ROOT .
+MAIN d36_xref_report.hlasm
+SOURCESET d34_copy_macro_library_members.sourceset

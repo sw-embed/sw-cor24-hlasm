@@ -42,6 +42,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d33 | Symbols and expressions | WORKS |
 | d34 | COPY macro library workflow | WORKS |
 | d35 | Listing/xref comments | WORKS |
+| d36 | End-of-run HLXREF report | WORKS |
 | d36 | IF/ELSEIF/ENDIF without ELSE | WORKS |
 
 ## Demo Policy
@@ -250,6 +251,19 @@ semicolon comments for consumed source-level events such as:
 `HLIST` is intended for understanding generated assembly and expansion flow.
 `HLANN` remains the narrower switch for structured-control-flow source markers.
 They can be used independently.
+`HLXREF` is a separate opt-in switch for a compact end-of-run cross-reference
+section.
+
+When `SET HLXREF,1` is active, `hlasm` emits a compact end-of-run section:
+
+```asm
+; HLASM XREF BEGIN
+; HLASM XREF COPY libmac
+; HLASM XREF MACRO PUSH2
+; HLASM XREF EXPAND PUSH2 1
+; HLASM XREF SYMBOL LOCAL
+; HLASM XREF END
+```
 
 ```
 IF cc_eq, r0, 0

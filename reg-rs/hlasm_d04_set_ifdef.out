@@ -1,16 +1,16 @@
-Assembled 15955 bytes
+Assembled 17107 bytes
 Loaded 80 bytes from 'demos/d04_set_ifdef.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
-[UART TX @ 40000] ' '  (0x20)
-[UART TX @ 40000] 'n'  (0x6E)
-[UART TX @ 40000] 'o'  (0x6F)
-[UART TX @ 40000] 'p'  (0x70)
-[UART TX @ 40000] ''  (0x0D)
-[UART TX @ 40000] '\n'
+[UART TX @ 48326] ' '  (0x20)
+[UART TX @ 48326] 'n'  (0x6E)
+[UART TX @ 48326] 'o'  (0x6F)
+[UART TX @ 48326] 'p'  (0x70)
+[UART TX @ 48326] ''  (0x0D)
+[UART TX @ 48326] '\n'
 
 UART output:  nop
 
 
-Executed 45433 instructions
+Executed 48326 instructions
 CPU halted (self-branch detected)

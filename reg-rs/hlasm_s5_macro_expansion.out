@@ -1,33 +1,33 @@
-Assembled 15955 bytes
+Assembled 17107 bytes
 Loaded 33 bytes from 'reg-rs/s5_macro.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
-[UART TX @ 40000] ' '  (0x20)
-[UART TX @ 40000] 'a'  (0x61)
-[UART TX @ 40000] 'd'  (0x64)
-[UART TX @ 40000] 'd'  (0x64)
-[UART TX @ 40000] ' '  (0x20)
-[UART TX @ 40000] 'r'  (0x72)
-[UART TX @ 40000] '0'  (0x30)
-[UART TX @ 40000] ','  (0x2C)
-[UART TX @ 40000] '1'  (0x31)
-[UART TX @ 40000] ''  (0x0D)
-[UART TX @ 40000] '\n'
-[UART TX @ 42737] ' '  (0x20)
-[UART TX @ 42737] 'a'  (0x61)
-[UART TX @ 42737] 'd'  (0x64)
-[UART TX @ 42737] 'd'  (0x64)
-[UART TX @ 42737] ' '  (0x20)
-[UART TX @ 42737] 'r'  (0x72)
-[UART TX @ 42737] '0'  (0x30)
-[UART TX @ 42737] ','  (0x2C)
-[UART TX @ 42737] '1'  (0x31)
-[UART TX @ 42737] ''  (0x0D)
-[UART TX @ 42737] '\n'
+[UART TX @ 45255] ' '  (0x20)
+[UART TX @ 45255] 'a'  (0x61)
+[UART TX @ 45255] 'd'  (0x64)
+[UART TX @ 45255] 'd'  (0x64)
+[UART TX @ 45255] ' '  (0x20)
+[UART TX @ 45255] 'r'  (0x72)
+[UART TX @ 45255] '0'  (0x30)
+[UART TX @ 45255] ','  (0x2C)
+[UART TX @ 45255] '1'  (0x31)
+[UART TX @ 45255] ''  (0x0D)
+[UART TX @ 45255] '\n'
+[UART TX @ 45255] ' '  (0x20)
+[UART TX @ 45255] 'a'  (0x61)
+[UART TX @ 45255] 'd'  (0x64)
+[UART TX @ 45255] 'd'  (0x64)
+[UART TX @ 45255] ' '  (0x20)
+[UART TX @ 45255] 'r'  (0x72)
+[UART TX @ 45255] '0'  (0x30)
+[UART TX @ 45255] ','  (0x2C)
+[UART TX @ 45255] '1'  (0x31)
+[UART TX @ 45255] ''  (0x0D)
+[UART TX @ 45255] '\n'
 
 UART output:  add r0,1
  add r0,1
 
 
-Executed 42737 instructions
+Executed 45255 instructions
 CPU halted (self-branch detected)

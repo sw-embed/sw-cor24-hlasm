@@ -1,16 +1,16 @@
-Assembled 15955 bytes
+Assembled 17107 bytes
 Loaded 33 bytes from 'demos/d22_include_return_main.bin' at 0x090000
 Loaded 33 bytes from 'demos/d22_include_return_extra.bin' at 0x081000
 Loaded 27 bytes from 'reg-rs/s14_include_return.cfg' at 0x07F000
 Running (speed: max IPS, time limit: 10s)...
 
-[UART TX @ 40000] 't'  (0x74)
-[UART TX @ 40000] 'a'  (0x61)
-[UART TX @ 40000] 'i'  (0x69)
-[UART TX @ 40000] 'l'  (0x6C)
-[UART TX @ 40000] ':'  (0x3A)
-[UART TX @ 40000] ''  (0x0D)
-[UART TX @ 40000] '\n'
+[UART TX @ 50000] 't'  (0x74)
+[UART TX @ 50000] 'a'  (0x61)
+[UART TX @ 50000] 'i'  (0x69)
+[UART TX @ 50000] 'l'  (0x6C)
+[UART TX @ 50000] ':'  (0x3A)
+[UART TX @ 50000] ''  (0x0D)
+[UART TX @ 50000] '\n'
 [UART TX @ 50000] ' '  (0x20)
 [UART TX @ 50000] 'b'  (0x62)
 [UART TX @ 50000] 'r'  (0x72)
@@ -25,17 +25,17 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 50000] ':'  (0x3A)
 [UART TX @ 50000] ''  (0x0D)
 [UART TX @ 50000] '\n'
-[UART TX @ 50835] ' '  (0x20)
-[UART TX @ 50835] 'b'  (0x62)
-[UART TX @ 50835] 'r'  (0x72)
-[UART TX @ 50835] 'a'  (0x61)
-[UART TX @ 50835] ' '  (0x20)
-[UART TX @ 50835] 't'  (0x74)
-[UART TX @ 50835] 'a'  (0x61)
-[UART TX @ 50835] 'i'  (0x69)
-[UART TX @ 50835] 'l'  (0x6C)
-[UART TX @ 50835] ''  (0x0D)
-[UART TX @ 50835] '\n'
+[UART TX @ 53565] ' '  (0x20)
+[UART TX @ 53565] 'b'  (0x62)
+[UART TX @ 53565] 'r'  (0x72)
+[UART TX @ 53565] 'a'  (0x61)
+[UART TX @ 53565] ' '  (0x20)
+[UART TX @ 53565] 't'  (0x74)
+[UART TX @ 53565] 'a'  (0x61)
+[UART TX @ 53565] 'i'  (0x69)
+[UART TX @ 53565] 'l'  (0x6C)
+[UART TX @ 53565] ''  (0x0D)
+[UART TX @ 53565] '\n'
 
 UART output: tail:
  bra _h
@@ -43,5 +43,5 @@ _h:
  bra tail
 
 
-Executed 50835 instructions
+Executed 53565 instructions
 CPU halted (self-branch detected)

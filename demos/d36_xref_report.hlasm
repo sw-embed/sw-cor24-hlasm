@@ -1,0 +1,10 @@
+; Demo 36: opt-in end-of-run xref report
+SET HLXREF,1
+COPY libmac
+COPY libsym
+
+SET LOCAL,7
+
+PUSH2 r0,r1
+LOAD7 r2
+POP2 r1,r0

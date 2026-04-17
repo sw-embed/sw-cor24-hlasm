@@ -1,47 +1,47 @@
-Assembled 15955 bytes
+Assembled 17107 bytes
 Loaded 64 bytes from 'demos/d03_macro_params.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
-[UART TX @ 47894] ' '  (0x20)
-[UART TX @ 47894] 'p'  (0x70)
-[UART TX @ 47894] 'u'  (0x75)
-[UART TX @ 47894] 's'  (0x73)
-[UART TX @ 47894] 'h'  (0x68)
-[UART TX @ 47894] ' '  (0x20)
-[UART TX @ 47894] 'r'  (0x72)
-[UART TX @ 47894] '0'  (0x30)
-[UART TX @ 47894] ''  (0x0D)
-[UART TX @ 47894] '\n'
-[UART TX @ 47894] ' '  (0x20)
-[UART TX @ 47894] 'p'  (0x70)
-[UART TX @ 47894] 'u'  (0x75)
-[UART TX @ 47894] 's'  (0x73)
-[UART TX @ 47894] 'h'  (0x68)
-[UART TX @ 47894] ' '  (0x20)
-[UART TX @ 47894] 'r'  (0x72)
-[UART TX @ 47894] '1'  (0x31)
-[UART TX @ 47894] ''  (0x0D)
-[UART TX @ 47894] '\n'
-[UART TX @ 47894] ' '  (0x20)
-[UART TX @ 47894] 'p'  (0x70)
-[UART TX @ 47894] 'u'  (0x75)
-[UART TX @ 47894] 's'  (0x73)
-[UART TX @ 47894] 'h'  (0x68)
-[UART TX @ 47894] ' '  (0x20)
-[UART TX @ 47894] 'r'  (0x72)
-[UART TX @ 47894] '2'  (0x32)
-[UART TX @ 47894] ''  (0x0D)
-[UART TX @ 47894] '\n'
-[UART TX @ 47894] ' '  (0x20)
-[UART TX @ 47894] 'p'  (0x70)
-[UART TX @ 47894] 'u'  (0x75)
-[UART TX @ 47894] 's'  (0x73)
-[UART TX @ 47894] 'h'  (0x68)
-[UART TX @ 47894] ' '  (0x20)
-[UART TX @ 47894] 'r'  (0x72)
-[UART TX @ 47894] '3'  (0x33)
-[UART TX @ 47894] ''  (0x0D)
-[UART TX @ 47894] '\n'
+[UART TX @ 50000] ' '  (0x20)
+[UART TX @ 50000] 'p'  (0x70)
+[UART TX @ 50000] 'u'  (0x75)
+[UART TX @ 50000] 's'  (0x73)
+[UART TX @ 50000] 'h'  (0x68)
+[UART TX @ 50000] ' '  (0x20)
+[UART TX @ 50000] 'r'  (0x72)
+[UART TX @ 50000] '0'  (0x30)
+[UART TX @ 50000] ''  (0x0D)
+[UART TX @ 50000] '\n'
+[UART TX @ 50000] ' '  (0x20)
+[UART TX @ 50000] 'p'  (0x70)
+[UART TX @ 50000] 'u'  (0x75)
+[UART TX @ 50000] 's'  (0x73)
+[UART TX @ 50000] 'h'  (0x68)
+[UART TX @ 50000] ' '  (0x20)
+[UART TX @ 50000] 'r'  (0x72)
+[UART TX @ 50000] '1'  (0x31)
+[UART TX @ 50000] ''  (0x0D)
+[UART TX @ 50000] '\n'
+[UART TX @ 50000] ' '  (0x20)
+[UART TX @ 50000] 'p'  (0x70)
+[UART TX @ 50000] 'u'  (0x75)
+[UART TX @ 50000] 's'  (0x73)
+[UART TX @ 50000] 'h'  (0x68)
+[UART TX @ 50000] ' '  (0x20)
+[UART TX @ 50000] 'r'  (0x72)
+[UART TX @ 50000] '2'  (0x32)
+[UART TX @ 50000] ''  (0x0D)
+[UART TX @ 50000] '\n'
+[UART TX @ 50000] ' '  (0x20)
+[UART TX @ 50000] 'p'  (0x70)
+[UART TX @ 50412] 'u'  (0x75)
+[UART TX @ 50412] 's'  (0x73)
+[UART TX @ 50412] 'h'  (0x68)
+[UART TX @ 50412] ' '  (0x20)
+[UART TX @ 50412] 'r'  (0x72)
+[UART TX @ 50412] '3'  (0x33)
+[UART TX @ 50412] ''  (0x0D)
+[UART TX @ 50412] '\n'
 
 UART output:  push r0
  push r1
@@ -49,5 +49,5 @@ UART output:  push r0
  push r3
 
 
-Executed 47894 instructions
+Executed 50412 instructions
 CPU halted (self-branch detected)

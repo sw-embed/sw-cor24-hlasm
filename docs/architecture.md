@@ -72,6 +72,11 @@ sites, macro expansion sites, and selected consumed directives. This is kept
 separate from `SET HLANN,1`, which only annotates structured control-flow
 lowering.
 
+A second opt-in visibility layer exists for end-of-run reporting: `SET HLXREF,1`
+causes the runtime to emit a compact xref section for copied members, macro
+definitions, macro expansion counts, and assembly-time symbols observed through
+`SET`/`EQU`.
+
 ## Components
 
 ### Scanner

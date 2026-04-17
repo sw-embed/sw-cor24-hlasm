@@ -30,6 +30,9 @@ line by line, recognizing:
 - **Opt-in listing comments**: `SET HLIST,1` emits grep-friendly semicolon
   comments for copied members, macro definitions, macro expansion, and selected
   consumed directives
+- **Opt-in xref report**: `SET HLXREF,1` emits a compact end-of-run cross-
+  reference section for copied members, macro definitions, macro expansion
+  counts, and assembly-time symbols seen through `SET`/`EQU`
 
 ### Structured Control-Flow Syntax
 
@@ -211,6 +214,20 @@ output, for example:
 This is meant to make generated `.s` files easier to inspect with normal text
 tools. `SET HLANN,1` remains the separate switch for structured-control-flow
 source markers; users can enable either or both.
+
+`SET HLXREF,1` enables a compact end-of-run xref report, for example:
+
+```
+; HLASM XREF BEGIN
+; HLASM XREF COPY libmac
+; HLASM XREF MACRO PUSH2
+; HLASM XREF EXPAND PUSH2 1
+; HLASM XREF SYMBOL LOCAL
+; HLASM XREF END
+```
+
+`HLIST` and `HLXREF` are complementary: `HLIST` annotates the lowered stream
+as it is emitted, while `HLXREF` adds a summary section at the end.
 
 ## Label Generation
 
