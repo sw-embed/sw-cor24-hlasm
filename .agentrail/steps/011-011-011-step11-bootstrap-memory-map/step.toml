@@ -1,0 +1,8 @@
+number = 11
+slug = "011-011-step11-bootstrap-memory-map"
+status = "pending"
+description = "Define and implement the first explicit bootstrap-oriented memory map for hla..."
+role = "legacy"
+context_files = []
+created_at = "2026-04-16T19:09:39"
+commits = []
