@@ -1,0 +1,5 @@
+command = "cor24-run --run hlasm.s --load-binary demos/d30_structured_annotations.bin@524288 --speed 0 -n 260000 2>&1"
+timeout = 15
+preprocess = "grep -A 260 '^UART output:' || true"
+exit_code = 0
+desc = "Demo 30: opt-in structured lowering annotation comments"

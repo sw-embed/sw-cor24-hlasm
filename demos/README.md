@@ -36,6 +36,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d27 | Positional macro parameters | WORKS |
 | d28 | Macro robustness stress | WORKS |
 | d29 | Control-flow integration proof | WORKS |
+| d30 | Structured annotation comments | WORKS |
 
 ## Demo Policy
 
@@ -174,6 +175,8 @@ Nested `IF` blocks and `ELSEIF` chains now lower to plain labels and branches.
 Structured conditionals are emitted in a long-range-safe form: a short
 reversed conditional branch skips over an unconditional `jmp`, so generated
 control flow does not depend on raw `bra` reach.
+When `SET HLANN,1` is active, `hlasm` also emits opt-in semicolon comment
+lines that mark structured source boundaries in the lowered `.s` output.
 
 ```
 IF cc_eq, r0, 0
@@ -193,6 +196,21 @@ ENDIF
 ```
 Condition codes: cc_eq, cc_ne, cc_lt (signed), cc_lu (unsigned),
 cc_zset (C flag set), cc_zclr (C flag clear).
+
+Annotation example:
+```
+SET HLANN,1
+IF cc_eq, r0, 0
+    add r1,1
+ENDIF
+```
+
+This emits normal lowered assembly plus comment markers such as:
+```
+; HLASM IF cc_eq, r0, 0
+; HLASM THEN
+; HLASM ENDIF
+```
 
 #### DO / DOEXIT / ITERATE / ENDDO
 Loop lowering uses the same long-range-safe pattern for generated exits and

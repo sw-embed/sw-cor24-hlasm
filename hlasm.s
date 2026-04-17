@@ -2206,6 +2206,236 @@ _emit_crlf:
 	pop	fp
 	jmp	(r1)
 
+; _struct_ann_enabled: Return 1 if SET HLASM_ANN,<nonzero> is active.
+_struct_ann_enabled:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r0,_ann_symbol_name
+	push	r0
+	la	r0,786576
+	push	r0
+	la	r0,_copy_strz
+	jal	r1,(r0)
+	add	sp,6
+
+	la	r0,_lookup_symbol
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_sae_off
+
+	la	r1,786594
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_sae_off
+
+	la	r0,1
+	bra	_sae_ret
+
+_sae_off:
+	la	r0,0
+
+_sae_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _emit_ann_prefix: Emit "; HLASM ".
+_emit_ann_prefix:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_ann_prefix_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_ann_line0: Emit "; HLASM <keyword>" when annotations are enabled.
+; Arg on stack: keyword_ptr
+_emit_ann_line0:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_struct_ann_enabled
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_eal0_ret
+
+	la	r0,_emit_ann_prefix
+	jal	r1,(r0)
+
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+_eal0_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_ann_line1: Emit "; HLASM <keyword> <arg>" when enabled.
+; Args on stack: keyword_ptr (9 fp), arg_ptr (6 fp)
+_emit_ann_line1:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_struct_ann_enabled
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_eal1_ret
+
+	la	r0,_emit_ann_prefix
+	jal	r1,(r0)
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+_eal1_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_ann_if_line: Emit "; HLASM <keyword> cc[, lhs, rhs]" when enabled.
+; Arg on stack: keyword_ptr
+_emit_ann_if_line:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_struct_ann_enabled
+	jal	r1,(r0)
+	ceq	r0,z
+	brf	_eail_on
+	la	r1,_eail_ret
+	jmp	(r1)
+
+_eail_on:
+
+	la	r0,_emit_ann_prefix
+	jal	r1,(r0)
+
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,787885
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_cc_zset_txt
+	push	r0
+	la	r0,787885
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	_eail_done
+
+	la	r0,_cc_zclr_txt
+	push	r0
+	la	r0,787885
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	_eail_done
+
+	lc	r0,44
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,787901
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,44
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	lc	r0,32
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,787917
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+_eail_done:
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+_eail_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
 ; _emit_strz: Emit a null-terminated string.
 ; Arg on stack: ptr
 _emit_strz:
@@ -6583,10 +6813,22 @@ _hsi_start:
 	la	r0,_parse_struct_if
 	jal	r1,(r0)
 
+	la	r0,_kw_if
+	push	r0
+	la	r0,_emit_ann_if_line
+	jal	r1,(r0)
+	add	sp,3
+
 	lw	r0,-3(fp)
 	lw	r0,0(r0)
 	push	r0
 	la	r0,_emit_struct_if_test
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_then_txt
+	push	r0
+	la	r0,_emit_ann_line0
 	jal	r1,(r0)
 	add	sp,3
 
@@ -6632,6 +6874,12 @@ _hse_emit:
 	la	r0,_emit_label_def
 	jal	r1,(r0)
 	add	sp,6
+
+	la	r0,_kw_else
+	push	r0
+	la	r0,_emit_ann_line0
+	jal	r1,(r0)
+	add	sp,3
 
 	la	r0,1
 	sw	r0,6(r2)
@@ -6689,9 +6937,21 @@ _hsel_emit:
 	la	r0,_parse_struct_if
 	jal	r1,(r0)
 
+	la	r0,_kw_elseif
+	push	r0
+	la	r0,_emit_ann_if_line
+	jal	r1,(r0)
+	add	sp,3
+
 	lw	r0,0(r2)
 	push	r0
 	la	r0,_emit_struct_if_test
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_then_txt
+	push	r0
+	la	r0,_emit_ann_line0
 	jal	r1,(r0)
 	add	sp,3
 
@@ -6741,6 +7001,12 @@ _hsend_clear:
 	lw	r0,0(r1)
 	add	r0,-1
 	sw	r0,0(r1)
+
+	la	r0,_kw_endif
+	push	r0
+	la	r0,_emit_ann_line0
+	jal	r1,(r0)
+	add	sp,3
 
 _hsend_ret:
 	mov	sp,fp
@@ -6796,6 +7062,12 @@ _hsd_start:
 	jal	r1,(r0)
 	add	sp,6
 
+	la	r0,_kw_do
+	push	r0
+	la	r0,_emit_ann_line0
+	jal	r1,(r0)
+	add	sp,3
+
 _hsd_ret:
 	mov	sp,fp
 	pop	r1
@@ -6817,6 +7089,12 @@ _handle_struct_doexit:
 	mov	r2,r0
 	la	r0,_parse_struct_if
 	jal	r1,(r0)
+
+	la	r0,_kw_doexit
+	push	r0
+	la	r0,_emit_ann_if_line
+	jal	r1,(r0)
+	add	sp,3
 
 	lw	r0,3(r2)
 	push	r0
@@ -6854,6 +7132,12 @@ _handle_struct_iterate:
 	la	r0,_emit_do_branch_label
 	jal	r1,(r0)
 	add	sp,9
+
+	la	r0,_kw_iterate
+	push	r0
+	la	r0,_emit_ann_line0
+	jal	r1,(r0)
+	add	sp,3
 
 _hsdi_ret:
 	mov	sp,fp
@@ -6896,6 +7180,12 @@ _handle_struct_enddo:
 	lw	r0,0(r1)
 	add	r0,-1
 	sw	r0,0(r1)
+
+	la	r0,_kw_enddo
+	push	r0
+	la	r0,_emit_ann_line0
+	jal	r1,(r0)
+	add	sp,3
 
 _hsdd_ret:
 	mov	sp,fp
@@ -7315,6 +7605,14 @@ _hss_start:
 	jal	r1,(r0)
 	add	sp,3
 
+	la	r0,_kw_select
+	push	r0
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_emit_ann_line1
+	jal	r1,(r0)
+	add	sp,6
+
 	la	r0,_alloc_struct_label_id
 	jal	r1,(r0)
 	lw	r2,-3(fp)
@@ -7346,13 +7644,21 @@ _handle_struct_when:
 	la	r0,_struct_select_top_ptr
 	jal	r1,(r0)
 	ceq	r0,z
-	brt	_hsw_ret
+	brf	_hsw_have_frame
+	la	r1,_hsw_ret
+	jmp	(r1)
+
+_hsw_have_frame:
 	sw	r0,-3(fp)
 
 	la	r0,_struct_select_top_sel_ptr
 	jal	r1,(r0)
 	ceq	r0,z
-	brt	_hsw_ret
+	brf	_hsw_have_sel
+	la	r1,_hsw_ret
+	jmp	(r1)
+
+_hsw_have_sel:
 	sw	r0,-6(fp)
 
 	lw	r2,-3(fp)
@@ -7404,6 +7710,14 @@ _hsw_parse:
 	la	r0,787917
 	push	r0
 	la	r0,_copy_strz
+	jal	r1,(r0)
+	add	sp,6
+
+	la	r0,_kw_when
+	push	r0
+	la	r0,787917
+	push	r0
+	la	r0,_emit_ann_line1
 	jal	r1,(r0)
 	add	sp,6
 
@@ -7471,6 +7785,12 @@ _hso_mark:
 	sw	r0,6(r2)
 	sw	r0,9(r2)
 
+	la	r0,_kw_otherwise
+	push	r0
+	la	r0,_emit_ann_line0
+	jal	r1,(r0)
+	add	sp,3
+
 _hso_ret:
 	mov	sp,fp
 	pop	r1
@@ -7514,6 +7834,12 @@ _hsse_end:
 	la	r0,_emit_select_label_def
 	jal	r1,(r0)
 	add	sp,6
+
+	la	r0,_kw_endsel
+	push	r0
+	la	r0,_emit_ann_line0
+	jal	r1,(r0)
+	add	sp,3
 
 	la	r1,787984
 	lw	r0,0(r1)
@@ -7822,6 +8148,9 @@ _kw_otherwise:
 _kw_endsel:
 	.byte	69,78,68,83,69,76,0
 
+_then_txt:
+	.byte	84,72,69,78,0
+
 _kw_elseasm:
 	.byte	69,76,83,69,65,83,77,0
 
@@ -7924,6 +8253,12 @@ _r1_txt:
 
 _r2_txt:
 	.byte	114,50,0
+
+_ann_symbol_name:
+	.byte	72,76,65,78,78,0
+
+_ann_prefix_txt:
+	.byte	59,32,72,76,65,83,77,32,0
 
 _cc_eq_txt:
 	.byte	99,99,95,101,113,0

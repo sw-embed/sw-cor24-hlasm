@@ -1,0 +1,31 @@
+; Demo 30: opt-in structured lowering annotations
+SET HLANN,1
+
+IF cc_eq, r0, 0
+ add r1,1
+ IF cc_ne, r1, z
+  sub r0,r0
+ ELSEIF cc_lt, r2, 10
+  add r2,1
+ ELSE
+  nop
+ ENDIF
+ELSE
+ add r2,2
+ENDIF
+
+DO
+ add r0,1
+ DOEXIT cc_eq, r0, 10
+ add r1,1
+ ITERATE
+ENDDO
+
+SELECT r1
+ WHEN 0
+  nop
+ WHEN 1
+  add r2,1
+ OTHERWISE
+  sub r2,r2
+ENDSEL

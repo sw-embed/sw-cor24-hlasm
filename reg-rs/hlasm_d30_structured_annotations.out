@@ -1,0 +1,93 @@
+UART output: ; Demo 30: opt-in structured lowering annotations
+
+; HLASM IF cc_eq, r0, 0
+ push r2
+ lc r2,0
+ ceq r0,r2
+ pop r2
+ brt _hlif_3_skip
+ jmp _hlif_1_false
+_hlif_3_skip:
+; HLASM THEN
+ add r1,1
+; HLASM IF cc_ne, r1, z
+ ceq r1,z
+ brf _hlif_6_skip
+ jmp _hlif_4_false
+_hlif_6_skip:
+; HLASM THEN
+  sub r0,r0
+ jmp _hlif_5_end
+_hlif_4_false:
+; HLASM ELSEIF cc_lt, r2, 10
+ push r1
+ lc r1,10
+ cls r2,r1
+ pop r1
+ brt _hlif_8_skip
+ jmp _hlif_7_false
+_hlif_8_skip:
+; HLASM THEN
+  add r2,1
+ jmp _hlif_5_end
+_hlif_7_false:
+; HLASM ELSE
+  nop
+_hlif_5_end:
+; HLASM ENDIF
+ jmp _hlif_2_end
+_hlif_1_false:
+; HLASM ELSE
+ add r2,2
+_hlif_2_end:
+; HLASM ENDIF
+
+_hldo_9_top:
+; HLASM DO
+ add r0,1
+; HLASM DOEXIT cc_eq, r0, 10
+ push r2
+ lc r2,10
+ ceq r0,r2
+ pop r2
+ brt _hldo_1a_skip
+ jmp _hldo_1a_end
+_hldo_1a_skip:
+ add r1,1
+ jmp _hldo_9_top
+; HLASM ITERATE
+ jmp _hldo_9_top
+_hldo_1a_end:
+; HLASM ENDDO
+
+; HLASM SELECT r1
+; HLASM WHEN 0
+ push r2
+ lc r2,0
+ ceq r1,r2
+ pop r2
+ brt _hlsel_1a_skip
+ jmp _hlsel_1a_next
+_hlsel_1a_skip:
+  nop
+ jmp _hlsel_1a_end
+_hlsel_1a_next:
+; HLASM WHEN 1
+ push r2
+ lc r2,1
+ ceq r1,r2
+ pop r2
+ brt _hlsel_1a_skip
+ jmp _hlsel_1a_next
+_hlsel_1a_skip:
+  add r2,1
+ jmp _hlsel_1a_end
+_hlsel_1a_next:
+; HLASM OTHERWISE
+  sub r2,r2
+_hlsel_1a_end:
+; HLASM ENDSEL
+
+
+Executed 130518 instructions
+CPU halted (self-branch detected)
