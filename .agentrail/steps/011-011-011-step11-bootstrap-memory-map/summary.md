@@ -1,0 +1,1 @@
+Moved mutable assembler state into a fixed middle-SRAM runtime arena at 0x0C0000, documented the bootstrap memory map, and added a dump-backed demo proving low-SRAM source buffers stay separate from arena state under a 3K EBR stack.
