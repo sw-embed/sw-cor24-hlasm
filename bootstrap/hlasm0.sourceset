@@ -1,6 +1,6 @@
 # Split hlasm0 bootstrap source set.
-ROOT bootstrap
-ALIGN 256
+PROFILE default.profile
+ROOT .
 MAIN hlasm0_split_main.hlasm
 INCLUDE common hlasm0_common.hlasm
 INCLUDE io hlasm0_io.hlasm

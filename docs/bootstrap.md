@@ -147,6 +147,11 @@ choose an alignment for packed include buffers. The host-side runner assigns
 extra-buffer addresses from the actual built `.bin` sizes instead of assuming
 every include file needs the next fixed 4 KB window.
 
+Step 23 adds a small profile layer on top of that source-set grammar. A source
+set can now start with `PROFILE default.profile` to pull in shared host-side
+layout defaults such as the standard main/extra windows and buffer alignment,
+then override only the pieces that differ for a particular bootstrap tree.
+
 `hlasm.s` currently walks the source portion of that table into a small
 in-memory descriptor set, which is enough to model include-like source
 chaining with multiple preloaded ASCII buffers. That keeps the input side

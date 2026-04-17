@@ -40,93 +40,119 @@ resolve_path() {
     esac
 }
 
-while IFS= read -r line || [[ -n "$line" ]]; do
-    line="${line%%;*}"
-    line="${line%%#*}"
+resolve_path_from() {
+    local base_dir="$1"
+    local path="$2"
 
-    set -- $line
-
-    if [[ $# -eq 0 ]]; then
-        continue
-    fi
-
-    case "$1" in
-        ROOT)
-            if [[ $# -ne 2 ]]; then
-                echo "ERROR: ROOT expects: ROOT <dir>"
-                exit 1
-            fi
-
-            root_dir="$2"
-            ;;
-        MAINADDR)
-            if [[ $# -ne 2 ]]; then
-                echo "ERROR: MAINADDR expects: MAINADDR <addr>"
-                exit 1
-            fi
-
-            main_addr="$2"
-            ;;
-        EXTRAADDR)
-            if [[ $# -ne 2 ]]; then
-                echo "ERROR: EXTRAADDR expects: EXTRAADDR <addr>"
-                exit 1
-            fi
-
-            next_addr="$2"
-            ;;
-        ALIGN)
-            if [[ $# -ne 2 ]]; then
-                echo "ERROR: ALIGN expects: ALIGN <bytes>"
-                exit 1
-            fi
-
-            align_bytes="$2"
-            ;;
-        MAIN)
-            if [[ $# -ne 2 ]]; then
-                echo "ERROR: MAIN expects: MAIN <file.hlasm>"
-                exit 1
-            fi
-
-            src_part="$(resolve_path "$2")"
-            bin_part="${src_part%.hlasm}.bin"
-
-            if [[ ! -f "$src_part" ]]; then
-                echo "ERROR: $src_part not found"
-                exit 1
-            fi
-
-            bash demos/make_bin.sh "$src_part" "$bin_part" >/dev/null
-            printf 'MAIN %s@%s\n' "$bin_part" "$main_addr" >> "$loader_spec"
-            ;;
-        INCLUDE)
-            if [[ $# -ne 3 ]]; then
-                echo "ERROR: INCLUDE expects: INCLUDE <name> <file.hlasm>"
-                exit 1
-            fi
-
-            src_part="$(resolve_path "$3")"
-            bin_part="${src_part%.hlasm}.bin"
-
-            if [[ ! -f "$src_part" ]]; then
-                echo "ERROR: $src_part not found"
-                exit 1
-            fi
-
-            bash demos/make_bin.sh "$src_part" "$bin_part" >/dev/null
-            size_part="$(wc -c < "$bin_part")"
-
-            slot_count=$(( slot_count + 1 ))
-            printf 'SRCBUF %s,%s@%s\n' "$slot_count" "$bin_part" "$next_addr" >> "$loader_spec"
-            printf 'INCLUDE %s,%s\n' "$2" "$slot_count" >> "$loader_spec"
-            next_addr="$(align_up $(( next_addr + size_part )) "$align_bytes")"
-            ;;
-        *)
-            echo "ERROR: unknown sourceset directive '$1'"
-            exit 1
-            ;;
+    case "$path" in
+        /*) echo "$path" ;;
+        *) echo "$base_dir/$path" ;;
     esac
-done < "$SRCSET"
+}
+
+process_sourceset() {
+    local spec_file="$1"
+    local spec_dir
+    spec_dir="$(cd "$(dirname "$spec_file")" && pwd)"
+
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        line="${line%%;*}"
+        line="${line%%#*}"
+
+        set -- $line
+
+        if [[ $# -eq 0 ]]; then
+            continue
+        fi
+
+        case "$1" in
+            PROFILE)
+                if [[ $# -ne 2 ]]; then
+                    echo "ERROR: PROFILE expects: PROFILE <file>"
+                    exit 1
+                fi
+
+                process_sourceset "$(resolve_path_from "$spec_dir" "$2")"
+                ;;
+            ROOT)
+                if [[ $# -ne 2 ]]; then
+                    echo "ERROR: ROOT expects: ROOT <dir>"
+                    exit 1
+                fi
+
+                root_dir="$(resolve_path_from "$spec_dir" "$2")"
+                ;;
+            MAINADDR)
+                if [[ $# -ne 2 ]]; then
+                    echo "ERROR: MAINADDR expects: MAINADDR <addr>"
+                    exit 1
+                fi
+
+                main_addr="$2"
+                ;;
+            EXTRAADDR)
+                if [[ $# -ne 2 ]]; then
+                    echo "ERROR: EXTRAADDR expects: EXTRAADDR <addr>"
+                    exit 1
+                fi
+
+                next_addr="$2"
+                ;;
+            ALIGN)
+                if [[ $# -ne 2 ]]; then
+                    echo "ERROR: ALIGN expects: ALIGN <bytes>"
+                    exit 1
+                fi
+
+                align_bytes="$2"
+                ;;
+            MAIN)
+                if [[ $# -ne 2 ]]; then
+                    echo "ERROR: MAIN expects: MAIN <file.hlasm>"
+                    exit 1
+                fi
+
+                src_part="$(resolve_path "$2")"
+                bin_part="${src_part%.hlasm}.bin"
+
+                if [[ ! -f "$src_part" ]]; then
+                    echo "ERROR: $src_part not found"
+                    exit 1
+                fi
+
+                bash demos/make_bin.sh "$src_part" "$bin_part" >/dev/null
+                printf 'MAIN %s@%s\n' "$bin_part" "$main_addr" >> "$loader_spec"
+                ;;
+            INCLUDE)
+                if [[ $# -ne 3 ]]; then
+                    echo "ERROR: INCLUDE expects: INCLUDE <name> <file.hlasm>"
+                    exit 1
+                fi
+
+                src_part="$(resolve_path "$3")"
+                bin_part="${src_part%.hlasm}.bin"
+
+                if [[ ! -f "$src_part" ]]; then
+                    echo "ERROR: $src_part not found"
+                    exit 1
+                fi
+
+                bash demos/make_bin.sh "$src_part" "$bin_part" >/dev/null
+                size_part="$(wc -c < "$bin_part")"
+
+                slot_count=$(( slot_count + 1 ))
+                printf 'SRCBUF %s,%s@%s\n' "$slot_count" "$bin_part" "$next_addr" >> "$loader_spec"
+                printf 'INCLUDE %s,%s\n' "$2" "$slot_count" >> "$loader_spec"
+                next_addr="$(align_up $(( next_addr + size_part )) "$align_bytes")"
+                ;;
+            *)
+                echo "ERROR: unknown sourceset directive '$1'"
+                exit 1
+                ;;
+        esac
+    done < "$spec_file"
+}
+
+process_sourceset "$SRCSET"
 
 exec bash reg-rs/run_bootstrap_loader.sh "$loader_spec" "$MAX_INSNS" "$@"

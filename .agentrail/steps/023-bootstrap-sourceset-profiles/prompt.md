@@ -1,0 +1,1 @@
+Add a small profile layer on top of the bootstrap source-set workflow so different bootstrap trees can share reusable host-side defaults instead of repeating layout choices. Keep the low-SRAM config layout and runtime INCLUDE lookup unchanged, but make larger source sets easier to define and run consistently.

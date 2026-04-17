@@ -1,0 +1,1 @@
+Hardened the bootstrap source-set model so growing multi-file trees can use shared roots, overridable base windows, and size-based packed include buffers instead of fixed per-run spacing assumptions.
