@@ -61,6 +61,29 @@ The bootstrap path should stay target-native:
 That preserves the current architecture while still allowing a multi-source
 bootstrap workflow later.
 
+## Step 11 Memory Map
+
+The first explicit bootstrap-oriented map is now:
+
+- `0x07F000`: source-switch config block
+- `0x080000-0x0BFFFF`: preloaded ASCII source/include buffers
+- `0x0C0000-0x0C0515`: `hlasm` runtime arena
+- `0xFEE000-0xFEEBFF`: preferred 3K EBR stack (`cor24-run --stack-kilobytes 3`)
+
+The current runtime arena packs the mutable assembler state into middle SRAM:
+
+- line buffer
+- source descriptor table and counters
+- macro table and macro body pool
+- expansion buffer state
+- symbol table
+- conditional stack
+
+That keeps the bootstrap input side in low SRAM, keeps mutable assembler-owned
+state out of the loaded source window, and leaves the rest of SRAM available
+for future include growth, larger source windows, or an eventual SRAM fallback
+stack if the 3K EBR stack proves too tight for later self-hosting stages.
+
 Two existing COR24 patterns are directly relevant here:
 
 - `sw-cor24-monitor/demos/monitor-editor-demo.sh` already uses repeated

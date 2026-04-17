@@ -6,6 +6,13 @@
 ; Source buffer descriptor (9 bytes):
 ;   +0: base address, +3: length, +6: position
 ;
+; Bootstrap memory map:
+;   0x07F000  config block for extra source buffers
+;   0x080000+ preloaded ASCII source/include buffers
+;   0x0C0000+ runtime arena (line buffer, descriptors, macro/symbol state)
+;   EBR stack: prefer cor24-run --stack-kilobytes 3 unless a future SRAM
+;              fallback stack is explicitly needed
+;
 ; Token types (word-sized):
 ;   0=EOF 1=NEWLINE 2=KEYWORD 3=MNEMONIC 4=REGISTER 5=NUMBER
 ;   6=IDENT 7=LABEL 8=COMMENT 9=COMMA 10=LPAREN 11=RPAREN
@@ -23,17 +30,8 @@ _main:
 	push	r2
 	mov	fp,sp
 
-	la	r1,_macro_count
-	la	r0,0
-	sw	r0,0(r1)
-
-	la	r1,_symbol_count
-	la	r0,0
-	sw	r0,0(r1)
-
-	la	r1,_cond_depth
-	la	r0,0
-	sw	r0,0(r1)
+	la	r0,_init_runtime_arena
+	jal	r1,(r0)
 
 	la	r0,_init_src_table
 	jal	r1,(r0)
@@ -56,7 +54,7 @@ _halt:
 _ml_go:
 	sw	r0,0(fp)
 
-	la	r1,_cond_depth
+	la	r1,787707
 	lw	r0,0(r1)
 	ceq	r0,z
 	brf	_ml_cond_active
@@ -165,7 +163,7 @@ _mc_skip_end:
 	jmp	(r1)
 
 _ml_not_recording:
-	la	r1,_macro_state
+	la	r1,787551
 	lw	r0,0(r1)
 	ceq	r0,z
 	brt	_mlnr_directives
@@ -352,19 +350,19 @@ _ml_is_set:
 	jmp	(r1)
 
 _ml_is_endifasm:
-	la	r1,_cond_depth
+	la	r1,787707
 	lw	r0,0(r1)
 	add	r0,-1
 	push	r0
 	la	r0,_mul3
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_cond_stack
+	la	r1,787710
 	add	r1,r0
 	la	r0,0
 	sw	r0,0(r1)
 
-	la	r1,_cond_depth
+	la	r1,787707
 	lw	r0,0(r1)
 	add	r0,-1
 	sw	r0,0(r1)
@@ -373,14 +371,14 @@ _ml_is_endifasm:
 	jmp	(r1)
 
 _ml_is_elseasm:
-	la	r1,_cond_depth
+	la	r1,787707
 	lw	r0,0(r1)
 	add	r0,-1
 	push	r0
 	la	r0,_mul3
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_cond_stack
+	la	r1,787710
 	add	r1,r0
 	lw	r0,0(r1)
 
@@ -451,7 +449,7 @@ _ml_finish:
 ; Returns: r0 = line length (0 on EOF)
 ; Frame: push fp, r1, r2, r2 = 12 bytes.
 ; 0(fp) = current length counter
-; Uses _line_buf for storage, _src_desc table for input.
+; Uses runtime arena line buffer and source descriptor table for input.
 _read_line:
 	push	fp
 	push	r1
@@ -459,13 +457,13 @@ _read_line:
 	push	r2
 	mov	fp,sp
 
-	la	r1,_line_buf
+	la	r1,786432
 	la	r0,0
 	sw	r0,0(fp)
 
 _rl_loop:
 	push	r1
-	la	r2,_src_desc
+	la	r2,786606
 	push	r2
 	la	r0,_read_char
 	jal	r1,(r0)
@@ -525,7 +523,7 @@ _rl_empty:
 	pop	fp
 	jmp	(r1)
 
-; _emit_line: Write _line_buf contents to UART followed by CR+LF.
+; _emit_line: Write runtime line buffer contents to UART followed by CR+LF.
 ; Arg on stack: line length
 ; Frame: push fp, r1, r2 = 9 bytes. Arg at 9(fp).
 _emit_line:
@@ -538,7 +536,7 @@ _emit_line:
 	ceq	r0,z
 	brt	_el_done
 
-	la	r1,_line_buf
+	la	r1,786432
 
 _el_loop:
 	lbu	r0,0(r1)
@@ -580,7 +578,7 @@ _is_structured:
 	ceq	r0,z
 	brt	_is_no
 
-	la	r2,_line_buf
+	la	r2,786432
 
 _is_skip_ws:
 	lbu	r0,0(r2)
@@ -1177,7 +1175,7 @@ _scan_comment:
 	mov	fp,sp
 
 	lw	r2,12(fp)
-	la	r1,_id_buf
+	la	r1,786560
 	sw	r1,0(fp)
 
 _sc_cloop:
@@ -1210,7 +1208,7 @@ _sc_cdone:
 	la	r0,0
 	sb	r0,0(r1)
 
-	la	r1,_id_buf
+	la	r1,786560
 	la	r0,8
 	push	r1
 	push	r0
@@ -1240,7 +1238,7 @@ _scan_dot:
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r1,_id_buf
+	la	r1,786560
 	lc	r0,46
 	sb	r0,0(r1)
 	add	r1,1
@@ -1278,7 +1276,7 @@ _sd_done:
 	la	r0,0
 	sb	r0,0(r1)
 
-	la	r1,_id_buf
+	la	r1,786560
 	la	r0,13
 	push	r1
 	push	r0
@@ -1304,7 +1302,7 @@ _scan_number:
 	mov	fp,sp
 
 	lw	r2,12(fp)
-	la	r1,_id_buf
+	la	r1,786560
 	sw	r1,0(fp)
 
 _sn_loop:
@@ -1344,7 +1342,7 @@ _sn_done:
 	la	r0,0
 	sb	r0,0(r1)
 
-	la	r1,_id_buf
+	la	r1,786560
 	la	r0,5
 	push	r1
 	push	r0
@@ -1372,7 +1370,7 @@ _scan_ident:
 	mov	fp,sp
 
 	lw	r2,12(fp)
-	la	r1,_id_buf
+	la	r1,786560
 	sw	r1,0(fp)
 
 _si_loop:
@@ -1412,7 +1410,7 @@ _si_done:
 	la	r0,0
 	sb	r0,0(r1)
 
-	la	r1,_id_buf
+	la	r1,786560
 	la	r0,_mn_table
 	push	r1
 	push	r0
@@ -1423,7 +1421,7 @@ _si_done:
 	ceq	r0,z
 	brt	_si_not_mn
 
-	la	r1,_id_buf
+	la	r1,786560
 	la	r0,3
 	push	r1
 	push	r0
@@ -1442,7 +1440,7 @@ _si_ret:
 	jmp	(r1)
 
 _si_not_mn:
-	la	r1,_id_buf
+	la	r1,786560
 	la	r0,_reg_table
 	push	r1
 	push	r0
@@ -1453,7 +1451,7 @@ _si_not_mn:
 	ceq	r0,z
 	brt	_si_not_reg
 
-	la	r1,_id_buf
+	la	r1,786560
 	la	r0,4
 	push	r1
 	push	r0
@@ -1466,7 +1464,7 @@ _si_not_mn:
 	jmp	(r1)
 
 _si_not_reg:
-	la	r1,_id_buf
+	la	r1,786560
 	la	r0,_cc_table
 	push	r1
 	push	r0
@@ -1477,7 +1475,7 @@ _si_not_reg:
 	ceq	r0,z
 	brt	_si_not_kw
 
-	la	r1,_id_buf
+	la	r1,786560
 	la	r0,2
 	push	r1
 	push	r0
@@ -1490,7 +1488,7 @@ _si_not_reg:
 	jmp	(r1)
 
 _si_not_kw:
-	la	r1,_id_buf
+	la	r1,786560
 	la	r0,_kw_table
 	push	r1
 	push	r0
@@ -1501,7 +1499,7 @@ _si_not_kw:
 	ceq	r0,z
 	brt	_si_ident
 
-	la	r1,_id_buf
+	la	r1,786560
 	la	r0,2
 	push	r1
 	push	r0
@@ -1512,7 +1510,7 @@ _si_not_kw:
 	la	r0,2
 
 _si_ident:
-	la	r1,_id_buf
+	la	r1,786560
 	la	r0,6
 	push	r1
 	push	r0
@@ -1948,6 +1946,83 @@ _ed24_ret:
 	pop	fp
 	jmp	(r1)
 
+; _zero_bytes: Zero a byte range in SRAM.
+; Args on stack: ptr (9 fp), len (12 fp)
+_zero_bytes:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r2,9(fp)
+	lw	r1,12(fp)
+
+_zb_loop:
+	ceq	r1,z
+	brt	_zb_ret
+
+	la	r0,0
+	sb	r0,0(r2)
+	add	r2,1
+	add	r1,-1
+	bra	_zb_loop
+
+_zb_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _init_runtime_arena: Initialize mutable assembler state in middle SRAM.
+_init_runtime_arena:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	la	r0,1302
+	push	r0
+	la	r0,786432
+	push	r0
+	la	r0,_zero_bytes
+	jal	r1,(r0)
+	add	sp,6
+
+	la	r1,786597
+	la	r0,1
+	sw	r0,0(r1)
+
+	la	r1,786606
+	la	r0,524288
+	sw	r0,0(r1)
+	la	r0,4096
+	sw	r0,3(r1)
+	la	r0,0
+	sw	r0,6(r1)
+
+	la	r1,786642
+	la	r0,786888
+	sw	r0,0(r1)
+
+	la	r1,787545
+	la	r0,787416
+	sw	r0,0(r1)
+
+	la	r1,787548
+	la	r0,1
+	sw	r0,0(r1)
+
+	la	r1,787557
+	la	r0,786888
+	sw	r0,0(r1)
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
 ; _init_src_table: Initialize source descriptors and optional extra buffers
 ; from config at 0x07F000.
 _init_src_table:
@@ -1957,30 +2032,30 @@ _init_src_table:
 	mov	fp,sp
 	add	sp,-3
 
-	la	r1,_src_count
+	la	r1,786597
 	la	r0,1
 	sw	r0,0(r1)
 
-	la	r1,_src_active_idx
+	la	r1,786600
 	la	r0,0
 	sw	r0,0(r1)
 
-	la	r1,_src_desc
+	la	r1,786606
 	la	r0,0
 	sw	r0,6(r1)
 
-	la	r1,_src_desc2
+	la	r1,786615
 	la	r0,0
 	sw	r0,0(r1)
 	sw	r0,3(r1)
 	sw	r0,6(r1)
 
-	la	r1,_src_desc3
+	la	r1,786624
 	sw	r0,0(r1)
 	sw	r0,3(r1)
 	sw	r0,6(r1)
 
-	la	r1,_src_desc4
+	la	r1,786633
 	sw	r0,0(r1)
 	sw	r0,3(r1)
 	sw	r0,6(r1)
@@ -1991,16 +2066,16 @@ _init_src_table:
 	brt	_ist_ret
 
 	sw	r0,0(fp)
-	la	r1,_src_count
+	la	r1,786597
 	add	r0,1
 	sw	r0,0(r1)
 
-	la	r1,_src_copy_idx
+	la	r1,786603
 	la	r0,0
 	sw	r0,0(r1)
 
 _ist_copy_loop:
-	la	r1,_src_copy_idx
+	la	r1,786603
 	lw	r0,0(r1)
 	lw	r1,0(fp)
 	clu	r0,r1
@@ -2015,7 +2090,7 @@ _ist_copy_loop:
 	add	r0,r1
 	mov	r2,r0
 
-	la	r1,_src_copy_idx
+	la	r1,786603
 	lw	r0,0(r1)
 	add	r0,1
 	push	r2
@@ -2025,7 +2100,7 @@ _ist_copy_loop:
 	add	sp,3
 	pop	r2
 	mov	r1,r0
-	la	r0,_src_desc
+	la	r0,786606
 	add	r0,r1
 	mov	r1,r0
 
@@ -2036,7 +2111,7 @@ _ist_copy_loop:
 	la	r0,0
 	sw	r0,6(r1)
 
-	la	r1,_src_copy_idx
+	la	r1,786603
 	lw	r0,0(r1)
 	add	r0,1
 	sw	r0,0(r1)
@@ -2057,9 +2132,9 @@ _advance_src_desc:
 	push	r2
 	mov	fp,sp
 
-	la	r1,_src_count
+	la	r1,786597
 	lw	r1,0(r1)
-	la	r2,_src_active_idx
+	la	r2,786600
 	lw	r0,0(r2)
 	add	r0,1
 	clu	r0,r1
@@ -2086,13 +2161,13 @@ _current_src_desc:
 	push	r1
 	mov	fp,sp
 
-	la	r1,_src_active_idx
+	la	r1,786600
 	lw	r0,0(r1)
 	push	r0
 	la	r0,_mul9
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_src_desc
+	la	r1,786606
 	add	r0,r1
 
 	mov	sp,fp
@@ -2356,7 +2431,7 @@ _starts_with:
 	push	r2
 	mov	fp,sp
 
-	la	r2,_line_buf
+	la	r2,786432
 
 _sws_skip:
 	lbu	r0,0(r2)
@@ -2434,7 +2509,7 @@ _extract_macro_name:
 	mov	fp,sp
 
 ; Skip "MACRO" (5 chars) in _line_buf
-	la	r1,_line_buf
+	la	r1,786432
 	la	r0,5
 	add	r1,r0
 
@@ -2466,7 +2541,7 @@ _emn_done_far:
 ; Copy name to macro table entry
 _emn_copy:
 	push	r1
-	la	r2,_macro_count
+	la	r2,786645
 	lw	r2,0(r2)
 
 	push	r2
@@ -2474,7 +2549,7 @@ _emn_copy:
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r2,_macro_table
+	la	r2,786648
 	add	r2,r0
 	pop	r1
 
@@ -2508,27 +2583,27 @@ _emn_name_end:
 	pop	r1
 
 ; Set macro state to recording
-	la	r1,_macro_state
+	la	r1,787551
 	la	r0,1
 	sw	r0,0(r1)
 
 ; Save current macro index
-	la	r1,_macro_rec_idx
-	la	r2,_macro_count
+	la	r1,787554
+	la	r2,786645
 	lw	r0,0(r2)
 	sw	r0,0(r1)
 
 ; Set body ptr to current _macro_body_start
-	la	r1,_macro_rec_idx
+	la	r1,787554
 	lw	r0,0(r1)
 	push	r0
 	la	r0,_mul15
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_macro_table
+	la	r1,786648
 	add	r1,r0
 
-	la	r0,_macro_body_start
+	la	r0,787557
 	lw	r0,0(r0)
 	sw	r0,9(r1)
 
@@ -2581,8 +2656,8 @@ _record_macro_line:
 	ceq	r0,z
 	brt	_rml_done
 
-	la	r1,_line_buf
-	la	r2,_macro_body_start
+	la	r1,786432
+	la	r2,787557
 	lw	r2,0(r2)
 
 _rml_cloop:
@@ -2600,7 +2675,7 @@ _rml_end:
 	sb	r0,0(r2)
 	add	r2,1
 
-	la	r1,_macro_body_start
+	la	r1,787557
 	sw	r2,0(r1)
 
 _rml_done:
@@ -2618,27 +2693,27 @@ _finish_macro:
 	mov	fp,sp
 
 ; Get macro table entry for current recording index
-	la	r1,_macro_rec_idx
+	la	r1,787554
 	lw	r0,0(r1)
 	push	r0
 	la	r0,_mul15
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_macro_table
+	la	r1,786648
 	add	r1,r0
 
 ; Store body end position
-	la	r0,_macro_body_start
+	la	r0,787557
 	lw	r0,0(r0)
 	sw	r0,12(r1)
 
 ; Clear macro state
-	la	r1,_macro_state
+	la	r1,787551
 	la	r0,0
 	sw	r0,0(r1)
 
 ; Increment macro count
-	la	r1,_macro_count
+	la	r1,786645
 	lw	r0,0(r1)
 	add	r0,1
 	sw	r0,0(r1)
@@ -2659,7 +2734,7 @@ _lookup_macro:
 	mov	fp,sp
 
 ; Save name start from _line_buf (skip whitespace)
-	la	r2,_line_buf
+	la	r2,786432
 
 _lm_scan_name:
 	lbu	r0,0(r2)
@@ -2691,7 +2766,7 @@ _lm_tbl_start:
 	la	r0,0
 
 _lm_tbl_loop:
-	la	r1,_macro_count
+	la	r1,786645
 	lw	r1,0(r1)
 	clu	r0,r1
 	brf	_lm_nf3
@@ -2704,7 +2779,7 @@ _lm_tbl_loop:
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r1,_macro_table
+	la	r1,786648
 	add	r1,r0
 
 ; Compare table name (r1) with line_buf name (saved at 0(fp))
@@ -2773,14 +2848,14 @@ _expand_macro:
 	la	r0,_mul15
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_macro_table
+	la	r1,786648
 	add	r1,r0
 
 	lw	r2,9(r1)
 	lw	r0,12(r1)
 	sw	r0,0(fp)
 
-	la	r1,_emb_end
+	la	r1,786642
 	sw	r0,0(r1)
 
 	sw	r2,3(fp)
@@ -2809,7 +2884,7 @@ _exm_loop:
 	bra	_exm_loop
 
 _exm_done:
-	la	r1,_expand_counter
+	la	r1,787548
 	lw	r0,0(r1)
 	add	r0,1
 	sw	r0,0(r1)
@@ -2834,13 +2909,13 @@ _expand_body_line:
 	push	r2
 	mov	fp,sp
 
-	la	r1,_expand_buf
+	la	r1,787416
 	sw	r1,0(fp)
 
 	lw	r2,15(fp)
 
 _ebl_loop:
-	la	r1,_emb_end
+	la	r1,786642
 	lw	r1,0(r1)
 	clu	r2,r1
 	brf	_ebl_nf
@@ -2948,18 +3023,18 @@ _ebl_bslash:
 
 	push	r2
 
-	la	r1,_expand_write_ptr
+	la	r1,787545
 	lw	r0,0(fp)
 	sw	r0,0(r1)
 
-	la	r0,_expand_counter
+	la	r0,787548
 	lw	r0,0(r0)
 	push	r0
 	la	r0,_emit_num4_to_buf
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r1,_expand_write_ptr
+	la	r1,787545
 	lw	r0,0(r1)
 	sw	r0,0(fp)
 
@@ -3016,7 +3091,7 @@ _emit_char_to_buf:
 	push	r2
 	mov	fp,sp
 
-	la	r2,_expand_write_ptr
+	la	r2,787545
 	lw	r1,0(r2)
 
 	lw	r0,9(fp)
@@ -3129,7 +3204,7 @@ _get_arg_start:
 	push	r2
 	mov	fp,sp
 
-	la	r2,_line_buf
+	la	r2,786432
 
 _gas_skip_name:
 	lbu	r0,0(r2)
@@ -3266,7 +3341,7 @@ _emit_expand_buf:
 	push	r2
 	mov	fp,sp
 
-	la	r1,_expand_buf
+	la	r1,787416
 
 _eeb_loop:
 	lbu	r0,0(r1)
@@ -3351,7 +3426,7 @@ _extract_kw_arg:
 	push	r1
 	mov	fp,sp
 	add	sp,-3
-	la	r2,_line_buf
+	la	r2,786432
 eka_skip:
 	lbu	r0,0(r2)
 	ceq	r0,z
@@ -3379,7 +3454,7 @@ eka_ws2:
 	add	r2,1
 	bra	eka_ws
 eka_copy:
-	la	r0,_parse_name_buf
+	la	r0,786576
 	sw	r0,-3(fp)
 eka_cn:
 	lbu	r0,0(r2)
@@ -3415,7 +3490,7 @@ _parse_cond_value:
 	push	r2
 	push	r1
 	mov	fp,sp
-	la	r2,_line_buf
+	la	r2,786432
 pcv_find:
 	lbu	r0,0(r2)
 	ceq	r0,z
@@ -3467,7 +3542,7 @@ _sym_find:
 	la	r0,0
 	sw	r0,-3(fp)
 sf_loop:
-	la	r1,_symbol_count
+	la	r1,787560
 	lw	r1,0(r1)
 	lw	r0,-3(fp)
 	clu	r0,r1
@@ -3477,10 +3552,10 @@ sf_loop:
 	la	r0,_mul9
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_symbol_table
+	la	r1,787563
 	add	r1,r0
 	push	r1
-	la	r1,_parse_name_buf
+	la	r1,786576
 	push	r1
 	la	r0,_streq
 	jal	r1,(r0)
@@ -3492,7 +3567,7 @@ sf_loop:
 	sw	r0,-3(fp)
 	bra	sf_loop
 sf_not_found:
-	la	r1,_symbol_count
+	la	r1,787560
 	lw	r0,0(r1)
 	bra	sf_ret
 sf_found:
@@ -3511,7 +3586,7 @@ _set_symbol:
 	push	r1
 	mov	fp,sp
 	add	sp,-9
-	la	r2,_line_buf
+	la	r2,786432
 	add	r2,4
 ss_sw:
 	lbu	r0,0(r2)
@@ -3531,7 +3606,7 @@ ss_sw2:
 	add	r2,1
 	bra	ss_sw
 ss_cn:
-	la	r0,_parse_name_buf
+	la	r0,786576
 	sw	r0,-6(fp)
 ss_cn_loop:
 	lbu	r0,0(r2)
@@ -3585,7 +3660,7 @@ ss_no_val:
 ss_search:
 	la	r0,_sym_find
 	jal	r1,(r0)
-	la	r1,_symbol_count
+	la	r1,787560
 	lw	r1,0(r1)
 	clu	r0,r1
 	brf	ss_new
@@ -3593,24 +3668,24 @@ ss_search:
 	la	r0,_mul9
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_symbol_table
+	la	r1,787563
 	add	r1,r0
 	bra	ss_store
 ss_new:
-	la	r1,_symbol_count
+	la	r1,787560
 	lw	r0,0(r1)
 	push	r0
 	la	r0,_mul9
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_symbol_table
+	la	r1,787563
 	add	r1,r0
-	la	r2,_symbol_count
+	la	r2,787560
 	lw	r0,0(r2)
 	add	r0,1
 	sw	r0,0(r2)
 ss_store:
-	la	r2,_parse_name_buf
+	la	r2,786576
 	sw	r1,-9(fp)
 ss_cname:
 	lbu	r0,0(r2)
@@ -3642,7 +3717,7 @@ _lookup_symbol:
 	la	r0,_sym_find
 	jal	r1,(r0)
 	sw	r0,-3(fp)
-	la	r1,_symbol_count
+	la	r1,787560
 	lw	r1,0(r1)
 	lw	r0,-3(fp)
 	clu	r0,r1
@@ -3652,10 +3727,10 @@ _lookup_symbol:
 	la	r0,_mul9
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_symbol_table
+	la	r1,787563
 	add	r1,r0
 	lw	r0,6(r1)
-	la	r1,_lookup_sym_val
+	la	r1,786594
 	sw	r0,0(r1)
 	la	r0,1
 	bra	ls_ret
@@ -3676,17 +3751,17 @@ _cond_push:
 	push	r1
 	mov	fp,sp
 	lw	r0,9(fp)
-	la	r1,_cond_depth
+	la	r1,787707
 	lw	r2,0(r1)
 	push	r2
 	la	r0,_mul3
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_cond_stack
+	la	r1,787710
 	add	r1,r0
 	lw	r0,9(fp)
 	sw	r0,0(r1)
-	la	r1,_cond_depth
+	la	r1,787707
 	lw	r0,0(r1)
 	add	r0,1
 	sw	r0,0(r1)
@@ -3703,7 +3778,7 @@ _cond_top:
 	push	r2
 	push	r1
 	mov	fp,sp
-	la	r1,_cond_depth
+	la	r1,787707
 	lw	r0,0(r1)
 	ceq	r0,z
 	brt	ct_zero
@@ -3712,7 +3787,7 @@ _cond_top:
 	la	r0,_mul3
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_cond_stack
+	la	r1,787710
 	add	r1,r0
 	lw	r0,0(r1)
 	bra	ct_ret
@@ -3732,14 +3807,14 @@ _cond_set_top:
 	push	r2
 	push	r1
 	mov	fp,sp
-	la	r1,_cond_depth
+	la	r1,787707
 	lw	r0,0(r1)
 	add	r0,-1
 	push	r0
 	la	r0,_mul3
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_cond_stack
+	la	r1,787710
 	add	r1,r0
 	lw	r0,9(fp)
 	sw	r0,0(r1)
@@ -3755,18 +3830,18 @@ _cond_pop:
 	push	r2
 	push	r1
 	mov	fp,sp
-	la	r1,_cond_depth
+	la	r1,787707
 	lw	r0,0(r1)
 	add	r0,-1
 	push	r0
 	la	r0,_mul3
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_cond_stack
+	la	r1,787710
 	add	r1,r0
 	la	r0,0
 	sw	r0,0(r1)
-	la	r1,_cond_depth
+	la	r1,787707
 	lw	r0,0(r1)
 	add	r0,-1
 	sw	r0,0(r1)
@@ -3789,7 +3864,7 @@ _handle_ifdef:
 	jal	r1,(r0)
 	ceq	r0,z
 	brt	hif_not_found
-	la	r1,_lookup_sym_val
+	la	r1,786594
 	lw	r0,0(r1)
 	ceq	r0,z
 	brt	hif_zero_val
@@ -3852,7 +3927,7 @@ _handle_ifeq:
 	jal	r1,(r0)
 	la	r0,_lookup_symbol
 	jal	r1,(r0)
-	la	r1,_lookup_sym_val
+	la	r1,786594
 	lw	r0,0(r1)
 	sw	r0,-3(fp)
 	la	r0,_parse_cond_value
@@ -3886,7 +3961,7 @@ _handle_ifne:
 	jal	r1,(r0)
 	la	r0,_lookup_symbol
 	jal	r1,(r0)
-	la	r1,_lookup_sym_val
+	la	r1,786594
 	lw	r0,0(r1)
 	sw	r0,-3(fp)
 	la	r0,_parse_cond_value

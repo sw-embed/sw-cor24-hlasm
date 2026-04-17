@@ -49,15 +49,16 @@ COR24 24-bit RISC: 3 GP registers (r0-r2), fp, sp, z, iv, ir,
 
 | Region | Address | Contents |
 |--------|---------|----------|
-| Code | 0x000000+ | HLASM macro-assembler assembly |
-| Source buffer | 0x080000 | Input .hlasm source text |
-| Macro table | 0x090000 | Macro definitions (name, params, body) |
-| Symbol table | 0x0A0000 | SET symbols, labels |
-| Output buffer | 0x0B0000 | Expanded/lowered .s output |
-| Working storage | 0x0C0000 | Temp buffers, string workspace |
-| Stack | 0xFEEC00 | Hardware stack (EBR, grows down) |
+| Code + immutable tables | 0x000000+ | HLASM macro-assembler assembly |
+| Source config block | 0x07F000 | Extra-source descriptor config loaded by `--load-binary` |
+| Source/include buffers | 0x080000-0x0BFFFF | Preloaded ASCII HLASM input buffers |
+| Runtime arena | 0x0C0000-0x0C0515 | Mutable assembler state in SRAM |
+| Stack | 0xFEEC00 | Preferred 3K EBR stack (`--stack-kilobytes 3`) |
 
-Addresses are approximate; exact layout decided during implementation.
+The runtime arena currently contains the line buffer, source descriptor table,
+macro table/body pool, expansion buffer state, symbol table, and conditional
+stack. This keeps loaded source text and assembler-owned mutable state in
+separate SRAM regions, which is the first bootstrap-oriented layout.
 
 ## Components
 

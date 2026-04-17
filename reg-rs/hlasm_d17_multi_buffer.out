@@ -2,5 +2,5 @@ UART output: _h:
  bra _h
 
 
-Executed 8479 instructions
+Executed 17637 instructions
 CPU halted (self-branch detected)

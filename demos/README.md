@@ -25,6 +25,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d16 | Bootstrap `hlasm0` subset | WORKS |
 | d17 | Multi-buffer source input | WORKS |
 | d18 | Include-ready multi-buffer chain | WORKS |
+| d19 | Bootstrap memory map proof | WORKS |
 
 ## Demo Policy
 

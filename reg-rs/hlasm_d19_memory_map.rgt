@@ -1,0 +1,5 @@
+command = 'cor24-run --run hlasm.s --load-binary demos/d19_memory_map_main.bin@524288 --load-binary demos/d19_memory_map_extra.bin@528384 --load-binary reg-rs/s11_memory_map.cfg@520192 --stack-kilobytes 3 --speed 0 -n 120000 --dump 2>&1'
+timeout = 15
+preprocess = "grep -E '^UART output:|^_h:|^ bra _h|^Executed|^CPU halted|^  0C00A0:|^  0C00D0:|^  0C0460:|^  0C04F0:' || true"
+exit_code = 0
+desc = 'Demo 19: runtime arena lives in middle SRAM while source buffers stay in low SRAM'
