@@ -1,0 +1,1 @@
+Implement the first lowering path for structured IF/ELSE/ENDIF in hlasm.s. Keep the existing conditional-assembly directives unchanged, add a demo plus reg-rs proof for single-level structured IF behavior, and update feature-status docs.

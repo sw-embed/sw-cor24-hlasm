@@ -1,0 +1,1 @@
+Run an integration pass across the structured control-flow families. Tighten demos, reg-rs proofs, and repo docs so feature status and examples reflect the implemented IF/DO/SELECT subset.

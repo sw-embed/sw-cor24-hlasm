@@ -1,0 +1,1 @@
+Implement structured SELECT/WHEN/OTHERWISE/ENDSEL lowering in hlasm.s. Reuse the existing lowering style, add a demo plus reg-rs proof for multi-arm dispatch, and update docs.

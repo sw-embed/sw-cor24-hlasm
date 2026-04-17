@@ -1,0 +1,1 @@
+Implement structured DO/DOEXIT/ITERATE/ENDDO lowering in hlasm.s. Preserve existing passthrough, macro, and bootstrap behavior, add a demo plus reg-rs proof for loop emission, and update docs.

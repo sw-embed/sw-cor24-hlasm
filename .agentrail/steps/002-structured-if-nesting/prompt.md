@@ -1,0 +1,1 @@
+Extend structured IF lowering to support ELSEIF and nested IF blocks. Keep the Step 1 lowering model intact, harden label/block stack handling, add a demo plus reg-rs proof, and update docs as needed.

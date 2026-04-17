@@ -1,0 +1,8 @@
+number = 3
+slug = "structured-do-lowering"
+status = "pending"
+description = "Implement structured DO/DOEXIT/ITERATE/ENDDO lowering in hlasm.s. Preserve ex..."
+role = "production"
+context_files = []
+created_at = "2026-04-16T20:54:08"
+commits = []
