@@ -235,21 +235,23 @@ work normally — use snapshot only as belt-and-suspenders insurance.
 Do not work directly on `main` or `dev`.
 
 - `main` is read-only to agents. Never commit or rebase it.
-- `dev` is the integration branch that accepts merges from `pr-<slug>`
+- `dev` is the integration branch that accepts merges from `pr/<slug>`
   branches. Do not commit to it directly either.
-- Feature work starts in a `feature-<slug>` branch off of `dev`. Bug
-  fixes start in a `fix-<slug>` branch off of `dev`.
+- Feature work starts in a `feat/<slug>` branch off of `dev`. Bug fixes
+  start in a `fix/<slug>` branch off of `dev`. The `/` is significant
+  — upstream expects slash-namespaced branch names, not `feat-` or
+  `fix-`.
 - A session starting on `main` or `dev` must switch to the correct
-  feature/fix branch before doing any work. If that branch does not
-  exist yet, create it.
-- One saga lives on one feature branch. One fix lives on one fix
-  branch. Do not mix sagas or fixes across branches.
+  feat/fix branch before doing any work. If that branch does not exist
+  yet, create it.
+- One saga lives on one feat branch. One fix lives on one fix branch.
+  Do not mix sagas or fixes across branches.
 - When the work completes successfully, rename the branch to
-  `pr-<slug>`. The rename itself is the signal — an external merge
-  process picks up `pr-<slug>` branches and merges them into `dev`:
+  `pr/<slug>`. The rename itself is the signal — an external merge
+  process picks up `pr/<slug>` branches and merges them into `dev`:
 
   ```bash
-  git branch -m feature-<slug> pr-<slug>   # or fix-<slug> -> pr-<slug>
+  git branch -m feat/<slug> pr/<slug>   # or fix/<slug> -> pr/<slug>
   ```
 
 - "Completes successfully" means:
@@ -260,8 +262,7 @@ Do not work directly on `main` or `dev`.
     commit landed.
 - If the work did not complete successfully (step aborted, saga
   archived for any reason other than success), leave the branch named
-  `feature-*` or `fix-*` and report status to the user — do not
-  rename.
+  `feat/*` or `fix/*` and report status to the user — do not rename.
 
 ### Synchronization model (no push, no pull)
 
@@ -274,7 +275,7 @@ publish branches with `push` and never sync with `pull`.
   neither fast-forward nor rebase is appropriate. Ask the user before
   creating one.
 - The external merge process is what advances `dev` — agents do not
-  initiate publication. The branch rename to `pr-<slug>` is the only
+  initiate publication. The branch rename to `pr/<slug>` is the only
   handoff signal.
 
 ### Commit checklist after each step
@@ -292,7 +293,7 @@ If anything is uncommitted, commit it now.
 1. `git add -A && git commit` -- ensure everything is committed
 2. `agentrail archive --reason "saga complete"` -- archive the saga
 3. `git add -A && git commit` -- commit the archive
-4. `git branch -m feature-<slug> pr-<slug>` -- signal merge readiness
+4. `git branch -m feat/<slug> pr/<slug>` -- signal merge readiness
    (the rename alone is the signal; do not push)
 
 ### This is a .s project
