@@ -244,8 +244,20 @@ Do not work directly on `main` or `dev`.
 - A session starting on `main` or `dev` must switch to the correct
   feat/fix branch before doing any work. If that branch does not exist
   yet, create it.
-- One saga lives on one feat branch. One fix lives on one fix branch.
-  Do not mix sagas or fixes across branches.
+- **One saga lives on one feat branch. Every step of the saga commits
+  to that same branch.** Do not create a new branch per step, and do
+  not rename to `pr/<slug>` between steps. The feat branch accumulates
+  all of the saga's commits and only renames to `pr/` when the saga
+  completes.
+- **One fix lives on one fix branch.** The fix may involve several
+  commits, but they all land on the same `fix/<slug>` branch. Rename
+  to `pr/<slug>` only when the fix is complete.
+- If a blocker surfaces mid-saga that cannot be addressed inside the
+  current saga step's scope, insert a new saga step for the blocker
+  (via `agentrail add` or `agentrail insert`), branch a `fix/<slug>`
+  off of `dev`, resolve the blocker there, rename it to `pr/<slug>`,
+  and return to the feat branch to continue the saga after the fix
+  merges upstream.
 - When the work completes successfully, rename the branch to
   `pr/<slug>`. The rename itself is the signal — an external merge
   process picks up `pr/<slug>` branches and merges them into `dev`:
@@ -258,11 +270,14 @@ Do not work directly on `main` or `dev`.
   - For a saga: the final step ran with `--done`, its commit landed,
     the saga was archived with `agentrail archive`, and the archive
     commit landed.
-  - For a fix: the single fix step completed with reward 1 and its
-    commit landed.
+  - For a fix: all planned commits for the fix have landed on the fix
+    branch.
 - If the work did not complete successfully (step aborted, saga
   archived for any reason other than success), leave the branch named
   `feat/*` or `fix/*` and report status to the user — do not rename.
+- **Corollary**: the merge/rebase cycle happens once per saga (and
+  once per fix), not once per step. Do not chain several `pr/<slug>`
+  branches for a single saga's worth of work.
 
 ### Synchronization model (no push, no pull)
 
@@ -301,6 +316,12 @@ changes:
 git switch feat/<slug>
 git rebase dev
 ```
+
+Rebase at natural points — typically at the start of a saga session
+or right after a blocker fix has been merged. Do not rebase after
+every individual step commit; the point of bundling an entire saga on
+one branch is that upstream sync happens at most once per saga, not
+once per step.
 
 ### Commit checklist after each step
 
