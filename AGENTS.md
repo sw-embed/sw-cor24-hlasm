@@ -278,6 +278,30 @@ publish branches with `push` and never sync with `pull`.
   initiate publication. The branch rename to `pr/<slug>` is the only
   handoff signal.
 
+### Picking up upstream merges
+
+When upstream merges a `pr/<slug>` branch into `dev`, run
+`./agent-sync.sh` from the repo root. It:
+
+1. Runs `git fetch origin --prune`.
+2. Fast-forwards local `dev` to `origin/dev` (if behind).
+3. Deletes any local `pr/<slug>` branch whose tip is now an ancestor
+   of `origin/dev`.
+4. Returns to the branch you started on, if it still exists.
+
+The script is safe to re-run; it is a no-op when nothing is merged.
+If it reports that local `dev` has diverged from `origin/dev`, stop
+and ask — divergence should not happen under this workflow.
+
+After `dev` advances, rebase any long-lived `feat/<slug>` or
+`fix/<slug>` branches onto the new tip so they pick up upstream
+changes:
+
+```bash
+git switch feat/<slug>
+git rebase dev
+```
+
 ### Commit checklist after each step
 
 After `agentrail complete`, verify:
