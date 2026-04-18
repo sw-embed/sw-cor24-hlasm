@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# agent-sync.sh -- pick up upstream merges and delete merged pr/ branches.
+# pr-reap.sh -- pick up upstream merges and reap merged pr/ branches.
 #
-# Usage: ./agent-sync.sh
+# Usage: ./pr-reap.sh
 #
 # Fetches origin, fast-forwards local dev to origin/dev, and deletes
 # local pr/<slug> branches whose tip is already an ancestor of
@@ -51,4 +51,4 @@ if [[ -n "$prior" && "$prior" != dev ]] && git show-ref --verify --quiet "refs/h
     git switch "$prior"
 fi
 
-echo "agent-sync complete."
+echo "pr-reap complete."

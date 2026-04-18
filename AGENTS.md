@@ -281,7 +281,7 @@ publish branches with `push` and never sync with `pull`.
 ### Picking up upstream merges
 
 When upstream merges a `pr/<slug>` branch into `dev`, run
-`./agent-sync.sh` from the repo root. It:
+`./pr-reap.sh` from the repo root. It:
 
 1. Runs `git fetch origin --prune`.
 2. Fast-forwards local `dev` to `origin/dev` (if behind).
