@@ -1,8 +1,9 @@
 number = 1
 slug = "diag-baseline"
-status = "in-progress"
+status = "completed"
 description = "Introduce the first real diagnostic surface for hlasm. Add an input source-lo..."
 role = "production"
 context_files = []
 created_at = "2026-04-21T08:22:42"
-commits = []
+completed_at = "2026-04-21T15:14:47"
+commits = ["1f31bb07fbfa5d2053bc9b07d225aa73b10d6dd3"]
