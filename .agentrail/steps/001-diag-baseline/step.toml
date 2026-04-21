@@ -1,0 +1,8 @@
+number = 1
+slug = "diag-baseline"
+status = "pending"
+description = "Introduce the first real diagnostic surface for hlasm. Add an input source-lo..."
+role = "production"
+context_files = []
+created_at = "2026-04-21T08:22:42"
+commits = []

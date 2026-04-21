@@ -1,0 +1,8 @@
+number = 2
+slug = "diag-unknown-mnemonic"
+status = "pending"
+description = "Wire the pass-through / unknown-mnemonic path into HLDIAG (from the diag-base..."
+role = "production"
+context_files = []
+created_at = "2026-04-21T08:22:46"
+commits = []

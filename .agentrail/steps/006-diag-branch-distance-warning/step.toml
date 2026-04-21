@@ -1,0 +1,8 @@
+number = 6
+slug = "diag-branch-distance-warning"
+status = "pending"
+description = "When HLDIAG is on, measure emitted-code distance to each local branch target ..."
+role = "production"
+context_files = []
+created_at = "2026-04-21T08:23:05"
+commits = []

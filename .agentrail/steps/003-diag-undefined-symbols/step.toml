@@ -1,0 +1,8 @@
+number = 3
+slug = "diag-undefined-symbols"
+status = "pending"
+description = "Extend the existing xref/symbol-table infrastructure (HLXREF) with an opt-in ..."
+role = "production"
+context_files = []
+created_at = "2026-04-21T08:22:49"
+commits = []
