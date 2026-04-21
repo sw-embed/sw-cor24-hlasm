@@ -63,6 +63,9 @@ _ml_loop:
 	ceq	r0,z
 	brt	_ml_go
 
+	la	r0,_emit_hldiag_banner_if_enabled
+	jal	r1,(r0)
+
 	la	r0,_emit_xref_report
 	jal	r1,(r0)
 
@@ -933,7 +936,7 @@ _rl_eof_switch:
 	pop	r1
 
 	ceq	r0,z
-	brf	_rl_loop
+	brf	_rl_switched_src
 
 	push	r1
 	la	r0,_advance_src_desc
@@ -941,7 +944,7 @@ _rl_eof_switch:
 	pop	r1
 
 	ceq	r0,z
-	brf	_rl_loop
+	brf	_rl_switched_src
 
 	lw	r0,0(fp)
 	ceq	r0,z
@@ -951,11 +954,25 @@ _rl_eof_switch:
 	sb	r0,0(r1)
 	bra	_rl_ret_len
 
+_rl_switched_src:
+	la	r2,_hldiag_src_id
+	lw	r0,0(r2)
+	add	r0,1
+	sw	r0,0(r2)
+	la	r2,_hldiag_line_no
+	la	r0,0
+	sw	r0,0(r2)
+	bra	_rl_loop
+
 _rl_eol:
 	la	r0,0
 	sb	r0,0(r1)
 
 _rl_ret_len:
+	la	r2,_hldiag_line_no
+	lw	r0,0(r2)
+	add	r0,1
+	sw	r0,0(r2)
 	lw	r0,0(fp)
 	mov	sp,fp
 	pop	r2
@@ -7194,6 +7211,12 @@ _ss_name_restored:
 
 	lw	r0,-3(fp)
 	push	r0
+	la	r0,_hldiag_update_switch_current
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,-3(fp)
+	push	r0
 	la	r0,_store_parse_name_value
 	jal	r1,(r0)
 	add	sp,3
@@ -10147,6 +10170,138 @@ _mul12:
 	pop	fp
 	jmp	(r1)
 
+; _hldiag_enabled: Return 1 if SET HLDIAG,<nonzero> is active.
+; Reads cached _hldiag_switch (maintained by _hldiag_update_switch_current)
+; to avoid the 6-character limit of the generic _parse_name_buf lookup path.
+_hldiag_enabled:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r1,_hldiag_switch
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_hde_off
+	la	r0,1
+	bra	_hde_ret
+
+_hde_off:
+	la	r0,0
+
+_hde_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _hldiag_update_switch_current: Update HLDIAG switch when current _parse_name_buf
+; matches HLDIAG. Called from _set_symbol so SET HLDIAG,<val> toggles the cache.
+; Arg on stack: value
+_hldiag_update_switch_current:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_hldiag_symbol_name
+	push	r0
+	la	r0,786576
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_hdus_ret
+
+	la	r1,_hldiag_switch
+	lw	r0,6(fp)
+	sw	r0,0(r1)
+
+_hdus_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _hldiag_warn: Emit "; !! hlasm: <msg> at src<id>:<line>" when HLDIAG is on.
+; Arg on stack: msg_ptr (null-terminated ASCII)
+; No-op when HLDIAG is off.
+_hldiag_warn:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r0,_hldiag_enabled
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hdw_ret
+
+	la	r0,_hldiag_prefix_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_at_src_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,_hldiag_src_id
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_colon_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,_hldiag_line_no
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+_hdw_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _emit_hldiag_banner_if_enabled: Smoke usage proving the HLDIAG channel works.
+; Fires once at end-of-run, only when HLDIAG is active.
+_emit_hldiag_banner_if_enabled:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_hldiag_banner_msg
+	push	r0
+	la	r0,_hldiag_warn
+	jal	r1,(r0)
+	add	sp,3
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
 ; --- Buffers ---
 _id_buf:
 	.byte 0, 0, 0, 0, 0, 0, 0, 0
@@ -10612,3 +10767,27 @@ _xref_expand_txt:
 
 _xref_symbol_txt:
 	.byte	83,89,77,66,79,76,0
+
+_hldiag_symbol_name:
+	.byte	72,76,68,73,65,71,0
+
+_hldiag_switch:
+	.word	0
+
+_hldiag_line_no:
+	.word	0
+
+_hldiag_src_id:
+	.word	0
+
+_hldiag_prefix_txt:
+	.byte	59,32,33,33,32,104,108,97,115,109,58,32,0
+
+_hldiag_at_src_txt:
+	.byte	32,97,116,32,115,114,99,0
+
+_hldiag_colon_txt:
+	.byte	58,0
+
+_hldiag_banner_msg:
+	.byte	72,76,68,73,65,71,32,97,99,116,105,118,101,0

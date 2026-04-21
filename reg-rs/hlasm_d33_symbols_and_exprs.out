@@ -1,4 +1,4 @@
-Assembled 17107 bytes
+Assembled 17383 bytes
 Loaded 257 bytes from 'demos/d33_symbols_and_exprs.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -72,12 +72,12 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 80000] '\n'
 [UART TX @ 80000] ''  (0x0D)
 [UART TX @ 80000] '\n'
-[UART TX @ 80000] ' '  (0x20)
-[UART TX @ 80000] 'a'  (0x61)
-[UART TX @ 80000] 'd'  (0x64)
-[UART TX @ 80000] 'd'  (0x64)
-[UART TX @ 80000] ' '  (0x20)
-[UART TX @ 80000] 'r'  (0x72)
+[UART TX @ 90000] ' '  (0x20)
+[UART TX @ 90000] 'a'  (0x61)
+[UART TX @ 90000] 'd'  (0x64)
+[UART TX @ 90000] 'd'  (0x64)
+[UART TX @ 90000] ' '  (0x20)
+[UART TX @ 90000] 'r'  (0x72)
 [UART TX @ 90000] '0'  (0x30)
 [UART TX @ 90000] ','  (0x2C)
 [UART TX @ 90000] '1'  (0x31)
@@ -142,13 +142,13 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 100000] '2'  (0x32)
 [UART TX @ 100000] ''  (0x0D)
 [UART TX @ 100000] '\n'
-[UART TX @ 101372] 't'  (0x74)
-[UART TX @ 101372] 'a'  (0x61)
-[UART TX @ 101372] 'i'  (0x69)
-[UART TX @ 101372] 'l'  (0x6C)
-[UART TX @ 101372] ':'  (0x3A)
-[UART TX @ 101372] ''  (0x0D)
-[UART TX @ 101372] '\n'
+[UART TX @ 101611] 't'  (0x74)
+[UART TX @ 101611] 'a'  (0x61)
+[UART TX @ 101611] 'i'  (0x69)
+[UART TX @ 101611] 'l'  (0x6C)
+[UART TX @ 101611] ':'  (0x3A)
+[UART TX @ 101611] ''  (0x0D)
+[UART TX @ 101611] '\n'
 
 UART output: ; Demo 33: EQU aliases and small assembly-time expressions
 
@@ -163,5 +163,5 @@ mark:
 tail:
 
 
-Executed 101372 instructions
+Executed 101611 instructions
 CPU halted (self-branch detected)

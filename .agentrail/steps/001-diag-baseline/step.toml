@@ -1,6 +1,6 @@
 number = 1
 slug = "diag-baseline"
-status = "pending"
+status = "in-progress"
 description = "Introduce the first real diagnostic surface for hlasm. Add an input source-lo..."
 role = "production"
 context_files = []

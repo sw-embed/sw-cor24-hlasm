@@ -1,4 +1,4 @@
-Assembled 17107 bytes
+Assembled 17383 bytes
 Loaded 84 bytes from 'demos/d09_comments.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -18,7 +18,7 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 40000] 's'  (0x73)
 [UART TX @ 40000] ' '  (0x20)
 [UART TX @ 40000] 'a'  (0x61)
-[UART TX @ 40000] ' '  (0x20)
+[UART TX @ 50000] ' '  (0x20)
 [UART TX @ 50000] 'c'  (0x63)
 [UART TX @ 50000] 'o'  (0x6F)
 [UART TX @ 50000] 'm'  (0x6D)
@@ -65,35 +65,35 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 50000] 't'  (0x74)
 [UART TX @ 50000] ''  (0x0D)
 [UART TX @ 50000] '\n'
-[UART TX @ 59855] ' '  (0x20)
-[UART TX @ 59855] 'b'  (0x62)
-[UART TX @ 59855] 'r'  (0x72)
-[UART TX @ 59855] 'a'  (0x61)
-[UART TX @ 59855] ' '  (0x20)
-[UART TX @ 59855] 'h'  (0x68)
-[UART TX @ 59855] 'a'  (0x61)
-[UART TX @ 59855] 'l'  (0x6C)
-[UART TX @ 59855] 't'  (0x74)
-[UART TX @ 59855] ''  (0x0D)
-[UART TX @ 59855] '\n'
-[UART TX @ 59855] 'h'  (0x68)
-[UART TX @ 59855] 'a'  (0x61)
-[UART TX @ 59855] 'l'  (0x6C)
-[UART TX @ 59855] 't'  (0x74)
-[UART TX @ 59855] ':'  (0x3A)
-[UART TX @ 59855] ''  (0x0D)
-[UART TX @ 59855] '\n'
-[UART TX @ 59855] ' '  (0x20)
-[UART TX @ 59855] 'b'  (0x62)
-[UART TX @ 59855] 'r'  (0x72)
-[UART TX @ 59855] 'a'  (0x61)
-[UART TX @ 59855] ' '  (0x20)
-[UART TX @ 59855] 'h'  (0x68)
-[UART TX @ 59855] 'a'  (0x61)
-[UART TX @ 59855] 'l'  (0x6C)
-[UART TX @ 59855] 't'  (0x74)
-[UART TX @ 59855] ''  (0x0D)
-[UART TX @ 59855] '\n'
+[UART TX @ 59922] ' '  (0x20)
+[UART TX @ 59922] 'b'  (0x62)
+[UART TX @ 59922] 'r'  (0x72)
+[UART TX @ 59922] 'a'  (0x61)
+[UART TX @ 59922] ' '  (0x20)
+[UART TX @ 59922] 'h'  (0x68)
+[UART TX @ 59922] 'a'  (0x61)
+[UART TX @ 59922] 'l'  (0x6C)
+[UART TX @ 59922] 't'  (0x74)
+[UART TX @ 59922] ''  (0x0D)
+[UART TX @ 59922] '\n'
+[UART TX @ 59922] 'h'  (0x68)
+[UART TX @ 59922] 'a'  (0x61)
+[UART TX @ 59922] 'l'  (0x6C)
+[UART TX @ 59922] 't'  (0x74)
+[UART TX @ 59922] ':'  (0x3A)
+[UART TX @ 59922] ''  (0x0D)
+[UART TX @ 59922] '\n'
+[UART TX @ 59922] ' '  (0x20)
+[UART TX @ 59922] 'b'  (0x62)
+[UART TX @ 59922] 'r'  (0x72)
+[UART TX @ 59922] 'a'  (0x61)
+[UART TX @ 59922] ' '  (0x20)
+[UART TX @ 59922] 'h'  (0x68)
+[UART TX @ 59922] 'a'  (0x61)
+[UART TX @ 59922] 'l'  (0x6C)
+[UART TX @ 59922] 't'  (0x74)
+[UART TX @ 59922] ''  (0x0D)
+[UART TX @ 59922] '\n'
 
 UART output: nop
 ; this is a comment
@@ -104,5 +104,5 @@ halt:
  bra halt
 
 
-Executed 59855 instructions
+Executed 59922 instructions
 CPU halted (self-branch detected)

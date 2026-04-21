@@ -1,0 +1,8 @@
+UART output: ; Demo 37: opt-in HLDIAG diagnostic channel baseline
+ add r0,1
+ nop
+; !! hlasm: HLDIAG active at src0:4
+
+
+Executed 51797 instructions
+CPU halted (self-branch detected)

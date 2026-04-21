@@ -1,41 +1,41 @@
-Assembled 17107 bytes
+Assembled 17383 bytes
 Loaded 60 bytes from 'demos/d08_macro_and_cond.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
-[UART TX @ 46927] 'I'  (0x49)
-[UART TX @ 46927] 'F'  (0x46)
-[UART TX @ 46927] 'D'  (0x44)
-[UART TX @ 46927] 'E'  (0x45)
-[UART TX @ 46927] 'F'  (0x46)
-[UART TX @ 46927] ' '  (0x20)
-[UART TX @ 46927] 'D'  (0x44)
-[UART TX @ 46927] 'E'  (0x45)
-[UART TX @ 46927] 'B'  (0x42)
-[UART TX @ 46927] 'U'  (0x55)
-[UART TX @ 46927] 'G'  (0x47)
-[UART TX @ 46927] ''  (0x0D)
-[UART TX @ 46927] '\n'
-[UART TX @ 46927] ' '  (0x20)
-[UART TX @ 46927] 'n'  (0x6E)
-[UART TX @ 46927] 'o'  (0x6F)
-[UART TX @ 46927] 'p'  (0x70)
-[UART TX @ 46927] ''  (0x0D)
-[UART TX @ 46927] '\n'
-[UART TX @ 46927] 'E'  (0x45)
-[UART TX @ 46927] 'N'  (0x4E)
-[UART TX @ 46927] 'D'  (0x44)
-[UART TX @ 46927] 'I'  (0x49)
-[UART TX @ 46927] 'F'  (0x46)
-[UART TX @ 46927] 'A'  (0x41)
-[UART TX @ 46927] 'S'  (0x53)
-[UART TX @ 46927] 'M'  (0x4D)
-[UART TX @ 46927] ''  (0x0D)
-[UART TX @ 46927] '\n'
+[UART TX @ 47034] 'I'  (0x49)
+[UART TX @ 47034] 'F'  (0x46)
+[UART TX @ 47034] 'D'  (0x44)
+[UART TX @ 47034] 'E'  (0x45)
+[UART TX @ 47034] 'F'  (0x46)
+[UART TX @ 47034] ' '  (0x20)
+[UART TX @ 47034] 'D'  (0x44)
+[UART TX @ 47034] 'E'  (0x45)
+[UART TX @ 47034] 'B'  (0x42)
+[UART TX @ 47034] 'U'  (0x55)
+[UART TX @ 47034] 'G'  (0x47)
+[UART TX @ 47034] ''  (0x0D)
+[UART TX @ 47034] '\n'
+[UART TX @ 47034] ' '  (0x20)
+[UART TX @ 47034] 'n'  (0x6E)
+[UART TX @ 47034] 'o'  (0x6F)
+[UART TX @ 47034] 'p'  (0x70)
+[UART TX @ 47034] ''  (0x0D)
+[UART TX @ 47034] '\n'
+[UART TX @ 47034] 'E'  (0x45)
+[UART TX @ 47034] 'N'  (0x4E)
+[UART TX @ 47034] 'D'  (0x44)
+[UART TX @ 47034] 'I'  (0x49)
+[UART TX @ 47034] 'F'  (0x46)
+[UART TX @ 47034] 'A'  (0x41)
+[UART TX @ 47034] 'S'  (0x53)
+[UART TX @ 47034] 'M'  (0x4D)
+[UART TX @ 47034] ''  (0x0D)
+[UART TX @ 47034] '\n'
 
 UART output: IFDEF DEBUG
  nop
 ENDIFASM
 
 
-Executed 46927 instructions
+Executed 47034 instructions
 CPU halted (self-branch detected)

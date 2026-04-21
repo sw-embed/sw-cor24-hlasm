@@ -1,4 +1,4 @@
-Assembled 17107 bytes
+Assembled 17383 bytes
 Loaded 874 bytes from 'demos/d36_structured_elseif_no_else.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -358,9 +358,9 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 110000] ' '  (0x20)
 [UART TX @ 110000] 'a'  (0x61)
 [UART TX @ 110000] 'd'  (0x64)
-[UART TX @ 110000] 'd'  (0x64)
-[UART TX @ 110000] ' '  (0x20)
-[UART TX @ 110000] 'r'  (0x72)
+[UART TX @ 120000] 'd'  (0x64)
+[UART TX @ 120000] ' '  (0x20)
+[UART TX @ 120000] 'r'  (0x72)
 [UART TX @ 120000] '2'  (0x32)
 [UART TX @ 120000] ','  (0x2C)
 [UART TX @ 120000] '1'  (0x31)
@@ -1226,39 +1226,39 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 330000] '0'  (0x30)
 [UART TX @ 330000] ''  (0x0D)
 [UART TX @ 330000] '\n'
-[UART TX @ 335135] '_'  (0x5F)
-[UART TX @ 335135] 'f'  (0x66)
-[UART TX @ 335135] 'i'  (0x69)
-[UART TX @ 335135] 'e'  (0x65)
-[UART TX @ 335135] 'l'  (0x6C)
-[UART TX @ 335135] 'd'  (0x64)
-[UART TX @ 335135] '_'  (0x5F)
-[UART TX @ 335135] 'd'  (0x64)
-[UART TX @ 335135] 'e'  (0x65)
-[UART TX @ 335135] 's'  (0x73)
-[UART TX @ 335135] 'c'  (0x63)
-[UART TX @ 335135] '2'  (0x32)
-[UART TX @ 335135] '_'  (0x5F)
-[UART TX @ 335135] 's'  (0x73)
-[UART TX @ 335135] 'r'  (0x72)
-[UART TX @ 335135] 'c'  (0x63)
-[UART TX @ 335135] '_'  (0x5F)
-[UART TX @ 335135] 'p'  (0x70)
-[UART TX @ 335135] 't'  (0x74)
-[UART TX @ 335135] 'r'  (0x72)
-[UART TX @ 335135] ':'  (0x3A)
-[UART TX @ 335135] ''  (0x0D)
-[UART TX @ 335135] '\n'
-[UART TX @ 335135] ' '  (0x20)
-[UART TX @ 335135] '.'  (0x2E)
-[UART TX @ 335135] 'w'  (0x77)
-[UART TX @ 335135] 'o'  (0x6F)
-[UART TX @ 335135] 'r'  (0x72)
-[UART TX @ 335135] 'd'  (0x64)
-[UART TX @ 335135] ' '  (0x20)
-[UART TX @ 335135] '0'  (0x30)
-[UART TX @ 335135] ''  (0x0D)
-[UART TX @ 335135] '\n'
+[UART TX @ 335450] '_'  (0x5F)
+[UART TX @ 335450] 'f'  (0x66)
+[UART TX @ 335450] 'i'  (0x69)
+[UART TX @ 335450] 'e'  (0x65)
+[UART TX @ 335450] 'l'  (0x6C)
+[UART TX @ 335450] 'd'  (0x64)
+[UART TX @ 335450] '_'  (0x5F)
+[UART TX @ 335450] 'd'  (0x64)
+[UART TX @ 335450] 'e'  (0x65)
+[UART TX @ 335450] 's'  (0x73)
+[UART TX @ 335450] 'c'  (0x63)
+[UART TX @ 335450] '2'  (0x32)
+[UART TX @ 335450] '_'  (0x5F)
+[UART TX @ 335450] 's'  (0x73)
+[UART TX @ 335450] 'r'  (0x72)
+[UART TX @ 335450] 'c'  (0x63)
+[UART TX @ 335450] '_'  (0x5F)
+[UART TX @ 335450] 'p'  (0x70)
+[UART TX @ 335450] 't'  (0x74)
+[UART TX @ 335450] 'r'  (0x72)
+[UART TX @ 335450] ':'  (0x3A)
+[UART TX @ 335450] ''  (0x0D)
+[UART TX @ 335450] '\n'
+[UART TX @ 335450] ' '  (0x20)
+[UART TX @ 335450] '.'  (0x2E)
+[UART TX @ 335450] 'w'  (0x77)
+[UART TX @ 335450] 'o'  (0x6F)
+[UART TX @ 335450] 'r'  (0x72)
+[UART TX @ 335450] 'd'  (0x64)
+[UART TX @ 335450] ' '  (0x20)
+[UART TX @ 335450] '0'  (0x30)
+[UART TX @ 335450] ''  (0x0D)
+[UART TX @ 335450] '\n'
 
 UART output: ; Demo 36: IF/ELSEIF/ENDIF without ELSE still defines the shared end label
 _parse_o_spec:
@@ -1354,5 +1354,5 @@ _field_desc2_src_ptr:
  .word 0
 
 
-Executed 335135 instructions
+Executed 335450 instructions
 CPU halted (self-branch detected)

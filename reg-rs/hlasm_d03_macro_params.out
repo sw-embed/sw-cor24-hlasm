@@ -1,4 +1,4 @@
-Assembled 17107 bytes
+Assembled 17383 bytes
 Loaded 64 bytes from 'demos/d03_macro_params.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -33,15 +33,15 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 50000] ''  (0x0D)
 [UART TX @ 50000] '\n'
 [UART TX @ 50000] ' '  (0x20)
-[UART TX @ 50000] 'p'  (0x70)
-[UART TX @ 50412] 'u'  (0x75)
-[UART TX @ 50412] 's'  (0x73)
-[UART TX @ 50412] 'h'  (0x68)
-[UART TX @ 50412] ' '  (0x20)
-[UART TX @ 50412] 'r'  (0x72)
-[UART TX @ 50412] '3'  (0x33)
-[UART TX @ 50412] ''  (0x0D)
-[UART TX @ 50412] '\n'
+[UART TX @ 50475] 'p'  (0x70)
+[UART TX @ 50475] 'u'  (0x75)
+[UART TX @ 50475] 's'  (0x73)
+[UART TX @ 50475] 'h'  (0x68)
+[UART TX @ 50475] ' '  (0x20)
+[UART TX @ 50475] 'r'  (0x72)
+[UART TX @ 50475] '3'  (0x33)
+[UART TX @ 50475] ''  (0x0D)
+[UART TX @ 50475] '\n'
 
 UART output:  push r0
  push r1
@@ -49,5 +49,5 @@ UART output:  push r0
  push r3
 
 
-Executed 50412 instructions
+Executed 50475 instructions
 CPU halted (self-branch detected)

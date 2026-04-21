@@ -1,4 +1,4 @@
-Assembled 17107 bytes
+Assembled 17383 bytes
 Loaded 241 bytes from 'demos/d29_control_flow_integration.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -389,10 +389,10 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 100000] '0'  (0x30)
 [UART TX @ 100000] ''  (0x0D)
 [UART TX @ 100000] '\n'
-[UART TX @ 100000] ' '  (0x20)
-[UART TX @ 100000] 'c'  (0x63)
-[UART TX @ 100000] 'e'  (0x65)
-[UART TX @ 100000] 'q'  (0x71)
+[UART TX @ 110000] ' '  (0x20)
+[UART TX @ 110000] 'c'  (0x63)
+[UART TX @ 110000] 'e'  (0x65)
+[UART TX @ 110000] 'q'  (0x71)
 [UART TX @ 110000] ' '  (0x20)
 [UART TX @ 110000] 'r'  (0x72)
 [UART TX @ 110000] '1'  (0x31)
@@ -508,34 +508,34 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 110000] ':'  (0x3A)
 [UART TX @ 110000] ''  (0x0D)
 [UART TX @ 110000] '\n'
-[UART TX @ 116818] ' '  (0x20)
-[UART TX @ 116818] ' '  (0x20)
-[UART TX @ 116818] 's'  (0x73)
-[UART TX @ 116818] 'u'  (0x75)
-[UART TX @ 116818] 'b'  (0x62)
-[UART TX @ 116818] ' '  (0x20)
-[UART TX @ 116818] 'r'  (0x72)
-[UART TX @ 116818] '2'  (0x32)
-[UART TX @ 116818] ','  (0x2C)
-[UART TX @ 116818] 'r'  (0x72)
-[UART TX @ 116818] '2'  (0x32)
-[UART TX @ 116818] ''  (0x0D)
-[UART TX @ 116818] '\n'
-[UART TX @ 116818] '_'  (0x5F)
-[UART TX @ 116818] 'h'  (0x68)
-[UART TX @ 116818] 'l'  (0x6C)
-[UART TX @ 116818] 's'  (0x73)
-[UART TX @ 116818] 'e'  (0x65)
-[UART TX @ 116818] 'l'  (0x6C)
-[UART TX @ 116818] '_'  (0x5F)
-[UART TX @ 116818] '7'  (0x37)
-[UART TX @ 116818] '_'  (0x5F)
-[UART TX @ 116818] 'e'  (0x65)
-[UART TX @ 116818] 'n'  (0x6E)
-[UART TX @ 116818] 'd'  (0x64)
-[UART TX @ 116818] ':'  (0x3A)
-[UART TX @ 116818] ''  (0x0D)
-[UART TX @ 116818] '\n'
+[UART TX @ 117001] ' '  (0x20)
+[UART TX @ 117001] ' '  (0x20)
+[UART TX @ 117001] 's'  (0x73)
+[UART TX @ 117001] 'u'  (0x75)
+[UART TX @ 117001] 'b'  (0x62)
+[UART TX @ 117001] ' '  (0x20)
+[UART TX @ 117001] 'r'  (0x72)
+[UART TX @ 117001] '2'  (0x32)
+[UART TX @ 117001] ','  (0x2C)
+[UART TX @ 117001] 'r'  (0x72)
+[UART TX @ 117001] '2'  (0x32)
+[UART TX @ 117001] ''  (0x0D)
+[UART TX @ 117001] '\n'
+[UART TX @ 117001] '_'  (0x5F)
+[UART TX @ 117001] 'h'  (0x68)
+[UART TX @ 117001] 'l'  (0x6C)
+[UART TX @ 117001] 's'  (0x73)
+[UART TX @ 117001] 'e'  (0x65)
+[UART TX @ 117001] 'l'  (0x6C)
+[UART TX @ 117001] '_'  (0x5F)
+[UART TX @ 117001] '7'  (0x37)
+[UART TX @ 117001] '_'  (0x5F)
+[UART TX @ 117001] 'e'  (0x65)
+[UART TX @ 117001] 'n'  (0x6E)
+[UART TX @ 117001] 'd'  (0x64)
+[UART TX @ 117001] ':'  (0x3A)
+[UART TX @ 117001] ''  (0x0D)
+[UART TX @ 117001] '\n'
 
 UART output:  push r0
  push r1
@@ -579,5 +579,5 @@ _hlsel_8_next:
 _hlsel_7_end:
 
 
-Executed 116818 instructions
+Executed 117001 instructions
 CPU halted (self-branch detected)

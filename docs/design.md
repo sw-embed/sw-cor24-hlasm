@@ -33,6 +33,11 @@ line by line, recognizing:
 - **Opt-in xref report**: `SET HLXREF,1` emits a compact end-of-run cross-
   reference section for copied members, macro definitions, macro expansion
   counts, and assembly-time symbols seen through `SET`/`EQU`
+- **Opt-in diagnostic channel**: `SET HLDIAG,1` activates a central warn
+  routine that emits `; !! hlasm: <msg> at src<id>:<line>` lines into the
+  generated stream, keyed to a per-source line counter updated by the read
+  path. The baseline step emits a single end-of-run banner as smoke; later
+  steps wire real callers
 
 ### Structured Control-Flow Syntax
 

@@ -1,4 +1,4 @@
-Assembled 17107 bytes
+Assembled 17383 bytes
 Loaded 239 bytes from 'demos/d28_macro_robustness.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -78,12 +78,12 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 80000] '3'  (0x33)
 [UART TX @ 80000] ''  (0x0D)
 [UART TX @ 80000] '\n'
-[UART TX @ 80896] 'i'  (0x69)
-[UART TX @ 80896] 'n'  (0x6E)
-[UART TX @ 80896] 'c'  (0x63)
-[UART TX @ 80896] 'x'  (0x78)
-[UART TX @ 80896] ''  (0x0D)
-[UART TX @ 80896] '\n'
+[UART TX @ 80983] 'i'  (0x69)
+[UART TX @ 80983] 'n'  (0x6E)
+[UART TX @ 80983] 'c'  (0x63)
+[UART TX @ 80983] 'x'  (0x78)
+[UART TX @ 80983] ''  (0x0D)
+[UART TX @ 80983] '\n'
 
 UART output: L0001: push r0
  b L0001
@@ -94,5 +94,5 @@ L0003: push r2
 incx
 
 
-Executed 80896 instructions
+Executed 80983 instructions
 CPU halted (self-branch detected)

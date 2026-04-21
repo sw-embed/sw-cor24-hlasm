@@ -77,6 +77,14 @@ causes the runtime to emit a compact xref section for copied members, macro
 definitions, macro expansion counts, and assembly-time symbols observed through
 `SET`/`EQU`.
 
+A third opt-in layer is the diagnostic channel: `SET HLDIAG,1` activates a
+central warn routine that emits `; !! hlasm: <msg> at src<id>:<line>` lines
+into the generated stream when callers invoke it. The read path maintains a
+per-source line counter and a monotonic source-id counter, so any future
+diagnostic can locate itself relative to the input. The baseline step wires
+this as a smoke usage at end of run; later steps attach real callers for
+unknown mnemonics, unresolved symbols, and structured-block health.
+
 ## Components
 
 ### Scanner

@@ -1,21 +1,21 @@
-Assembled 17107 bytes
+Assembled 17383 bytes
 Loaded 61 bytes from 'demos/d14_ifndef.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
-[UART TX @ 43639] ' '  (0x20)
-[UART TX @ 43639] 'a'  (0x61)
-[UART TX @ 43639] 'd'  (0x64)
-[UART TX @ 43639] 'd'  (0x64)
-[UART TX @ 43639] ' '  (0x20)
-[UART TX @ 43639] 'r'  (0x72)
-[UART TX @ 43639] '0'  (0x30)
-[UART TX @ 43639] ','  (0x2C)
-[UART TX @ 43639] '1'  (0x31)
-[UART TX @ 43639] ''  (0x0D)
-[UART TX @ 43639] '\n'
+[UART TX @ 43702] ' '  (0x20)
+[UART TX @ 43702] 'a'  (0x61)
+[UART TX @ 43702] 'd'  (0x64)
+[UART TX @ 43702] 'd'  (0x64)
+[UART TX @ 43702] ' '  (0x20)
+[UART TX @ 43702] 'r'  (0x72)
+[UART TX @ 43702] '0'  (0x30)
+[UART TX @ 43702] ','  (0x2C)
+[UART TX @ 43702] '1'  (0x31)
+[UART TX @ 43702] ''  (0x0D)
+[UART TX @ 43702] '\n'
 
 UART output:  add r0,1
 
 
-Executed 43639 instructions
+Executed 43702 instructions
 CPU halted (self-branch detected)

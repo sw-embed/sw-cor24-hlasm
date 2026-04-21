@@ -1,0 +1,5 @@
+command = "cor24-run --run hlasm.s --load-binary demos/d37_hldiag_baseline.bin@524288 --speed 0 -n 120000 2>&1"
+timeout = 15
+preprocess = "grep -A 120 '^UART output:' || true"
+exit_code = 0
+desc = "Demo 37: opt-in HLDIAG diagnostic channel emits a '; !! hlasm: <msg> at src<id>:<line>' banner at end of run"

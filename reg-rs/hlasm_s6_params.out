@@ -1,39 +1,39 @@
-Assembled 17107 bytes
+Assembled 17383 bytes
 Loaded 61 bytes from 'reg-rs/s6_params.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
-[UART TX @ 49342] ' '  (0x20)
-[UART TX @ 49342] 's'  (0x73)
-[UART TX @ 49342] 't'  (0x74)
-[UART TX @ 49342] ' '  (0x20)
-[UART TX @ 49342] 'r'  (0x72)
-[UART TX @ 49342] '0'  (0x30)
-[UART TX @ 49342] ''  (0x0D)
-[UART TX @ 49342] '\n'
-[UART TX @ 49342] ' '  (0x20)
-[UART TX @ 49342] 's'  (0x73)
-[UART TX @ 49342] 't'  (0x74)
-[UART TX @ 49342] ' '  (0x20)
-[UART TX @ 49342] 'r'  (0x72)
-[UART TX @ 49342] '1'  (0x31)
-[UART TX @ 49342] ''  (0x0D)
-[UART TX @ 49342] '\n'
-[UART TX @ 49342] ' '  (0x20)
-[UART TX @ 49342] 's'  (0x73)
-[UART TX @ 49342] 't'  (0x74)
-[UART TX @ 49342] ' '  (0x20)
-[UART TX @ 49342] 'r'  (0x72)
-[UART TX @ 49342] '2'  (0x32)
-[UART TX @ 49342] ''  (0x0D)
-[UART TX @ 49342] '\n'
-[UART TX @ 49342] ' '  (0x20)
-[UART TX @ 49342] 's'  (0x73)
-[UART TX @ 49342] 't'  (0x74)
-[UART TX @ 49342] ' '  (0x20)
-[UART TX @ 49342] 'f'  (0x66)
-[UART TX @ 49342] 'p'  (0x70)
-[UART TX @ 49342] ''  (0x0D)
-[UART TX @ 49342] '\n'
+[UART TX @ 49405] ' '  (0x20)
+[UART TX @ 49405] 's'  (0x73)
+[UART TX @ 49405] 't'  (0x74)
+[UART TX @ 49405] ' '  (0x20)
+[UART TX @ 49405] 'r'  (0x72)
+[UART TX @ 49405] '0'  (0x30)
+[UART TX @ 49405] ''  (0x0D)
+[UART TX @ 49405] '\n'
+[UART TX @ 49405] ' '  (0x20)
+[UART TX @ 49405] 's'  (0x73)
+[UART TX @ 49405] 't'  (0x74)
+[UART TX @ 49405] ' '  (0x20)
+[UART TX @ 49405] 'r'  (0x72)
+[UART TX @ 49405] '1'  (0x31)
+[UART TX @ 49405] ''  (0x0D)
+[UART TX @ 49405] '\n'
+[UART TX @ 49405] ' '  (0x20)
+[UART TX @ 49405] 's'  (0x73)
+[UART TX @ 49405] 't'  (0x74)
+[UART TX @ 49405] ' '  (0x20)
+[UART TX @ 49405] 'r'  (0x72)
+[UART TX @ 49405] '2'  (0x32)
+[UART TX @ 49405] ''  (0x0D)
+[UART TX @ 49405] '\n'
+[UART TX @ 49405] ' '  (0x20)
+[UART TX @ 49405] 's'  (0x73)
+[UART TX @ 49405] 't'  (0x74)
+[UART TX @ 49405] ' '  (0x20)
+[UART TX @ 49405] 'f'  (0x66)
+[UART TX @ 49405] 'p'  (0x70)
+[UART TX @ 49405] ''  (0x0D)
+[UART TX @ 49405] '\n'
 
 UART output:  st r0
  st r1
@@ -41,5 +41,5 @@ UART output:  st r0
  st fp
 
 
-Executed 49342 instructions
+Executed 49405 instructions
 CPU halted (self-branch detected)
