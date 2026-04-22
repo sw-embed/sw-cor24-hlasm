@@ -1,8 +1,9 @@
 number = 2
 slug = "diag-unknown-mnemonic"
-status = "in-progress"
+status = "completed"
 description = "Wire the pass-through / unknown-mnemonic path into HLDIAG (from the diag-base..."
 role = "production"
 context_files = []
 created_at = "2026-04-21T08:22:46"
-commits = []
+completed_at = "2026-04-21T20:25:50"
+commits = ["7ca66f877ca6d59ab685be833f0d31788078a06b"]
