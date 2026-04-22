@@ -36,8 +36,10 @@ line by line, recognizing:
 - **Opt-in diagnostic channel**: `SET HLDIAG,1` activates a central warn
   routine that emits `; !! hlasm: <msg> at src<id>:<line>` lines into the
   generated stream, keyed to a per-source line counter updated by the read
-  path. The baseline step emits a single end-of-run banner as smoke; later
-  steps wire real callers
+  path. Current callers: an end-of-run `HLDIAG active` banner, and an
+  `unknown mnemonic '<token>'` warning on the pass-through path when a
+  line's mnemonic-position token is neither a known COR24 mnemonic nor a
+  defined macro
 
 ### Structured Control-Flow Syntax
 

@@ -1,4 +1,4 @@
-Assembled 17383 bytes
+Assembled 17659 bytes
 Loaded 120 bytes from 'demos/d15_realistic.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -18,20 +18,20 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 60000] '0'  (0x30)
 [UART TX @ 60000] ''  (0x0D)
 [UART TX @ 60000] '\n'
-[UART TX @ 62050] ' '  (0x20)
-[UART TX @ 62050] 'p'  (0x70)
-[UART TX @ 62050] 'o'  (0x6F)
-[UART TX @ 62050] 'p'  (0x70)
-[UART TX @ 62050] ' '  (0x20)
-[UART TX @ 62050] 'r'  (0x72)
-[UART TX @ 62050] '0'  (0x30)
-[UART TX @ 62050] ''  (0x0D)
-[UART TX @ 62050] '\n'
+[UART TX @ 62077] ' '  (0x20)
+[UART TX @ 62077] 'p'  (0x70)
+[UART TX @ 62077] 'o'  (0x6F)
+[UART TX @ 62077] 'p'  (0x70)
+[UART TX @ 62077] ' '  (0x20)
+[UART TX @ 62077] 'r'  (0x72)
+[UART TX @ 62077] '0'  (0x30)
+[UART TX @ 62077] ''  (0x0D)
+[UART TX @ 62077] '\n'
 
 UART output:  nop
  push r0
  pop r0
 
 
-Executed 62050 instructions
+Executed 62077 instructions
 CPU halted (self-branch detected)

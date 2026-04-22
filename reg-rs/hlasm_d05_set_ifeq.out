@@ -1,4 +1,4 @@
-Assembled 17383 bytes
+Assembled 17659 bytes
 Loaded 124 bytes from 'demos/d05_set_ifeq.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -8,21 +8,21 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 50000] 'p'  (0x70)
 [UART TX @ 50000] ''  (0x0D)
 [UART TX @ 50000] '\n'
-[UART TX @ 58072] ' '  (0x20)
-[UART TX @ 58072] 's'  (0x73)
-[UART TX @ 58072] 'u'  (0x75)
-[UART TX @ 58072] 'b'  (0x62)
-[UART TX @ 58072] ' '  (0x20)
-[UART TX @ 58072] 'r'  (0x72)
-[UART TX @ 58072] '0'  (0x30)
-[UART TX @ 58072] ','  (0x2C)
-[UART TX @ 58072] '1'  (0x31)
-[UART TX @ 58072] ''  (0x0D)
-[UART TX @ 58072] '\n'
+[UART TX @ 58126] ' '  (0x20)
+[UART TX @ 58126] 's'  (0x73)
+[UART TX @ 58126] 'u'  (0x75)
+[UART TX @ 58126] 'b'  (0x62)
+[UART TX @ 58126] ' '  (0x20)
+[UART TX @ 58126] 'r'  (0x72)
+[UART TX @ 58126] '0'  (0x30)
+[UART TX @ 58126] ','  (0x2C)
+[UART TX @ 58126] '1'  (0x31)
+[UART TX @ 58126] ''  (0x0D)
+[UART TX @ 58126] '\n'
 
 UART output:  nop
  sub r0,1
 
 
-Executed 58072 instructions
+Executed 58126 instructions
 CPU halted (self-branch detected)

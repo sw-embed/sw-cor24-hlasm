@@ -1,21 +1,21 @@
-Assembled 17383 bytes
+Assembled 17659 bytes
 Loaded 53 bytes from 'demos/d06_elseasm.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
-[UART TX @ 43925] ' '  (0x20)
-[UART TX @ 43925] 'a'  (0x61)
-[UART TX @ 43925] 'd'  (0x64)
-[UART TX @ 43925] 'd'  (0x64)
-[UART TX @ 43925] ' '  (0x20)
-[UART TX @ 43925] 'r'  (0x72)
-[UART TX @ 43925] '0'  (0x30)
-[UART TX @ 43925] ','  (0x2C)
-[UART TX @ 43925] '1'  (0x31)
-[UART TX @ 43925] ''  (0x0D)
-[UART TX @ 43925] '\n'
+[UART TX @ 43952] ' '  (0x20)
+[UART TX @ 43952] 'a'  (0x61)
+[UART TX @ 43952] 'd'  (0x64)
+[UART TX @ 43952] 'd'  (0x64)
+[UART TX @ 43952] ' '  (0x20)
+[UART TX @ 43952] 'r'  (0x72)
+[UART TX @ 43952] '0'  (0x30)
+[UART TX @ 43952] ','  (0x2C)
+[UART TX @ 43952] '1'  (0x31)
+[UART TX @ 43952] ''  (0x0D)
+[UART TX @ 43952] '\n'
 
 UART output:  add r0,1
 
 
-Executed 43925 instructions
+Executed 43952 instructions
 CPU halted (self-branch detected)

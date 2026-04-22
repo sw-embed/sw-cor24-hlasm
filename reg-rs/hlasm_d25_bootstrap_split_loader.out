@@ -1,5 +1,5 @@
 === Assembling hlasm.s ===
-Assembled 17383 bytes
+Assembled 17659 bytes
 Running (speed: max IPS, time limit: 10s)...
 
 
@@ -7,11 +7,11 @@ Executed 1000 instructions
 Assemble check OK.
 
 === Bootstrap Source Set ===
-Assembled 17383 bytes
+Assembled 17659 bytes
 Loaded 151 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/bootstrap/./hlasm0_split_main.bin' at 0x090000
 Loaded 112 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/bootstrap/./hlasm0_common.bin' at 0x081000
 Loaded 45 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/bootstrap/./hlasm0_io.bin' at 0x081100
-Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-21522.cfg' at 0x07F000
+Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-22062.cfg' at 0x07F000
 Running (speed: max IPS, time limit: 10s)...
 
 [UART TX @ 60000] '_'  (0x5F)
@@ -53,7 +53,7 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 70000] 'r'  (0x72)
 [UART TX @ 70000] '2'  (0x32)
 [UART TX @ 70000] ''  (0x0D)
-[UART TX @ 70000] '\n'
+[UART TX @ 80000] '\n'
 [UART TX @ 80000] ' '  (0x20)
 [UART TX @ 80000] 'm'  (0x6D)
 [UART TX @ 80000] 'o'  (0x6F)
@@ -204,29 +204,29 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 110000] ')'  (0x29)
 [UART TX @ 110000] ''  (0x0D)
 [UART TX @ 110000] '\n'
-[UART TX @ 117108] '_'  (0x5F)
-[UART TX @ 117108] 't'  (0x74)
-[UART TX @ 117108] 'x'  (0x78)
-[UART TX @ 117108] ':'  (0x3A)
-[UART TX @ 117108] ''  (0x0D)
-[UART TX @ 117108] '\n'
-[UART TX @ 117108] ' '  (0x20)
-[UART TX @ 117108] '.'  (0x2E)
-[UART TX @ 117108] 'w'  (0x77)
-[UART TX @ 117108] 'o'  (0x6F)
-[UART TX @ 117108] 'r'  (0x72)
-[UART TX @ 117108] 'd'  (0x64)
-[UART TX @ 117108] ' '  (0x20)
-[UART TX @ 117108] '1'  (0x31)
-[UART TX @ 117108] '6'  (0x36)
-[UART TX @ 117108] '7'  (0x37)
-[UART TX @ 117108] '1'  (0x31)
-[UART TX @ 117108] '1'  (0x31)
-[UART TX @ 117108] '9'  (0x39)
-[UART TX @ 117108] '3'  (0x33)
-[UART TX @ 117108] '6'  (0x36)
-[UART TX @ 117108] ''  (0x0D)
-[UART TX @ 117108] '\n'
+[UART TX @ 117405] '_'  (0x5F)
+[UART TX @ 117405] 't'  (0x74)
+[UART TX @ 117405] 'x'  (0x78)
+[UART TX @ 117405] ':'  (0x3A)
+[UART TX @ 117405] ''  (0x0D)
+[UART TX @ 117405] '\n'
+[UART TX @ 117405] ' '  (0x20)
+[UART TX @ 117405] '.'  (0x2E)
+[UART TX @ 117405] 'w'  (0x77)
+[UART TX @ 117405] 'o'  (0x6F)
+[UART TX @ 117405] 'r'  (0x72)
+[UART TX @ 117405] 'd'  (0x64)
+[UART TX @ 117405] ' '  (0x20)
+[UART TX @ 117405] '1'  (0x31)
+[UART TX @ 117405] '6'  (0x36)
+[UART TX @ 117405] '7'  (0x37)
+[UART TX @ 117405] '1'  (0x31)
+[UART TX @ 117405] '1'  (0x31)
+[UART TX @ 117405] '9'  (0x39)
+[UART TX @ 117405] '3'  (0x33)
+[UART TX @ 117405] '6'  (0x36)
+[UART TX @ 117405] ''  (0x0D)
+[UART TX @ 117405] '\n'
 
 UART output: _main:
  push fp
@@ -250,5 +250,5 @@ _tx:
  .word 16711936
 
 
-Executed 117108 instructions
+Executed 117405 instructions
 CPU halted (self-branch detected)

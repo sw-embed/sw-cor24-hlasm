@@ -1,4 +1,4 @@
-Assembled 17383 bytes
+Assembled 17659 bytes
 Loaded 171 bytes from 'demos/d13_structured_select.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -411,8 +411,8 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 80000] 's'  (0x73)
 [UART TX @ 80000] 'e'  (0x65)
 [UART TX @ 80000] 'l'  (0x6C)
-[UART TX @ 80000] '_'  (0x5F)
-[UART TX @ 80000] '8'  (0x38)
+[UART TX @ 90000] '_'  (0x5F)
+[UART TX @ 90000] '8'  (0x38)
 [UART TX @ 90000] '_'  (0x5F)
 [UART TX @ 90000] 's'  (0x73)
 [UART TX @ 90000] 'k'  (0x6B)
@@ -498,34 +498,34 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 90000] ':'  (0x3A)
 [UART TX @ 90000] ''  (0x0D)
 [UART TX @ 90000] '\n'
-[UART TX @ 95741] ' '  (0x20)
-[UART TX @ 95741] ' '  (0x20)
-[UART TX @ 95741] 's'  (0x73)
-[UART TX @ 95741] 'u'  (0x75)
-[UART TX @ 95741] 'b'  (0x62)
-[UART TX @ 95741] ' '  (0x20)
-[UART TX @ 95741] 'r'  (0x72)
-[UART TX @ 95741] '2'  (0x32)
-[UART TX @ 95741] ','  (0x2C)
-[UART TX @ 95741] 'r'  (0x72)
-[UART TX @ 95741] '2'  (0x32)
-[UART TX @ 95741] ''  (0x0D)
-[UART TX @ 95741] '\n'
-[UART TX @ 95741] '_'  (0x5F)
-[UART TX @ 95741] 'h'  (0x68)
-[UART TX @ 95741] 'l'  (0x6C)
-[UART TX @ 95741] 's'  (0x73)
-[UART TX @ 95741] 'e'  (0x65)
-[UART TX @ 95741] 'l'  (0x6C)
-[UART TX @ 95741] '_'  (0x5F)
-[UART TX @ 95741] '6'  (0x36)
-[UART TX @ 95741] '_'  (0x5F)
-[UART TX @ 95741] 'e'  (0x65)
-[UART TX @ 95741] 'n'  (0x6E)
-[UART TX @ 95741] 'd'  (0x64)
-[UART TX @ 95741] ':'  (0x3A)
-[UART TX @ 95741] ''  (0x0D)
-[UART TX @ 95741] '\n'
+[UART TX @ 95903] ' '  (0x20)
+[UART TX @ 95903] ' '  (0x20)
+[UART TX @ 95903] 's'  (0x73)
+[UART TX @ 95903] 'u'  (0x75)
+[UART TX @ 95903] 'b'  (0x62)
+[UART TX @ 95903] ' '  (0x20)
+[UART TX @ 95903] 'r'  (0x72)
+[UART TX @ 95903] '2'  (0x32)
+[UART TX @ 95903] ','  (0x2C)
+[UART TX @ 95903] 'r'  (0x72)
+[UART TX @ 95903] '2'  (0x32)
+[UART TX @ 95903] ''  (0x0D)
+[UART TX @ 95903] '\n'
+[UART TX @ 95903] '_'  (0x5F)
+[UART TX @ 95903] 'h'  (0x68)
+[UART TX @ 95903] 'l'  (0x6C)
+[UART TX @ 95903] 's'  (0x73)
+[UART TX @ 95903] 'e'  (0x65)
+[UART TX @ 95903] 'l'  (0x6C)
+[UART TX @ 95903] '_'  (0x5F)
+[UART TX @ 95903] '6'  (0x36)
+[UART TX @ 95903] '_'  (0x5F)
+[UART TX @ 95903] 'e'  (0x65)
+[UART TX @ 95903] 'n'  (0x6E)
+[UART TX @ 95903] 'd'  (0x64)
+[UART TX @ 95903] ':'  (0x3A)
+[UART TX @ 95903] ''  (0x0D)
+[UART TX @ 95903] '\n'
 
 UART output: ; Demo 13: SELECT/WHEN/OTHERWISE/ENDSEL
  push r2
@@ -564,5 +564,5 @@ _hlsel_7_next:
 _hlsel_6_end:
 
 
-Executed 95741 instructions
+Executed 95903 instructions
 CPU halted (self-branch detected)

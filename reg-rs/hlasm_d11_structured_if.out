@@ -1,4 +1,4 @@
-Assembled 17383 bytes
+Assembled 17659 bytes
 Loaded 197 bytes from 'demos/d11_structured_if.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -143,7 +143,7 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 50000] ':'  (0x3A)
 [UART TX @ 50000] ''  (0x0D)
 [UART TX @ 50000] '\n'
-[UART TX @ 50000] ' '  (0x20)
+[UART TX @ 60000] ' '  (0x20)
 [UART TX @ 60000] 'a'  (0x61)
 [UART TX @ 60000] 'd'  (0x64)
 [UART TX @ 60000] 'd'  (0x64)
@@ -575,20 +575,20 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 100000] '2'  (0x32)
 [UART TX @ 100000] ''  (0x0D)
 [UART TX @ 100000] '\n'
-[UART TX @ 101126] '_'  (0x5F)
-[UART TX @ 101126] 'h'  (0x68)
-[UART TX @ 101126] 'l'  (0x6C)
-[UART TX @ 101126] 'i'  (0x69)
-[UART TX @ 101126] 'f'  (0x66)
-[UART TX @ 101126] '_'  (0x5F)
-[UART TX @ 101126] '2'  (0x32)
-[UART TX @ 101126] '_'  (0x5F)
-[UART TX @ 101126] 'e'  (0x65)
-[UART TX @ 101126] 'n'  (0x6E)
-[UART TX @ 101126] 'd'  (0x64)
-[UART TX @ 101126] ':'  (0x3A)
-[UART TX @ 101126] ''  (0x0D)
-[UART TX @ 101126] '\n'
+[UART TX @ 101315] '_'  (0x5F)
+[UART TX @ 101315] 'h'  (0x68)
+[UART TX @ 101315] 'l'  (0x6C)
+[UART TX @ 101315] 'i'  (0x69)
+[UART TX @ 101315] 'f'  (0x66)
+[UART TX @ 101315] '_'  (0x5F)
+[UART TX @ 101315] '2'  (0x32)
+[UART TX @ 101315] '_'  (0x5F)
+[UART TX @ 101315] 'e'  (0x65)
+[UART TX @ 101315] 'n'  (0x6E)
+[UART TX @ 101315] 'd'  (0x64)
+[UART TX @ 101315] ':'  (0x3A)
+[UART TX @ 101315] ''  (0x0D)
+[UART TX @ 101315] '\n'
 
 UART output: ; Demo 11: IF/ELSEIF/ELSE/ENDIF with nesting
  push r2
@@ -630,5 +630,5 @@ _hlif_9_false:
 _hlif_2_end:
 
 
-Executed 101126 instructions
+Executed 101315 instructions
 CPU halted (self-branch detected)

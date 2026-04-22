@@ -1,4 +1,4 @@
-Assembled 17383 bytes
+Assembled 17659 bytes
 Loaded 47 bytes from 'demos/d21_directed_switch_main.bin' at 0x090000
 Loaded 24 bytes from 'demos/d21_directed_switch_extra.bin' at 0x081000
 Loaded 29 bytes from 'reg-rs/s13_directed_switch.cfg' at 0x07F000

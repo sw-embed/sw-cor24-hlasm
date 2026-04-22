@@ -1,8 +1,8 @@
-Assembled 17383 bytes
+Assembled 17659 bytes
 Loaded 139 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d35_listing_xref.bin' at 0x090000
 Loaded 109 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d34_copy_macro_library_macros.bin' at 0x081000
 Loaded 40 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d34_copy_macro_library_symbols.bin' at 0x081100
-Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-22456.cfg' at 0x07F000
+Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-23037.cfg' at 0x07F000
 Running (speed: max IPS, time limit: 10s)...
 
 [UART TX @ 40000] ';'  (0x3B)
@@ -49,7 +49,7 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 40000] 'u'  (0x75)
 [UART TX @ 40000] 't'  (0x74)
 [UART TX @ 40000] 'p'  (0x70)
-[UART TX @ 40000] 'u'  (0x75)
+[UART TX @ 50000] 'u'  (0x75)
 [UART TX @ 50000] 't'  (0x74)
 [UART TX @ 50000] ''  (0x0D)
 [UART TX @ 50000] '\n'
@@ -115,8 +115,8 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 60000] 'O'  (0x4F)
 [UART TX @ 60000] 'P'  (0x50)
 [UART TX @ 60000] '2'  (0x32)
-[UART TX @ 60000] ''  (0x0D)
-[UART TX @ 60000] '\n'
+[UART TX @ 70000] ''  (0x0D)
+[UART TX @ 70000] '\n'
 [UART TX @ 70000] ''  (0x0D)
 [UART TX @ 70000] '\n'
 [UART TX @ 70000] ';'  (0x3B)
@@ -357,7 +357,7 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 110000] ','  (0x2C)
 [UART TX @ 110000] '7'  (0x37)
 [UART TX @ 110000] ''  (0x0D)
-[UART TX @ 110000] '\n'
+[UART TX @ 120000] '\n'
 [UART TX @ 120000] '_'  (0x5F)
 [UART TX @ 120000] 'h'  (0x68)
 [UART TX @ 120000] 'l'  (0x6C)
@@ -461,5 +461,5 @@ _hlif_2_end:
  pop r0
 
 
-Executed 120211 instructions
+Executed 120400 instructions
 CPU halted (self-branch detected)

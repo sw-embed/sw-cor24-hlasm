@@ -1,8 +1,8 @@
-Assembled 17383 bytes
+Assembled 17659 bytes
 Loaded 29 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d24_nested_named_include_main.bin' at 0x090000
 Loaded 43 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d24_nested_named_include_mid.bin' at 0x081000
 Loaded 13 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d24_nested_named_include_tail.bin' at 0x081100
-Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-21346.cfg' at 0x07F000
+Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-21886.cfg' at 0x07F000
 Running (speed: max IPS, time limit: 10s)...
 
 [UART TX @ 40000] 'm'  (0x6D)
@@ -60,21 +60,21 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 60000] ':'  (0x3A)
 [UART TX @ 60000] ''  (0x0D)
 [UART TX @ 60000] '\n'
-[UART TX @ 63552] ' '  (0x20)
-[UART TX @ 63552] 'b'  (0x62)
-[UART TX @ 63552] 'r'  (0x72)
-[UART TX @ 63552] 'a'  (0x61)
-[UART TX @ 63552] ' '  (0x20)
-[UART TX @ 63552] 'm'  (0x6D)
-[UART TX @ 63552] 'i'  (0x69)
-[UART TX @ 63552] 'd'  (0x64)
-[UART TX @ 63552] '_'  (0x5F)
-[UART TX @ 63552] 'd'  (0x64)
-[UART TX @ 63552] 'o'  (0x6F)
-[UART TX @ 63552] 'n'  (0x6E)
-[UART TX @ 63552] 'e'  (0x65)
-[UART TX @ 63552] ''  (0x0D)
-[UART TX @ 63552] '\n'
+[UART TX @ 63741] ' '  (0x20)
+[UART TX @ 63741] 'b'  (0x62)
+[UART TX @ 63741] 'r'  (0x72)
+[UART TX @ 63741] 'a'  (0x61)
+[UART TX @ 63741] ' '  (0x20)
+[UART TX @ 63741] 'm'  (0x6D)
+[UART TX @ 63741] 'i'  (0x69)
+[UART TX @ 63741] 'd'  (0x64)
+[UART TX @ 63741] '_'  (0x5F)
+[UART TX @ 63741] 'd'  (0x64)
+[UART TX @ 63741] 'o'  (0x6F)
+[UART TX @ 63741] 'n'  (0x6E)
+[UART TX @ 63741] 'e'  (0x65)
+[UART TX @ 63741] ''  (0x0D)
+[UART TX @ 63741] '\n'
 
 UART output: mid_entry:
 tail:
@@ -85,5 +85,5 @@ _h:
  bra mid_done
 
 
-Executed 63552 instructions
+Executed 63741 instructions
 CPU halted (self-branch detected)

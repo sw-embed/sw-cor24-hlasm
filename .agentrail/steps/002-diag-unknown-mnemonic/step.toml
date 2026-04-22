@@ -1,6 +1,6 @@
 number = 2
 slug = "diag-unknown-mnemonic"
-status = "pending"
+status = "in-progress"
 description = "Wire the pass-through / unknown-mnemonic path into HLDIAG (from the diag-base..."
 role = "production"
 context_files = []

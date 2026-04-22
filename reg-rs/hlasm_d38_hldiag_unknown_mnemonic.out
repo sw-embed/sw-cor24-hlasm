@@ -1,0 +1,10 @@
+UART output: ; Demo 38: HLDIAG warns on unknown mnemonic at pass-through
+ add r0,1
+; !! hlasm: unknown mnemonic 'frobnicate' at src0:4
+ frobnicate r0
+ nop
+; !! hlasm: HLDIAG active at src0:5
+
+
+Executed 62372 instructions
+CPU halted (self-branch detected)

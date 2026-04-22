@@ -650,6 +650,9 @@ _ml_skipkw_near:
 	jmp	(r1)
 
 _ml_nf5:
+	la	r0,_hldiag_check_unknown_mnemonic
+	jal	r1,(r0)
+
 	lw	r0,0(fp)
 	push	r0
 	la	r0,_emit_line
@@ -10302,6 +10305,178 @@ _emit_hldiag_banner_if_enabled:
 	pop	fp
 	jmp	(r1)
 
+; _hldiag_warn_unknown_mnemonic: Emit an HLDIAG warning for an unknown mnemonic.
+; Arg on stack: token_ptr (null-terminated name currently in _parse_name_buf).
+; No-op when HLDIAG is off.
+_hldiag_warn_unknown_mnemonic:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r0,_hldiag_enabled
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hwum_ret
+
+	la	r0,_hldiag_prefix_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_unknown_mn_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_quote_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_at_src_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,_hldiag_src_id
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_colon_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,_hldiag_line_no
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+_hwum_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _hldiag_check_unknown_mnemonic: At pass-through, warn when the line's
+; first mnemonic-position token is not a known COR24 mnemonic. Skips
+; blanks, comments, '.'-prefixed raw directives, and pure labels. Uses
+; _parse_name_buf (786576) as scratch; safe because the line has already
+; been dispatched past any hlasm-owned directive path.
+_hldiag_check_unknown_mnemonic:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r0,_hldiag_enabled
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hcum_ret
+
+	la	r2,786432
+
+_hcum_skipws:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_hcum_ret
+	lc	r1,32
+	ceq	r0,r1
+	brt	_hcum_ws_adv
+	lc	r1,9
+	ceq	r0,r1
+	brf	_hcum_got_start
+
+_hcum_ws_adv:
+	add	r2,1
+	bra	_hcum_skipws
+
+_hcum_got_start:
+	lbu	r0,0(r2)
+	lc	r1,59
+	ceq	r0,r1
+	brt	_hcum_ret
+	lc	r1,35
+	ceq	r0,r1
+	brt	_hcum_ret
+	lc	r1,46
+	ceq	r0,r1
+	brt	_hcum_ret
+
+	push	r2
+	la	r0,_copy_ident_token
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+
+	la	r1,786576
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_hcum_ret
+
+_hcum_after_ws:
+	lbu	r0,0(r2)
+	lc	r1,32
+	ceq	r0,r1
+	brt	_hcum_after_ws_adv
+	lc	r1,9
+	ceq	r0,r1
+	brt	_hcum_after_ws_adv
+	bra	_hcum_after_check
+
+_hcum_after_ws_adv:
+	add	r2,1
+	bra	_hcum_after_ws
+
+_hcum_after_check:
+	lc	r1,58
+	ceq	r0,r1
+	brt	_hcum_ret
+
+	la	r1,786576
+	la	r0,_mn_table
+	push	r1
+	push	r0
+	la	r0,_lookup
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	_hcum_ret
+
+	la	r0,786576
+	push	r0
+	la	r0,_hldiag_warn_unknown_mnemonic
+	jal	r1,(r0)
+	add	sp,3
+
+_hcum_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; --- Buffers ---
 _id_buf:
 	.byte 0, 0, 0, 0, 0, 0, 0, 0
@@ -10791,3 +10966,9 @@ _hldiag_colon_txt:
 
 _hldiag_banner_msg:
 	.byte	72,76,68,73,65,71,32,97,99,116,105,118,101,0
+
+_hldiag_unknown_mn_txt:
+	.byte	117,110,107,110,111,119,110,32,109,110,101,109,111,110,105,99,32,39,0
+
+_hldiag_quote_txt:
+	.byte	39,0
