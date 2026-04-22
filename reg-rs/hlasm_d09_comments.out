@@ -1,4 +1,4 @@
-Assembled 17659 bytes
+Assembled 18254 bytes
 Loaded 84 bytes from 'demos/d09_comments.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -104,5 +104,5 @@ halt:
  bra halt
 
 
-Executed 60111 instructions
+Executed 60141 instructions
 CPU halted (self-branch detected)

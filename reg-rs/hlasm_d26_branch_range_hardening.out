@@ -1,4 +1,4 @@
-Assembled 17659 bytes
+Assembled 18254 bytes
 Loaded 261 bytes from 'demos/d26_branch_range_hardening.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -479,49 +479,49 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 140000] 'p'  (0x70)
 [UART TX @ 140000] ''  (0x0D)
 [UART TX @ 140000] '\n'
-[UART TX @ 146541] ' '  (0x20)
-[UART TX @ 146541] 'a'  (0x61)
-[UART TX @ 146541] 'd'  (0x64)
-[UART TX @ 146541] 'd'  (0x64)
-[UART TX @ 146541] ' '  (0x20)
-[UART TX @ 146541] 'r'  (0x72)
-[UART TX @ 146541] '0'  (0x30)
-[UART TX @ 146541] ','  (0x2C)
-[UART TX @ 146541] '1'  (0x31)
-[UART TX @ 146541] ''  (0x0D)
-[UART TX @ 146541] '\n'
-[UART TX @ 146541] ' '  (0x20)
-[UART TX @ 146541] 'j'  (0x6A)
-[UART TX @ 146541] 'm'  (0x6D)
-[UART TX @ 146541] 'p'  (0x70)
-[UART TX @ 146541] ' '  (0x20)
-[UART TX @ 146541] '_'  (0x5F)
-[UART TX @ 146541] 'h'  (0x68)
-[UART TX @ 146541] 'l'  (0x6C)
-[UART TX @ 146541] 'd'  (0x64)
-[UART TX @ 146541] 'o'  (0x6F)
-[UART TX @ 146541] '_'  (0x5F)
-[UART TX @ 146541] '4'  (0x34)
-[UART TX @ 146541] '_'  (0x5F)
-[UART TX @ 146541] 't'  (0x74)
-[UART TX @ 146541] 'o'  (0x6F)
-[UART TX @ 146541] 'p'  (0x70)
-[UART TX @ 146541] ''  (0x0D)
-[UART TX @ 146541] '\n'
-[UART TX @ 146541] '_'  (0x5F)
-[UART TX @ 146541] 'h'  (0x68)
-[UART TX @ 146541] 'l'  (0x6C)
-[UART TX @ 146541] 'd'  (0x64)
-[UART TX @ 146541] 'o'  (0x6F)
-[UART TX @ 146541] '_'  (0x5F)
-[UART TX @ 146541] '5'  (0x35)
-[UART TX @ 146541] '_'  (0x5F)
-[UART TX @ 146541] 'e'  (0x65)
-[UART TX @ 146541] 'n'  (0x6E)
-[UART TX @ 146541] 'd'  (0x64)
-[UART TX @ 146541] ':'  (0x3A)
-[UART TX @ 146541] ''  (0x0D)
-[UART TX @ 146541] '\n'
+[UART TX @ 146571] ' '  (0x20)
+[UART TX @ 146571] 'a'  (0x61)
+[UART TX @ 146571] 'd'  (0x64)
+[UART TX @ 146571] 'd'  (0x64)
+[UART TX @ 146571] ' '  (0x20)
+[UART TX @ 146571] 'r'  (0x72)
+[UART TX @ 146571] '0'  (0x30)
+[UART TX @ 146571] ','  (0x2C)
+[UART TX @ 146571] '1'  (0x31)
+[UART TX @ 146571] ''  (0x0D)
+[UART TX @ 146571] '\n'
+[UART TX @ 146571] ' '  (0x20)
+[UART TX @ 146571] 'j'  (0x6A)
+[UART TX @ 146571] 'm'  (0x6D)
+[UART TX @ 146571] 'p'  (0x70)
+[UART TX @ 146571] ' '  (0x20)
+[UART TX @ 146571] '_'  (0x5F)
+[UART TX @ 146571] 'h'  (0x68)
+[UART TX @ 146571] 'l'  (0x6C)
+[UART TX @ 146571] 'd'  (0x64)
+[UART TX @ 146571] 'o'  (0x6F)
+[UART TX @ 146571] '_'  (0x5F)
+[UART TX @ 146571] '4'  (0x34)
+[UART TX @ 146571] '_'  (0x5F)
+[UART TX @ 146571] 't'  (0x74)
+[UART TX @ 146571] 'o'  (0x6F)
+[UART TX @ 146571] 'p'  (0x70)
+[UART TX @ 146571] ''  (0x0D)
+[UART TX @ 146571] '\n'
+[UART TX @ 146571] '_'  (0x5F)
+[UART TX @ 146571] 'h'  (0x68)
+[UART TX @ 146571] 'l'  (0x6C)
+[UART TX @ 146571] 'd'  (0x64)
+[UART TX @ 146571] 'o'  (0x6F)
+[UART TX @ 146571] '_'  (0x5F)
+[UART TX @ 146571] '5'  (0x35)
+[UART TX @ 146571] '_'  (0x5F)
+[UART TX @ 146571] 'e'  (0x65)
+[UART TX @ 146571] 'n'  (0x6E)
+[UART TX @ 146571] 'd'  (0x64)
+[UART TX @ 146571] ':'  (0x3A)
+[UART TX @ 146571] ''  (0x0D)
+[UART TX @ 146571] '\n'
 
 UART output: ; Demo 26: structured control flow emits long-range-safe lowering
  push r2
@@ -570,5 +570,5 @@ _hldo_6_skip:
 _hldo_5_end:
 
 
-Executed 146541 instructions
+Executed 146571 instructions
 CPU halted (self-branch detected)

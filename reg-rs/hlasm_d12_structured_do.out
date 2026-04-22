@@ -1,4 +1,4 @@
-Assembled 17659 bytes
+Assembled 18254 bytes
 Loaded 124 bytes from 'demos/d12_structured_do.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -244,49 +244,49 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 70000] 'p'  (0x70)
 [UART TX @ 70000] ''  (0x0D)
 [UART TX @ 70000] '\n'
-[UART TX @ 73949] ' '  (0x20)
-[UART TX @ 73949] 'a'  (0x61)
-[UART TX @ 73949] 'd'  (0x64)
-[UART TX @ 73949] 'd'  (0x64)
-[UART TX @ 73949] ' '  (0x20)
-[UART TX @ 73949] 'r'  (0x72)
-[UART TX @ 73949] '2'  (0x32)
-[UART TX @ 73949] ','  (0x2C)
-[UART TX @ 73949] '1'  (0x31)
-[UART TX @ 73949] ''  (0x0D)
-[UART TX @ 73949] '\n'
-[UART TX @ 73949] ' '  (0x20)
-[UART TX @ 73949] 'j'  (0x6A)
-[UART TX @ 73949] 'm'  (0x6D)
-[UART TX @ 73949] 'p'  (0x70)
-[UART TX @ 73949] ' '  (0x20)
-[UART TX @ 73949] '_'  (0x5F)
-[UART TX @ 73949] 'h'  (0x68)
-[UART TX @ 73949] 'l'  (0x6C)
-[UART TX @ 73949] 'd'  (0x64)
-[UART TX @ 73949] 'o'  (0x6F)
-[UART TX @ 73949] '_'  (0x5F)
-[UART TX @ 73949] '4'  (0x34)
-[UART TX @ 73949] '_'  (0x5F)
-[UART TX @ 73949] 't'  (0x74)
-[UART TX @ 73949] 'o'  (0x6F)
-[UART TX @ 73949] 'p'  (0x70)
-[UART TX @ 73949] ''  (0x0D)
-[UART TX @ 73949] '\n'
-[UART TX @ 73949] '_'  (0x5F)
-[UART TX @ 73949] 'h'  (0x68)
-[UART TX @ 73949] 'l'  (0x6C)
-[UART TX @ 73949] 'd'  (0x64)
-[UART TX @ 73949] 'o'  (0x6F)
-[UART TX @ 73949] '_'  (0x5F)
-[UART TX @ 73949] '5'  (0x35)
-[UART TX @ 73949] '_'  (0x5F)
-[UART TX @ 73949] 'e'  (0x65)
-[UART TX @ 73949] 'n'  (0x6E)
-[UART TX @ 73949] 'd'  (0x64)
-[UART TX @ 73949] ':'  (0x3A)
-[UART TX @ 73949] ''  (0x0D)
-[UART TX @ 73949] '\n'
+[UART TX @ 73979] ' '  (0x20)
+[UART TX @ 73979] 'a'  (0x61)
+[UART TX @ 73979] 'd'  (0x64)
+[UART TX @ 73979] 'd'  (0x64)
+[UART TX @ 73979] ' '  (0x20)
+[UART TX @ 73979] 'r'  (0x72)
+[UART TX @ 73979] '2'  (0x32)
+[UART TX @ 73979] ','  (0x2C)
+[UART TX @ 73979] '1'  (0x31)
+[UART TX @ 73979] ''  (0x0D)
+[UART TX @ 73979] '\n'
+[UART TX @ 73979] ' '  (0x20)
+[UART TX @ 73979] 'j'  (0x6A)
+[UART TX @ 73979] 'm'  (0x6D)
+[UART TX @ 73979] 'p'  (0x70)
+[UART TX @ 73979] ' '  (0x20)
+[UART TX @ 73979] '_'  (0x5F)
+[UART TX @ 73979] 'h'  (0x68)
+[UART TX @ 73979] 'l'  (0x6C)
+[UART TX @ 73979] 'd'  (0x64)
+[UART TX @ 73979] 'o'  (0x6F)
+[UART TX @ 73979] '_'  (0x5F)
+[UART TX @ 73979] '4'  (0x34)
+[UART TX @ 73979] '_'  (0x5F)
+[UART TX @ 73979] 't'  (0x74)
+[UART TX @ 73979] 'o'  (0x6F)
+[UART TX @ 73979] 'p'  (0x70)
+[UART TX @ 73979] ''  (0x0D)
+[UART TX @ 73979] '\n'
+[UART TX @ 73979] '_'  (0x5F)
+[UART TX @ 73979] 'h'  (0x68)
+[UART TX @ 73979] 'l'  (0x6C)
+[UART TX @ 73979] 'd'  (0x64)
+[UART TX @ 73979] 'o'  (0x6F)
+[UART TX @ 73979] '_'  (0x5F)
+[UART TX @ 73979] '5'  (0x35)
+[UART TX @ 73979] '_'  (0x5F)
+[UART TX @ 73979] 'e'  (0x65)
+[UART TX @ 73979] 'n'  (0x6E)
+[UART TX @ 73979] 'd'  (0x64)
+[UART TX @ 73979] ':'  (0x3A)
+[UART TX @ 73979] ''  (0x0D)
+[UART TX @ 73979] '\n'
 
 UART output: ; Demo 12: DO/DOEXIT/ITERATE/ENDDO
 _hldo_1_top:
@@ -309,5 +309,5 @@ _hldo_4_top:
 _hldo_5_end:
 
 
-Executed 73949 instructions
+Executed 73979 instructions
 CPU halted (self-branch detected)

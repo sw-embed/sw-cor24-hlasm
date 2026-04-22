@@ -1,4 +1,4 @@
-Assembled 17659 bytes
+Assembled 18254 bytes
 Loaded 106 bytes from 'demos/d07_nested_cond.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -12,5 +12,5 @@ Running (speed: max IPS, time limit: 10s)...
 UART output:  nop
 
 
-Executed 51724 instructions
+Executed 51756 instructions
 CPU halted (self-branch detected)

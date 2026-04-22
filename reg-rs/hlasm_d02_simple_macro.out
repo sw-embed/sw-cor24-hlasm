@@ -1,45 +1,45 @@
-Assembled 17659 bytes
+Assembled 18254 bytes
 Loaded 36 bytes from 'demos/d02_simple_macro.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
-[UART TX @ 49331] ' '  (0x20)
-[UART TX @ 49331] 'a'  (0x61)
-[UART TX @ 49331] 'd'  (0x64)
-[UART TX @ 49331] 'd'  (0x64)
-[UART TX @ 49331] ' '  (0x20)
-[UART TX @ 49331] 'r'  (0x72)
-[UART TX @ 49331] '0'  (0x30)
-[UART TX @ 49331] ','  (0x2C)
-[UART TX @ 49331] '1'  (0x31)
-[UART TX @ 49331] ''  (0x0D)
-[UART TX @ 49331] '\n'
-[UART TX @ 49331] ' '  (0x20)
-[UART TX @ 49331] 'a'  (0x61)
-[UART TX @ 49331] 'd'  (0x64)
-[UART TX @ 49331] 'd'  (0x64)
-[UART TX @ 49331] ' '  (0x20)
-[UART TX @ 49331] 'r'  (0x72)
-[UART TX @ 49331] '0'  (0x30)
-[UART TX @ 49331] ','  (0x2C)
-[UART TX @ 49331] '1'  (0x31)
-[UART TX @ 49331] ''  (0x0D)
-[UART TX @ 49331] '\n'
-[UART TX @ 49331] ' '  (0x20)
-[UART TX @ 49331] 'a'  (0x61)
-[UART TX @ 49331] 'd'  (0x64)
-[UART TX @ 49331] 'd'  (0x64)
-[UART TX @ 49331] ' '  (0x20)
-[UART TX @ 49331] 'r'  (0x72)
-[UART TX @ 49331] '0'  (0x30)
-[UART TX @ 49331] ','  (0x2C)
-[UART TX @ 49331] '1'  (0x31)
-[UART TX @ 49331] ''  (0x0D)
-[UART TX @ 49331] '\n'
+[UART TX @ 49361] ' '  (0x20)
+[UART TX @ 49361] 'a'  (0x61)
+[UART TX @ 49361] 'd'  (0x64)
+[UART TX @ 49361] 'd'  (0x64)
+[UART TX @ 49361] ' '  (0x20)
+[UART TX @ 49361] 'r'  (0x72)
+[UART TX @ 49361] '0'  (0x30)
+[UART TX @ 49361] ','  (0x2C)
+[UART TX @ 49361] '1'  (0x31)
+[UART TX @ 49361] ''  (0x0D)
+[UART TX @ 49361] '\n'
+[UART TX @ 49361] ' '  (0x20)
+[UART TX @ 49361] 'a'  (0x61)
+[UART TX @ 49361] 'd'  (0x64)
+[UART TX @ 49361] 'd'  (0x64)
+[UART TX @ 49361] ' '  (0x20)
+[UART TX @ 49361] 'r'  (0x72)
+[UART TX @ 49361] '0'  (0x30)
+[UART TX @ 49361] ','  (0x2C)
+[UART TX @ 49361] '1'  (0x31)
+[UART TX @ 49361] ''  (0x0D)
+[UART TX @ 49361] '\n'
+[UART TX @ 49361] ' '  (0x20)
+[UART TX @ 49361] 'a'  (0x61)
+[UART TX @ 49361] 'd'  (0x64)
+[UART TX @ 49361] 'd'  (0x64)
+[UART TX @ 49361] ' '  (0x20)
+[UART TX @ 49361] 'r'  (0x72)
+[UART TX @ 49361] '0'  (0x30)
+[UART TX @ 49361] ','  (0x2C)
+[UART TX @ 49361] '1'  (0x31)
+[UART TX @ 49361] ''  (0x0D)
+[UART TX @ 49361] '\n'
 
 UART output:  add r0,1
  add r0,1
  add r0,1
 
 
-Executed 49331 instructions
+Executed 49361 instructions
 CPU halted (self-branch detected)

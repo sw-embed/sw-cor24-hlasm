@@ -1,0 +1,5 @@
+; Demo 39: HLDIAG warns on SET/EQU expressions that reference an undefined symbol
+SET HLDIAG,1
+SET FLAG,10
+SET RESULT,FLAG+UNDEF
+ nop

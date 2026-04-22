@@ -1,4 +1,4 @@
-Assembled 17659 bytes
+Assembled 18254 bytes
 Loaded 325 bytes from 'demos/d30_structured_annotations.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -1300,51 +1300,51 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 160000] 'E'  (0x45)
 [UART TX @ 160000] ''  (0x0D)
 [UART TX @ 160000] '\n'
-[UART TX @ 166599] ' '  (0x20)
-[UART TX @ 166599] ' '  (0x20)
-[UART TX @ 166599] 's'  (0x73)
-[UART TX @ 166599] 'u'  (0x75)
-[UART TX @ 166599] 'b'  (0x62)
-[UART TX @ 166599] ' '  (0x20)
-[UART TX @ 166599] 'r'  (0x72)
-[UART TX @ 166599] '2'  (0x32)
-[UART TX @ 166599] ','  (0x2C)
-[UART TX @ 166599] 'r'  (0x72)
-[UART TX @ 166599] '2'  (0x32)
-[UART TX @ 166599] ''  (0x0D)
-[UART TX @ 166599] '\n'
-[UART TX @ 166599] '_'  (0x5F)
-[UART TX @ 166599] 'h'  (0x68)
-[UART TX @ 166599] 'l'  (0x6C)
-[UART TX @ 166599] 's'  (0x73)
-[UART TX @ 166599] 'e'  (0x65)
-[UART TX @ 166599] 'l'  (0x6C)
-[UART TX @ 166599] '_'  (0x5F)
-[UART TX @ 166599] '1'  (0x31)
-[UART TX @ 166599] '2'  (0x32)
-[UART TX @ 166599] '_'  (0x5F)
-[UART TX @ 166599] 'e'  (0x65)
-[UART TX @ 166599] 'n'  (0x6E)
-[UART TX @ 166599] 'd'  (0x64)
-[UART TX @ 166599] ':'  (0x3A)
-[UART TX @ 166599] ''  (0x0D)
-[UART TX @ 166599] '\n'
-[UART TX @ 166599] ';'  (0x3B)
-[UART TX @ 166599] ' '  (0x20)
-[UART TX @ 166599] 'H'  (0x48)
-[UART TX @ 166599] 'L'  (0x4C)
-[UART TX @ 166599] 'A'  (0x41)
-[UART TX @ 166599] 'S'  (0x53)
-[UART TX @ 166599] 'M'  (0x4D)
-[UART TX @ 166599] ' '  (0x20)
-[UART TX @ 166599] 'E'  (0x45)
-[UART TX @ 166599] 'N'  (0x4E)
-[UART TX @ 166599] 'D'  (0x44)
-[UART TX @ 166599] 'S'  (0x53)
-[UART TX @ 166599] 'E'  (0x45)
-[UART TX @ 166599] 'L'  (0x4C)
-[UART TX @ 166599] ''  (0x0D)
-[UART TX @ 166599] '\n'
+[UART TX @ 166630] ' '  (0x20)
+[UART TX @ 166630] ' '  (0x20)
+[UART TX @ 166630] 's'  (0x73)
+[UART TX @ 166630] 'u'  (0x75)
+[UART TX @ 166630] 'b'  (0x62)
+[UART TX @ 166630] ' '  (0x20)
+[UART TX @ 166630] 'r'  (0x72)
+[UART TX @ 166630] '2'  (0x32)
+[UART TX @ 166630] ','  (0x2C)
+[UART TX @ 166630] 'r'  (0x72)
+[UART TX @ 166630] '2'  (0x32)
+[UART TX @ 166630] ''  (0x0D)
+[UART TX @ 166630] '\n'
+[UART TX @ 166630] '_'  (0x5F)
+[UART TX @ 166630] 'h'  (0x68)
+[UART TX @ 166630] 'l'  (0x6C)
+[UART TX @ 166630] 's'  (0x73)
+[UART TX @ 166630] 'e'  (0x65)
+[UART TX @ 166630] 'l'  (0x6C)
+[UART TX @ 166630] '_'  (0x5F)
+[UART TX @ 166630] '1'  (0x31)
+[UART TX @ 166630] '2'  (0x32)
+[UART TX @ 166630] '_'  (0x5F)
+[UART TX @ 166630] 'e'  (0x65)
+[UART TX @ 166630] 'n'  (0x6E)
+[UART TX @ 166630] 'd'  (0x64)
+[UART TX @ 166630] ':'  (0x3A)
+[UART TX @ 166630] ''  (0x0D)
+[UART TX @ 166630] '\n'
+[UART TX @ 166630] ';'  (0x3B)
+[UART TX @ 166630] ' '  (0x20)
+[UART TX @ 166630] 'H'  (0x48)
+[UART TX @ 166630] 'L'  (0x4C)
+[UART TX @ 166630] 'A'  (0x41)
+[UART TX @ 166630] 'S'  (0x53)
+[UART TX @ 166630] 'M'  (0x4D)
+[UART TX @ 166630] ' '  (0x20)
+[UART TX @ 166630] 'E'  (0x45)
+[UART TX @ 166630] 'N'  (0x4E)
+[UART TX @ 166630] 'D'  (0x44)
+[UART TX @ 166630] 'S'  (0x53)
+[UART TX @ 166630] 'E'  (0x45)
+[UART TX @ 166630] 'L'  (0x4C)
+[UART TX @ 166630] ''  (0x0D)
+[UART TX @ 166630] '\n'
 
 UART output: ; Demo 30: opt-in structured lowering annotations
 
@@ -1437,5 +1437,5 @@ _hlsel_12_end:
 ; HLASM ENDSEL
 
 
-Executed 166599 instructions
+Executed 166630 instructions
 CPU halted (self-branch detected)

@@ -1,0 +1,8 @@
+UART output: ; Demo 39: HLDIAG warns on SET/EQU expressions that reference an undefined symbol
+ nop
+; !! hlasm: HLDIAG active at src0:5
+; !! hlasm: undefined symbol 'UNDEF' at src0:5
+
+
+Executed 60135 instructions
+CPU halted (self-branch detected)

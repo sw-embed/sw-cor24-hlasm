@@ -1,6 +1,6 @@
 number = 3
 slug = "diag-undefined-symbols"
-status = "pending"
+status = "in-progress"
 description = "Extend the existing xref/symbol-table infrastructure (HLXREF) with an opt-in ..."
 role = "production"
 context_files = []

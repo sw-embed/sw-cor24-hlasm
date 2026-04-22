@@ -1,4 +1,4 @@
-Assembled 17659 bytes
+Assembled 18254 bytes
 Loaded 24 bytes from 'reg-rs/s4_comments.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -17,21 +17,21 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 40000] 't'  (0x74)
 [UART TX @ 40000] ''  (0x0D)
 [UART TX @ 40000] '\n'
-[UART TX @ 40793] 'a'  (0x61)
-[UART TX @ 40793] 'd'  (0x64)
-[UART TX @ 40793] 'd'  (0x64)
-[UART TX @ 40793] ' '  (0x20)
-[UART TX @ 40793] 'r'  (0x72)
-[UART TX @ 40793] '0'  (0x30)
-[UART TX @ 40793] ','  (0x2C)
-[UART TX @ 40793] 'r'  (0x72)
-[UART TX @ 40793] '1'  (0x31)
-[UART TX @ 40793] ''  (0x0D)
-[UART TX @ 40793] '\n'
+[UART TX @ 40823] 'a'  (0x61)
+[UART TX @ 40823] 'd'  (0x64)
+[UART TX @ 40823] 'd'  (0x64)
+[UART TX @ 40823] ' '  (0x20)
+[UART TX @ 40823] 'r'  (0x72)
+[UART TX @ 40823] '0'  (0x30)
+[UART TX @ 40823] ','  (0x2C)
+[UART TX @ 40823] 'r'  (0x72)
+[UART TX @ 40823] '1'  (0x31)
+[UART TX @ 40823] ''  (0x0D)
+[UART TX @ 40823] '\n'
 
 UART output: nop ; comment
 add r0,r1
 
 
-Executed 40793 instructions
+Executed 40823 instructions
 CPU halted (self-branch detected)

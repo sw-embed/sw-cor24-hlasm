@@ -1,4 +1,4 @@
-Assembled 17659 bytes
+Assembled 18254 bytes
 Loaded 20 bytes from 'reg-rs/s4_simple.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -14,22 +14,22 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 40000] ':'  (0x3A)
 [UART TX @ 40000] ''  (0x0D)
 [UART TX @ 40000] '\n'
-[UART TX @ 43294] ' '  (0x20)
-[UART TX @ 43294] 'b'  (0x62)
-[UART TX @ 43294] 'r'  (0x72)
-[UART TX @ 43294] 'a'  (0x61)
-[UART TX @ 43294] ' '  (0x20)
-[UART TX @ 43294] 'h'  (0x68)
-[UART TX @ 43294] 'a'  (0x61)
-[UART TX @ 43294] 'l'  (0x6C)
-[UART TX @ 43294] 't'  (0x74)
-[UART TX @ 43294] ''  (0x0D)
-[UART TX @ 43294] '\n'
+[UART TX @ 43324] ' '  (0x20)
+[UART TX @ 43324] 'b'  (0x62)
+[UART TX @ 43324] 'r'  (0x72)
+[UART TX @ 43324] 'a'  (0x61)
+[UART TX @ 43324] ' '  (0x20)
+[UART TX @ 43324] 'h'  (0x68)
+[UART TX @ 43324] 'a'  (0x61)
+[UART TX @ 43324] 'l'  (0x6C)
+[UART TX @ 43324] 't'  (0x74)
+[UART TX @ 43324] ''  (0x0D)
+[UART TX @ 43324] '\n'
 
 UART output: nop
 halt:
  bra halt
 
 
-Executed 43294 instructions
+Executed 43324 instructions
 CPU halted (self-branch detected)

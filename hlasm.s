@@ -66,6 +66,9 @@ _ml_loop:
 	la	r0,_emit_hldiag_banner_if_enabled
 	jal	r1,(r0)
 
+	la	r0,_emit_hldiag_undef_report
+	jal	r1,(r0)
+
 	la	r0,_emit_xref_report
 	jal	r1,(r0)
 
@@ -6109,6 +6112,8 @@ _eep_sym:
 	bra	_eep_apply
 
 _eep_zero_term:
+	la	r0,_hldiag_mark_undef_current
+	jal	r1,(r0)
 	la	r0,0
 	sw	r0,-9(fp)
 
@@ -6119,7 +6124,8 @@ _eep_apply:
 	lw	r1,-3(fp)
 	add	r1,r0
 	sw	r1,-3(fp)
-	bra	_eep_loop
+	la	r1,_eep_loop
+	jmp	(r1)
 
 _eep_plus:
 	la	r0,1
@@ -10477,6 +10483,195 @@ _hcum_ret:
 	pop	fp
 	jmp	(r1)
 
+; _hldiag_mark_undef_current: Record _parse_name_buf (786576) in the undef-
+; symbol table if HLDIAG is on and the name is not already there. Invoked
+; from _eval_expr_ptr's _eep_zero_term (symbol-lookup miss) so SET/EQU
+; expressions that silently resolve undefined terms to 0 get captured.
+_hldiag_mark_undef_current:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+
+	la	r0,_hldiag_enabled
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hmu_ret
+
+	la	r0,0
+	sw	r0,-3(fp)
+
+_hmu_loop:
+	la	r1,_xref_undef_count
+	lw	r1,0(r1)
+	lw	r0,-3(fp)
+	clu	r0,r1
+	brf	_hmu_add
+
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_mul16
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_xref_undef_names
+	add	r1,r0
+	push	r1
+	la	r1,786576
+	push	r1
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	_hmu_ret
+
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+	bra	_hmu_loop
+
+_hmu_add:
+	la	r1,_xref_undef_count
+	lw	r0,0(r1)
+	lc	r2,16
+	clu	r0,r2
+	brf	_hmu_ret
+
+	push	r0
+	la	r0,_mul16
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_xref_undef_names
+	add	r1,r0
+	la	r2,786576
+	lc	r0,16
+	sw	r0,-3(fp)
+
+_hmu_copy:
+	lbu	r0,0(r2)
+	sb	r0,0(r1)
+	add	r1,1
+	add	r2,1
+	lw	r0,-3(fp)
+	add	r0,-1
+	sw	r0,-3(fp)
+	ceq	r0,z
+	brt	_hmu_inc
+	bra	_hmu_copy
+
+_hmu_inc:
+	la	r1,_xref_undef_count
+	lw	r0,0(r1)
+	add	r0,1
+	sw	r0,0(r1)
+
+_hmu_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _emit_hldiag_undef_report: When HLDIAG is on, emit a warning per collected
+; undefined-symbol name as an end-of-run pass. No output if the table is
+; empty or HLDIAG is off.
+_emit_hldiag_undef_report:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+
+	la	r0,_hldiag_enabled
+	jal	r1,(r0)
+	ceq	r0,z
+	brf	_ehur_continue
+	la	r1,_ehur_ret
+	jmp	(r1)
+
+_ehur_continue:
+	la	r0,0
+	sw	r0,-3(fp)
+
+_ehur_loop:
+	la	r1,_xref_undef_count
+	lw	r1,0(r1)
+	lw	r0,-3(fp)
+	clu	r0,r1
+	brf	_ehur_ret
+
+	la	r0,_hldiag_prefix_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_undef_sym_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_mul16
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_xref_undef_names
+	add	r1,r0
+	push	r1
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_quote_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_at_src_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,_hldiag_src_id
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_colon_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,_hldiag_line_no
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+	la	r1,_ehur_loop
+	jmp	(r1)
+
+_ehur_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; --- Buffers ---
 _id_buf:
 	.byte 0, 0, 0, 0, 0, 0, 0, 0
@@ -10972,3 +11167,27 @@ _hldiag_unknown_mn_txt:
 
 _hldiag_quote_txt:
 	.byte	39,0
+
+_hldiag_undef_sym_txt:
+	.byte	117,110,100,101,102,105,110,101,100,32,115,121,109,98,111,108,32,39,0
+
+_xref_undef_count:
+	.word	0
+
+_xref_undef_names:
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

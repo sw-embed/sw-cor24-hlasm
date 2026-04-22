@@ -1,4 +1,4 @@
-Assembled 17659 bytes
+Assembled 18254 bytes
 Loaded 346 bytes from 'demos/d32_literals_and_data.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -423,30 +423,30 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 120000] ','  (0x2C)
 [UART TX @ 120000] '0'  (0x30)
 [UART TX @ 120000] ','  (0x2C)
-[UART TX @ 124865] '0'  (0x30)
-[UART TX @ 124865] ','  (0x2C)
-[UART TX @ 124865] '0'  (0x30)
-[UART TX @ 124865] ''  (0x0D)
-[UART TX @ 124865] '\n'
-[UART TX @ 124865] '.'  (0x2E)
-[UART TX @ 124865] 'b'  (0x62)
-[UART TX @ 124865] 'y'  (0x79)
-[UART TX @ 124865] 't'  (0x74)
-[UART TX @ 124865] 'e'  (0x65)
-[UART TX @ 124865] ' '  (0x20)
-[UART TX @ 124865] '1'  (0x31)
-[UART TX @ 124865] '2'  (0x32)
-[UART TX @ 124865] '7'  (0x37)
-[UART TX @ 124865] ','  (0x2C)
-[UART TX @ 124865] '1'  (0x31)
-[UART TX @ 124865] '2'  (0x32)
-[UART TX @ 124865] '7'  (0x37)
-[UART TX @ 124865] ','  (0x2C)
-[UART TX @ 124865] '1'  (0x31)
-[UART TX @ 124865] '2'  (0x32)
-[UART TX @ 124865] '7'  (0x37)
-[UART TX @ 124865] ''  (0x0D)
-[UART TX @ 124865] '\n'
+[UART TX @ 124901] '0'  (0x30)
+[UART TX @ 124901] ','  (0x2C)
+[UART TX @ 124901] '0'  (0x30)
+[UART TX @ 124901] ''  (0x0D)
+[UART TX @ 124901] '\n'
+[UART TX @ 124901] '.'  (0x2E)
+[UART TX @ 124901] 'b'  (0x62)
+[UART TX @ 124901] 'y'  (0x79)
+[UART TX @ 124901] 't'  (0x74)
+[UART TX @ 124901] 'e'  (0x65)
+[UART TX @ 124901] ' '  (0x20)
+[UART TX @ 124901] '1'  (0x31)
+[UART TX @ 124901] '2'  (0x32)
+[UART TX @ 124901] '7'  (0x37)
+[UART TX @ 124901] ','  (0x2C)
+[UART TX @ 124901] '1'  (0x31)
+[UART TX @ 124901] '2'  (0x32)
+[UART TX @ 124901] '7'  (0x37)
+[UART TX @ 124901] ','  (0x2C)
+[UART TX @ 124901] '1'  (0x31)
+[UART TX @ 124901] '2'  (0x32)
+[UART TX @ 124901] '7'  (0x37)
+[UART TX @ 124901] ''  (0x0D)
+[UART TX @ 124901] '\n'
 
 UART output: ; Demo 32: richer literals and lowered data directives
 
@@ -483,5 +483,5 @@ _hlsel_4_end:
 .byte 127,127,127
 
 
-Executed 124865 instructions
+Executed 124901 instructions
 CPU halted (self-branch detected)

@@ -1,4 +1,4 @@
-Assembled 17659 bytes
+Assembled 18254 bytes
 Loaded 80 bytes from 'demos/d37_hldiag_baseline.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -67,49 +67,49 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 50000] '1'  (0x31)
 [UART TX @ 50000] ''  (0x0D)
 [UART TX @ 50000] '\n'
-[UART TX @ 52900] ' '  (0x20)
-[UART TX @ 52900] 'n'  (0x6E)
-[UART TX @ 52900] 'o'  (0x6F)
-[UART TX @ 52900] 'p'  (0x70)
-[UART TX @ 52900] ''  (0x0D)
-[UART TX @ 52900] '\n'
-[UART TX @ 52900] ';'  (0x3B)
-[UART TX @ 52900] ' '  (0x20)
-[UART TX @ 52900] '!'  (0x21)
-[UART TX @ 52900] '!'  (0x21)
-[UART TX @ 52900] ' '  (0x20)
-[UART TX @ 52900] 'h'  (0x68)
-[UART TX @ 52900] 'l'  (0x6C)
-[UART TX @ 52900] 'a'  (0x61)
-[UART TX @ 52900] 's'  (0x73)
-[UART TX @ 52900] 'm'  (0x6D)
-[UART TX @ 52900] ':'  (0x3A)
-[UART TX @ 52900] ' '  (0x20)
-[UART TX @ 52900] 'H'  (0x48)
-[UART TX @ 52900] 'L'  (0x4C)
-[UART TX @ 52900] 'D'  (0x44)
-[UART TX @ 52900] 'I'  (0x49)
-[UART TX @ 52900] 'A'  (0x41)
-[UART TX @ 52900] 'G'  (0x47)
-[UART TX @ 52900] ' '  (0x20)
-[UART TX @ 52900] 'a'  (0x61)
-[UART TX @ 52900] 'c'  (0x63)
-[UART TX @ 52900] 't'  (0x74)
-[UART TX @ 52900] 'i'  (0x69)
-[UART TX @ 52900] 'v'  (0x76)
-[UART TX @ 52900] 'e'  (0x65)
-[UART TX @ 52900] ' '  (0x20)
-[UART TX @ 52900] 'a'  (0x61)
-[UART TX @ 52900] 't'  (0x74)
-[UART TX @ 52900] ' '  (0x20)
-[UART TX @ 52900] 's'  (0x73)
-[UART TX @ 52900] 'r'  (0x72)
-[UART TX @ 52900] 'c'  (0x63)
-[UART TX @ 52900] '0'  (0x30)
-[UART TX @ 52900] ':'  (0x3A)
-[UART TX @ 52900] '4'  (0x34)
-[UART TX @ 52900] ''  (0x0D)
-[UART TX @ 52900] '\n'
+[UART TX @ 52937] ' '  (0x20)
+[UART TX @ 52937] 'n'  (0x6E)
+[UART TX @ 52937] 'o'  (0x6F)
+[UART TX @ 52937] 'p'  (0x70)
+[UART TX @ 52937] ''  (0x0D)
+[UART TX @ 52937] '\n'
+[UART TX @ 52937] ';'  (0x3B)
+[UART TX @ 52937] ' '  (0x20)
+[UART TX @ 52937] '!'  (0x21)
+[UART TX @ 52937] '!'  (0x21)
+[UART TX @ 52937] ' '  (0x20)
+[UART TX @ 52937] 'h'  (0x68)
+[UART TX @ 52937] 'l'  (0x6C)
+[UART TX @ 52937] 'a'  (0x61)
+[UART TX @ 52937] 's'  (0x73)
+[UART TX @ 52937] 'm'  (0x6D)
+[UART TX @ 52937] ':'  (0x3A)
+[UART TX @ 52937] ' '  (0x20)
+[UART TX @ 52937] 'H'  (0x48)
+[UART TX @ 52937] 'L'  (0x4C)
+[UART TX @ 52937] 'D'  (0x44)
+[UART TX @ 52937] 'I'  (0x49)
+[UART TX @ 52937] 'A'  (0x41)
+[UART TX @ 52937] 'G'  (0x47)
+[UART TX @ 52937] ' '  (0x20)
+[UART TX @ 52937] 'a'  (0x61)
+[UART TX @ 52937] 'c'  (0x63)
+[UART TX @ 52937] 't'  (0x74)
+[UART TX @ 52937] 'i'  (0x69)
+[UART TX @ 52937] 'v'  (0x76)
+[UART TX @ 52937] 'e'  (0x65)
+[UART TX @ 52937] ' '  (0x20)
+[UART TX @ 52937] 'a'  (0x61)
+[UART TX @ 52937] 't'  (0x74)
+[UART TX @ 52937] ' '  (0x20)
+[UART TX @ 52937] 's'  (0x73)
+[UART TX @ 52937] 'r'  (0x72)
+[UART TX @ 52937] 'c'  (0x63)
+[UART TX @ 52937] '0'  (0x30)
+[UART TX @ 52937] ':'  (0x3A)
+[UART TX @ 52937] '4'  (0x34)
+[UART TX @ 52937] ''  (0x0D)
+[UART TX @ 52937] '\n'
 
 UART output: ; Demo 37: opt-in HLDIAG diagnostic channel baseline
  add r0,1
@@ -117,5 +117,5 @@ UART output: ; Demo 37: opt-in HLDIAG diagnostic channel baseline
 ; !! hlasm: HLDIAG active at src0:4
 
 
-Executed 52900 instructions
+Executed 52937 instructions
 CPU halted (self-branch detected)

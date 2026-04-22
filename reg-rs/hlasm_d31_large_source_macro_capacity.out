@@ -1,4 +1,4 @@
-Assembled 17659 bytes
+Assembled 18254 bytes
 Loaded 5284 bytes from 'demos/d31_large_source_macro_capacity.bin' at 0x080000
 Running (speed: max IPS, time limit: 10s)...
 
@@ -5033,26 +5033,26 @@ Running (speed: max IPS, time limit: 10s)...
 [UART TX @ 820000] '2'  (0x32)
 [UART TX @ 820000] ''  (0x0D)
 [UART TX @ 820000] '\n'
-[UART TX @ 822018] ' '  (0x20)
-[UART TX @ 822018] '.'  (0x2E)
-[UART TX @ 822018] 'b'  (0x62)
-[UART TX @ 822018] 'y'  (0x79)
-[UART TX @ 822018] 't'  (0x74)
-[UART TX @ 822018] 'e'  (0x65)
-[UART TX @ 822018] ' '  (0x20)
-[UART TX @ 822018] '3'  (0x33)
-[UART TX @ 822018] '2'  (0x32)
-[UART TX @ 822018] ','  (0x2C)
-[UART TX @ 822018] '3'  (0x33)
-[UART TX @ 822018] '2'  (0x32)
-[UART TX @ 822018] ','  (0x2C)
-[UART TX @ 822018] '3'  (0x33)
-[UART TX @ 822018] '2'  (0x32)
-[UART TX @ 822018] ','  (0x2C)
-[UART TX @ 822018] '3'  (0x33)
-[UART TX @ 822018] '2'  (0x32)
-[UART TX @ 822018] ''  (0x0D)
-[UART TX @ 822018] '\n'
+[UART TX @ 822048] ' '  (0x20)
+[UART TX @ 822048] '.'  (0x2E)
+[UART TX @ 822048] 'b'  (0x62)
+[UART TX @ 822048] 'y'  (0x79)
+[UART TX @ 822048] 't'  (0x74)
+[UART TX @ 822048] 'e'  (0x65)
+[UART TX @ 822048] ' '  (0x20)
+[UART TX @ 822048] '3'  (0x33)
+[UART TX @ 822048] '2'  (0x32)
+[UART TX @ 822048] ','  (0x2C)
+[UART TX @ 822048] '3'  (0x33)
+[UART TX @ 822048] '2'  (0x32)
+[UART TX @ 822048] ','  (0x2C)
+[UART TX @ 822048] '3'  (0x33)
+[UART TX @ 822048] '2'  (0x32)
+[UART TX @ 822048] ','  (0x2C)
+[UART TX @ 822048] '3'  (0x33)
+[UART TX @ 822048] '2'  (0x32)
+[UART TX @ 822048] ''  (0x0D)
+[UART TX @ 822048] '\n'
 
 UART output: ; Demo 31: large source window plus many macro definitions
 ; filler 0001 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -5146,5 +5146,5 @@ _tail_ok:
  .byte 32,32,32,32
 
 
-Executed 822018 instructions
+Executed 822048 instructions
 CPU halted (self-branch detected)
