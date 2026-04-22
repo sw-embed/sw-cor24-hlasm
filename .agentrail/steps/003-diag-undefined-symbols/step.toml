@@ -1,8 +1,9 @@
 number = 3
 slug = "diag-undefined-symbols"
-status = "in-progress"
+status = "completed"
 description = "Extend the existing xref/symbol-table infrastructure (HLXREF) with an opt-in ..."
 role = "production"
 context_files = []
 created_at = "2026-04-21T08:22:49"
-commits = []
+completed_at = "2026-04-22T09:51:57"
+commits = ["3a4c674f4b017aa41125c859e89cd90c50a0f026"]

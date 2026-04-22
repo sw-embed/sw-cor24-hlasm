@@ -1,0 +1,1 @@
+Extended HLXREF rails with a 16-entry _xref_undef_names set populated at _eval_expr_ptr's _eep_zero_term; _emit_hldiag_undef_report emits '; !! hlasm: undefined symbol <name> at src<id>:<line>' per distinct name when HLDIAG is on. Added demo d39.
