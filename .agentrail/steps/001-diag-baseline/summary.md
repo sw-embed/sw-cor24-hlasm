@@ -1,0 +1,1 @@
+Wired SET HLDIAG,1 as a fourth opt-in switch with a cached switch word, added per-source line and src-id counters to _read_line, added central _hldiag_warn routine emitting '; !! hlasm: <msg> at src<id>:<line>', and proved the end-to-end path with d37.

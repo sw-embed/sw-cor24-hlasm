@@ -1,0 +1,8 @@
+number = 4
+slug = "diag-structured-block-health"
+status = "pending"
+description = "When HLDIAG is on, surface structural warnings from the structured-control-fl..."
+role = "production"
+context_files = []
+created_at = "2026-04-21T08:22:56"
+commits = []

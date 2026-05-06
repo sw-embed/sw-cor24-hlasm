@@ -13,6 +13,15 @@ Part of the [COR24 ecosystem](https://github.com/sw-embed/sw-cor24-project).
 - Conditional assembly: IFDEF, IFEQ, SET symbols
 - Plain assembly passthrough
 
+## Opt-in Source Switches
+
+All four are off by default and activated by a `SET <name>,1` line anywhere in the source:
+
+- `SET HLANN,1` -- annotate structured control-flow lowering with `; HLASM ...` comments
+- `SET HLIST,1` -- emit listing comments for COPY members, macro definitions, macro expansions, and selected consumed directives
+- `SET HLXREF,1` -- emit a compact end-of-run cross-reference section
+- `SET HLDIAG,1` -- activate the diagnostic channel (`; !! hlasm: <msg> at src<id>:<line>`)
+
 ## Pipeline
 
 ```

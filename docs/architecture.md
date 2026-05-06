@@ -77,6 +77,21 @@ causes the runtime to emit a compact xref section for copied members, macro
 definitions, macro expansion counts, and assembly-time symbols observed through
 `SET`/`EQU`.
 
+A third opt-in layer is the diagnostic channel: `SET HLDIAG,1` activates a
+central warn routine that emits `; !! hlasm: <msg> at src<id>:<line>` lines
+into the generated stream when callers invoke it. The read path maintains a
+per-source line counter and a monotonic source-id counter, so any future
+diagnostic can locate itself relative to the input. The first real caller
+runs at the pass-through path: if the line's mnemonic-position token is not
+a known COR24 mnemonic (checked against the existing `_mn_table`), a macro,
+a hlasm-owned directive, a label, a comment, or a `.`-prefixed raw directive,
+hlasm emits an `unknown mnemonic '<token>'` warning and still passes the
+original line through unchanged. A second real caller is piggybacked on the
+HLXREF rails: whenever `_eval_expr_ptr` looks up a `SET`/`EQU` term that
+isn't in the symbol table, the name is recorded in a small undef-names set
+(capped at 16) and an `undefined symbol '<name>'` warning is emitted once
+per distinct name as part of the end-of-run pass.
+
 ## Components
 
 ### Scanner

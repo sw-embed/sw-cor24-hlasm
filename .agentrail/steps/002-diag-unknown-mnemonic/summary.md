@@ -1,0 +1,1 @@
+Hooked the pass-through path into HLDIAG: _hldiag_check_unknown_mnemonic extracts the mnemonic-position token and looks it up in the existing _mn_table; unknown tokens (not macros, not labels, not comments, not '.' directives) produce a warning, and the original line is still emitted verbatim. Added demo d38 with a deliberately misspelled mnemonic.

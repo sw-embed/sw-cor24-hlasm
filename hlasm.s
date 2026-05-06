@@ -63,6 +63,12 @@ _ml_loop:
 	ceq	r0,z
 	brt	_ml_go
 
+	la	r0,_emit_hldiag_banner_if_enabled
+	jal	r1,(r0)
+
+	la	r0,_emit_hldiag_undef_report
+	jal	r1,(r0)
+
 	la	r0,_emit_xref_report
 	jal	r1,(r0)
 
@@ -647,6 +653,9 @@ _ml_skipkw_near:
 	jmp	(r1)
 
 _ml_nf5:
+	la	r0,_hldiag_check_unknown_mnemonic
+	jal	r1,(r0)
+
 	lw	r0,0(fp)
 	push	r0
 	la	r0,_emit_line
@@ -933,7 +942,7 @@ _rl_eof_switch:
 	pop	r1
 
 	ceq	r0,z
-	brf	_rl_loop
+	brf	_rl_switched_src
 
 	push	r1
 	la	r0,_advance_src_desc
@@ -941,7 +950,7 @@ _rl_eof_switch:
 	pop	r1
 
 	ceq	r0,z
-	brf	_rl_loop
+	brf	_rl_switched_src
 
 	lw	r0,0(fp)
 	ceq	r0,z
@@ -951,11 +960,25 @@ _rl_eof_switch:
 	sb	r0,0(r1)
 	bra	_rl_ret_len
 
+_rl_switched_src:
+	la	r2,_hldiag_src_id
+	lw	r0,0(r2)
+	add	r0,1
+	sw	r0,0(r2)
+	la	r2,_hldiag_line_no
+	la	r0,0
+	sw	r0,0(r2)
+	bra	_rl_loop
+
 _rl_eol:
 	la	r0,0
 	sb	r0,0(r1)
 
 _rl_ret_len:
+	la	r2,_hldiag_line_no
+	lw	r0,0(r2)
+	add	r0,1
+	sw	r0,0(r2)
 	lw	r0,0(fp)
 	mov	sp,fp
 	pop	r2
@@ -6089,6 +6112,8 @@ _eep_sym:
 	bra	_eep_apply
 
 _eep_zero_term:
+	la	r0,_hldiag_mark_undef_current
+	jal	r1,(r0)
 	la	r0,0
 	sw	r0,-9(fp)
 
@@ -6099,7 +6124,8 @@ _eep_apply:
 	lw	r1,-3(fp)
 	add	r1,r0
 	sw	r1,-3(fp)
-	bra	_eep_loop
+	la	r1,_eep_loop
+	jmp	(r1)
 
 _eep_plus:
 	la	r0,1
@@ -7189,6 +7215,12 @@ _ss_name_restored:
 	lw	r0,-3(fp)
 	push	r0
 	la	r0,_xref_update_switch_current
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_hldiag_update_switch_current
 	jal	r1,(r0)
 	add	sp,3
 
@@ -10147,6 +10179,499 @@ _mul12:
 	pop	fp
 	jmp	(r1)
 
+; _hldiag_enabled: Return 1 if SET HLDIAG,<nonzero> is active.
+; Reads cached _hldiag_switch (maintained by _hldiag_update_switch_current)
+; to avoid the 6-character limit of the generic _parse_name_buf lookup path.
+_hldiag_enabled:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r1,_hldiag_switch
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_hde_off
+	la	r0,1
+	bra	_hde_ret
+
+_hde_off:
+	la	r0,0
+
+_hde_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _hldiag_update_switch_current: Update HLDIAG switch when current _parse_name_buf
+; matches HLDIAG. Called from _set_symbol so SET HLDIAG,<val> toggles the cache.
+; Arg on stack: value
+_hldiag_update_switch_current:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_hldiag_symbol_name
+	push	r0
+	la	r0,786576
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_hdus_ret
+
+	la	r1,_hldiag_switch
+	lw	r0,6(fp)
+	sw	r0,0(r1)
+
+_hdus_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _hldiag_warn: Emit "; !! hlasm: <msg> at src<id>:<line>" when HLDIAG is on.
+; Arg on stack: msg_ptr (null-terminated ASCII)
+; No-op when HLDIAG is off.
+_hldiag_warn:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r0,_hldiag_enabled
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hdw_ret
+
+	la	r0,_hldiag_prefix_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_at_src_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,_hldiag_src_id
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_colon_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,_hldiag_line_no
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+_hdw_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _emit_hldiag_banner_if_enabled: Smoke usage proving the HLDIAG channel works.
+; Fires once at end-of-run, only when HLDIAG is active.
+_emit_hldiag_banner_if_enabled:
+	push	fp
+	push	r1
+	mov	fp,sp
+
+	la	r0,_hldiag_banner_msg
+	push	r0
+	la	r0,_hldiag_warn
+	jal	r1,(r0)
+	add	sp,3
+
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _hldiag_warn_unknown_mnemonic: Emit an HLDIAG warning for an unknown mnemonic.
+; Arg on stack: token_ptr (null-terminated name currently in _parse_name_buf).
+; No-op when HLDIAG is off.
+_hldiag_warn_unknown_mnemonic:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r0,_hldiag_enabled
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hwum_ret
+
+	la	r0,_hldiag_prefix_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_unknown_mn_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_quote_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_at_src_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,_hldiag_src_id
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_colon_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,_hldiag_line_no
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+_hwum_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _hldiag_check_unknown_mnemonic: At pass-through, warn when the line's
+; first mnemonic-position token is not a known COR24 mnemonic. Skips
+; blanks, comments, '.'-prefixed raw directives, and pure labels. Uses
+; _parse_name_buf (786576) as scratch; safe because the line has already
+; been dispatched past any hlasm-owned directive path.
+_hldiag_check_unknown_mnemonic:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	la	r0,_hldiag_enabled
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hcum_ret
+
+	la	r2,786432
+
+_hcum_skipws:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_hcum_ret
+	lc	r1,32
+	ceq	r0,r1
+	brt	_hcum_ws_adv
+	lc	r1,9
+	ceq	r0,r1
+	brf	_hcum_got_start
+
+_hcum_ws_adv:
+	add	r2,1
+	bra	_hcum_skipws
+
+_hcum_got_start:
+	lbu	r0,0(r2)
+	lc	r1,59
+	ceq	r0,r1
+	brt	_hcum_ret
+	lc	r1,35
+	ceq	r0,r1
+	brt	_hcum_ret
+	lc	r1,46
+	ceq	r0,r1
+	brt	_hcum_ret
+
+	push	r2
+	la	r0,_copy_ident_token
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+
+	la	r1,786576
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_hcum_ret
+
+_hcum_after_ws:
+	lbu	r0,0(r2)
+	lc	r1,32
+	ceq	r0,r1
+	brt	_hcum_after_ws_adv
+	lc	r1,9
+	ceq	r0,r1
+	brt	_hcum_after_ws_adv
+	bra	_hcum_after_check
+
+_hcum_after_ws_adv:
+	add	r2,1
+	bra	_hcum_after_ws
+
+_hcum_after_check:
+	lc	r1,58
+	ceq	r0,r1
+	brt	_hcum_ret
+
+	la	r1,786576
+	la	r0,_mn_table
+	push	r1
+	push	r0
+	la	r0,_lookup
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	_hcum_ret
+
+	la	r0,786576
+	push	r0
+	la	r0,_hldiag_warn_unknown_mnemonic
+	jal	r1,(r0)
+	add	sp,3
+
+_hcum_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _hldiag_mark_undef_current: Record _parse_name_buf (786576) in the undef-
+; symbol table if HLDIAG is on and the name is not already there. Invoked
+; from _eval_expr_ptr's _eep_zero_term (symbol-lookup miss) so SET/EQU
+; expressions that silently resolve undefined terms to 0 get captured.
+_hldiag_mark_undef_current:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+
+	la	r0,_hldiag_enabled
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_hmu_ret
+
+	la	r0,0
+	sw	r0,-3(fp)
+
+_hmu_loop:
+	la	r1,_xref_undef_count
+	lw	r1,0(r1)
+	lw	r0,-3(fp)
+	clu	r0,r1
+	brf	_hmu_add
+
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_mul16
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_xref_undef_names
+	add	r1,r0
+	push	r1
+	la	r1,786576
+	push	r1
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	_hmu_ret
+
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+	bra	_hmu_loop
+
+_hmu_add:
+	la	r1,_xref_undef_count
+	lw	r0,0(r1)
+	lc	r2,16
+	clu	r0,r2
+	brf	_hmu_ret
+
+	push	r0
+	la	r0,_mul16
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_xref_undef_names
+	add	r1,r0
+	la	r2,786576
+	lc	r0,16
+	sw	r0,-3(fp)
+
+_hmu_copy:
+	lbu	r0,0(r2)
+	sb	r0,0(r1)
+	add	r1,1
+	add	r2,1
+	lw	r0,-3(fp)
+	add	r0,-1
+	sw	r0,-3(fp)
+	ceq	r0,z
+	brt	_hmu_inc
+	bra	_hmu_copy
+
+_hmu_inc:
+	la	r1,_xref_undef_count
+	lw	r0,0(r1)
+	add	r0,1
+	sw	r0,0(r1)
+
+_hmu_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _emit_hldiag_undef_report: When HLDIAG is on, emit a warning per collected
+; undefined-symbol name as an end-of-run pass. No output if the table is
+; empty or HLDIAG is off.
+_emit_hldiag_undef_report:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-3
+
+	la	r0,_hldiag_enabled
+	jal	r1,(r0)
+	ceq	r0,z
+	brf	_ehur_continue
+	la	r1,_ehur_ret
+	jmp	(r1)
+
+_ehur_continue:
+	la	r0,0
+	sw	r0,-3(fp)
+
+_ehur_loop:
+	la	r1,_xref_undef_count
+	lw	r1,0(r1)
+	lw	r0,-3(fp)
+	clu	r0,r1
+	brf	_ehur_ret
+
+	la	r0,_hldiag_prefix_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_undef_sym_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_mul16
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_xref_undef_names
+	add	r1,r0
+	push	r1
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_quote_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_at_src_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,_hldiag_src_id
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_hldiag_colon_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r1,_hldiag_line_no
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+	la	r1,_ehur_loop
+	jmp	(r1)
+
+_ehur_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; --- Buffers ---
 _id_buf:
 	.byte 0, 0, 0, 0, 0, 0, 0, 0
@@ -10612,3 +11137,57 @@ _xref_expand_txt:
 
 _xref_symbol_txt:
 	.byte	83,89,77,66,79,76,0
+
+_hldiag_symbol_name:
+	.byte	72,76,68,73,65,71,0
+
+_hldiag_switch:
+	.word	0
+
+_hldiag_line_no:
+	.word	0
+
+_hldiag_src_id:
+	.word	0
+
+_hldiag_prefix_txt:
+	.byte	59,32,33,33,32,104,108,97,115,109,58,32,0
+
+_hldiag_at_src_txt:
+	.byte	32,97,116,32,115,114,99,0
+
+_hldiag_colon_txt:
+	.byte	58,0
+
+_hldiag_banner_msg:
+	.byte	72,76,68,73,65,71,32,97,99,116,105,118,101,0
+
+_hldiag_unknown_mn_txt:
+	.byte	117,110,107,110,111,119,110,32,109,110,101,109,111,110,105,99,32,39,0
+
+_hldiag_quote_txt:
+	.byte	39,0
+
+_hldiag_undef_sym_txt:
+	.byte	117,110,100,101,102,105,110,101,100,32,115,121,109,98,111,108,32,39,0
+
+_xref_undef_count:
+	.word	0
+
+_xref_undef_names:
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
