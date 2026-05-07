@@ -1,4 +1,7 @@
 profile = "default"
-content_hash = "436bd4a3f891018a"
-updated_at = "2026-04-29T11:44:45"
-targets = ["AGENTS.md"]
+content_hash = "99264963c15794b8"
+updated_at = "2026-05-07T09:11:09"
+targets = [
+    "CLAUDE.md",
+    "AGENTS.md",
+]
