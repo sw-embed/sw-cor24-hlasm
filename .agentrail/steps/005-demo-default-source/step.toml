@@ -1,8 +1,9 @@
 number = 5
 slug = "demo-default-source"
-status = "in-progress"
+status = "completed"
 description = "Fix ./demo.sh default mode: it ran hlasm with no source loaded, so there was ..."
 role = "production"
 context_files = []
 created_at = "2026-10-30T09:52:49"
-commits = []
+completed_at = "2026-10-30T09:53:17"
+commits = ["b74df6d5f3d82ea27f1879429d8698fc3b93047c"]

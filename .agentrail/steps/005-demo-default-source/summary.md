@@ -1,0 +1,1 @@
+Fixed ./demo.sh default mode: loads demos/d15_realistic.hlasm, prints input and hlasm output, verifies output assembles via scripts/run-kernel.sh. Found hlasm structured lowering emits 'jmp <label>' which cor24-asm rejects (needs follow-up step).
