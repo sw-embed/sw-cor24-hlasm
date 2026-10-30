@@ -1,4 +1,4 @@
-number = 6
+number = 7
 slug = "branch-relax-pseudos"
 status = "pending"
 description = "Add source-level long-branch pseudo-ops that the user can invoke at specific ..."

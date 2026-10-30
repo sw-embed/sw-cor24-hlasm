@@ -1,4 +1,4 @@
-number = 7
+number = 8
 slug = "diag-branch-distance-warning"
 status = "pending"
 description = "When HLDIAG is on, measure emitted-code distance to each local branch target ..."

@@ -38,9 +38,25 @@ case "${1:-demo}" in
             echo "hlasm.s not yet created."
             exit 1
         fi
-        $RUN -n 5000000 2>&1 | grep "^UART output:" -A 20 | tr '\n' ' ' \
-            | sed -e 's/.*UART output: //' -e 's/Executed.*//' \
-            | sed -e 's/  */ /g' -e 's/^ //;s/ $//'
+        src="demos/d15_realistic.hlasm"
+        work="$(mktemp -d -t hlasm-demo)"
+        trap 'rm -rf "$work"' EXIT
+
+        echo "--- input: $src ---"
+        cat "$src"
+        echo ""
+
+        bash demos/make_bin.sh "$src" "$work/demo.bin" >/dev/null
+        $RUN --load-binary "$work/demo.bin@524288" -n 5000000 -q \
+            2>/dev/null > "$work/demo.s"
+        echo "--- hlasm output ---"
+        cat "$work/demo.s"
+        echo ""
+
+        # Assemble the generated code (and run one instruction) to show the
+        # output is valid COR24 assembly.
+        scripts/run-kernel.sh "$work/demo.s" --speed 0 -n 1 -q >/dev/null 2>&1
+        echo "--- cor24-asm accepts the output ---"
         echo ""
         echo "To run tests: ./demo.sh test"
         ;;

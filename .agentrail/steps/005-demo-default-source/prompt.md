@@ -1,0 +1,1 @@
+Fix ./demo.sh default mode: it ran hlasm with no source loaded, so there was no UART output and the grep pipeline failed under pipefail. Make it load a real demo source, show the input and hlasm's generated assembly, and check that cor24-asm accepts the output.
