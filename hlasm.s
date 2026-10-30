@@ -44,6 +44,9 @@ _main:
 	push	r2
 	mov	fp,sp
 
+	la	r0,_relax_begin_pass
+	jal	r1,(r0)
+
 	la	r0,_init_runtime_arena
 	jal	r1,(r0)
 
@@ -75,6 +78,16 @@ _ml_loop:
 	mov	sp,fp
 	pop	r2
 	pop	fp
+
+	la	r0,_relax_pass
+	lw	r0,0(r0)
+	ceq	r0,z
+	brf	_halt
+	la	r0,_relax_end_pass1
+	jal	r1,(r0)
+	la	r0,_main
+	jmp	(r0)
+
 _halt:
 	bra	_halt
 
@@ -2367,6 +2380,18 @@ _emit_char:
 	mov	fp,sp
 
 	lw	r0,9(fp)
+	la	r2,_relax_pass
+	lw	r2,0(r2)
+	ceq	r2,z
+	brf	_ec_uart
+
+	push	r0
+	la	r0,_relax_size_char
+	jal	r1,(r0)
+	add	sp,3
+	bra	_ec_ret
+
+_ec_uart:
 	la	r2,-65280
 
 _poll:
@@ -2376,6 +2401,7 @@ _poll:
 
 	sb	r0,0(r2)
 
+_ec_ret:
 	mov	sp,fp
 	pop	r2
 	pop	r1
@@ -3005,6 +3031,26 @@ _emit_branch_label:
 	push	r1
 	mov	fp,sp
 
+	lw	r0,12(fp)
+	la	r1,_jmp_txt
+	ceq	r0,r1
+	brf	_ebrl_plain
+	la	r0,_if_label_prefix
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_relaxed_jump
+	jal	r1,(r0)
+	add	sp,9
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+_ebrl_plain:
+
 	lc	r0,32
 	push	r0
 	la	r0,_emit_char
@@ -3058,6 +3104,16 @@ _emit_label_def:
 
 	la	r0,_if_label_prefix
 	push	r0
+	lw	r0,9(fp)
+	push	r0
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_relax_label_def
+	jal	r1,(r0)
+	add	sp,9
+
+	la	r0,_if_label_prefix
+	push	r0
 	la	r0,_emit_strz
 	jal	r1,(r0)
 	add	sp,3
@@ -3094,6 +3150,26 @@ _emit_do_branch_label:
 	push	fp
 	push	r1
 	mov	fp,sp
+
+	lw	r0,12(fp)
+	la	r1,_jmp_txt
+	ceq	r0,r1
+	brf	_edbrl_plain
+	la	r0,_do_label_prefix
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_relaxed_jump
+	jal	r1,(r0)
+	add	sp,9
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+_edbrl_plain:
 
 	lc	r0,32
 	push	r0
@@ -3148,6 +3224,16 @@ _emit_do_label_def:
 
 	la	r0,_do_label_prefix
 	push	r0
+	lw	r0,9(fp)
+	push	r0
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_relax_label_def
+	jal	r1,(r0)
+	add	sp,9
+
+	la	r0,_do_label_prefix
+	push	r0
 	la	r0,_emit_strz
 	jal	r1,(r0)
 	add	sp,3
@@ -3184,6 +3270,26 @@ _emit_select_branch_label:
 	push	fp
 	push	r1
 	mov	fp,sp
+
+	lw	r0,12(fp)
+	la	r1,_jmp_txt
+	ceq	r0,r1
+	brf	_esbrl_plain
+	la	r0,_sel_label_prefix
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_emit_relaxed_jump
+	jal	r1,(r0)
+	add	sp,9
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+_esbrl_plain:
 
 	lc	r0,32
 	push	r0
@@ -3235,6 +3341,16 @@ _emit_select_label_def:
 	push	fp
 	push	r1
 	mov	fp,sp
+
+	la	r0,_sel_label_prefix
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_relax_label_def
+	jal	r1,(r0)
+	add	sp,9
 
 	la	r0,_sel_label_prefix
 	push	r0
@@ -10672,10 +10788,966 @@ _ehur_ret:
 	pop	fp
 	jmp	(r1)
 
+; --- Structured jump relaxation (docs/structured-jump-relaxation.md) ---
+; hlasm runs twice. Pass 1 (_relax_pass = 0) sends output to a line sizer
+; instead of the UART and records label and jump positions; pass 2 restores
+; the mutable data and emits, using bra for jumps whose pass-1 distance fits
+; and push r2 / la r2,L_far / jmp (r2) otherwise.
+; Relax state at 0x0E0000 (917504):
+;   +0 pos  +3 jump count  +6 line length  +16 line buffer (256 bytes)
+;   918528 label_pos[1024]  921600 jump_pos[1024]  924672 jump_tgt[1024]
+;   927744 label_def[1024]  928768 label_far[1024]  929792 jump_far[1024]
+; Data snapshot at 0x0D0000 (851968).
+
+; _relax_begin_pass: Prepare relax state at the start of each pass.
+_relax_begin_pass:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	la	r2,_relax_pass
+	lw	r0,0(r2)
+	ceq	r0,z
+	brf	_rbp_common
+
+	lc	r0,0
+	push	r0
+	la	r0,_relax_snapshot
+	jal	r1,(r0)
+	add	sp,3
+
+	; clear label_def, label_far and jump_far (3072 bytes) a word at a time
+	la	r2,927744
+	la	r1,930816
+	lc	r0,0
+
+_rbp_zero:
+	sw	r0,0(r2)
+	add	r2,3
+	clu	r2,r1
+	brt	_rbp_zero
+
+_rbp_common:
+	la	r2,917504
+	lc	r0,0
+	sw	r0,0(r2)
+	sw	r0,3(r2)
+	sw	r0,6(r2)
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _relax_end_pass1: Decide near/far jumps, restore data, select pass 2.
+_relax_end_pass1:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	la	r0,_relax_resolve
+	jal	r1,(r0)
+
+	lc	r0,1
+	push	r0
+	la	r0,_relax_snapshot
+	jal	r1,(r0)
+	add	sp,3
+
+	la	r2,_relax_pass
+	lc	r0,1
+	sw	r0,0(r2)
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _relax_snapshot: Save (dir 0) or restore (dir 1) the image's mutable data.
+; Arg on stack: dir (9 fp)
+_relax_snapshot:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	la	r0,_const_A
+	push	r0
+	la	r0,_line_is_keyword
+	push	r0
+	la	r0,851968
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_relax_copy
+	jal	r1,(r0)
+	add	sp,12
+
+	la	r0,_id_buf
+	push	r0
+	la	r0,_image_end
+	push	r0
+	la	r0,852992
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_relax_copy
+	jal	r1,(r0)
+	add	sp,12
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _relax_copy: Copy words between an image range and the snapshot area.
+; Args: dir (9 fp), snap ptr (12 fp), image end (15 fp), image begin (18 fp)
+; dir 0: image -> snapshot; dir 1: snapshot -> image.
+_relax_copy:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r1,18(fp)
+	lw	r2,12(fp)
+
+_rcp_loop:
+	lw	r0,15(fp)
+	clu	r1,r0
+	brf	_rcp_ret
+	lw	r0,9(fp)
+	ceq	r0,z
+	brf	_rcp_back
+	lw	r0,0(r1)
+	sw	r0,0(r2)
+	bra	_rcp_next
+
+_rcp_back:
+	lw	r0,0(r2)
+	sw	r0,0(r1)
+
+_rcp_next:
+	add	r1,3
+	add	r2,3
+	bra	_rcp_loop
+
+_rcp_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _rx_addr3: Return base + 3 * index.
+; Args on stack: base (9 fp), index (12 fp)
+_rx_addr3:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r0,12(fp)
+	mov	r2,r0
+	add	r0,r2
+	add	r0,r2
+	lw	r2,9(fp)
+	add	r0,r2
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _relax_size_char: Pass-1 replacement for UART output. Buffers the line and
+; adds its size bound to the position counter at each LF (CR is ignored).
+; Arg on stack: byte value (9 fp)
+_relax_size_char:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r0,9(fp)
+	lc	r2,13
+	ceq	r0,r2
+	brt	_rsc_ret
+	lc	r2,10
+	ceq	r0,r2
+	brt	_rsc_eol
+
+	la	r2,917510
+	lw	r1,0(r2)
+	add	r1,1
+	sw	r1,0(r2)
+	add	r1,-1
+	la	r0,255
+	clu	r1,r0
+	brf	_rsc_ret
+	la	r0,917520
+	add	r0,r1
+	lw	r1,9(fp)
+	sb	r1,0(r0)
+	bra	_rsc_ret
+
+_rsc_eol:
+	la	r0,_relax_size_line
+	jal	r1,(r0)
+	la	r2,917504
+	lw	r1,0(r2)
+	add	r1,r0
+	sw	r1,0(r2)
+	lc	r0,0
+	sw	r0,6(r2)
+
+_rsc_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _relax_size_line: Upper bound on the bytes the buffered line assembles to.
+; Skips a leading "name:" label; comment/empty = 0; .byte = items;
+; .word = 3 * items; .text/.data/.glob* = 0; other directives, quoted data or
+; an overlong line = 256 (forces any spanning jump far); instruction = 4.
+; Returns: r0 = size
+_relax_size_line:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-3
+
+	la	r2,917510
+	lw	r1,0(r2)
+	la	r0,255
+	clu	r1,r0
+	brt	_rsl_fits
+	la	r0,256
+	la	r1,_rsl_ret
+	jmp	(r1)
+
+_rsl_fits:
+	la	r0,917520
+	add	r0,r1
+	lc	r1,0
+	sb	r1,0(r0)
+
+	la	r0,917520
+	push	r0
+	la	r0,_rx_skip_ws
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-3(fp)
+	mov	r2,r0
+
+_rsl_tok:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_rsl_body
+	lc	r1,32
+	ceq	r0,r1
+	brt	_rsl_body
+	lc	r1,9
+	ceq	r0,r1
+	brt	_rsl_body
+	lc	r1,59
+	ceq	r0,r1
+	brt	_rsl_body
+	lc	r1,58
+	ceq	r0,r1
+	brt	_rsl_label
+	add	r2,1
+	bra	_rsl_tok
+
+_rsl_label:
+	add	r2,1
+	push	r2
+	la	r0,_rx_skip_ws
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-3(fp)
+
+_rsl_body:
+	lw	r2,-3(fp)
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_rsl_zero
+	lc	r1,59
+	ceq	r0,r1
+	brt	_rsl_zero
+	lc	r1,46
+	ceq	r0,r1
+	brt	_rsl_dot
+	lc	r0,4
+	la	r1,_rsl_ret
+	jmp	(r1)
+
+_rsl_zero:
+	lc	r0,0
+	la	r1,_rsl_ret
+	jmp	(r1)
+
+_rsl_dot:
+	add	r2,1
+	sw	r2,-3(fp)
+
+	push	r2
+	la	r0,_rx_byte_txt
+	push	r0
+	la	r0,_rx_prefix
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_rsl_not_byte
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_rx_count_items
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_rsl_ret
+	jmp	(r1)
+
+_rsl_not_byte:
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_rx_word_txt
+	push	r0
+	la	r0,_rx_prefix
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_rsl_not_word
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_rx_count_items
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+	add	r0,r2
+	add	r0,r2
+	la	r1,_rsl_ret
+	jmp	(r1)
+
+_rsl_not_word:
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_rx_text_txt
+	push	r0
+	la	r0,_rx_prefix
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	_rsl_zero_far
+
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_rx_data_txt
+	push	r0
+	la	r0,_rx_prefix
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	_rsl_zero_far
+
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_rx_glob_txt
+	push	r0
+	la	r0,_rx_prefix
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	_rsl_zero_far
+
+	la	r0,256
+	bra	_rsl_ret
+
+_rsl_zero_far:
+	lc	r0,0
+
+_rsl_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _rx_skip_ws: Return pointer past spaces and tabs.
+; Arg on stack: ptr (9 fp)
+_rx_skip_ws:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r2,9(fp)
+
+_rsw_loop:
+	lbu	r0,0(r2)
+	lc	r1,32
+	ceq	r0,r1
+	brt	_rsw_adv
+	lc	r1,9
+	ceq	r0,r1
+	brf	_rsw_ret
+
+_rsw_adv:
+	add	r2,1
+	bra	_rsw_loop
+
+_rsw_ret:
+	mov	r0,r2
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _rx_prefix: Return 1 if text starts with the NUL-terminated word.
+; Args on stack: word (9 fp), text (12 fp)
+_rx_prefix:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-3
+
+	lw	r0,12(fp)
+	sw	r0,-3(fp)
+	lw	r2,9(fp)
+
+_rxp_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_rxp_yes
+	lw	r1,-3(fp)
+	lbu	r1,0(r1)
+	ceq	r0,r1
+	brf	_rxp_no
+	lw	r1,-3(fp)
+	add	r1,1
+	sw	r1,-3(fp)
+	add	r2,1
+	bra	_rxp_loop
+
+_rxp_yes:
+	lc	r0,1
+	bra	_rxp_ret
+
+_rxp_no:
+	lc	r0,0
+
+_rxp_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _rx_count_items: Return commas + 1 up to end of line or ';' comment, or
+; 256 if the line holds a quote (string or character data).
+; Arg on stack: ptr (9 fp)
+_rx_count_items:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-3
+
+	lc	r0,1
+	sw	r0,-3(fp)
+	lw	r2,9(fp)
+
+_rci_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_rci_done
+	lc	r1,59
+	ceq	r0,r1
+	brt	_rci_done
+	lc	r1,34
+	ceq	r0,r1
+	brt	_rci_poison
+	lc	r1,39
+	ceq	r0,r1
+	brt	_rci_poison
+	lc	r1,44
+	ceq	r0,r1
+	brf	_rci_next
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+
+_rci_next:
+	add	r2,1
+	bra	_rci_loop
+
+_rci_poison:
+	la	r0,256
+	bra	_rci_ret
+
+_rci_done:
+	lw	r0,-3(fp)
+
+_rci_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _rx_emit_label: Emit "<prefix><id><suffix>" (no newline).
+; Args on stack: suffix (9 fp), id (12 fp), prefix (15 fp)
+_rx_emit_label:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r0,15(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,12(fp)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_relaxed_jump: Emit a structured jump to <prefix><id><suffix>.
+; Near: " bra L". Far: " push r2" / " la r2,L_far" / " jmp (r2)".
+; Pass 1 always emits the far form and records the jump.
+; Args on stack: suffix (9 fp), id (12 fp), prefix (15 fp)
+; Locals: far flag (-3 fp), jump index (-6 fp)
+_emit_relaxed_jump:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-6
+
+	la	r2,917507
+	lw	r1,0(r2)
+	sw	r1,-6(fp)
+	add	r1,1
+	sw	r1,0(r2)
+	add	r1,-1
+
+	lc	r0,1
+	sw	r0,-3(fp)
+
+	la	r2,_relax_pass
+	lw	r2,0(r2)
+	ceq	r2,z
+	brf	_erj_pass2
+
+	la	r0,1024
+	clu	r1,r0
+	brf	_erj_p1_overflow
+	lw	r0,12(fp)
+	la	r2,1024
+	clu	r0,r2
+	brf	_erj_emit_near
+
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,921600
+	push	r0
+	la	r0,_rx_addr3
+	jal	r1,(r0)
+	add	sp,6
+	la	r2,917504
+	lw	r2,0(r2)
+	sw	r2,0(r0)
+
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,924672
+	push	r0
+	la	r0,_rx_addr3
+	jal	r1,(r0)
+	add	sp,6
+	lw	r2,12(fp)
+	sw	r2,0(r0)
+	bra	_erj_emit_near
+
+_erj_p1_overflow:
+	lw	r0,12(fp)
+	la	r2,1024
+	clu	r0,r2
+	brf	_erj_emit_near
+	la	r2,928768
+	add	r2,r0
+	lc	r0,1
+	sb	r0,0(r2)
+	bra	_erj_emit_near
+
+_erj_pass2:
+	la	r0,1024
+	clu	r1,r0
+	brf	_erj_emit_near
+	lw	r0,12(fp)
+	la	r2,1024
+	clu	r0,r2
+	brf	_erj_emit_near
+	la	r2,929792
+	add	r2,r1
+	lbu	r0,0(r2)
+	sw	r0,-3(fp)
+
+_erj_emit_near:
+	lw	r0,-3(fp)
+	ceq	r0,z
+	brf	_erj_far
+
+	la	r0,_rx_bra_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+	lw	r0,15(fp)
+	push	r0
+	lw	r0,12(fp)
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_rx_emit_label
+	jal	r1,(r0)
+	add	sp,9
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+	la	r1,_erj_ret
+	jmp	(r1)
+
+_erj_far:
+	la	r0,_rx_push_r2_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	la	r0,_rx_la_r2_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+	lw	r0,15(fp)
+	push	r0
+	lw	r0,12(fp)
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_rx_emit_label
+	jal	r1,(r0)
+	add	sp,9
+	la	r0,_rx_far_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	la	r0,_rx_jmp_r2_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+_erj_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _relax_label_def: Called before a structured label definition is emitted.
+; Emits the far-entry trampoline " bra L" / "L_far:" / " pop r2" when the
+; label is a far target (pass 1: any non-skip label, as a size bound), then
+; records the label position in pass 1.
+; Args on stack: suffix (9 fp), id (12 fp), prefix (15 fp)
+_relax_label_def:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r0,9(fp)
+	la	r2,_if_skip_suffix
+	ceq	r0,r2
+	brt	_rld_record
+	la	r2,_do_skip_suffix
+	ceq	r0,r2
+	brt	_rld_record
+	la	r2,_sel_skip_suffix
+	ceq	r0,r2
+	brt	_rld_record
+
+	la	r2,_relax_pass
+	lw	r2,0(r2)
+	ceq	r2,z
+	brt	_rld_tramp
+	lw	r0,12(fp)
+	la	r2,1024
+	clu	r0,r2
+	brf	_rld_tramp
+	la	r2,928768
+	add	r2,r0
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_rld_record
+
+_rld_tramp:
+	la	r0,_rx_bra_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+	lw	r0,15(fp)
+	push	r0
+	lw	r0,12(fp)
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_rx_emit_label
+	jal	r1,(r0)
+	add	sp,9
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	lw	r0,15(fp)
+	push	r0
+	lw	r0,12(fp)
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_rx_emit_label
+	jal	r1,(r0)
+	add	sp,9
+	la	r0,_rx_far_def_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	la	r0,_rx_pop_r2_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+_rld_record:
+	la	r2,_relax_pass
+	lw	r2,0(r2)
+	ceq	r2,z
+	brf	_rld_ret
+	lw	r0,12(fp)
+	la	r2,1024
+	clu	r0,r2
+	brf	_rld_ret
+
+	lw	r0,12(fp)
+	push	r0
+	la	r0,918528
+	push	r0
+	la	r0,_rx_addr3
+	jal	r1,(r0)
+	add	sp,6
+	la	r2,917504
+	lw	r2,0(r2)
+	sw	r2,0(r0)
+
+	lw	r0,12(fp)
+	la	r2,927744
+	add	r2,r0
+	lc	r0,1
+	sb	r0,0(r2)
+
+_rld_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _relax_resolve: After pass 1, mark each recorded jump far when its target
+; is undefined, unrecorded, or outside the bra offset range [-128, 127]
+; measured from the jump address + 4; mark far targets for trampolines.
+; Locals: jump index (-3 fp), target id (-6 fp), target pos (-9 fp)
+_relax_resolve:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-9
+
+	lc	r0,0
+	sw	r0,-3(fp)
+
+_rr_loop:
+	lw	r1,-3(fp)
+	la	r2,917507
+	lw	r0,0(r2)
+	clu	r1,r0
+	brt	_rr_in_count
+	la	r0,_rr_ret
+	jmp	(r0)
+
+_rr_in_count:
+	la	r0,1024
+	clu	r1,r0
+	brt	_rr_in_table
+	la	r0,_rr_ret
+	jmp	(r0)
+
+_rr_in_table:
+	push	r1
+	la	r0,924672
+	push	r0
+	la	r0,_rx_addr3
+	jal	r1,(r0)
+	add	sp,6
+	lw	r0,0(r0)
+	sw	r0,-6(fp)
+
+	la	r2,1024
+	clu	r0,r2
+	brf	_rr_far_jump
+
+	la	r2,927744
+	add	r2,r0
+	lbu	r2,0(r2)
+	ceq	r2,z
+	brt	_rr_far_target
+
+	push	r0
+	la	r0,918528
+	push	r0
+	la	r0,_rx_addr3
+	jal	r1,(r0)
+	add	sp,6
+	lw	r0,0(r0)
+	sw	r0,-9(fp)
+
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,921600
+	push	r0
+	la	r0,_rx_addr3
+	jal	r1,(r0)
+	add	sp,6
+	lw	r1,0(r0)
+
+	lw	r0,-9(fp)
+	sub	r0,r1
+	add	r0,124
+	la	r2,256
+	clu	r0,r2
+	brt	_rr_next
+
+_rr_far_target:
+	lw	r0,-6(fp)
+	la	r2,928768
+	add	r2,r0
+	lc	r0,1
+	sb	r0,0(r2)
+
+_rr_far_jump:
+	lw	r0,-3(fp)
+	la	r2,929792
+	add	r2,r0
+	lc	r0,1
+	sb	r0,0(r2)
+
+_rr_next:
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+	la	r0,_rr_loop
+	jmp	(r0)
+
+_rr_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+_rx_bra_txt:
+	.byte	32,98,114,97,32,0
+
+_rx_push_r2_txt:
+	.byte	32,112,117,115,104,32,114,50,0
+
+_rx_pop_r2_txt:
+	.byte	32,112,111,112,32,114,50,0
+
+_rx_la_r2_txt:
+	.byte	32,108,97,32,114,50,44,0
+
+_rx_jmp_r2_txt:
+	.byte	32,106,109,112,32,40,114,50,41,0
+
+_rx_far_txt:
+	.byte	95,102,97,114,0
+
+_rx_far_def_txt:
+	.byte	95,102,97,114,58,0
+
+_rx_byte_txt:
+	.byte	98,121,116,101,0
+
+_rx_word_txt:
+	.byte	119,111,114,100,0
+
+_rx_text_txt:
+	.byte	116,101,120,116,0
+
+_rx_data_txt:
+	.byte	100,97,116,97,0
+
+_rx_glob_txt:
+	.byte	103,108,111,98,0
+
 ; --- Buffers ---
 _id_buf:
 	.byte 0, 0, 0, 0, 0, 0, 0, 0
 	.byte 0, 0, 0, 0, 0, 0, 0, 0
+
+; Relax pass: 0 = sizing pass (output suppressed), 1 = emitting pass.
+; Saved with the data at pass-1 start and restored to 0 before being set to 1.
+_relax_pass:
+	.word	0
 
 ; --- Source descriptor table ---
 ; Main source buffer is loaded at 0x080000.
@@ -11191,3 +12263,6 @@ _xref_undef_names:
 	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
+; Must stay last: end of the mutable data saved between relax passes.
+_image_end:

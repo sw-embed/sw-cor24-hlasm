@@ -19,7 +19,7 @@ case "${1:-demo}" in
     bootstrap)
         echo "=== sw-cor24-hlasm Bootstrap Demo ==="
         echo ""
-        ./build.sh bootstrap bootstrap/hlasm0.sourceset 120000 2>&1 \
+        ./build.sh bootstrap bootstrap/hlasm0.sourceset 460000 2>&1 \
             | grep "^UART output:" -A 20 | tr '\n' ' ' \
             | sed -e 's/.*UART output: //' -e 's/Executed.*//' \
             | sed -e 's/  */ /g' -e 's/^ //;s/ $//'

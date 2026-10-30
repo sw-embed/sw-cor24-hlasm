@@ -1,32 +1,32 @@
-Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.dLujXgpsDp/hlasm.lgo
+Loaded 19847 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.lWxUysLXIU/hlasm.lgo
 Loaded 20 bytes from 'reg-rs/s4_simple.bin' at 0x080000
-[UART TX @ 40000] 'n'  (0x6E)
-[UART TX @ 40000] 'o'  (0x6F)
-[UART TX @ 40000] 'p'  (0x70)
-[UART TX @ 40000] ''  (0x0D)
-[UART TX @ 40000] '\n'
-[UART TX @ 40000] 'h'  (0x68)
-[UART TX @ 40000] 'a'  (0x61)
-[UART TX @ 40000] 'l'  (0x6C)
-[UART TX @ 40000] 't'  (0x74)
-[UART TX @ 40000] ':'  (0x3A)
-[UART TX @ 40000] ''  (0x0D)
-[UART TX @ 40000] '\n'
-[UART TX @ 43324] ' '  (0x20)
-[UART TX @ 43324] 'b'  (0x62)
-[UART TX @ 43324] 'r'  (0x72)
-[UART TX @ 43324] 'a'  (0x61)
-[UART TX @ 43324] ' '  (0x20)
-[UART TX @ 43324] 'h'  (0x68)
-[UART TX @ 43324] 'a'  (0x61)
-[UART TX @ 43324] 'l'  (0x6C)
-[UART TX @ 43324] 't'  (0x74)
-[UART TX @ 43324] ''  (0x0D)
-[UART TX @ 43324] '\n'
+[UART TX @ 110000] 'n'  (0x6E)
+[UART TX @ 110000] 'o'  (0x6F)
+[UART TX @ 110000] 'p'  (0x70)
+[UART TX @ 110000] ''  (0x0D)
+[UART TX @ 110000] '\n'
+[UART TX @ 116862] 'h'  (0x68)
+[UART TX @ 116862] 'a'  (0x61)
+[UART TX @ 116862] 'l'  (0x6C)
+[UART TX @ 116862] 't'  (0x74)
+[UART TX @ 116862] ':'  (0x3A)
+[UART TX @ 116862] ''  (0x0D)
+[UART TX @ 116862] '\n'
+[UART TX @ 116862] ' '  (0x20)
+[UART TX @ 116862] 'b'  (0x62)
+[UART TX @ 116862] 'r'  (0x72)
+[UART TX @ 116862] 'a'  (0x61)
+[UART TX @ 116862] ' '  (0x20)
+[UART TX @ 116862] 'h'  (0x68)
+[UART TX @ 116862] 'a'  (0x61)
+[UART TX @ 116862] 'l'  (0x6C)
+[UART TX @ 116862] 't'  (0x74)
+[UART TX @ 116862] ''  (0x0D)
+[UART TX @ 116862] '\n'
 
 UART output: nop
 halt:
  bra halt
 
 
-Executed 43324 instructions
+Executed 116862 instructions

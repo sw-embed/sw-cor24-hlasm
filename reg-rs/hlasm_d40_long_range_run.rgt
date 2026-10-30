@@ -1,0 +1,4 @@
+command = "bash -c 'scripts/run-kernel.sh <(scripts/run-kernel.sh hlasm.s --load-binary demos/d40_long_range_jumps.bin@524288 --speed 0 -n 3500000 -q 2>/dev/null) --speed 0 -n 10000 -q 2>&1'"
+timeout = 30
+exit_code = 0
+desc = "Demo 40 assembled with cor24-asm and run on cor24-emu (prints r0 r1; 32 once DOEXIT exits on a true condition)"

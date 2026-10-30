@@ -1,6 +1,6 @@
 number = 1
 slug = "structured-jmp-relaxation"
-status = "pending"
+status = "in-progress"
 description = "Implement docs/structured-jump-relaxation.md in hlasm.s: two-pass run (pass 1..."
 role = "production"
 context_files = []

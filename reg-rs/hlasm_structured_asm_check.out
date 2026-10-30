@@ -1,0 +1,22 @@
+d11_structured_if: errors
+  Line 16: sub r0,r0 not supported
+d12_structured_do: errors
+  Line 11: Undefined label '_body'
+d13_structured_select: errors
+  Line 22: sub r0,r0 not supported
+  Line 34: sub r2,r2 not supported
+d26_branch_range_hardening: errors
+  Line 29: ceq r2,r1 not supported
+d29_control_flow_integration: errors
+  Line 39: sub r2,r2 not supported
+d30_structured_annotations: errors
+  Line 21: sub r0,r0 not supported
+  Line 92: sub r2,r2 not supported
+d32_literals_and_data: errors
+  Line 13: xor r0,r0 not supported
+  Line 18: Invalid lc operands
+  Line 24: Invalid shl operands
+  Line 27: Invalid srl operands
+d35_listing_xref: ok
+d36_structured_elseif_no_else: ok
+d40_long_range_jumps: ok

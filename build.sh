@@ -38,7 +38,7 @@ run() {
 
 bootstrap_run() {
     local sourceset="${2:-bootstrap/hlasm0.sourceset}"
-    local max_insns="${3:-120000}"
+    local max_insns="${3:-460000}"
 
     build
     echo ""

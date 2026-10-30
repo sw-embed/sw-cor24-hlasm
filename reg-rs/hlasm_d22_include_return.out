@@ -1,39 +1,39 @@
-Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.wQpdIJDB1t/hlasm.lgo
+Loaded 19847 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.a09VRegtvl/hlasm.lgo
 Loaded 33 bytes from 'demos/d22_include_return_main.bin' at 0x090000
 Loaded 33 bytes from 'demos/d22_include_return_extra.bin' at 0x081000
 Loaded 27 bytes from 'reg-rs/s14_include_return.cfg' at 0x07F000
-[UART TX @ 50000] 't'  (0x74)
-[UART TX @ 50000] 'a'  (0x61)
-[UART TX @ 50000] 'i'  (0x69)
-[UART TX @ 50000] 'l'  (0x6C)
-[UART TX @ 50000] ':'  (0x3A)
-[UART TX @ 50000] ''  (0x0D)
-[UART TX @ 50000] '\n'
-[UART TX @ 50000] ' '  (0x20)
-[UART TX @ 50000] 'b'  (0x62)
-[UART TX @ 50000] 'r'  (0x72)
-[UART TX @ 50000] 'a'  (0x61)
-[UART TX @ 50000] ' '  (0x20)
-[UART TX @ 50000] '_'  (0x5F)
-[UART TX @ 50000] 'h'  (0x68)
-[UART TX @ 50000] ''  (0x0D)
-[UART TX @ 50000] '\n'
-[UART TX @ 50000] '_'  (0x5F)
-[UART TX @ 50000] 'h'  (0x68)
-[UART TX @ 50000] ':'  (0x3A)
-[UART TX @ 50000] ''  (0x0D)
-[UART TX @ 50000] '\n'
-[UART TX @ 53831] ' '  (0x20)
-[UART TX @ 53831] 'b'  (0x62)
-[UART TX @ 53831] 'r'  (0x72)
-[UART TX @ 53831] 'a'  (0x61)
-[UART TX @ 53831] ' '  (0x20)
-[UART TX @ 53831] 't'  (0x74)
-[UART TX @ 53831] 'a'  (0x61)
-[UART TX @ 53831] 'i'  (0x69)
-[UART TX @ 53831] 'l'  (0x6C)
-[UART TX @ 53831] ''  (0x0D)
-[UART TX @ 53831] '\n'
+[UART TX @ 130000] 't'  (0x74)
+[UART TX @ 130000] 'a'  (0x61)
+[UART TX @ 130000] 'i'  (0x69)
+[UART TX @ 130000] 'l'  (0x6C)
+[UART TX @ 130000] ':'  (0x3A)
+[UART TX @ 130000] ''  (0x0D)
+[UART TX @ 130000] '\n'
+[UART TX @ 130000] ' '  (0x20)
+[UART TX @ 130000] 'b'  (0x62)
+[UART TX @ 130000] 'r'  (0x72)
+[UART TX @ 130000] 'a'  (0x61)
+[UART TX @ 130000] ' '  (0x20)
+[UART TX @ 130000] '_'  (0x5F)
+[UART TX @ 130000] 'h'  (0x68)
+[UART TX @ 130000] ''  (0x0D)
+[UART TX @ 130000] '\n'
+[UART TX @ 138321] '_'  (0x5F)
+[UART TX @ 138321] 'h'  (0x68)
+[UART TX @ 138321] ':'  (0x3A)
+[UART TX @ 138321] ''  (0x0D)
+[UART TX @ 138321] '\n'
+[UART TX @ 138321] ' '  (0x20)
+[UART TX @ 138321] 'b'  (0x62)
+[UART TX @ 138321] 'r'  (0x72)
+[UART TX @ 138321] 'a'  (0x61)
+[UART TX @ 138321] ' '  (0x20)
+[UART TX @ 138321] 't'  (0x74)
+[UART TX @ 138321] 'a'  (0x61)
+[UART TX @ 138321] 'i'  (0x69)
+[UART TX @ 138321] 'l'  (0x6C)
+[UART TX @ 138321] ''  (0x0D)
+[UART TX @ 138321] '\n'
 
 UART output: tail:
  bra _h
@@ -41,4 +41,4 @@ _h:
  bra tail
 
 
-Executed 53831 instructions
+Executed 138321 instructions

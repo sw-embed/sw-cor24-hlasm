@@ -1,4 +1,4 @@
-command = "bash reg-rs/run_bootstrap_sourceset.sh demos/d36_xref_report.sourceset 220000 2>&1"
+command = "bash reg-rs/run_bootstrap_sourceset.sh demos/d36_xref_report.sourceset 760000 2>&1"
 timeout = 15
 preprocess = "grep -A 220 '^UART output:' || true"
 exit_code = 0

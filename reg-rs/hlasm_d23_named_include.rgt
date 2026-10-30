@@ -1,4 +1,4 @@
-command = "bash reg-rs/run_bootstrap_sourceset.sh demos/d23_named_include.sourceset 120000 2>&1"
+command = "bash reg-rs/run_bootstrap_sourceset.sh demos/d23_named_include.sourceset 460000 2>&1"
 timeout = 15
 preprocess = "grep -A 100 '^UART output:' || true"
 exit_code = 0

@@ -1,4 +1,4 @@
-command = "bash reg-rs/run_bootstrap_sourceset.sh demos/d34_copy_macro_library.sourceset 140000 2>&1"
+command = "bash reg-rs/run_bootstrap_sourceset.sh demos/d34_copy_macro_library.sourceset 520000 2>&1"
 timeout = 15
 preprocess = "grep -A 140 '^UART output:' || true"
 exit_code = 0

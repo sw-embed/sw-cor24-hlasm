@@ -10,7 +10,7 @@ demo:
     ./demo.sh
 
 bootstrap:
-    ./build.sh bootstrap bootstrap/hlasm0.sourceset 120000
+    ./build.sh bootstrap bootstrap/hlasm0.sourceset 460000
 
 clean:
     ./build.sh clean

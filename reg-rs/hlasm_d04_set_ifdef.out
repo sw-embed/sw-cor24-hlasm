@@ -1,13 +1,13 @@
-Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.SMyvqmkYqO/hlasm.lgo
+Loaded 19847 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.wDPaaD4FNy/hlasm.lgo
 Loaded 80 bytes from 'demos/d04_set_ifdef.bin' at 0x080000
-[UART TX @ 48536] ' '  (0x20)
-[UART TX @ 48536] 'n'  (0x6E)
-[UART TX @ 48536] 'o'  (0x6F)
-[UART TX @ 48536] 'p'  (0x70)
-[UART TX @ 48536] ''  (0x0D)
-[UART TX @ 48536] '\n'
+[UART TX @ 120000] ' '  (0x20)
+[UART TX @ 120000] 'n'  (0x6E)
+[UART TX @ 120000] 'o'  (0x6F)
+[UART TX @ 120000] 'p'  (0x70)
+[UART TX @ 120000] ''  (0x0D)
+[UART TX @ 120000] '\n'
 
 UART output:  nop
 
 
-Executed 48536 instructions
+Executed 126427 instructions
