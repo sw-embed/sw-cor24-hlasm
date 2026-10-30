@@ -1,6 +1,6 @@
 # Structured Jump Relaxation (design)
 
-Status: designed, not yet implemented.
+Status: implemented (tinyc-macro-ports saga, step 1).
 
 ## Problem
 
@@ -65,46 +65,77 @@ jump is emitted. hlasm keeps all source in memory, so it can run twice:
 ### Why one sizing pass is enough
 
 Pass 1 counts an upper bound for every line, emits the far form for every
-relaxed jump, and emits a trampoline for every label definition. Pass 2
-lines are never larger, so every span between two points only shrinks.
-For a forward jump the offset can only fall (and stays >= -4); for a
-backward jump it can only rise toward zero. A jump that fits in pass 1
-fits in pass 2. No iteration is needed.
+relaxed jump, and emits a trampoline before every non-`_skip` structured
+label (`_skip` labels are only ever targets of short `brt`/`brf`, never of
+a structured jump). Pass 2 lines are never larger, so every span between
+two points only shrinks. For a forward jump the offset can only fall (and
+stays >= -4); for a backward jump it can only rise toward zero. A jump that
+fits in pass 1 fits in pass 2. No iteration is needed.
 
 ### Line sizer (pass 1, on each completed output line)
 
 - skip a leading `name:` label (also allows `label: insn` on one line)
 - empty or `;` comment: 0
 - `.byte a,b,...`: commas + 1; `.word ...`: 3 * (commas + 1)
-- any `"` on a `.byte` line, or any other directive: poison (add 0x8000),
-  forcing every jump spanning it far. `.text`/`.data`/`.globl` count 0.
+- a quote (`"` or `'`) on a `.byte`/`.word` line, any other directive, or a
+  line over 255 characters: 256, forcing every jump spanning it far.
+  `.text`/`.data`/`.glob*` count 0.
 - anything else is an instruction: 4
+
+## Implementation (hlasm.s)
+
+- `_main` calls `_relax_begin_pass` first. When `_relax_pass` is 0 it saves
+  the mutable data and clears the flag tables. At the end of pass 1 `_main`
+  calls `_relax_end_pass1` (resolve far jumps, restore the data, set
+  `_relax_pass` to 1) and re-enters itself; after pass 2 it halts.
+- `_emit_char` sends bytes to `_relax_size_char` in pass 1 and to the UART
+  in pass 2.
+- `_emit_branch_label`, `_emit_do_branch_label` and
+  `_emit_select_branch_label` hand `jmp` requests to `_emit_relaxed_jump`;
+  the matching `*_label_def` emitters call `_relax_label_def` first.
+- `_relax_resolve` marks jump k far, and its target as needing a
+  trampoline, when the target is undefined or
+  `label_pos[tgt] - jump_pos[k] - 4` is outside `[-128, 127]`.
 
 ### State restore between passes
 
-Mutable state lives in the program image (data clusters near hlasm.s lines
-3959-4067 and 10677-end, plus small ones near 1485-1640) and in the runtime
-arena at 0x0C0000 (re-initialised by `_init_runtime_arena`). On pass-1
-entry, copy the image's mutable data to a save area; before pass 2, copy it
-back and re-enter `_main`. The pass flag lives in the image (loader
-initialises it to 0) and is set to 1 after the restore. Copying the whole
-image (code is never self-modified) is simplest but costs instructions;
-prefer copying only the data clusters (add `_data_*_begin/_end` labels).
+Mutable state lives in two data regions of the image (`_const_A` up to
+`_line_is_keyword`, and `_id_buf` up to `_image_end`, which must stay the
+last label in hlasm.s) and in the runtime arena at 0x0C0000, which
+`_init_runtime_arena` re-initialises on each pass. `_relax_snapshot` copies
+the two regions to 0x0D0000 at pass-1 start and back before pass 2. The
+pass flag `_relax_pass` lives in the second region: the loader initialises
+it to 0, the restore puts it back to 0, and it is then set to 1.
 
 ### Memory
 
-- 0x0D0000: image/data snapshot
-- 0x0E0000: relax state: pass-1 position counter, line buffer (256),
-  label_pos[2048] (3 bytes each), jump_pos[2048], jump_tgt[2048],
-  jump_far[2048] (1 byte), label_far[2048] (1 byte), jump counter.
-  Ids or sequence numbers >= 2048: jump is always far, and the label always
-  gets a trampoline (consistent, always correct).
+- 0x0D0000 (851968): data snapshot (region 1 at +0, region 2 at +1024)
+- 0x0E0000 (917504): relax state: +0 position, +3 jump count, +6 line
+  length, +16 line buffer (256 bytes); label_pos[1024] at 918528,
+  jump_pos[1024] at 921600, jump_tgt[1024] at 924672 (3 bytes each);
+  label_def[1024] at 927744, label_far[1024] at 928768, jump_far[1024] at
+  929792 (1 byte each).
+- Label ids or jump numbers >= 1024: the jump is always far, and a
+  non-`_skip` label with such an id always gets a trampoline (consistent,
+  always correct).
 
-## Test impact
+## Cost and tests
 
-- Every baseline's `Executed N instructions` changes (two passes); several
-  `-n` budgets must rise.
-- Pass-2 UART output must equal the old output except the `jmp` lines and
-  the added trampolines; verify that per test before rebasing.
-- Add an end-to-end check: feed each structured demo's output to `cor24-asm`
-  and require success (the gap that hid this bug).
+- Two passes cost about 2-3x the instructions of one, plus ~30K fixed.
+  reg-rs budgets were raised to 3x + 100K; bootstrap defaults to 460000.
+- Pass-2 output was checked per test against the old baselines: identical
+  except `jmp L` -> `bra L` (no existing demo needed the far form).
+- d40 (`demos/d40_long_range_jumps.hlasm`) forces the far form and the
+  trampoline; `hlasm_d40_long_range_run` assembles and runs its output.
+- `reg-rs/check_structured_asm.sh` (test `hlasm_structured_asm_check`)
+  assembles every structured demo's output. Remaining errors come from the
+  demos' own source lines (`sub r0,r0`, `xor r0,r0`, `shl r0,1`, an
+  undefined `_body`) and from two pre-existing lowering bugs: compares with
+  `r2` on the left emit `ceq r2,r1` (only `ceq r1,r2` is encodable), and
+  `0b` literals reach `lc` unconverted.
+
+## Known issue found while testing
+
+DOEXIT exits when its condition is false, the opposite of docs/design.md
+(`DOEXIT cc_eq, r0, 0` lowers to `ceq r0,z` / `brt <end>`). d40 is written
+to the documented meaning and prints `10` until that is fixed (`32` after).

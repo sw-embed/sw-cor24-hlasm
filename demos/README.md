@@ -44,6 +44,10 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d35 | Listing/xref comments | WORKS |
 | d36 | End-of-run HLXREF report | WORKS |
 | d36 | IF/ELSEIF/ENDIF without ELSE | WORKS |
+| d37 | HLDIAG diagnostic baseline | WORKS |
+| d38 | HLDIAG unknown mnemonic | WORKS |
+| d39 | HLDIAG undefined symbol | WORKS |
+| d40 | Long-range structured jumps (far form + trampoline) | WORKS |
 
 ## Demo Policy
 
@@ -235,8 +239,12 @@ ENDIFASM
 #### IF / ELSEIF / ELSE / ENDIF
 Nested `IF` blocks and `ELSEIF` chains now lower to plain labels and branches.
 Structured conditionals are emitted in a long-range-safe form: a short
-reversed conditional branch skips over an unconditional `jmp`, so generated
-control flow does not depend on raw `bra` reach.
+reversed conditional branch skips over an unconditional transfer, so generated
+control flow does not depend on raw `bra` reach. The transfer is `bra L`
+when its worst-case offset fits; otherwise it is `push r2` / `la r2,L_far` /
+`jmp (r2)`, and the target gets a `bra L` / `L_far:` / `pop r2` trampoline
+(see docs/structured-jump-relaxation.md; hlasm sizes its output in a first
+pass to decide).
 When `SET HLANN,1` is active, `hlasm` also emits opt-in semicolon comment
 lines that mark structured source boundaries in the lowered `.s` output.
 
@@ -301,7 +309,7 @@ This emits normal lowered assembly plus comment markers such as:
 
 #### DO / DOEXIT / ITERATE / ENDDO
 Loop lowering uses the same long-range-safe pattern for generated exits and
-back-edges, with unconditional structured transfers emitted as `jmp`.
+back-edges, with unconditional structured transfers relaxed the same way.
 
 ```
 DO
