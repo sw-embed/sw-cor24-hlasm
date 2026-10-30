@@ -1,8 +1,9 @@
 number = 1
 slug = "structured-jmp-relaxation"
-status = "in-progress"
+status = "completed"
 description = "Implement docs/structured-jump-relaxation.md in hlasm.s: two-pass run (pass 1..."
 role = "production"
 context_files = []
 created_at = "2026-10-30T09:59:16"
-commits = []
+completed_at = "2026-10-30T15:02:11"
+commits = ["b11697acbd18afb05fd436799eaed4f52370da40"]
