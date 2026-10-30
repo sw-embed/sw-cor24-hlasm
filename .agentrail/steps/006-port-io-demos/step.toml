@@ -1,4 +1,4 @@
-number = 5
+number = 6
 slug = "port-io-demos"
 status = "pending"
 description = "Port the simplest tiny-C demos (hello, uart_tx, led, button and similar I/O-o..."

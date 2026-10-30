@@ -1,1 +1,0 @@
-Write docs/macro-value.md showing, for several ported examples, the C source, tc24r's generated .s, the hlasm source and the hlasm-expanded .s side by side, with line counts and notes on what the macros buy (readability, reuse, size). Add './demo.sh macros' that runs a few ported examples end to end, and update README. Final step: complete with --done, then archive the saga.

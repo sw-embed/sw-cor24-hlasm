@@ -1,7 +1,7 @@
-number = 8
+number = 9
 slug = "macro-value-showcase"
 status = "pending"
-description = "Write docs/macro-value.md showing, for several ported examples, the C source,..."
+description = "Finish docs/c-demos-in-hlasm.md as the showcase: for several ported examples,..."
 role = "production"
 context_files = []
 created_at = "2026-10-30T09:59:16"

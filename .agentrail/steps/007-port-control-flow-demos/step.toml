@@ -1,4 +1,4 @@
-number = 6
+number = 7
 slug = "port-control-flow-demos"
 status = "pending"
 description = "Port the tiny-C demos centred on if/else, while, do-while, for, break/continu..."

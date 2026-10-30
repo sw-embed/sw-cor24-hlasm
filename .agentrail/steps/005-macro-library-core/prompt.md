@@ -1,0 +1,1 @@
+Create the core hlasm macro library from docs/tinyc-port-plan.md as COPY members under lib/ (e.g. UART PUTC/PUTS/PUTDEC, LED/BUTTON, function frame PROLOG/EPILOG/CALL/RET, common data macros). Document each macro's parameters and register effects in a header comment and in the macro section of docs/c-demos-in-hlasm.md. Add hlasm_e2e reg-rs tests exercising each macro.

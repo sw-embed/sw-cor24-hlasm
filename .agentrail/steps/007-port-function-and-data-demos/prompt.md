@@ -1,1 +1,0 @@
-Port the tiny-C demos centred on functions/recursion, arrays, pointers, strings, structs and globals, extending the macro library where repetition justifies it. Each gets an hlasm_e2e test matching the C program's expected output.

@@ -1,1 +1,0 @@
-Port the simplest tiny-C demos (hello, uart_tx, led, button and similar I/O-only programs) to demos/tinyc/*.hlasm using the macro library. Each gets an hlasm_e2e reg-rs test whose UART output matches the C program's expected output.

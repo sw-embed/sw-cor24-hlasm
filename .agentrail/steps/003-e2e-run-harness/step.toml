@@ -1,4 +1,4 @@
-number = 2
+number = 3
 slug = "e2e-run-harness"
 status = "pending"
 description = "Add scripts/hlasm-e2e.sh: take a .hlasm source (or sourceset with COPY member..."
