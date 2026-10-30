@@ -1,0 +1,1 @@
+Paused, not complete: steps 1-5 done; steps 6-9 (diag-structured-block-health, branch-relax-pseudos, diag-branch-distance-warning, rpg2-unblock-proof) still pending. Superseded for now by the tinyc-macro-ports saga, whose first step fixes structured jmp lowering. Resume these steps in a later saga.
