@@ -1,8 +1,9 @@
 number = 4
 slug = "use-split-toolchain"
-status = "in-progress"
+status = "completed"
 description = "Migrate hlasm off the deprecated combined cor24-run (assemble+run) onto the s..."
 role = "production"
 context_files = []
 created_at = "2026-10-30T09:45:38"
-commits = []
+completed_at = "2026-10-30T09:50:25"
+commits = ["d37ee03d73cf4df8b8256814c6ae96df9e9c224a"]
