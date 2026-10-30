@@ -1,0 +1,8 @@
+number = 2
+slug = "e2e-run-harness"
+status = "pending"
+description = "Add scripts/hlasm-e2e.sh: take a .hlasm source (or sourceset with COPY member..."
+role = "production"
+context_files = []
+created_at = "2026-10-30T09:59:16"
+commits = []

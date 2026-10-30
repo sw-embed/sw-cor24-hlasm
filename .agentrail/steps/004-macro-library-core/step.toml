@@ -1,0 +1,8 @@
+number = 4
+slug = "macro-library-core"
+status = "pending"
+description = "Create the core hlasm macro library from docs/tinyc-port-plan.md as COPY memb..."
+role = "production"
+context_files = []
+created_at = "2026-10-30T09:59:16"
+commits = []

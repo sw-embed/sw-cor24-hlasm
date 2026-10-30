@@ -1,0 +1,1 @@
+Port the tiny-C demos centred on if/else, while, do-while, for, break/continue and switch, using hlasm IF/DO/SELECT plus library macros. Each gets an hlasm_e2e test matching the C program's expected output (e.g. the DnOK markers).

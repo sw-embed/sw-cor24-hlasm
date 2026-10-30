@@ -1,0 +1,8 @@
+number = 5
+slug = "port-io-demos"
+status = "pending"
+description = "Port the simplest tiny-C demos (hello, uart_tx, led, button and similar I/O-o..."
+role = "production"
+context_files = []
+created_at = "2026-10-30T09:59:16"
+commits = []

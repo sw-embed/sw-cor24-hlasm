@@ -1,0 +1,8 @@
+number = 1
+slug = "structured-jmp-relaxation"
+status = "pending"
+description = "Implement docs/structured-jump-relaxation.md in hlasm.s: two-pass run (pass 1..."
+role = "production"
+context_files = []
+created_at = "2026-10-30T09:59:16"
+commits = []

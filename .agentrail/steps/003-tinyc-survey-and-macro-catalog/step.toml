@@ -1,0 +1,8 @@
+number = 3
+slug = "tinyc-survey-and-macro-catalog"
+status = "pending"
+description = "Survey all demos in ../sw-cor24-x-tinyc/demos (C sources and tc24r's generate..."
+role = "production"
+context_files = []
+created_at = "2026-10-30T09:59:16"
+commits = []
