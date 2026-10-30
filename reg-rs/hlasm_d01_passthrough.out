@@ -1,7 +1,5 @@
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.6YQJS8G1MM/hlasm.lgo
 Loaded 19 bytes from 'demos/d01_passthrough.bin' at 0x080000
-Running (speed: max IPS, time limit: 10s)...
-
 [UART TX @ 40000] 'n'  (0x6E)
 [UART TX @ 40000] 'o'  (0x6F)
 [UART TX @ 40000] 'p'  (0x70)
@@ -32,4 +30,3 @@ halt:
 
 
 Executed 43325 instructions
-CPU halted (self-branch detected)

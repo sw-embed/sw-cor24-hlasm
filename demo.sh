@@ -10,7 +10,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 HLASM="hlasm.s"
-RUN="cor24-run --run $HLASM --speed 0"
+RUN="scripts/run-kernel.sh $HLASM --speed 0"
 
 case "${1:-demo}" in
     test)
@@ -29,7 +29,7 @@ case "${1:-demo}" in
     repl)
         echo "=== sw-cor24-hlasm REPL (not yet implemented) ==="
         echo ""
-        cor24-run --run "$HLASM" --terminal --echo --speed 0
+        scripts/run-kernel.sh "$HLASM" --terminal --echo --speed 0
         ;;
     demo)
         echo "=== sw-cor24-hlasm Demo ==="

@@ -34,12 +34,15 @@ hlasm.s (macro-assembler running on COR24)
 UART output: plain .s assembly
      |
      v
-cor24-run --assemble --run
+cor24-asm out.s -o out.lgo; cor24-emu --lgo out.lgo
 ```
 
 ## Prerequisites
 
-- `cor24-run` -- build from [sw-cor24-emulator](https://github.com/sw-embed/sw-cor24-emulator)
+- `cor24-asm` -- build from [sw-cor24-x-assembler](https://github.com/sw-embed/sw-cor24-x-assembler)
+- `cor24-emu` -- build from [sw-cor24-emulator](https://github.com/sw-embed/sw-cor24-emulator)
+  (`scripts/run-kernel.sh` finds both on PATH, via `COR24_ASM` / `COR24_EMU`,
+  or in sibling checkouts' `target/release`)
 - `reg-rs` -- for running tests
 
 ## Quick Start
@@ -68,6 +71,7 @@ just bootstrap
 hlasm.s        -- COR24 assembly source (the macro-assembler)
 bootstrap/     -- reduced self-hosting subset sources and proof points
 build.sh       -- build / test / run script
+scripts/       -- run-kernel.sh: assemble hlasm.s (cor24-asm) and run it (cor24-emu)
 demo.sh        -- demo script
 justfile       -- just targets
 docs/          -- architecture, prd, design, plan
@@ -84,7 +88,8 @@ reg-rs/        -- reg-rs test specifications and baselines
 
 ## Related Repositories
 
-- [sw-cor24-emulator](https://github.com/sw-embed/sw-cor24-emulator) -- COR24 emulator + assembler
+- [sw-cor24-emulator](https://github.com/sw-embed/sw-cor24-emulator) -- COR24 emulator (`cor24-emu`)
+- [sw-cor24-x-assembler](https://github.com/sw-embed/sw-cor24-x-assembler) -- COR24 cross-assembler (`cor24-asm`)
 - [sw-cor24-forth](https://github.com/sw-embed/sw-cor24-forth) -- Forth for COR24
 - [sw-cor24-rpg-ii](https://github.com/sw-embed/sw-cor24-rpg-ii) -- RPG-II for COR24
 - [sw-cor24-project](https://github.com/sw-embed/sw-cor24-project) -- ecosystem hub

@@ -1,7 +1,5 @@
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.GyLS2lL7od/hlasm.lgo
 Loaded 47 bytes from 'reg-rs/s6_at_label.bin' at 0x080000
-Running (speed: max IPS, time limit: 10s)...
-
 [UART TX @ 48640] 'L'  (0x4C)
 [UART TX @ 48640] '0'  (0x30)
 [UART TX @ 48640] '0'  (0x30)
@@ -64,4 +62,3 @@ L0002: add r0,1
 
 
 Executed 48640 instructions
-CPU halted (self-branch detected)

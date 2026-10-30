@@ -1,9 +1,7 @@
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.TjzEsUfpk5/hlasm.lgo
 Loaded 39 bytes from 'demos/d19_memory_map_main.bin' at 0x080000
 Loaded 25 bytes from 'demos/d19_memory_map_extra.bin' at 0x081000
 Loaded 9 bytes from 'reg-rs/s11_memory_map.cfg' at 0x07F000
-Running (speed: max IPS, time limit: 10s)...
-
 [UART TX @ 47805] '_'  (0x5F)
 [UART TX @ 47805] 'h'  (0x68)
 [UART TX @ 47805] ':'  (0x3A)
@@ -24,7 +22,6 @@ UART output: _h:
 
 
 Executed 47805 instructions
-CPU halted (self-branch detected)
 
 === Registers ===
   PC:  0x000034    C: 1

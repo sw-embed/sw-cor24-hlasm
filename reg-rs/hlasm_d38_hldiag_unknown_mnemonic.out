@@ -1,7 +1,5 @@
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.qlCkWSH9Wt/hlasm.lgo
 Loaded 102 bytes from 'demos/d38_hldiag_unknown_mnemonic.bin' at 0x080000
-Running (speed: max IPS, time limit: 10s)...
-
 [UART TX @ 40000] ';'  (0x3B)
 [UART TX @ 40000] ' '  (0x20)
 [UART TX @ 40000] 'D'  (0x44)
@@ -196,4 +194,3 @@ UART output: ; Demo 38: HLDIAG warns on unknown mnemonic at pass-through
 
 
 Executed 62409 instructions
-CPU halted (self-branch detected)

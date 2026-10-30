@@ -7,7 +7,7 @@ written entirely in COR24 assembly. It reads HLASM-inspired structured
 assembly source from an in-memory text buffer and emits plain COR24
 assembly (`.s` output via UART).
 
-The macro-assembler runs on the COR24 emulator (`cor24-run`) just like
+The macro-assembler runs on the COR24 emulator (`cor24-emu`) just like
 sw-cor24-forth and sw-cor24-rpg-ii.
 
 **Product statement**: A COR24 macro-assembler, written in COR24 assembly,
@@ -34,7 +34,7 @@ that processes HLASM-inspired source and produces plain COR24 assembly output.
 UART output: plain .s assembly
      |
      v
-cor24-run --assemble --run
+cor24-asm out.s -o out.lgo; cor24-emu --lgo out.lgo
 ```
 
 The macro-assembler is a COR24 program that reads text and writes text.
@@ -177,7 +177,8 @@ sw-cor24-hlasm (this project)
   |
   |  runs on
   v
-sw-cor24-emulator (cor24-run -- assembler + emulator)
+sw-cor24-emulator (cor24-emu), after sw-cor24-x-assembler (cor24-asm)
+  assembles hlasm.s to .lgo -- scripts/run-kernel.sh joins the two
 ```
 
 ## Testing Strategy
@@ -185,7 +186,7 @@ sw-cor24-emulator (cor24-run -- assembler + emulator)
 Tests use **reg-rs** (golden-output regression testing), following the same
 pattern as sw-cor24-forth and sw-cor24-rpg-ii:
 
-1. Each test is a `.rgt` file with a `cor24-run` command
+1. Each test is a `.rgt` file with a `scripts/run-kernel.sh hlasm.s` command
 2. Input source loaded via `--load-binary`
 3. Preprocess filter extracts UART output
 4. Tests run via `reg-rs run -p hlasm --parallel`

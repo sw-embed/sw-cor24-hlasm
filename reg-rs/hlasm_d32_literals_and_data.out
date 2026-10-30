@@ -1,7 +1,5 @@
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.C9mEG5mCce/hlasm.lgo
 Loaded 346 bytes from 'demos/d32_literals_and_data.bin' at 0x080000
-Running (speed: max IPS, time limit: 10s)...
-
 [UART TX @ 40000] ';'  (0x3B)
 [UART TX @ 40000] ' '  (0x20)
 [UART TX @ 40000] 'D'  (0x44)
@@ -484,4 +482,3 @@ _hlsel_4_end:
 
 
 Executed 124901 instructions
-CPU halted (self-branch detected)

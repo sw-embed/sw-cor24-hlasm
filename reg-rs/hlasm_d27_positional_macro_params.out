@@ -1,7 +1,5 @@
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.QK5ye8qxSK/hlasm.lgo
 Loaded 58 bytes from 'demos/d27_positional_macro_params.bin' at 0x080000
-Running (speed: max IPS, time limit: 10s)...
-
 [UART TX @ 49370] ' '  (0x20)
 [UART TX @ 49370] 'p'  (0x70)
 [UART TX @ 49370] 'u'  (0x75)
@@ -50,4 +48,3 @@ UART output:  push r0
 
 
 Executed 49370 instructions
-CPU halted (self-branch detected)

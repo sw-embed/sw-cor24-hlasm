@@ -1,10 +1,8 @@
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.1jbvQnihCF/hlasm.lgo
 Loaded 184 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d34_copy_macro_library_main.bin' at 0x090000
 Loaded 109 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d34_copy_macro_library_macros.bin' at 0x081000
 Loaded 40 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d34_copy_macro_library_symbols.bin' at 0x081100
-Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-40401.cfg' at 0x07F000
-Running (speed: max IPS, time limit: 10s)...
-
+Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-20084.cfg' at 0x07F000
 [UART TX @ 40000] ';'  (0x3B)
 [UART TX @ 40000] ' '  (0x20)
 [UART TX @ 40000] 'D'  (0x44)
@@ -150,4 +148,3 @@ UART output: ; Demo 34: COPY-based macro and symbol library workflow
 
 
 Executed 117177 instructions
-CPU halted (self-branch detected)

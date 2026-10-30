@@ -1,7 +1,5 @@
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.6MenmlukoN/hlasm.lgo
 Loaded 106 bytes from 'demos/d07_nested_cond.bin' at 0x080000
-Running (speed: max IPS, time limit: 10s)...
-
 [UART TX @ 50000] ' '  (0x20)
 [UART TX @ 50000] 'n'  (0x6E)
 [UART TX @ 50000] 'o'  (0x6F)
@@ -13,4 +11,3 @@ UART output:  nop
 
 
 Executed 51756 instructions
-CPU halted (self-branch detected)

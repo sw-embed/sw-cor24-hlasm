@@ -1,7 +1,5 @@
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.nF4Ev7Pr73/hlasm.lgo
 Loaded 61 bytes from 'demos/d14_ifndef.bin' at 0x080000
-Running (speed: max IPS, time limit: 10s)...
-
 [UART TX @ 43759] ' '  (0x20)
 [UART TX @ 43759] 'a'  (0x61)
 [UART TX @ 43759] 'd'  (0x64)
@@ -18,4 +16,3 @@ UART output:  add r0,1
 
 
 Executed 43759 instructions
-CPU halted (self-branch detected)

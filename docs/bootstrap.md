@@ -68,7 +68,7 @@ The first explicit bootstrap-oriented map is now:
 - `0x07F000`: source-switch config block
 - `0x080000-0x0BFFFF`: preloaded ASCII source/include buffers
 - `0x0C0000-0x0C055E`: `hlasm` runtime arena
-- `0xFEE000-0xFEEBFF`: preferred 3K EBR stack (`cor24-run --stack-kilobytes 3`)
+- `0xFEE000-0xFEEBFF`: preferred 3K EBR stack (`cor24-emu --stack-kilobytes 3`)
 
 The current runtime arena packs the mutable assembler state into middle SRAM:
 
@@ -90,7 +90,7 @@ Two existing COR24 patterns are directly relevant here:
 - `sw-cor24-monitor/demos/monitor-editor-demo.sh` already uses repeated
   `--load-binary ...@addr` flags to place several binaries plus an ASCII text
   file into memory at once.
-- `cor24-run` also supports `--patch addr=value`, which is useful for passing
+- `cor24-emu` also supports `--patch addr=value`, which is useful for passing
   buffer pointers, include-table roots, or entry-state values after those
   buffers are loaded.
 
@@ -163,7 +163,7 @@ emit the unchanged config image at `0x07F000`, and run `hlasm.s` directly.
 `hlasm.s` currently walks the source portion of that table into a small
 in-memory descriptor set, which is enough to model include-like source
 chaining with multiple preloaded ASCII buffers. That keeps the input side
-compatible with repeated `cor24-run --load-binary ...@addr` flags today while
+compatible with repeated `cor24-emu --load-binary ...@addr` flags today while
 leaving room for a later heap-backed descriptor arena.
 
 When the main override words are zero, stage0 keeps the default main window at

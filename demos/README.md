@@ -60,7 +60,7 @@ Every new HLASM feature or bootstrap milestone should add:
 bash demos/make_bin.sh demos/d01_passthrough.hlasm demos/d01_passthrough.bin
 
 # Run on emulator
-cor24-run --run hlasm.s --load-binary demos/d01_passthrough.bin@524288 --speed 0 -n 100000 2>&1
+scripts/run-kernel.sh hlasm.s --load-binary demos/d01_passthrough.bin@524288 --speed 0 -n 100000 2>&1
 ```
 
 ## HLASM Syntax Reference

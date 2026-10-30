@@ -1,7 +1,5 @@
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.m6wQuLkZVO/hlasm.lgo
 Loaded 80 bytes from 'demos/d37_hldiag_baseline.bin' at 0x080000
-Running (speed: max IPS, time limit: 10s)...
-
 [UART TX @ 40000] ';'  (0x3B)
 [UART TX @ 40000] ' '  (0x20)
 [UART TX @ 40000] 'D'  (0x44)
@@ -118,4 +116,3 @@ UART output: ; Demo 37: opt-in HLDIAG diagnostic channel baseline
 
 
 Executed 52937 instructions
-CPU halted (self-branch detected)

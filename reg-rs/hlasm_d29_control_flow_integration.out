@@ -1,7 +1,5 @@
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.VP8630xGBd/hlasm.lgo
 Loaded 241 bytes from 'demos/d29_control_flow_integration.bin' at 0x080000
-Running (speed: max IPS, time limit: 10s)...
-
 [UART TX @ 50000] ' '  (0x20)
 [UART TX @ 50000] 'p'  (0x70)
 [UART TX @ 50000] 'u'  (0x75)
@@ -580,4 +578,3 @@ _hlsel_7_end:
 
 
 Executed 117221 instructions
-CPU halted (self-branch detected)

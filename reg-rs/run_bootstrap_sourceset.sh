@@ -183,7 +183,7 @@ process_sourceset "$SRCSET"
 
 bash reg-rs/make_cfg.sh "$cfg_txt" "$cfg_bin"
 
-exec cor24-run --run hlasm.s \
+exec scripts/run-kernel.sh hlasm.s \
     "${load_args[@]}" \
     --load-binary "${cfg_bin}@520192" \
     --stack-kilobytes 3 \

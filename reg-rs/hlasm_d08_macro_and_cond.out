@@ -1,7 +1,5 @@
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.mDtNshfZ4X/hlasm.lgo
 Loaded 60 bytes from 'demos/d08_macro_and_cond.bin' at 0x080000
-Running (speed: max IPS, time limit: 10s)...
-
 [UART TX @ 47065] 'I'  (0x49)
 [UART TX @ 47065] 'F'  (0x46)
 [UART TX @ 47065] 'D'  (0x44)
@@ -38,4 +36,3 @@ ENDIFASM
 
 
 Executed 47065 instructions
-CPU halted (self-branch detected)

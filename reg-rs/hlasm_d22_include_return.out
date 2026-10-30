@@ -1,9 +1,7 @@
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.wQpdIJDB1t/hlasm.lgo
 Loaded 33 bytes from 'demos/d22_include_return_main.bin' at 0x090000
 Loaded 33 bytes from 'demos/d22_include_return_extra.bin' at 0x081000
 Loaded 27 bytes from 'reg-rs/s14_include_return.cfg' at 0x07F000
-Running (speed: max IPS, time limit: 10s)...
-
 [UART TX @ 50000] 't'  (0x74)
 [UART TX @ 50000] 'a'  (0x61)
 [UART TX @ 50000] 'i'  (0x69)
@@ -44,4 +42,3 @@ _h:
 
 
 Executed 53831 instructions
-CPU halted (self-branch detected)

@@ -1,7 +1,5 @@
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.4x2rJVhin4/hlasm.lgo
 Loaded 239 bytes from 'demos/d28_macro_robustness.bin' at 0x080000
-Running (speed: max IPS, time limit: 10s)...
-
 [UART TX @ 60000] 'L'  (0x4C)
 [UART TX @ 60000] '0'  (0x30)
 [UART TX @ 60000] '0'  (0x30)
@@ -95,4 +93,3 @@ incx
 
 
 Executed 81040 instructions
-CPU halted (self-branch detected)

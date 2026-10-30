@@ -13,12 +13,10 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
 HLASM="hlasm.s"
-RUN="cor24-run"
-
-if ! command -v cor24-run &>/dev/null; then
-    echo "ERROR: cor24-run not found. Build sw-cor24-emulator first."
-    exit 1
-fi
+# Every hlasm run goes through scripts/run-kernel.sh, which finds cor24-asm
+# (sw-cor24-x-assembler) and cor24-emu (sw-cor24-emulator) on PATH or in the
+# sibling checkouts and says which is missing.
+RUN="scripts/run-kernel.sh"
 
 if [[ ! -f "$HLASM" ]]; then
     echo "ERROR: $HLASM not found."
@@ -27,7 +25,7 @@ fi
 
 build() {
     echo "=== Assembling $HLASM ==="
-    $RUN --run "$HLASM" --speed 0 -n 1000 2>&1 | tail -5
+    $RUN "$HLASM" --speed 0 -n 1000 2>&1 | tail -5
     echo "Assemble check OK."
 }
 
@@ -35,7 +33,7 @@ run() {
     build
     echo ""
     echo "=== Running ==="
-    $RUN --run "$HLASM" --speed 0 "${@:2}"
+    $RUN "$HLASM" --speed 0 "$@"
 }
 
 bootstrap_run() {

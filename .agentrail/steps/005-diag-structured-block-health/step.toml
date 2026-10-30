@@ -1,4 +1,4 @@
-number = 4
+number = 5
 slug = "diag-structured-block-health"
 status = "pending"
 description = "When HLDIAG is on, surface structural warnings from the structured-control-fl..."

@@ -1,7 +1,5 @@
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.HXQghXy7t8/hlasm.lgo
 Loaded 124 bytes from 'demos/d12_structured_do.bin' at 0x080000
-Running (speed: max IPS, time limit: 10s)...
-
 [UART TX @ 40000] ';'  (0x3B)
 [UART TX @ 40000] ' '  (0x20)
 [UART TX @ 40000] 'D'  (0x44)
@@ -310,4 +308,3 @@ _hldo_5_end:
 
 
 Executed 73979 instructions
-CPU halted (self-branch detected)

@@ -1,7 +1,5 @@
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.cspFpd7wOB/hlasm.lgo
 Loaded 5284 bytes from 'demos/d31_large_source_macro_capacity.bin' at 0x080000
-Running (speed: max IPS, time limit: 10s)...
-
 [UART TX @ 40000] ';'  (0x3B)
 [UART TX @ 40000] ' '  (0x20)
 [UART TX @ 40000] 'D'  (0x44)
@@ -5147,4 +5145,3 @@ _tail_ok:
 
 
 Executed 822048 instructions
-CPU halted (self-branch detected)

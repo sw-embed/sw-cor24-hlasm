@@ -1,19 +1,15 @@
 === Assembling hlasm.s ===
-Assembled 18254 bytes
-Running (speed: max IPS, time limit: 10s)...
-
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.hC14UluPtA/hlasm.lgo
 
 Executed 1000 instructions
 Assemble check OK.
 
 === Bootstrap Source Set ===
-Assembled 18254 bytes
+Loaded 18254 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.DnEkiJg9AF/hlasm.lgo
 Loaded 151 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/bootstrap/./hlasm0_split_main.bin' at 0x090000
 Loaded 112 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/bootstrap/./hlasm0_common.bin' at 0x081000
 Loaded 45 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/bootstrap/./hlasm0_io.bin' at 0x081100
-Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-39630.cfg' at 0x07F000
-Running (speed: max IPS, time limit: 10s)...
-
+Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-22061.cfg' at 0x07F000
 [UART TX @ 60000] '_'  (0x5F)
 [UART TX @ 60000] 'm'  (0x6D)
 [UART TX @ 60000] 'a'  (0x61)
@@ -251,4 +247,3 @@ _tx:
 
 
 Executed 117437 instructions
-CPU halted (self-branch detected)
