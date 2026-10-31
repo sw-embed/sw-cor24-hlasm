@@ -1,0 +1,1 @@
+Audited every hlasm capacity limit and defect by experiment (24 limits, 8 defects, 7 language gaps, cost per line) and wrote docs/limits-and-lifting-plan.md with lift targets, new memory map, overflow policy, system-services plan (bare-metal/sw-tos targets) and the plsw UART framing protocol; inserted steps 3-7 for the lifts.
