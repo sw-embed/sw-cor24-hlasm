@@ -1,0 +1,8 @@
+number = 3
+slug = "fix-lowering-defects"
+status = "pending"
+description = "Fix the lowering defects in docs/limits-and-lifting-plan.md: D1 DOEXIT exits ..."
+role = "production"
+context_files = []
+created_at = "2026-10-31T12:56:15"
+commits = []

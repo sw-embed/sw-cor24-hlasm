@@ -1,4 +1,4 @@
-number = 4
+number = 9
 slug = "tinyc-survey-and-macro-catalog"
 status = "pending"
 description = "Survey all demos in ../sw-cor24-x-tinyc/demos (C sources and tc24r's generate..."

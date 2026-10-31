@@ -1,0 +1,8 @@
+number = 7
+slug = "include-capacity-and-diagnostics"
+status = "pending"
+description = "Implement L19-L21 and M7 from docs/limits-and-lifting-plan.md: new source con..."
+role = "production"
+context_files = []
+created_at = "2026-10-31T12:56:15"
+commits = []

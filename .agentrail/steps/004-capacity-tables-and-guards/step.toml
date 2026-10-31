@@ -1,0 +1,8 @@
+number = 4
+slug = "capacity-tables-and-guards"
+status = "pending"
+description = "Lift hlasm's table limits per docs/limits-and-lifting-plan.md (L1 symbols->51..."
+role = "production"
+context_files = []
+created_at = "2026-10-31T12:56:15"
+commits = []

@@ -1,0 +1,8 @@
+number = 5
+slug = "equ-and-expressions"
+status = "pending"
+description = "Implement M1 and M4 from docs/limits-and-lifting-plan.md: EQU name,expr and S..."
+role = "production"
+context_files = []
+created_at = "2026-10-31T12:56:15"
+commits = []

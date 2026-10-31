@@ -1,4 +1,4 @@
-number = 5
+number = 10
 slug = "macro-library-core"
 status = "pending"
 description = "Create the core hlasm macro library from docs/tinyc-port-plan.md as COPY memb..."

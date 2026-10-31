@@ -47,16 +47,19 @@ needed, is out of scope.
   repeats `la r0,_fn` / `jal r1,(r0)` / `add sp,N`. Control flow is written
   as hand-made branch chains. These patterns are what macros and structured
   control flow will replace.
-- Cost: roughly 1,000 emulated instructions per source byte for
-  macro-heavy input, and the two relaxation passes add more. (The limits
-  audit has the exact figures.) A ~130 KB HLASM source is therefore on the
-  order of 10^8 instructions per run. That needs a budget like plsw's
+- Cost: 10-15K emulated instructions per source line over both relaxation
+  passes (measured in the limits audit). About 12K lines is therefore about
+  150M instructions per run. That needs a budget like plsw's
   (`-n 2000000000`), not the reg-rs-sized budgets.
 
 ## Prerequisites (from the limits plan)
 
 These must be lifted before the full assembler source can go through hlasm.
-The numbers are tracked in `docs/limits-and-lifting-plan.md`.
+The numbers are tracked in `docs/limits-and-lifting-plan.md`, and its
+scheduled steps 1-5 cover all of them. Other findings matter here too:
+- structured label ids break at 1000 and `\@` at 10,000 (L11, L16);
+- nested macro calls are not supported (L10);
+- the macro body pool holds only 1,023 bytes in total (L8).
 
 1. **Source capacity.** The default main window is 4,096 bytes. The legacy
    config block has only 3 extra-buffer records, and include names are at

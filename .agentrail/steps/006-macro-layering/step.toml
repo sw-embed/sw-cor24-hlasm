@@ -1,0 +1,8 @@
+number = 6
+slug = "macro-layering"
+status = "pending"
+description = "Implement L10, M3, M2/D5 from docs/limits-and-lifting-plan.md: feed macro exp..."
+role = "production"
+context_files = []
+created_at = "2026-10-31T12:56:15"
+commits = []
