@@ -1,5 +1,8 @@
 # Bootstrap Plan
 
+Full self-hosting (porting all of `hlasm.s` to HLASM) is planned in
+`docs/bootstrap-hlasm.md`.
+
 ## Goal
 
 Reach a first self-hosting milestone where `hlasm.s` can assemble a reduced
