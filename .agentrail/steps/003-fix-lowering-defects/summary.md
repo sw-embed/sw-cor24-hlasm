@@ -1,0 +1,1 @@
+Fixed D1 DOEXIT polarity (_emit_struct_branch_if_true; d40 prints 32), D2 ceq operand order (_emit_inst2 + _reg_digit swap to ascending registers), D3 0b operands emitted in decimal, D7 rewrote demos' unencodable lines; check_structured_asm reports all 10 structured demos ok; 12 goldens rebased after reviewing each diff; 50/50 tests.
