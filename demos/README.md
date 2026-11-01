@@ -277,7 +277,7 @@ When `SET HLXREF,1` is active, `hlasm` emits a compact end-of-run section:
 IF cc_eq, r0, 0
     add r1,1
     IF cc_ne, r1, z
-        sub r0,r0
+        lc r0,0
     ELSEIF cc_lt, r2, 10
         add r2,1
     ELSE
@@ -315,7 +315,7 @@ back-edges, with unconditional structured transfers relaxed the same way.
 DO
     add r0,1
     DOEXIT cc_eq, r0, 10
-    bra _body
+    nop
 ENDDO
 DO
     add r1,1

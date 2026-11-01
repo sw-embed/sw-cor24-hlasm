@@ -78,17 +78,17 @@ Key to the Check column:
 | L23 | XREF expand counts | 16 B (but 32 macros) | none | macros 17-32 corrupt `_xref_symbol_count`, even with HLXREF off | - | follow L4 |
 | L24 | Relax tables | 1,024 ids or jumps; line sizer 255 B | yes | far form (safe, larger) | self-host | 4,096 |
 
-## Defects (wrong output today)
+## Defects
 
 | # | Defect | Evidence | Fix |
 |---|---|---|---|
-| D1 | DOEXIT exits when its condition is **false** (design.md says true) | d40 prints `10`, not `32` | invert the lowering; update the d12/d29 goldens |
-| D2 | A compare with `r2` on the left emits `ceq r2,r1`; only `ceq r1,r2` (and r0 pairs) is encodable | d26 assembly check | swap the operands for symmetric conditions; for `cls`/`clu` all orders are encodable |
-| D3 | `0b` literals reach `lc` unconverted (`lc r2,0b10`) | d32 assembly check | convert to decimal like `0x`/`h` |
+| D1 | DOEXIT exited when its condition was **false** (design.md says true) | d40 printed `10`, not `32` | **fixed (step 3):** `_emit_struct_branch_if_true` inverts the skip branch; d40 prints `32` |
+| D2 | A compare with `r2` on the left emitted `ceq r2,r1`; only `ceq r1,r2` (and r0 pairs) is encodable | d26 assembly check | **fixed (step 3):** `_emit_inst2` swaps `ceq` register operands into ascending order |
+| D3 | `0b` literals reached `lc` unconverted (`lc r2,0b10`) | d32 assembly check | **fixed (step 3):** `_emit_inst2` emits a `0b` second operand in decimal (via `_emit_dec24`, so 0-999 until step 4 widens it) |
 | D4 | SET symbols of 6 or more chars silently fail (L2) | d32 golden | fixed by the L2 lift; rebase the d32 golden |
 | D5 | Default params `&V=5` store the name as `V=5`; `&V` then expands to empty even when an argument is passed | audit B6 | parse `=default` (see M2) |
 | D6 | `\xNN` string escape gives `x`,`N`,`N`; unknown escapes drop the backslash | audit G4 | add `\xNN`; error on unknown escapes |
-| D7 | The demos' own fake source lines (`sub r0,r0`, `xor r0,r0`, `shl r0,1`, undefined `_body`) | `check_structured_asm.sh` | rewrite with encodable instructions (e.g. `lc r0,0`) |
+| D7 | The demos' own fake source lines (`sub r0,r0`, `xor r0,r0`, `shl r0,1`, undefined `_body`) | `check_structured_asm.sh` | **fixed (step 3):** rewritten as `lc r0,0`, `shl r0,r1`, `nop`; every structured demo now assembles |
 | D8 | Docs are stale: the arena spans 0xC0000-0xC125B (4,700 B), not 0xC055E; the main buffer is 32,767 B, not 4,096 | audit | update `docs/bootstrap.md` and the `hlasm.s` header |
 
 ## Language gaps

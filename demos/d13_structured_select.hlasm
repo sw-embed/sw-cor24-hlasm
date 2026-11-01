@@ -5,11 +5,11 @@ SELECT r0
  WHEN 1
   add r2,1
  OTHERWISE
-  sub r0,r0
+  lc r0,0
 ENDSEL
 SELECT r1
  WHEN 2
   nop
  OTHERWISE
-  sub r2,r2
+  lc r2,0
 ENDSEL

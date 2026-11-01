@@ -1,6 +1,6 @@
 number = 3
 slug = "fix-lowering-defects"
-status = "pending"
+status = "in-progress"
 description = "Fix the lowering defects in docs/limits-and-lifting-plan.md: D1 DOEXIT exits ..."
 role = "production"
 context_files = []

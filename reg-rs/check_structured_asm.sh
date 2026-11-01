@@ -6,9 +6,8 @@
 # with -q for plain UART text), feed the result to cor24-asm through
 # scripts/run-kernel.sh, and report "ok" or the assembler's errors.
 #
-# Some demos contain deliberately fake source lines (e.g. "sub r2,r2", which
-# COR24 cannot encode); those errors are expected and stay visible in the
-# baseline rather than being filtered out.
+# Every demo is expected to report "ok"; any assembler error stays visible in
+# the baseline rather than being filtered out.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 

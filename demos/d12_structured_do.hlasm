@@ -2,7 +2,7 @@
 DO
  add r0,1
  DOEXIT cc_eq, r0, 10
- bra _body
+ nop
 ENDDO
 DO
  add r1,1

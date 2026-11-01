@@ -4,9 +4,8 @@
 ; long THEN body are out of bra range. hlasm emits push r2 / la r2,L_far /
 ; jmp (r2) for them, with a bra L / L_far: / pop r2 trampoline at each
 ; target. Assembled and run on cor24-emu, it prints r0 then r1 as digits.
-; Per docs/design.md DOEXIT exits when its condition is true, giving "32"
-; (r0 = 3 at exit, r1 = 2 completed passes). Until the DOEXIT polarity fix
-; lands, hlasm exits when the condition is false and this prints "10".
+; DOEXIT exits when its condition is true, so this prints "32"
+; (r0 = 3 at exit, r1 = 2 completed passes).
  lc r0,0
  lc r1,0
 DO

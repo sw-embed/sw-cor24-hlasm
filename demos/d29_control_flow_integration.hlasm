@@ -22,5 +22,5 @@ SELECT r1
  WHEN 0
   nop
  OTHERWISE
-  sub r2,r2
+  lc r2,0
 ENDSEL

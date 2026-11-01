@@ -2103,6 +2103,36 @@ _seq_ret:
 	pop	fp
 	jmp	(r1)
 
+; _reg_digit: r0 = N if the string is exactly "rN" with N in 0-2, else -1
+; Arg on stack: string ptr (6 fp)
+_reg_digit:
+	push	fp
+	push	r1
+	mov	fp,sp
+	lw	r1,6(fp)
+	lbu	r0,0(r1)
+	add	r0,-114
+	ceq	r0,z
+	brf	_rd_no
+	lbu	r0,2(r1)
+	ceq	r0,z
+	brf	_rd_no
+	lbu	r0,1(r1)
+	add	r0,-48
+	cls	r0,z
+	brt	_rd_no
+	lc	r1,3
+	cls	r0,r1
+	brf	_rd_no
+	bra	_rd_ret
+_rd_no:
+	lc	r0,-1
+_rd_ret:
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
 ; _is_alpha: r0 = 1 if A-Z or a-z
 ; Arg on stack: char (6 fp)
 ; Frame: push fp, r1 = 6 bytes. Arg at 6(fp).
@@ -2975,11 +3005,39 @@ _emit_inst1:
 
 ; _emit_inst2: Emit " mnemonic op1,op2" and CRLF.
 ; Args on stack: mnemonic_ptr (12 fp), op1_ptr (9 fp), op2_ptr (6 fp)
+; ceq is encodable only with the lower register first (ceq r1,r2, not
+; ceq r2,r1), so "ceq rB,rA" with B > A is emitted as "ceq rA,rB".
 _emit_inst2:
 	push	fp
 	push	r1
 	mov	fp,sp
 
+	lw	r0,12(fp)
+	la	r1,_ceq_txt
+	ceq	r0,r1
+	brf	_ei2_emit
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_reg_digit
+	jal	r1,(r0)
+	add	sp,3
+	push	r0
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_reg_digit
+	jal	r1,(r0)
+	add	sp,3
+	pop	r1
+	cls	r0,z
+	brt	_ei2_emit
+	cls	r0,r1
+	brf	_ei2_emit
+	lw	r0,9(fp)
+	lw	r1,6(fp)
+	sw	r1,9(fp)
+	sw	r0,6(fp)
+
+_ei2_emit:
 	lc	r0,32
 	push	r0
 	la	r0,_emit_char
@@ -3010,12 +3068,39 @@ _emit_inst2:
 	jal	r1,(r0)
 	add	sp,3
 
+	; cor24-asm has no 0b literals: emit "0b..." operands in decimal.
+	lw	r1,6(fp)
+	lbu	r0,0(r1)
+	add	r0,-48
+	ceq	r0,z
+	brf	_ei2_op2_text
+	lbu	r0,1(r1)
+	add	r0,-66
+	ceq	r0,z
+	brt	_ei2_op2_bin
+	add	r0,-32
+	ceq	r0,z
+	brf	_ei2_op2_text
+
+_ei2_op2_bin:
+	push	r1
+	la	r0,_atoi
+	jal	r1,(r0)
+	add	sp,3
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+	bra	_ei2_crlf
+
+_ei2_op2_text:
 	lw	r0,6(fp)
 	push	r0
 	la	r0,_emit_strz
 	jal	r1,(r0)
 	add	sp,3
 
+_ei2_crlf:
 	la	r0,_emit_crlf
 	jal	r1,(r0)
 
@@ -9462,7 +9547,7 @@ _handle_struct_doexit:
 	push	r0
 	la	r0,_do_end_suffix
 	push	r0
-	la	r0,_emit_struct_branch_if_false
+	la	r0,_emit_struct_branch_if_true
 	jal	r1,(r0)
 	add	sp,6
 
@@ -9556,9 +9641,11 @@ _hsdd_ret:
 	pop	fp
 	jmp	(r1)
 
-; _emit_struct_branch_if_false: Emit test sequence that branches false to a label.
+; _emit_struct_branch_if_true: Emit test sequence that branches to a label when
+; the condition is true (DOEXIT). The skip branch jumps over the jump when the
+; condition is false.
 ; Args on stack: label_id (12 fp), suffix_ptr (9 fp)
-_emit_struct_branch_if_false:
+_emit_struct_branch_if_true:
 	push	fp
 	push	r2
 	push	r1
@@ -9579,7 +9666,7 @@ _emit_struct_branch_if_false:
 	ceq	r0,z
 	brt	_esbf_zclr
 
-	la	r0,_brt_txt
+	la	r0,_brf_txt
 	push	r0
 	lw	r0,-6(fp)
 	push	r0
@@ -9618,7 +9705,7 @@ _esbf_zclr:
 	ceq	r0,z
 	brt	_esbf_cmp_setup
 
-	la	r0,_brf_txt
+	la	r0,_brt_txt
 	push	r0
 	lw	r0,-6(fp)
 	push	r0
@@ -9772,11 +9859,11 @@ _esbf_branch:
 	ceq	r0,z
 	brt	_esbf_branch_false
 
-	la	r0,_brf_txt
+	la	r0,_brt_txt
 	bra	_esbf_branch_emit
 
 _esbf_branch_false:
-	la	r0,_brt_txt
+	la	r0,_brf_txt
 
 	_esbf_branch_emit:
 	push	r0

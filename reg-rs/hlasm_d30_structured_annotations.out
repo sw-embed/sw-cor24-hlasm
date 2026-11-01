@@ -1,5 +1,5 @@
-Loaded 19847 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.yVrBA2hcFs/hlasm.lgo
-Loaded 325 bytes from 'demos/d30_structured_annotations.bin' at 0x080000
+Loaded 19968 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.F1z4eF7ZPa/hlasm.lgo
+Loaded 321 bytes from 'demos/d30_structured_annotations.bin' at 0x080000
 [UART TX @ 360000] ';'  (0x3B)
 [UART TX @ 360000] ' '  (0x20)
 [UART TX @ 360000] 'D'  (0x44)
@@ -323,22 +323,20 @@ Loaded 325 bytes from 'demos/d30_structured_annotations.bin' at 0x080000
 [UART TX @ 380000] 'S'  (0x53)
 [UART TX @ 380000] 'M'  (0x4D)
 [UART TX @ 380000] ' '  (0x20)
-[UART TX @ 390000] 'T'  (0x54)
-[UART TX @ 390000] 'H'  (0x48)
-[UART TX @ 390000] 'E'  (0x45)
-[UART TX @ 390000] 'N'  (0x4E)
+[UART TX @ 380000] 'T'  (0x54)
+[UART TX @ 380000] 'H'  (0x48)
+[UART TX @ 380000] 'E'  (0x45)
+[UART TX @ 380000] 'N'  (0x4E)
 [UART TX @ 390000] ''  (0x0D)
 [UART TX @ 390000] '\n'
 [UART TX @ 390000] ' '  (0x20)
 [UART TX @ 390000] ' '  (0x20)
-[UART TX @ 390000] 's'  (0x73)
-[UART TX @ 390000] 'u'  (0x75)
-[UART TX @ 390000] 'b'  (0x62)
+[UART TX @ 390000] 'l'  (0x6C)
+[UART TX @ 390000] 'c'  (0x63)
 [UART TX @ 390000] ' '  (0x20)
 [UART TX @ 390000] 'r'  (0x72)
 [UART TX @ 390000] '0'  (0x30)
 [UART TX @ 390000] ','  (0x2C)
-[UART TX @ 390000] 'r'  (0x72)
 [UART TX @ 390000] '0'  (0x30)
 [UART TX @ 390000] ''  (0x0D)
 [UART TX @ 390000] '\n'
@@ -391,13 +389,13 @@ Loaded 325 bytes from 'demos/d30_structured_annotations.bin' at 0x080000
 [UART TX @ 390000] 'I'  (0x49)
 [UART TX @ 390000] 'F'  (0x46)
 [UART TX @ 390000] ' '  (0x20)
-[UART TX @ 400000] 'c'  (0x63)
-[UART TX @ 400000] 'c'  (0x63)
-[UART TX @ 400000] '_'  (0x5F)
-[UART TX @ 400000] 'l'  (0x6C)
-[UART TX @ 400000] 't'  (0x74)
-[UART TX @ 400000] ','  (0x2C)
-[UART TX @ 400000] ' '  (0x20)
+[UART TX @ 390000] 'c'  (0x63)
+[UART TX @ 390000] 'c'  (0x63)
+[UART TX @ 390000] '_'  (0x5F)
+[UART TX @ 390000] 'l'  (0x6C)
+[UART TX @ 390000] 't'  (0x74)
+[UART TX @ 390000] ','  (0x2C)
+[UART TX @ 390000] ' '  (0x20)
 [UART TX @ 400000] 'r'  (0x72)
 [UART TX @ 400000] '2'  (0x32)
 [UART TX @ 400000] ','  (0x2C)
@@ -597,15 +595,15 @@ Loaded 325 bytes from 'demos/d30_structured_annotations.bin' at 0x080000
 [UART TX @ 410000] ':'  (0x3A)
 [UART TX @ 410000] ''  (0x0D)
 [UART TX @ 410000] '\n'
-[UART TX @ 420000] ';'  (0x3B)
-[UART TX @ 420000] ' '  (0x20)
-[UART TX @ 420000] 'H'  (0x48)
-[UART TX @ 420000] 'L'  (0x4C)
-[UART TX @ 420000] 'A'  (0x41)
-[UART TX @ 420000] 'S'  (0x53)
-[UART TX @ 420000] 'M'  (0x4D)
-[UART TX @ 420000] ' '  (0x20)
-[UART TX @ 420000] 'E'  (0x45)
+[UART TX @ 410000] ';'  (0x3B)
+[UART TX @ 410000] ' '  (0x20)
+[UART TX @ 410000] 'H'  (0x48)
+[UART TX @ 410000] 'L'  (0x4C)
+[UART TX @ 410000] 'A'  (0x41)
+[UART TX @ 410000] 'S'  (0x53)
+[UART TX @ 410000] 'M'  (0x4D)
+[UART TX @ 410000] ' '  (0x20)
+[UART TX @ 410000] 'E'  (0x45)
 [UART TX @ 420000] 'N'  (0x4E)
 [UART TX @ 420000] 'D'  (0x44)
 [UART TX @ 420000] 'I'  (0x49)
@@ -785,9 +783,9 @@ Loaded 325 bytes from 'demos/d30_structured_annotations.bin' at 0x080000
 [UART TX @ 430000] 'r'  (0x72)
 [UART TX @ 430000] '0'  (0x30)
 [UART TX @ 430000] ','  (0x2C)
-[UART TX @ 440000] '1'  (0x31)
-[UART TX @ 440000] ''  (0x0D)
-[UART TX @ 440000] '\n'
+[UART TX @ 430000] '1'  (0x31)
+[UART TX @ 430000] ''  (0x0D)
+[UART TX @ 430000] '\n'
 [UART TX @ 440000] ';'  (0x3B)
 [UART TX @ 440000] ' '  (0x20)
 [UART TX @ 440000] 'H'  (0x48)
@@ -863,7 +861,7 @@ Loaded 325 bytes from 'demos/d30_structured_annotations.bin' at 0x080000
 [UART TX @ 440000] ' '  (0x20)
 [UART TX @ 440000] 'b'  (0x62)
 [UART TX @ 440000] 'r'  (0x72)
-[UART TX @ 440000] 't'  (0x74)
+[UART TX @ 440000] 'f'  (0x66)
 [UART TX @ 440000] ' '  (0x20)
 [UART TX @ 440000] '_'  (0x5F)
 [UART TX @ 440000] 'h'  (0x68)
@@ -1000,14 +998,14 @@ Loaded 325 bytes from 'demos/d30_structured_annotations.bin' at 0x080000
 [UART TX @ 450000] 'L'  (0x4C)
 [UART TX @ 450000] 'A'  (0x41)
 [UART TX @ 450000] 'S'  (0x53)
-[UART TX @ 460000] 'M'  (0x4D)
-[UART TX @ 460000] ' '  (0x20)
-[UART TX @ 460000] 'E'  (0x45)
-[UART TX @ 460000] 'N'  (0x4E)
-[UART TX @ 460000] 'D'  (0x44)
-[UART TX @ 460000] 'D'  (0x44)
-[UART TX @ 460000] 'O'  (0x4F)
-[UART TX @ 460000] ''  (0x0D)
+[UART TX @ 450000] 'M'  (0x4D)
+[UART TX @ 450000] ' '  (0x20)
+[UART TX @ 450000] 'E'  (0x45)
+[UART TX @ 450000] 'N'  (0x4E)
+[UART TX @ 450000] 'D'  (0x44)
+[UART TX @ 450000] 'D'  (0x44)
+[UART TX @ 450000] 'O'  (0x4F)
+[UART TX @ 450000] ''  (0x0D)
 [UART TX @ 460000] '\n'
 [UART TX @ 460000] ''  (0x0D)
 [UART TX @ 460000] '\n'
@@ -1102,12 +1100,12 @@ Loaded 325 bytes from 'demos/d30_structured_annotations.bin' at 0x080000
 [UART TX @ 460000] '1'  (0x31)
 [UART TX @ 460000] '4'  (0x34)
 [UART TX @ 460000] '_'  (0x5F)
-[UART TX @ 470000] 's'  (0x73)
-[UART TX @ 470000] 'k'  (0x6B)
-[UART TX @ 470000] 'i'  (0x69)
-[UART TX @ 470000] 'p'  (0x70)
-[UART TX @ 470000] ''  (0x0D)
-[UART TX @ 470000] '\n'
+[UART TX @ 460000] 's'  (0x73)
+[UART TX @ 460000] 'k'  (0x6B)
+[UART TX @ 460000] 'i'  (0x69)
+[UART TX @ 460000] 'p'  (0x70)
+[UART TX @ 460000] ''  (0x0D)
+[UART TX @ 460000] '\n'
 [UART TX @ 470000] ' '  (0x20)
 [UART TX @ 470000] 'b'  (0x62)
 [UART TX @ 470000] 'r'  (0x72)
@@ -1206,8 +1204,8 @@ Loaded 325 bytes from 'demos/d30_structured_annotations.bin' at 0x080000
 [UART TX @ 470000] '1'  (0x31)
 [UART TX @ 470000] ''  (0x0D)
 [UART TX @ 470000] '\n'
-[UART TX @ 480000] ' '  (0x20)
-[UART TX @ 480000] 'p'  (0x70)
+[UART TX @ 470000] ' '  (0x20)
+[UART TX @ 470000] 'p'  (0x70)
 [UART TX @ 480000] 'u'  (0x75)
 [UART TX @ 480000] 's'  (0x73)
 [UART TX @ 480000] 'h'  (0x68)
@@ -1318,9 +1316,9 @@ Loaded 325 bytes from 'demos/d30_structured_annotations.bin' at 0x080000
 [UART TX @ 480000] '1'  (0x31)
 [UART TX @ 480000] ''  (0x0D)
 [UART TX @ 480000] '\n'
-[UART TX @ 490000] ' '  (0x20)
-[UART TX @ 490000] 'b'  (0x62)
-[UART TX @ 490000] 'r'  (0x72)
+[UART TX @ 480000] ' '  (0x20)
+[UART TX @ 480000] 'b'  (0x62)
+[UART TX @ 480000] 'r'  (0x72)
 [UART TX @ 490000] 'a'  (0x61)
 [UART TX @ 490000] ' '  (0x20)
 [UART TX @ 490000] '_'  (0x5F)
@@ -1376,15 +1374,13 @@ Loaded 325 bytes from 'demos/d30_structured_annotations.bin' at 0x080000
 [UART TX @ 490000] '\n'
 [UART TX @ 490000] ' '  (0x20)
 [UART TX @ 490000] ' '  (0x20)
-[UART TX @ 490000] 's'  (0x73)
-[UART TX @ 490000] 'u'  (0x75)
-[UART TX @ 490000] 'b'  (0x62)
+[UART TX @ 490000] 'l'  (0x6C)
+[UART TX @ 490000] 'c'  (0x63)
 [UART TX @ 490000] ' '  (0x20)
 [UART TX @ 490000] 'r'  (0x72)
 [UART TX @ 490000] '2'  (0x32)
 [UART TX @ 490000] ','  (0x2C)
-[UART TX @ 490000] 'r'  (0x72)
-[UART TX @ 490000] '2'  (0x32)
+[UART TX @ 490000] '0'  (0x30)
 [UART TX @ 490000] ''  (0x0D)
 [UART TX @ 490000] '\n'
 [UART TX @ 490000] '_'  (0x5F)
@@ -1406,19 +1402,19 @@ Loaded 325 bytes from 'demos/d30_structured_annotations.bin' at 0x080000
 [UART TX @ 490000] ';'  (0x3B)
 [UART TX @ 490000] ' '  (0x20)
 [UART TX @ 490000] 'H'  (0x48)
-[UART TX @ 490666] 'L'  (0x4C)
-[UART TX @ 490666] 'A'  (0x41)
-[UART TX @ 490666] 'S'  (0x53)
-[UART TX @ 490666] 'M'  (0x4D)
-[UART TX @ 490666] ' '  (0x20)
-[UART TX @ 490666] 'E'  (0x45)
-[UART TX @ 490666] 'N'  (0x4E)
-[UART TX @ 490666] 'D'  (0x44)
-[UART TX @ 490666] 'S'  (0x53)
-[UART TX @ 490666] 'E'  (0x45)
-[UART TX @ 490666] 'L'  (0x4C)
-[UART TX @ 490666] ''  (0x0D)
-[UART TX @ 490666] '\n'
+[UART TX @ 490000] 'L'  (0x4C)
+[UART TX @ 490000] 'A'  (0x41)
+[UART TX @ 490000] 'S'  (0x53)
+[UART TX @ 490000] 'M'  (0x4D)
+[UART TX @ 490000] ' '  (0x20)
+[UART TX @ 490000] 'E'  (0x45)
+[UART TX @ 490000] 'N'  (0x4E)
+[UART TX @ 490000] 'D'  (0x44)
+[UART TX @ 490000] 'S'  (0x53)
+[UART TX @ 490000] 'E'  (0x45)
+[UART TX @ 490000] 'L'  (0x4C)
+[UART TX @ 490310] ''  (0x0D)
+[UART TX @ 490310] '\n'
 
 UART output: ; Demo 30: opt-in structured lowering annotations
 
@@ -1440,7 +1436,7 @@ _hlif_3_skip:
  bra _hlif_4_false
 _hlif_6_skip:
 ; HLASM THEN
-  sub r0,r0
+  lc r0,0
  bra _hlif_5_end
 _hlif_4_false:
 ; HLASM ELSEIF cc_lt, r2, 10
@@ -1477,7 +1473,7 @@ _hldo_9_top:
  lc r2,10
  ceq r0,r2
  pop r2
- brt _hldo_11_skip
+ brf _hldo_11_skip
  bra _hldo_10_end
 _hldo_11_skip:
  add r1,1
@@ -1511,9 +1507,9 @@ _hlsel_16_skip:
  bra _hlsel_12_end
 _hlsel_15_next:
 ; HLASM OTHERWISE
-  sub r2,r2
+  lc r2,0
 _hlsel_12_end:
 ; HLASM ENDSEL
 
 
-Executed 490666 instructions
+Executed 490310 instructions

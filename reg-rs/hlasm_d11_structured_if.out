@@ -1,5 +1,5 @@
-Loaded 19847 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.2cImvyQiSi/hlasm.lgo
-Loaded 197 bytes from 'demos/d11_structured_if.bin' at 0x080000
+Loaded 19968 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.6nHIQ4Nuwt/hlasm.lgo
+Loaded 195 bytes from 'demos/d11_structured_if.bin' at 0x080000
 [UART TX @ 240000] ';'  (0x3B)
 [UART TX @ 240000] ' '  (0x20)
 [UART TX @ 240000] 'D'  (0x44)
@@ -128,7 +128,7 @@ Loaded 197 bytes from 'demos/d11_structured_if.bin' at 0x080000
 [UART TX @ 240000] 'l'  (0x6C)
 [UART TX @ 240000] 'i'  (0x69)
 [UART TX @ 240000] 'f'  (0x66)
-[UART TX @ 250000] '_'  (0x5F)
+[UART TX @ 240000] '_'  (0x5F)
 [UART TX @ 250000] '1'  (0x31)
 [UART TX @ 250000] '_'  (0x5F)
 [UART TX @ 250000] 'f'  (0x66)
@@ -200,7 +200,7 @@ Loaded 197 bytes from 'demos/d11_structured_if.bin' at 0x080000
 [UART TX @ 250000] 'l'  (0x6C)
 [UART TX @ 250000] 'i'  (0x69)
 [UART TX @ 250000] 'f'  (0x66)
-[UART TX @ 260000] '_'  (0x5F)
+[UART TX @ 250000] '_'  (0x5F)
 [UART TX @ 260000] '6'  (0x36)
 [UART TX @ 260000] '_'  (0x5F)
 [UART TX @ 260000] 's'  (0x73)
@@ -246,14 +246,12 @@ Loaded 197 bytes from 'demos/d11_structured_if.bin' at 0x080000
 [UART TX @ 260000] '\n'
 [UART TX @ 260000] ' '  (0x20)
 [UART TX @ 260000] ' '  (0x20)
-[UART TX @ 260000] 's'  (0x73)
-[UART TX @ 260000] 'u'  (0x75)
-[UART TX @ 260000] 'b'  (0x62)
+[UART TX @ 260000] 'l'  (0x6C)
+[UART TX @ 260000] 'c'  (0x63)
 [UART TX @ 260000] ' '  (0x20)
 [UART TX @ 260000] 'r'  (0x72)
 [UART TX @ 260000] '0'  (0x30)
 [UART TX @ 260000] ','  (0x2C)
-[UART TX @ 260000] 'r'  (0x72)
 [UART TX @ 260000] '0'  (0x30)
 [UART TX @ 260000] ''  (0x0D)
 [UART TX @ 260000] '\n'
@@ -283,14 +281,14 @@ Loaded 197 bytes from 'demos/d11_structured_if.bin' at 0x080000
 [UART TX @ 260000] '_'  (0x5F)
 [UART TX @ 260000] '4'  (0x34)
 [UART TX @ 260000] '_'  (0x5F)
-[UART TX @ 270000] 'f'  (0x66)
-[UART TX @ 270000] 'a'  (0x61)
-[UART TX @ 270000] 'l'  (0x6C)
-[UART TX @ 270000] 's'  (0x73)
-[UART TX @ 270000] 'e'  (0x65)
-[UART TX @ 270000] ':'  (0x3A)
-[UART TX @ 270000] ''  (0x0D)
-[UART TX @ 270000] '\n'
+[UART TX @ 260000] 'f'  (0x66)
+[UART TX @ 260000] 'a'  (0x61)
+[UART TX @ 260000] 'l'  (0x6C)
+[UART TX @ 260000] 's'  (0x73)
+[UART TX @ 260000] 'e'  (0x65)
+[UART TX @ 260000] ':'  (0x3A)
+[UART TX @ 260000] ''  (0x0D)
+[UART TX @ 260000] '\n'
 [UART TX @ 270000] ' '  (0x20)
 [UART TX @ 270000] 'p'  (0x70)
 [UART TX @ 270000] 'u'  (0x75)
@@ -396,9 +394,9 @@ Loaded 197 bytes from 'demos/d11_structured_if.bin' at 0x080000
 [UART TX @ 270000] 'r'  (0x72)
 [UART TX @ 270000] '2'  (0x32)
 [UART TX @ 270000] ','  (0x2C)
-[UART TX @ 280000] '1'  (0x31)
-[UART TX @ 280000] ''  (0x0D)
-[UART TX @ 280000] '\n'
+[UART TX @ 270000] '1'  (0x31)
+[UART TX @ 270000] ''  (0x0D)
+[UART TX @ 270000] '\n'
 [UART TX @ 280000] ' '  (0x20)
 [UART TX @ 280000] 'b'  (0x62)
 [UART TX @ 280000] 'r'  (0x72)
@@ -649,20 +647,20 @@ Loaded 197 bytes from 'demos/d11_structured_if.bin' at 0x080000
 [UART TX @ 300000] '2'  (0x32)
 [UART TX @ 300000] ''  (0x0D)
 [UART TX @ 300000] '\n'
-[UART TX @ 301193] '_'  (0x5F)
-[UART TX @ 301193] 'h'  (0x68)
-[UART TX @ 301193] 'l'  (0x6C)
-[UART TX @ 301193] 'i'  (0x69)
-[UART TX @ 301193] 'f'  (0x66)
-[UART TX @ 301193] '_'  (0x5F)
-[UART TX @ 301193] '2'  (0x32)
-[UART TX @ 301193] '_'  (0x5F)
-[UART TX @ 301193] 'e'  (0x65)
-[UART TX @ 301193] 'n'  (0x6E)
-[UART TX @ 301193] 'd'  (0x64)
-[UART TX @ 301193] ':'  (0x3A)
-[UART TX @ 301193] ''  (0x0D)
-[UART TX @ 301193] '\n'
+[UART TX @ 300000] '_'  (0x5F)
+[UART TX @ 300000] 'h'  (0x68)
+[UART TX @ 300000] 'l'  (0x6C)
+[UART TX @ 300000] 'i'  (0x69)
+[UART TX @ 300000] 'f'  (0x66)
+[UART TX @ 300000] '_'  (0x5F)
+[UART TX @ 300000] '2'  (0x32)
+[UART TX @ 300932] '_'  (0x5F)
+[UART TX @ 300932] 'e'  (0x65)
+[UART TX @ 300932] 'n'  (0x6E)
+[UART TX @ 300932] 'd'  (0x64)
+[UART TX @ 300932] ':'  (0x3A)
+[UART TX @ 300932] ''  (0x0D)
+[UART TX @ 300932] '\n'
 
 UART output: ; Demo 11: IF/ELSEIF/ELSE/ENDIF with nesting
  push r2
@@ -679,7 +677,7 @@ _hlif_3_skip:
  brf _hlif_6_skip
  bra _hlif_4_false
 _hlif_6_skip:
-  sub r0,r0
+  lc r0,0
  bra _hlif_5_end
 _hlif_4_false:
  push r1
@@ -709,4 +707,4 @@ _hlif_9_false:
 _hlif_2_end:
 
 
-Executed 301193 instructions
+Executed 300932 instructions

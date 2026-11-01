@@ -1,5 +1,5 @@
-Loaded 19847 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.JCSg46uGHp/hlasm.lgo
-Loaded 171 bytes from 'demos/d13_structured_select.bin' at 0x080000
+Loaded 19968 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.TAEsnxZYuw/hlasm.lgo
+Loaded 167 bytes from 'demos/d13_structured_select.bin' at 0x080000
 [UART TX @ 220000] ';'  (0x3B)
 [UART TX @ 220000] ' '  (0x20)
 [UART TX @ 220000] 'D'  (0x44)
@@ -138,9 +138,9 @@ Loaded 171 bytes from 'demos/d13_structured_select.bin' at 0x080000
 [UART TX @ 230000] ':'  (0x3A)
 [UART TX @ 230000] ''  (0x0D)
 [UART TX @ 230000] '\n'
-[UART TX @ 240000] ' '  (0x20)
-[UART TX @ 240000] ' '  (0x20)
-[UART TX @ 240000] 'a'  (0x61)
+[UART TX @ 230000] ' '  (0x20)
+[UART TX @ 230000] ' '  (0x20)
+[UART TX @ 230000] 'a'  (0x61)
 [UART TX @ 240000] 'd'  (0x64)
 [UART TX @ 240000] 'd'  (0x64)
 [UART TX @ 240000] ' '  (0x20)
@@ -329,17 +329,15 @@ Loaded 171 bytes from 'demos/d13_structured_select.bin' at 0x080000
 [UART TX @ 250000] ':'  (0x3A)
 [UART TX @ 250000] ''  (0x0D)
 [UART TX @ 250000] '\n'
-[UART TX @ 260000] ' '  (0x20)
-[UART TX @ 260000] ' '  (0x20)
-[UART TX @ 260000] 's'  (0x73)
-[UART TX @ 260000] 'u'  (0x75)
-[UART TX @ 260000] 'b'  (0x62)
-[UART TX @ 260000] ' '  (0x20)
-[UART TX @ 260000] 'r'  (0x72)
-[UART TX @ 260000] '0'  (0x30)
-[UART TX @ 260000] ','  (0x2C)
-[UART TX @ 260000] 'r'  (0x72)
-[UART TX @ 260000] '0'  (0x30)
+[UART TX @ 250000] ' '  (0x20)
+[UART TX @ 250000] ' '  (0x20)
+[UART TX @ 250000] 'l'  (0x6C)
+[UART TX @ 250000] 'c'  (0x63)
+[UART TX @ 250000] ' '  (0x20)
+[UART TX @ 250000] 'r'  (0x72)
+[UART TX @ 250000] '0'  (0x30)
+[UART TX @ 250000] ','  (0x2C)
+[UART TX @ 250000] '0'  (0x30)
 [UART TX @ 260000] ''  (0x0D)
 [UART TX @ 260000] '\n'
 [UART TX @ 260000] '_'  (0x5F)
@@ -398,18 +396,18 @@ Loaded 171 bytes from 'demos/d13_structured_select.bin' at 0x080000
 [UART TX @ 260000] '2'  (0x32)
 [UART TX @ 260000] ''  (0x0D)
 [UART TX @ 260000] '\n'
-[UART TX @ 270000] ' '  (0x20)
-[UART TX @ 270000] 'b'  (0x62)
-[UART TX @ 270000] 'r'  (0x72)
-[UART TX @ 270000] 't'  (0x74)
-[UART TX @ 270000] ' '  (0x20)
-[UART TX @ 270000] '_'  (0x5F)
-[UART TX @ 270000] 'h'  (0x68)
-[UART TX @ 270000] 'l'  (0x6C)
-[UART TX @ 270000] 's'  (0x73)
-[UART TX @ 270000] 'e'  (0x65)
-[UART TX @ 270000] 'l'  (0x6C)
-[UART TX @ 270000] '_'  (0x5F)
+[UART TX @ 260000] ' '  (0x20)
+[UART TX @ 260000] 'b'  (0x62)
+[UART TX @ 260000] 'r'  (0x72)
+[UART TX @ 260000] 't'  (0x74)
+[UART TX @ 260000] ' '  (0x20)
+[UART TX @ 260000] '_'  (0x5F)
+[UART TX @ 260000] 'h'  (0x68)
+[UART TX @ 260000] 'l'  (0x6C)
+[UART TX @ 260000] 's'  (0x73)
+[UART TX @ 260000] 'e'  (0x65)
+[UART TX @ 260000] 'l'  (0x6C)
+[UART TX @ 260000] '_'  (0x5F)
 [UART TX @ 270000] '8'  (0x38)
 [UART TX @ 270000] '_'  (0x5F)
 [UART TX @ 270000] 's'  (0x73)
@@ -496,34 +494,32 @@ Loaded 171 bytes from 'demos/d13_structured_select.bin' at 0x080000
 [UART TX @ 270000] ':'  (0x3A)
 [UART TX @ 270000] ''  (0x0D)
 [UART TX @ 270000] '\n'
-[UART TX @ 277042] ' '  (0x20)
-[UART TX @ 277042] ' '  (0x20)
-[UART TX @ 277042] 's'  (0x73)
-[UART TX @ 277042] 'u'  (0x75)
-[UART TX @ 277042] 'b'  (0x62)
-[UART TX @ 277042] ' '  (0x20)
-[UART TX @ 277042] 'r'  (0x72)
-[UART TX @ 277042] '2'  (0x32)
-[UART TX @ 277042] ','  (0x2C)
-[UART TX @ 277042] 'r'  (0x72)
-[UART TX @ 277042] '2'  (0x32)
-[UART TX @ 277042] ''  (0x0D)
-[UART TX @ 277042] '\n'
-[UART TX @ 277042] '_'  (0x5F)
-[UART TX @ 277042] 'h'  (0x68)
-[UART TX @ 277042] 'l'  (0x6C)
-[UART TX @ 277042] 's'  (0x73)
-[UART TX @ 277042] 'e'  (0x65)
-[UART TX @ 277042] 'l'  (0x6C)
-[UART TX @ 277042] '_'  (0x5F)
-[UART TX @ 277042] '6'  (0x36)
-[UART TX @ 277042] '_'  (0x5F)
-[UART TX @ 277042] 'e'  (0x65)
-[UART TX @ 277042] 'n'  (0x6E)
-[UART TX @ 277042] 'd'  (0x64)
-[UART TX @ 277042] ':'  (0x3A)
-[UART TX @ 277042] ''  (0x0D)
-[UART TX @ 277042] '\n'
+[UART TX @ 276358] ' '  (0x20)
+[UART TX @ 276358] ' '  (0x20)
+[UART TX @ 276358] 'l'  (0x6C)
+[UART TX @ 276358] 'c'  (0x63)
+[UART TX @ 276358] ' '  (0x20)
+[UART TX @ 276358] 'r'  (0x72)
+[UART TX @ 276358] '2'  (0x32)
+[UART TX @ 276358] ','  (0x2C)
+[UART TX @ 276358] '0'  (0x30)
+[UART TX @ 276358] ''  (0x0D)
+[UART TX @ 276358] '\n'
+[UART TX @ 276358] '_'  (0x5F)
+[UART TX @ 276358] 'h'  (0x68)
+[UART TX @ 276358] 'l'  (0x6C)
+[UART TX @ 276358] 's'  (0x73)
+[UART TX @ 276358] 'e'  (0x65)
+[UART TX @ 276358] 'l'  (0x6C)
+[UART TX @ 276358] '_'  (0x5F)
+[UART TX @ 276358] '6'  (0x36)
+[UART TX @ 276358] '_'  (0x5F)
+[UART TX @ 276358] 'e'  (0x65)
+[UART TX @ 276358] 'n'  (0x6E)
+[UART TX @ 276358] 'd'  (0x64)
+[UART TX @ 276358] ':'  (0x3A)
+[UART TX @ 276358] ''  (0x0D)
+[UART TX @ 276358] '\n'
 
 UART output: ; Demo 13: SELECT/WHEN/OTHERWISE/ENDSEL
  push r2
@@ -546,7 +542,7 @@ _hlsel_5_skip:
   add r2,1
  bra _hlsel_1_end
 _hlsel_4_next:
-  sub r0,r0
+  lc r0,0
 _hlsel_1_end:
  push r2
  lc r2,2
@@ -558,8 +554,8 @@ _hlsel_8_skip:
   nop
  bra _hlsel_6_end
 _hlsel_7_next:
-  sub r2,r2
+  lc r2,0
 _hlsel_6_end:
 
 
-Executed 277042 instructions
+Executed 276358 instructions

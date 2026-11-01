@@ -128,14 +128,17 @@ it to 0, the restore puts it back to 0, and it is then set to 1.
 - d40 (`demos/d40_long_range_jumps.hlasm`) forces the far form and the
   trampoline; `hlasm_d40_long_range_run` assembles and runs its output.
 - `reg-rs/check_structured_asm.sh` (test `hlasm_structured_asm_check`)
-  assembles every structured demo's output. Remaining errors come from the
-  demos' own source lines (`sub r0,r0`, `xor r0,r0`, `shl r0,1`, an
-  undefined `_body`) and from two pre-existing lowering bugs: compares with
-  `r2` on the left emit `ceq r2,r1` (only `ceq r1,r2` is encodable), and
-  `0b` literals reach `lc` unconverted.
+  assembles every structured demo's output; all of them report `ok`.
 
-## Known issue found while testing
+## Issues found while testing (fixed in step 3)
 
-DOEXIT exits when its condition is false, the opposite of docs/design.md
-(`DOEXIT cc_eq, r0, 0` lowers to `ceq r0,z` / `brt <end>`). d40 is written
-to the documented meaning and prints `10` until that is fixed (`32` after).
+- DOEXIT exited when its condition was false, the opposite of
+  docs/design.md. It now exits when true, and d40 prints `32`.
+- Compares with `r2` on the left emitted the unencodable `ceq r2,r1`;
+  `ceq` operands are now put in ascending register order.
+- `0b` literals reached `lc` unconverted; they are now emitted in decimal.
+- Several demos used instructions COR24 cannot encode (`sub r0,r0`,
+  `xor r0,r0`, `shl r0,1`) or an undefined label (`_body`); they were
+  rewritten.
+
+See D1-D3 and D7 in docs/limits-and-lifting-plan.md.
