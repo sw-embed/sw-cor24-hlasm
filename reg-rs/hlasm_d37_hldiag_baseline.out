@@ -1,4 +1,4 @@
-Loaded 19847 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.f8VJMCUYWa/hlasm.lgo
+Loaded 20444 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.F1Faln1nGT/hlasm.lgo
 Loaded 80 bytes from 'demos/d37_hldiag_baseline.bin' at 0x080000
 [UART TX @ 130000] ';'  (0x3B)
 [UART TX @ 130000] ' '  (0x20)
@@ -54,60 +54,60 @@ Loaded 80 bytes from 'demos/d37_hldiag_baseline.bin' at 0x080000
 [UART TX @ 130000] 'e'  (0x65)
 [UART TX @ 130000] ''  (0x0D)
 [UART TX @ 130000] '\n'
-[UART TX @ 139192] ' '  (0x20)
-[UART TX @ 139192] 'a'  (0x61)
-[UART TX @ 139192] 'd'  (0x64)
-[UART TX @ 139192] 'd'  (0x64)
-[UART TX @ 139192] ' '  (0x20)
-[UART TX @ 139192] 'r'  (0x72)
-[UART TX @ 139192] '0'  (0x30)
-[UART TX @ 139192] ','  (0x2C)
-[UART TX @ 139192] '1'  (0x31)
-[UART TX @ 139192] ''  (0x0D)
-[UART TX @ 139192] '\n'
-[UART TX @ 139192] ' '  (0x20)
-[UART TX @ 139192] 'n'  (0x6E)
-[UART TX @ 139192] 'o'  (0x6F)
-[UART TX @ 139192] 'p'  (0x70)
-[UART TX @ 139192] ''  (0x0D)
-[UART TX @ 139192] '\n'
-[UART TX @ 139192] ';'  (0x3B)
-[UART TX @ 139192] ' '  (0x20)
-[UART TX @ 139192] '!'  (0x21)
-[UART TX @ 139192] '!'  (0x21)
-[UART TX @ 139192] ' '  (0x20)
-[UART TX @ 139192] 'h'  (0x68)
-[UART TX @ 139192] 'l'  (0x6C)
-[UART TX @ 139192] 'a'  (0x61)
-[UART TX @ 139192] 's'  (0x73)
-[UART TX @ 139192] 'm'  (0x6D)
-[UART TX @ 139192] ':'  (0x3A)
-[UART TX @ 139192] ' '  (0x20)
-[UART TX @ 139192] 'H'  (0x48)
-[UART TX @ 139192] 'L'  (0x4C)
-[UART TX @ 139192] 'D'  (0x44)
-[UART TX @ 139192] 'I'  (0x49)
-[UART TX @ 139192] 'A'  (0x41)
-[UART TX @ 139192] 'G'  (0x47)
-[UART TX @ 139192] ' '  (0x20)
-[UART TX @ 139192] 'a'  (0x61)
-[UART TX @ 139192] 'c'  (0x63)
-[UART TX @ 139192] 't'  (0x74)
-[UART TX @ 139192] 'i'  (0x69)
-[UART TX @ 139192] 'v'  (0x76)
-[UART TX @ 139192] 'e'  (0x65)
-[UART TX @ 139192] ' '  (0x20)
-[UART TX @ 139192] 'a'  (0x61)
-[UART TX @ 139192] 't'  (0x74)
-[UART TX @ 139192] ' '  (0x20)
-[UART TX @ 139192] 's'  (0x73)
-[UART TX @ 139192] 'r'  (0x72)
-[UART TX @ 139192] 'c'  (0x63)
-[UART TX @ 139192] '0'  (0x30)
-[UART TX @ 139192] ':'  (0x3A)
-[UART TX @ 139192] '4'  (0x34)
-[UART TX @ 139192] ''  (0x0D)
-[UART TX @ 139192] '\n'
+[UART TX @ 139860] ' '  (0x20)
+[UART TX @ 139860] 'a'  (0x61)
+[UART TX @ 139860] 'd'  (0x64)
+[UART TX @ 139860] 'd'  (0x64)
+[UART TX @ 139860] ' '  (0x20)
+[UART TX @ 139860] 'r'  (0x72)
+[UART TX @ 139860] '0'  (0x30)
+[UART TX @ 139860] ','  (0x2C)
+[UART TX @ 139860] '1'  (0x31)
+[UART TX @ 139860] ''  (0x0D)
+[UART TX @ 139860] '\n'
+[UART TX @ 139860] ' '  (0x20)
+[UART TX @ 139860] 'n'  (0x6E)
+[UART TX @ 139860] 'o'  (0x6F)
+[UART TX @ 139860] 'p'  (0x70)
+[UART TX @ 139860] ''  (0x0D)
+[UART TX @ 139860] '\n'
+[UART TX @ 139860] ';'  (0x3B)
+[UART TX @ 139860] ' '  (0x20)
+[UART TX @ 139860] '!'  (0x21)
+[UART TX @ 139860] '!'  (0x21)
+[UART TX @ 139860] ' '  (0x20)
+[UART TX @ 139860] 'h'  (0x68)
+[UART TX @ 139860] 'l'  (0x6C)
+[UART TX @ 139860] 'a'  (0x61)
+[UART TX @ 139860] 's'  (0x73)
+[UART TX @ 139860] 'm'  (0x6D)
+[UART TX @ 139860] ':'  (0x3A)
+[UART TX @ 139860] ' '  (0x20)
+[UART TX @ 139860] 'H'  (0x48)
+[UART TX @ 139860] 'L'  (0x4C)
+[UART TX @ 139860] 'D'  (0x44)
+[UART TX @ 139860] 'I'  (0x49)
+[UART TX @ 139860] 'A'  (0x41)
+[UART TX @ 139860] 'G'  (0x47)
+[UART TX @ 139860] ' '  (0x20)
+[UART TX @ 139860] 'a'  (0x61)
+[UART TX @ 139860] 'c'  (0x63)
+[UART TX @ 139860] 't'  (0x74)
+[UART TX @ 139860] 'i'  (0x69)
+[UART TX @ 139860] 'v'  (0x76)
+[UART TX @ 139860] 'e'  (0x65)
+[UART TX @ 139860] ' '  (0x20)
+[UART TX @ 139860] 'a'  (0x61)
+[UART TX @ 139860] 't'  (0x74)
+[UART TX @ 139860] ' '  (0x20)
+[UART TX @ 139860] 's'  (0x73)
+[UART TX @ 139860] 'r'  (0x72)
+[UART TX @ 139860] 'c'  (0x63)
+[UART TX @ 139860] '0'  (0x30)
+[UART TX @ 139860] ':'  (0x3A)
+[UART TX @ 139860] '4'  (0x34)
+[UART TX @ 139860] ''  (0x0D)
+[UART TX @ 139860] '\n'
 
 UART output: ; Demo 37: opt-in HLDIAG diagnostic channel baseline
  add r0,1
@@ -115,4 +115,4 @@ UART output: ; Demo 37: opt-in HLDIAG diagnostic channel baseline
 ; !! hlasm: HLDIAG active at src0:4
 
 
-Executed 139192 instructions
+Executed 139860 instructions

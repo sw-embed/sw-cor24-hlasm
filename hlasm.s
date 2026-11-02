@@ -2438,6 +2438,36 @@ _ec_ret:
 	pop	fp
 	jmp	(r1)
 
+; _fatal: Print "ERROR: <msg>" on the UART and halt.
+; Used for every capacity limit, so nothing overflows silently. Setting
+; _relax_pass forces the UART path even during the sizing pass.
+; Arg on stack: message string ptr (9 fp)
+_fatal:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	la	r1,_relax_pass
+	la	r0,1
+	sw	r0,0(r1)
+
+	la	r0,_fatal_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+
+	la	r0,_halt
+	jmp	(r0)
+
 ; _emit_crlf: Print CR+LF to UART.
 _emit_crlf:
 	push	fp
@@ -3469,47 +3499,51 @@ _emit_select_label_def:
 	pop	fp
 	jmp	(r1)
 
-; _emit_dec24: Print a small number (0-999) as decimal to UART.
+; _emit_dec24: Print an unsigned 24-bit number as decimal (no padding).
 ; Arg on stack: number
 ; Frame: push fp, r1, r2 = 9 bytes. Arg at 9(fp).
+; -3(fp) = remaining value, -6(fp) = digit started flag, -9(fp) = power ptr
 _emit_dec24:
 	push	fp
 	push	r1
 	push	r2
 	mov	fp,sp
-	add	sp,-6
+	add	sp,-9
 
 	lw	r0,9(fp)
 	sw	r0,-3(fp)
 	la	r0,0
 	sw	r0,-6(fp)
+	la	r0,_dec_pow
+	sw	r0,-9(fp)
 
-	lw	r0,-3(fp)
-	ceq	r0,z
-	brf	_ed24_hundreds
-	lc	r0,48
-	push	r0
-	la	r0,_emit_char
-	jal	r1,(r0)
-	add	sp,3
-	bra	_ed24_ret
-
-_ed24_hundreds:
+_ed24_pow:
+	lw	r1,-9(fp)
+	lw	r1,0(r1)
+	ceq	r1,z
+	brt	_ed24_ret
 	la	r2,0
 
-_ed24_hl:
+_ed24_sub:
 	lw	r0,-3(fp)
-	lc	r1,100
 	clu	r0,r1
-	brt	_ed24_hd
+	brt	_ed24_digit
 	sub	r0,r1
 	sw	r0,-3(fp)
 	add	r2,1
-	bra	_ed24_hl
+	bra	_ed24_sub
 
-_ed24_hd:
+_ed24_digit:
 	ceq	r2,z
-	brt	_ed24_tens
+	brf	_ed24_emit
+	lw	r0,-6(fp)
+	ceq	r0,z
+	brf	_ed24_emit
+	lc	r0,1
+	ceq	r0,r1
+	brf	_ed24_next
+
+_ed24_emit:
 	lc	r0,48
 	add	r0,r2
 	push	r0
@@ -3519,42 +3553,11 @@ _ed24_hd:
 	la	r0,1
 	sw	r0,-6(fp)
 
-_ed24_tens:
-	la	r2,0
-
-_ed24_tl:
-	lw	r0,-3(fp)
-	lc	r1,10
-	clu	r0,r1
-	brt	_ed24_td
-	sub	r0,r1
-	sw	r0,-3(fp)
-	add	r2,1
-	bra	_ed24_tl
-
-_ed24_td:
-	ceq	r2,z
-	brf	_ed24_td_emit
-	lw	r0,-6(fp)
-	ceq	r0,z
-	brt	_ed24_ones
-
-_ed24_td_emit:
-	lc	r0,48
-	add	r0,r2
-	push	r0
-	la	r0,_emit_char
-	jal	r1,(r0)
-	add	sp,3
-
-_ed24_ones:
-	lw	r0,-3(fp)
-	lc	r1,48
-	add	r0,r1
-	push	r0
-	la	r0,_emit_char
-	jal	r1,(r0)
-	add	sp,3
+_ed24_next:
+	lw	r0,-9(fp)
+	add	r0,3
+	sw	r0,-9(fp)
+	bra	_ed24_pow
 
 _ed24_ret:
 	mov	sp,fp
@@ -5798,85 +5801,69 @@ _emit_char_to_buf:
 	pop	fp
 	jmp	(r1)
 
-; _emit_num4_to_buf: Write 4-digit zero-padded decimal number to _expand_buf.
-; Arg on stack: number (0-9999)
+; _emit_num4_to_buf: Write a decimal number to _expand_buf, zero-padded to at
+; least 4 digits (0001-9999, then 10000 and up unpadded, so labels stay unique).
+; Arg on stack: number
 ; Frame: push fp, r1, r2, r2 = 12 bytes. Arg at 12(fp).
-; 0(fp) = remaining value
+; 0(fp) = remaining value, -3(fp) = started flag, -6(fp) = power ptr
 _emit_num4_to_buf:
 	push	fp
 	push	r1
 	push	r2
 	push	r2
 	mov	fp,sp
+	add	sp,-6
 
 	lw	r0,12(fp)
 	sw	r0,0(fp)
+	la	r0,0
+	sw	r0,-3(fp)
+	la	r0,_dec_pow
+	sw	r0,-6(fp)
 
-	la	r1,1000
+_en4_pow:
+	lw	r1,-6(fp)
+	lw	r1,0(r1)
+	ceq	r1,z
+	brt	_en4_ret
 	la	r2,0
-_en4_tloop:
+
+_en4_sub:
 	lw	r0,0(fp)
 	clu	r0,r1
-	brt	_en4_tdone
-	lw	r0,0(fp)
+	brt	_en4_digit
 	sub	r0,r1
 	sw	r0,0(fp)
 	add	r2,1
-	bra	_en4_tloop
-_en4_tdone:
+	bra	_en4_sub
+
+_en4_digit:
+	ceq	r2,z
+	brf	_en4_emit
+	lw	r0,-3(fp)
+	ceq	r0,z
+	brf	_en4_emit
+	la	r0,1001
+	clu	r1,r0
+	brf	_en4_next
+
+_en4_emit:
 	lc	r0,48
 	add	r0,r2
 	push	r0
 	la	r0,_emit_char_to_buf
 	jal	r1,(r0)
 	add	sp,3
+	la	r0,1
+	sw	r0,-3(fp)
 
-	la	r1,100
-	la	r2,0
-_en4_hloop:
-	lw	r0,0(fp)
-	clu	r0,r1
-	brt	_en4_hdone
-	lw	r0,0(fp)
-	sub	r0,r1
-	sw	r0,0(fp)
-	add	r2,1
-	bra	_en4_hloop
-_en4_hdone:
-	lc	r0,48
-	add	r0,r2
-	push	r0
-	la	r0,_emit_char_to_buf
-	jal	r1,(r0)
-	add	sp,3
+_en4_next:
+	lw	r0,-6(fp)
+	add	r0,3
+	sw	r0,-6(fp)
+	bra	_en4_pow
 
-	la	r1,10
-	la	r2,0
-_en4_oloop:
-	lw	r0,0(fp)
-	clu	r0,r1
-	brt	_en4_odone
-	lw	r0,0(fp)
-	sub	r0,r1
-	sw	r0,0(fp)
-	add	r2,1
-	bra	_en4_oloop
-_en4_odone:
-	lc	r0,48
-	add	r0,r2
-	push	r0
-	la	r0,_emit_char_to_buf
-	jal	r1,(r0)
-	add	sp,3
-
-	lw	r0,0(fp)
-	lc	r1,48
-	add	r0,r1
-	push	r0
-	la	r0,_emit_char_to_buf
-	jal	r1,(r0)
-	add	sp,3
-
+_en4_ret:
 	mov	sp,fp
 	pop	r2
 	pop	r2
@@ -11825,6 +11812,53 @@ _rx_data_txt:
 
 _rx_glob_txt:
 	.byte	103,108,111,98,0
+
+; --- Capacity limits: _fatal messages ---
+_fatal_txt:
+	.byte	69,82,82,79,82,58,32,0
+
+_err_line_long:
+	.byte	105,110,112,117,116,32,108,105,110,101,32,108,111,110,103,101,114,32,116,104,97,110,32,50,53,54,32,99,104,97,114,97,99,116,101,114,115,0
+
+_err_sym_full:
+	.byte	115,121,109,98,111,108,32,116,97,98,108,101,32,111,118,101,114,102,108,111,119,32,40,53,49,50,32,115,121,109,98,111,108,115,41,0
+
+_err_sym_long:
+	.byte	115,121,109,98,111,108,32,110,97,109,101,32,108,111,110,103,101,114,32,116,104,97,110,32,51,49,32,99,104,97,114,97,99,116,101,114,115,0
+
+_err_mac_full:
+	.byte	109,97,99,114,111,32,116,97,98,108,101,32,111,118,101,114,102,108,111,119,32,40,50,53,54,32,109,97,99,114,111,115,41,0
+
+_err_mac_long:
+	.byte	109,97,99,114,111,32,110,97,109,101,32,108,111,110,103,101,114,32,116,104,97,110,32,51,49,32,99,104,97,114,97,99,116,101,114,115,0
+
+_err_parm_full:
+	.byte	109,111,114,101,32,116,104,97,110,32,49,54,32,109,97,99,114,111,32,112,97,114,97,109,101,116,101,114,115,0
+
+_err_parm_long:
+	.byte	109,97,99,114,111,32,112,97,114,97,109,101,116,101,114,32,110,97,109,101,32,108,111,110,103,101,114,32,116,104,97,110,32,51,49,32,99,104,97,114,97,99,116,101,114,115,0
+
+_err_pool_full:
+	.byte	109,97,99,114,111,32,98,111,100,121,32,112,111,111,108,32,111,118,101,114,102,108,111,119,32,40,54,53,53,51,54,32,98,121,116,101,115,41,0
+
+_err_exp_long:
+	.byte	101,120,112,97,110,100,101,100,32,109,97,99,114,111,32,108,105,110,101,32,108,111,110,103,101,114,32,116,104,97,110,32,50,53,54,32,99,104,97,114,97,99,116,101,114,115,0
+
+_err_cond_deep:
+	.byte	99,111,110,100,105,116,105,111,110,97,108,32,97,115,115,101,109,98,108,121,32,110,101,115,116,101,100,32,100,101,101,112,101,114,32,116,104,97,110,32,51,50,0
+
+_err_if_deep:
+	.byte	73,70,32,110,101,115,116,101,100,32,100,101,101,112,101,114,32,116,104,97,110,32,51,50,0
+
+_err_do_deep:
+	.byte	68,79,32,110,101,115,116,101,100,32,100,101,101,112,101,114,32,116,104,97,110,32,51,50,0
+
+_err_sel_deep:
+	.byte	83,69,76,69,67,84,32,110,101,115,116,101,100,32,100,101,101,112,101,114,32,116,104,97,110,32,51,50,0
+
+; Powers of ten for _emit_dec24 and _emit_num4_to_buf (0-terminated).
+_dec_pow:
+	.word	10000000,1000000,100000,10000,1000,100,10,1,0
 
 ; --- Buffers ---
 _id_buf:

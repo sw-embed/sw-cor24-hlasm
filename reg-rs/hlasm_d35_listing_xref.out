@@ -1,8 +1,8 @@
-Loaded 19968 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.2qf6J0jRkK/hlasm.lgo
+Loaded 20444 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.AS8XvcKDJa/hlasm.lgo
 Loaded 139 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d35_listing_xref.bin' at 0x090000
 Loaded 109 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d34_copy_macro_library_macros.bin' at 0x081000
 Loaded 40 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d34_copy_macro_library_symbols.bin' at 0x081100
-Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-75092.cfg' at 0x07F000
+Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-16701.cfg' at 0x07F000
 [UART TX @ 220000] ';'  (0x3B)
 [UART TX @ 220000] ' '  (0x20)
 [UART TX @ 220000] 'D'  (0x44)
@@ -115,8 +115,8 @@ Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-75092.cfg' at 0x07F000
 [UART TX @ 240000] '2'  (0x32)
 [UART TX @ 240000] ''  (0x0D)
 [UART TX @ 240000] '\n'
-[UART TX @ 240000] ''  (0x0D)
-[UART TX @ 240000] '\n'
+[UART TX @ 250000] ''  (0x0D)
+[UART TX @ 250000] '\n'
 [UART TX @ 250000] ';'  (0x3B)
 [UART TX @ 250000] ' '  (0x20)
 [UART TX @ 250000] 'H'  (0x48)
@@ -138,18 +138,18 @@ Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-75092.cfg' at 0x07F000
 [UART TX @ 250000] '7'  (0x37)
 [UART TX @ 250000] ''  (0x0D)
 [UART TX @ 250000] '\n'
-[UART TX @ 250000] ';'  (0x3B)
-[UART TX @ 250000] ' '  (0x20)
-[UART TX @ 250000] 'H'  (0x48)
-[UART TX @ 250000] 'L'  (0x4C)
-[UART TX @ 250000] 'A'  (0x41)
-[UART TX @ 250000] 'S'  (0x53)
-[UART TX @ 250000] 'M'  (0x4D)
-[UART TX @ 250000] ' '  (0x20)
-[UART TX @ 250000] 'C'  (0x43)
-[UART TX @ 250000] 'O'  (0x4F)
-[UART TX @ 250000] 'P'  (0x50)
-[UART TX @ 250000] 'Y'  (0x59)
+[UART TX @ 260000] ';'  (0x3B)
+[UART TX @ 260000] ' '  (0x20)
+[UART TX @ 260000] 'H'  (0x48)
+[UART TX @ 260000] 'L'  (0x4C)
+[UART TX @ 260000] 'A'  (0x41)
+[UART TX @ 260000] 'S'  (0x53)
+[UART TX @ 260000] 'M'  (0x4D)
+[UART TX @ 260000] ' '  (0x20)
+[UART TX @ 260000] 'C'  (0x43)
+[UART TX @ 260000] 'O'  (0x4F)
+[UART TX @ 260000] 'P'  (0x50)
+[UART TX @ 260000] 'Y'  (0x59)
 [UART TX @ 260000] ' '  (0x20)
 [UART TX @ 260000] 'l'  (0x6C)
 [UART TX @ 260000] 'i'  (0x69)
@@ -251,33 +251,33 @@ Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-75092.cfg' at 0x07F000
 [UART TX @ 280000] '\n'
 [UART TX @ 280000] ''  (0x0D)
 [UART TX @ 280000] '\n'
-[UART TX @ 280000] ' '  (0x20)
-[UART TX @ 280000] 'p'  (0x70)
-[UART TX @ 280000] 'u'  (0x75)
-[UART TX @ 280000] 's'  (0x73)
-[UART TX @ 280000] 'h'  (0x68)
-[UART TX @ 280000] ' '  (0x20)
-[UART TX @ 280000] 'r'  (0x72)
-[UART TX @ 280000] '2'  (0x32)
-[UART TX @ 280000] ''  (0x0D)
-[UART TX @ 280000] '\n'
-[UART TX @ 280000] ' '  (0x20)
-[UART TX @ 280000] 'l'  (0x6C)
-[UART TX @ 280000] 'c'  (0x63)
-[UART TX @ 280000] ' '  (0x20)
-[UART TX @ 280000] 'r'  (0x72)
-[UART TX @ 280000] '2'  (0x32)
-[UART TX @ 280000] ','  (0x2C)
-[UART TX @ 280000] '0'  (0x30)
-[UART TX @ 280000] ''  (0x0D)
-[UART TX @ 280000] '\n'
-[UART TX @ 280000] ' '  (0x20)
-[UART TX @ 280000] 'c'  (0x63)
-[UART TX @ 280000] 'e'  (0x65)
-[UART TX @ 280000] 'q'  (0x71)
-[UART TX @ 280000] ' '  (0x20)
-[UART TX @ 280000] 'r'  (0x72)
-[UART TX @ 280000] '0'  (0x30)
+[UART TX @ 290000] ' '  (0x20)
+[UART TX @ 290000] 'p'  (0x70)
+[UART TX @ 290000] 'u'  (0x75)
+[UART TX @ 290000] 's'  (0x73)
+[UART TX @ 290000] 'h'  (0x68)
+[UART TX @ 290000] ' '  (0x20)
+[UART TX @ 290000] 'r'  (0x72)
+[UART TX @ 290000] '2'  (0x32)
+[UART TX @ 290000] ''  (0x0D)
+[UART TX @ 290000] '\n'
+[UART TX @ 290000] ' '  (0x20)
+[UART TX @ 290000] 'l'  (0x6C)
+[UART TX @ 290000] 'c'  (0x63)
+[UART TX @ 290000] ' '  (0x20)
+[UART TX @ 290000] 'r'  (0x72)
+[UART TX @ 290000] '2'  (0x32)
+[UART TX @ 290000] ','  (0x2C)
+[UART TX @ 290000] '0'  (0x30)
+[UART TX @ 290000] ''  (0x0D)
+[UART TX @ 290000] '\n'
+[UART TX @ 290000] ' '  (0x20)
+[UART TX @ 290000] 'c'  (0x63)
+[UART TX @ 290000] 'e'  (0x65)
+[UART TX @ 290000] 'q'  (0x71)
+[UART TX @ 290000] ' '  (0x20)
+[UART TX @ 290000] 'r'  (0x72)
+[UART TX @ 290000] '0'  (0x30)
 [UART TX @ 290000] ','  (0x2C)
 [UART TX @ 290000] 'r'  (0x72)
 [UART TX @ 290000] '2'  (0x32)
@@ -356,77 +356,77 @@ Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-75092.cfg' at 0x07F000
 [UART TX @ 290000] '7'  (0x37)
 [UART TX @ 290000] ''  (0x0D)
 [UART TX @ 290000] '\n'
-[UART TX @ 290000] '_'  (0x5F)
-[UART TX @ 290000] 'h'  (0x68)
-[UART TX @ 290000] 'l'  (0x6C)
-[UART TX @ 290000] 'i'  (0x69)
-[UART TX @ 290000] 'f'  (0x66)
-[UART TX @ 290000] '_'  (0x5F)
-[UART TX @ 290000] '1'  (0x31)
-[UART TX @ 290000] '_'  (0x5F)
-[UART TX @ 290000] 'f'  (0x66)
-[UART TX @ 290000] 'a'  (0x61)
-[UART TX @ 290000] 'l'  (0x6C)
-[UART TX @ 290000] 's'  (0x73)
-[UART TX @ 290000] 'e'  (0x65)
-[UART TX @ 290000] ':'  (0x3A)
-[UART TX @ 290000] ''  (0x0D)
-[UART TX @ 290000] '\n'
-[UART TX @ 290000] '_'  (0x5F)
-[UART TX @ 290000] 'h'  (0x68)
-[UART TX @ 290000] 'l'  (0x6C)
-[UART TX @ 290000] 'i'  (0x69)
-[UART TX @ 290000] 'f'  (0x66)
-[UART TX @ 290000] '_'  (0x5F)
-[UART TX @ 290000] '2'  (0x32)
-[UART TX @ 290000] '_'  (0x5F)
-[UART TX @ 290000] 'e'  (0x65)
-[UART TX @ 290000] 'n'  (0x6E)
-[UART TX @ 290000] 'd'  (0x64)
-[UART TX @ 290000] ':'  (0x3A)
-[UART TX @ 290000] ''  (0x0D)
-[UART TX @ 290000] '\n'
-[UART TX @ 297844] ''  (0x0D)
-[UART TX @ 297844] '\n'
-[UART TX @ 297844] ';'  (0x3B)
-[UART TX @ 297844] ' '  (0x20)
-[UART TX @ 297844] 'H'  (0x48)
-[UART TX @ 297844] 'L'  (0x4C)
-[UART TX @ 297844] 'A'  (0x41)
-[UART TX @ 297844] 'S'  (0x53)
-[UART TX @ 297844] 'M'  (0x4D)
-[UART TX @ 297844] ' '  (0x20)
-[UART TX @ 297844] 'E'  (0x45)
-[UART TX @ 297844] 'X'  (0x58)
-[UART TX @ 297844] 'P'  (0x50)
-[UART TX @ 297844] 'A'  (0x41)
-[UART TX @ 297844] 'N'  (0x4E)
-[UART TX @ 297844] 'D'  (0x44)
-[UART TX @ 297844] ' '  (0x20)
-[UART TX @ 297844] 'P'  (0x50)
-[UART TX @ 297844] 'O'  (0x4F)
-[UART TX @ 297844] 'P'  (0x50)
-[UART TX @ 297844] '2'  (0x32)
-[UART TX @ 297844] ''  (0x0D)
-[UART TX @ 297844] '\n'
-[UART TX @ 297844] ' '  (0x20)
-[UART TX @ 297844] 'p'  (0x70)
-[UART TX @ 297844] 'o'  (0x6F)
-[UART TX @ 297844] 'p'  (0x70)
-[UART TX @ 297844] ' '  (0x20)
-[UART TX @ 297844] 'r'  (0x72)
-[UART TX @ 297844] '1'  (0x31)
-[UART TX @ 297844] ''  (0x0D)
-[UART TX @ 297844] '\n'
-[UART TX @ 297844] ' '  (0x20)
-[UART TX @ 297844] 'p'  (0x70)
-[UART TX @ 297844] 'o'  (0x6F)
-[UART TX @ 297844] 'p'  (0x70)
-[UART TX @ 297844] ' '  (0x20)
-[UART TX @ 297844] 'r'  (0x72)
-[UART TX @ 297844] '0'  (0x30)
-[UART TX @ 297844] ''  (0x0D)
-[UART TX @ 297844] '\n'
+[UART TX @ 300000] '_'  (0x5F)
+[UART TX @ 300000] 'h'  (0x68)
+[UART TX @ 300000] 'l'  (0x6C)
+[UART TX @ 300000] 'i'  (0x69)
+[UART TX @ 300000] 'f'  (0x66)
+[UART TX @ 300000] '_'  (0x5F)
+[UART TX @ 300000] '1'  (0x31)
+[UART TX @ 300000] '_'  (0x5F)
+[UART TX @ 300000] 'f'  (0x66)
+[UART TX @ 300000] 'a'  (0x61)
+[UART TX @ 300000] 'l'  (0x6C)
+[UART TX @ 300000] 's'  (0x73)
+[UART TX @ 300000] 'e'  (0x65)
+[UART TX @ 300000] ':'  (0x3A)
+[UART TX @ 300000] ''  (0x0D)
+[UART TX @ 300000] '\n'
+[UART TX @ 300000] '_'  (0x5F)
+[UART TX @ 300000] 'h'  (0x68)
+[UART TX @ 300000] 'l'  (0x6C)
+[UART TX @ 300000] 'i'  (0x69)
+[UART TX @ 300000] 'f'  (0x66)
+[UART TX @ 300000] '_'  (0x5F)
+[UART TX @ 300000] '2'  (0x32)
+[UART TX @ 300000] '_'  (0x5F)
+[UART TX @ 300000] 'e'  (0x65)
+[UART TX @ 300000] 'n'  (0x6E)
+[UART TX @ 300000] 'd'  (0x64)
+[UART TX @ 300000] ':'  (0x3A)
+[UART TX @ 300000] ''  (0x0D)
+[UART TX @ 300000] '\n'
+[UART TX @ 300000] ''  (0x0D)
+[UART TX @ 300000] '\n'
+[UART TX @ 300000] ';'  (0x3B)
+[UART TX @ 300000] ' '  (0x20)
+[UART TX @ 300000] 'H'  (0x48)
+[UART TX @ 300000] 'L'  (0x4C)
+[UART TX @ 300000] 'A'  (0x41)
+[UART TX @ 300000] 'S'  (0x53)
+[UART TX @ 300000] 'M'  (0x4D)
+[UART TX @ 300000] ' '  (0x20)
+[UART TX @ 300000] 'E'  (0x45)
+[UART TX @ 300000] 'X'  (0x58)
+[UART TX @ 300000] 'P'  (0x50)
+[UART TX @ 300000] 'A'  (0x41)
+[UART TX @ 300000] 'N'  (0x4E)
+[UART TX @ 300000] 'D'  (0x44)
+[UART TX @ 300000] ' '  (0x20)
+[UART TX @ 300000] 'P'  (0x50)
+[UART TX @ 300000] 'O'  (0x4F)
+[UART TX @ 300000] 'P'  (0x50)
+[UART TX @ 300000] '2'  (0x32)
+[UART TX @ 300000] ''  (0x0D)
+[UART TX @ 300000] '\n'
+[UART TX @ 300000] ' '  (0x20)
+[UART TX @ 300000] 'p'  (0x70)
+[UART TX @ 300000] 'o'  (0x6F)
+[UART TX @ 300000] 'p'  (0x70)
+[UART TX @ 300000] ' '  (0x20)
+[UART TX @ 300000] 'r'  (0x72)
+[UART TX @ 300000] '1'  (0x31)
+[UART TX @ 300000] ''  (0x0D)
+[UART TX @ 300000] '\n'
+[UART TX @ 300000] ' '  (0x20)
+[UART TX @ 300000] 'p'  (0x70)
+[UART TX @ 300000] 'o'  (0x6F)
+[UART TX @ 300000] 'p'  (0x70)
+[UART TX @ 300000] ' '  (0x20)
+[UART TX @ 300000] 'r'  (0x72)
+[UART TX @ 300000] '0'  (0x30)
+[UART TX @ 300000] ''  (0x0D)
+[UART TX @ 300000] '\n'
 
 UART output: ; Demo 35: opt-in listing/xref-friendly output
 ; HLASM COPY libmac
@@ -459,4 +459,4 @@ _hlif_2_end:
  pop r0
 
 
-Executed 297844 instructions
+Executed 300000 instructions
