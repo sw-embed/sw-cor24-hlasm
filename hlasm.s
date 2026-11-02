@@ -737,7 +737,7 @@ _ml_is_endifasm:
 	la	r0,_mul3
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,787710
+	la	r1,199712
 	add	r1,r0
 	la	r0,0
 	sw	r0,0(r1)
@@ -758,7 +758,7 @@ _ml_is_elseasm:
 	la	r0,_mul3
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,787710
+	la	r1,199712
 	add	r1,r0
 	lw	r0,0(r1)
 
@@ -909,12 +909,12 @@ _read_line:
 	push	r2
 	mov	fp,sp
 
-	la	r1,786432
+	la	r1,196608
 	la	r0,0
 	sw	r0,0(fp)
 	la	r1,788191
 	sw	r0,0(r1)
-	la	r1,786432
+	la	r1,196608
 
 _rl_loop:
 	push	r1
@@ -937,7 +937,13 @@ _rl_loop:
 	lw	r0,0(fp)
 	add	r0,1
 	sw	r0,0(fp)
-	bra	_rl_loop
+	la	r2,257
+	clu	r0,r2
+	brt	_rl_loop
+	la	r0,_err_line_long
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
 
 _rl_eof:
 	lw	r0,0(fp)
@@ -1025,7 +1031,7 @@ _emit_line:
 	ceq	r0,z
 	brt	_el_end_str
 
-	la	r1,786432
+	la	r1,196608
 
 _el_loop:
 	lbu	r0,0(r1)
@@ -1067,7 +1073,7 @@ _is_structured:
 	ceq	r0,z
 	brt	_is_no
 
-	la	r2,786432
+	la	r2,196608
 
 _is_skip_ws:
 	lbu	r0,0(r2)
@@ -1664,7 +1670,7 @@ _scan_comment:
 	mov	fp,sp
 
 	lw	r2,12(fp)
-	la	r1,786560
+	la	r1,196868
 	sw	r1,0(fp)
 
 _sc_cloop:
@@ -1697,7 +1703,7 @@ _sc_cdone:
 	la	r0,0
 	sb	r0,0(r1)
 
-	la	r1,786560
+	la	r1,196868
 	la	r0,8
 	push	r1
 	push	r0
@@ -1727,7 +1733,7 @@ _scan_dot:
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r1,786560
+	la	r1,196868
 	lc	r0,46
 	sb	r0,0(r1)
 	add	r1,1
@@ -1765,7 +1771,7 @@ _sd_done:
 	la	r0,0
 	sb	r0,0(r1)
 
-	la	r1,786560
+	la	r1,196868
 	la	r0,13
 	push	r1
 	push	r0
@@ -1791,7 +1797,7 @@ _scan_number:
 	mov	fp,sp
 
 	lw	r2,12(fp)
-	la	r1,786560
+	la	r1,196868
 	sw	r1,0(fp)
 
 _sn_loop:
@@ -1831,7 +1837,7 @@ _sn_done:
 	la	r0,0
 	sb	r0,0(r1)
 
-	la	r1,786560
+	la	r1,196868
 	la	r0,5
 	push	r1
 	push	r0
@@ -1859,7 +1865,7 @@ _scan_ident:
 	mov	fp,sp
 
 	lw	r2,12(fp)
-	la	r1,786560
+	la	r1,196868
 	sw	r1,0(fp)
 
 _si_loop:
@@ -1899,7 +1905,7 @@ _si_done:
 	la	r0,0
 	sb	r0,0(r1)
 
-	la	r1,786560
+	la	r1,196868
 	la	r0,_mn_table
 	push	r1
 	push	r0
@@ -1910,7 +1916,7 @@ _si_done:
 	ceq	r0,z
 	brt	_si_not_mn
 
-	la	r1,786560
+	la	r1,196868
 	la	r0,3
 	push	r1
 	push	r0
@@ -1929,7 +1935,7 @@ _si_ret:
 	jmp	(r1)
 
 _si_not_mn:
-	la	r1,786560
+	la	r1,196868
 	la	r0,_reg_table
 	push	r1
 	push	r0
@@ -1940,7 +1946,7 @@ _si_not_mn:
 	ceq	r0,z
 	brt	_si_not_reg
 
-	la	r1,786560
+	la	r1,196868
 	la	r0,4
 	push	r1
 	push	r0
@@ -1953,7 +1959,7 @@ _si_not_mn:
 	jmp	(r1)
 
 _si_not_reg:
-	la	r1,786560
+	la	r1,196868
 	la	r0,_cc_table
 	push	r1
 	push	r0
@@ -1964,7 +1970,7 @@ _si_not_reg:
 	ceq	r0,z
 	brt	_si_not_kw
 
-	la	r1,786560
+	la	r1,196868
 	la	r0,2
 	push	r1
 	push	r0
@@ -1977,7 +1983,7 @@ _si_not_reg:
 	jmp	(r1)
 
 _si_not_kw:
-	la	r1,786560
+	la	r1,196868
 	la	r0,_kw_table
 	push	r1
 	push	r0
@@ -1988,7 +1994,7 @@ _si_not_kw:
 	ceq	r0,z
 	brt	_si_ident
 
-	la	r1,786560
+	la	r1,196868
 	la	r0,2
 	push	r1
 	push	r0
@@ -1999,7 +2005,7 @@ _si_not_kw:
 	la	r0,2
 
 _si_ident:
-	la	r1,786560
+	la	r1,196868
 	la	r0,6
 	push	r1
 	push	r0
@@ -2500,7 +2506,7 @@ _symbol_enabled:
 	mov	fp,sp
 	add	sp,-24
 
-	la	r1,786576
+	la	r1,197128
 	la	r2,0
 	add	r2,fp
 	add	r2,-18
@@ -2522,7 +2528,7 @@ _sye_saved:
 
 	lw	r0,9(fp)
 	push	r0
-	la	r0,786576
+	la	r0,197128
 	push	r0
 	la	r0,_copy_strz
 	jal	r1,(r0)
@@ -2549,7 +2555,7 @@ _sye_ret:
 	la	r1,0
 	add	r1,fp
 	add	r1,-18
-	la	r2,786576
+	la	r2,197128
 	la	r0,16
 	sw	r0,-21(fp)
 _sye_restore:
@@ -2890,7 +2896,7 @@ _eail_on:
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_emit_strz
 	jal	r1,(r0)
@@ -2898,7 +2904,7 @@ _eail_on:
 
 	la	r0,_cc_zset_txt
 	push	r0
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -2908,7 +2914,7 @@ _eail_on:
 
 	la	r0,_cc_zclr_txt
 	push	r0
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -2928,7 +2934,7 @@ _eail_on:
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r0,787901
+	la	r0,197908
 	push	r0
 	la	r0,_emit_strz
 	jal	r1,(r0)
@@ -2946,7 +2952,7 @@ _eail_on:
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r0,787917
+	la	r0,198168
 	push	r0
 	la	r0,_emit_strz
 	jal	r1,(r0)
@@ -3628,6 +3634,17 @@ _init_runtime_arena:
 	jal	r1,(r0)
 	add	sp,6
 
+; Work area at 0x030000 (line, token, name and operand buffers, expansion
+; buffer, assembly-time stacks): 4576 bytes, cleared a word at a time.
+	la	r1,196608
+	la	r2,201184
+	lc	r0,0
+_ira_wa_loop:
+	sw	r0,0(r1)
+	add	r1,3
+	clu	r1,r2
+	brt	_ira_wa_loop
+
 	la	r1,786597
 	la	r0,1
 	sw	r0,0(r1)
@@ -3645,7 +3662,7 @@ _init_runtime_arena:
 	sw	r0,0(r1)
 
 	la	r1,790704
-	la	r0,790575
+	la	r0,198688
 	sw	r0,0(r1)
 
 	la	r1,790707
@@ -3975,7 +3992,7 @@ _lis_loop:
 	push	r2
 	add	r2,3
 	push	r2
-	la	r2,786576
+	la	r2,197128
 	push	r2
 	la	r0,_streq
 	jal	r1,(r0)
@@ -4283,7 +4300,7 @@ _line_is_keyword:
 	push	r2
 	mov	fp,sp
 
-	la	r2,786432
+	la	r2,196608
 
 _lik_skip:
 	lbu	r0,0(r2)
@@ -4376,7 +4393,7 @@ _starts_with:
 	push	r2
 	mov	fp,sp
 
-	la	r2,786432
+	la	r2,196608
 
 _sws_skip:
 	lbu	r0,0(r2)
@@ -4452,7 +4469,7 @@ _line_is_equ_stmt:
 	push	r1
 	mov	fp,sp
 
-	la	r2,786432
+	la	r2,196608
 
 _lies_ws:
 	lbu	r0,0(r2)
@@ -4576,7 +4593,7 @@ _extract_macro_name:
 	add	sp,-6
 
 ; Skip "MACRO" (5 chars) in _line_buf
-	la	r1,786432
+	la	r1,196608
 	la	r0,5
 	add	r1,r0
 
@@ -4735,7 +4752,7 @@ _parse_macro_params:
 	sw	r0,0(r1)
 	sw	r0,-6(fp)
 
-	la	r0,786432
+	la	r0,196608
 	sw	r0,-3(fp)
 	la	r0,5
 	lw	r1,-3(fp)
@@ -4816,11 +4833,13 @@ _pmp_after_name_comma:
 
 _pmp_param_start:
 	lw	r0,-6(fp)
-	lc	r1,8
+	lc	r1,16
 	clu	r0,r1
 	brt	_pmp_param_start_ok
-	la	r1,_pmp_ret
-	jmp	(r1)
+	la	r0,_err_parm_full
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
 _pmp_param_start_ok:
 
 	lw	r1,-3(fp)
@@ -4834,10 +4853,10 @@ _pmp_param_start_ok:
 _pmp_param_slot:
 	lw	r0,-6(fp)
 	push	r0
-	la	r0,_mul9
+	la	r0,_mul32
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,788197
+	la	r1,200672
 	add	r1,r0
 	la	r0,0
 	sw	r0,-9(fp)
@@ -4857,17 +4876,22 @@ _pmp_param_copy:
 	ceq	r0,r1
 	brt	_pmp_param_done_pop
 	lw	r1,-9(fp)
-	lc	r2,8
+	lc	r2,31
 	clu	r1,r2
-	brf	_pmp_param_skip
+	brt	_pmp_name_ok
+	la	r0,_err_parm_long
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_pmp_name_ok:
 	lw	r1,-3(fp)
 	lbu	r0,0(r1)
 	lw	r2,-6(fp)
 	push	r2
-	la	r2,_mul9
+	la	r2,_mul32
 	jal	r1,(r2)
 	add	sp,3
-	la	r1,788197
+	la	r1,200672
 	add	r1,r0
 	lw	r0,-9(fp)
 	add	r1,r0
@@ -4888,10 +4912,10 @@ _pmp_param_done_pop:
 _pmp_param_done:
 	lw	r0,-6(fp)
 	push	r0
-	la	r0,_mul9
+	la	r0,_mul32
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,788197
+	la	r1,200672
 	add	r1,r0
 	lw	r0,-9(fp)
 	add	r1,r0
@@ -4972,10 +4996,10 @@ _fmp_loop:
 	lw	r0,-6(fp)
 	add	r0,-1
 	push	r0
-	la	r0,_mul9
+	la	r0,_mul32
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,788197
+	la	r1,200672
 	add	r1,r0
 	lw	r0,-3(fp)
 	sw	r0,-9(fp)
@@ -5138,6 +5162,63 @@ _mul16:
 	pop	fp
 	jmp	(r1)
 
+; _mul32 / _mul256 / _mul40: r0 = arg * 32 / 256 / 40
+_mul32:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	lw	r0,9(fp)
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+_mul256:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	lw	r0,9(fp)
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+_mul40:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	lw	r0,9(fp)
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	mov	r1,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r1
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
 ; _record_macro_line: Append current _line_buf to _macro_buf.
 ; Arg on stack: line length
 _record_macro_line:
@@ -5154,7 +5235,7 @@ _record_macro_line:
 	jmp	(r1)
 _rml_has_len:
 
-	la	r0,786432
+	la	r0,196608
 	sw	r0,-3(fp)
 	la	r1,790716
 	lw	r0,0(r1)
@@ -5407,7 +5488,7 @@ _lookup_macro:
 	mov	fp,sp
 
 ; Save name start from _line_buf (skip whitespace)
-	la	r2,786432
+	la	r2,196608
 
 _lm_scan_name:
 	lbu	r0,0(r2)
@@ -5604,12 +5685,23 @@ _expand_body_line:
 	push	r2
 	mov	fp,sp
 
-	la	r1,790575
+	la	r1,198688
 	sw	r1,0(fp)
 
 	lw	r2,15(fp)
 
 _ebl_loop:
+; _expand_buf is 1024 bytes; every path returns here after writing at most
+; one argument (< 257 bytes), so checking for > 256 here cannot overrun it.
+	lw	r0,0(fp)
+	la	r1,198945
+	clu	r0,r1
+	brt	_ebl_room
+	la	r0,_err_exp_long
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_ebl_room:
 	la	r1,786642
 	lw	r1,0(r1)
 	clu	r2,r1
@@ -5883,7 +5975,7 @@ _get_arg_start:
 	push	r2
 	mov	fp,sp
 
-	la	r2,786432
+	la	r2,196608
 
 _gas_skip_name:
 	lbu	r0,0(r2)
@@ -6020,7 +6112,7 @@ _emit_expand_buf:
 	push	r2
 	mov	fp,sp
 
-	la	r1,790575
+	la	r1,198688
 
 _eeb_loop:
 	lbu	r0,0(r1)
@@ -6058,7 +6150,7 @@ _copy_ident_token:
 	add	sp,-3
 
 	lw	r2,9(fp)
-	la	r0,786576
+	la	r0,197128
 	sw	r0,-3(fp)
 
 	lbu	r0,0(r2)
@@ -6109,7 +6201,7 @@ _copy_expr_token:
 	add	sp,-3
 
 	lw	r2,9(fp)
-	la	r0,786576
+	la	r0,197128
 	sw	r0,-3(fp)
 
 _cet_loop:
@@ -6194,7 +6286,7 @@ _spnv_new:
 
 _spnv_store:
 	sw	r1,-3(fp)
-	la	r2,786576
+	la	r2,197128
 
 _spnv_name:
 	lbu	r0,0(r2)
@@ -6273,7 +6365,7 @@ _eep_term:
 	ceq	r0,r2
 	brt	_eep_ret
 
-	la	r0,786576
+	la	r0,197128
 	push	r0
 	la	r0,_is_number_str
 	jal	r1,(r0)
@@ -6281,7 +6373,7 @@ _eep_term:
 	ceq	r0,z
 	brt	_eep_sym
 
-	la	r0,786576
+	la	r0,197128
 	push	r0
 	la	r0,_atoi
 	jal	r1,(r0)
@@ -6462,7 +6554,7 @@ _handle_dot_space:
 	push	r1
 	mov	fp,sp
 
-	la	r2,786432
+	la	r2,196608
 	add	r2,6
 	push	r2
 	la	r0,_skip_ws_ptr
@@ -6494,7 +6586,7 @@ _handle_dot_fill:
 	mov	fp,sp
 	add	sp,-6
 
-	la	r2,786432
+	la	r2,196608
 	add	r2,5
 	push	r2
 	la	r0,_skip_ws_ptr
@@ -6679,7 +6771,7 @@ _handle_dot_ascii:
 	push	r1
 	mov	fp,sp
 
-	la	r0,786432
+	la	r0,196608
 	push	r0
 	la	r0,0
 	push	r0
@@ -6698,7 +6790,7 @@ _handle_dot_asciz:
 	push	r1
 	mov	fp,sp
 
-	la	r0,786432
+	la	r0,196608
 	push	r0
 	la	r0,1
 	push	r0
@@ -7068,7 +7160,7 @@ _extract_kw_arg:
 	push	r1
 	mov	fp,sp
 	add	sp,-3
-	la	r2,786432
+	la	r2,196608
 eka_skip:
 	lbu	r0,0(r2)
 	ceq	r0,z
@@ -7096,7 +7188,7 @@ eka_ws2:
 	add	r2,1
 	bra	eka_ws
 eka_copy:
-	la	r0,786576
+	la	r0,197128
 	sw	r0,-3(fp)
 eka_cn:
 	lbu	r0,0(r2)
@@ -7132,7 +7224,7 @@ _parse_cond_value:
 	push	r2
 	push	r1
 	mov	fp,sp
-	la	r2,786432
+	la	r2,196608
 pcv_find:
 	lbu	r0,0(r2)
 	ceq	r0,z
@@ -7197,7 +7289,7 @@ sf_loop:
 	la	r1,787563
 	add	r1,r0
 	push	r1
-	la	r1,786576
+	la	r1,197128
 	push	r1
 	la	r0,_streq
 	jal	r1,(r0)
@@ -7229,7 +7321,7 @@ _handle_equ:
 	mov	fp,sp
 	add	sp,-24
 
-	la	r2,786432
+	la	r2,196608
 	push	r2
 	la	r0,_skip_ws_ptr
 	jal	r1,(r0)
@@ -7244,14 +7336,14 @@ _handle_equ:
 
 	la	r0,_kw_equ
 	push	r0
-	la	r0,786576
+	la	r0,197128
 	push	r0
 	la	r0,_emit_list_line1
 	jal	r1,(r0)
 	add	sp,6
 
 	sw	r2,-6(fp)
-	la	r1,786576
+	la	r1,197128
 	la	r2,0
 	add	r2,fp
 	add	r2,-24
@@ -7286,7 +7378,7 @@ _heq_saved:
 	la	r1,0
 	add	r1,fp
 	add	r1,-24
-	la	r2,786576
+	la	r2,197128
 _heq_restore_name:
 	lbu	r0,0(r1)
 	sb	r0,0(r2)
@@ -7325,7 +7417,7 @@ _set_symbol:
 	push	r1
 	mov	fp,sp
 	add	sp,-24
-	la	r2,786432
+	la	r2,196608
 	add	r2,3
 	push	r2
 	la	r0,_skip_ws_ptr
@@ -7340,7 +7432,7 @@ _set_symbol:
 	mov	r2,r0
 
 	sw	r2,-6(fp)
-	la	r1,786576
+	la	r1,197128
 	la	r2,0
 	add	r2,fp
 	add	r2,-24
@@ -7386,7 +7478,7 @@ _ss_store:
 	la	r1,0
 	add	r1,fp
 	add	r1,-24
-	la	r2,786576
+	la	r2,197128
 _ss_restore_name:
 	lbu	r0,0(r1)
 	sb	r0,0(r2)
@@ -7449,7 +7541,7 @@ _xmsc_loop:
 	la	r1,_xref_symbol_table
 	add	r1,r0
 	push	r1
-	la	r1,786576
+	la	r1,197128
 	push	r1
 	la	r0,_streq
 	jal	r1,(r0)
@@ -7475,7 +7567,7 @@ _xmsc_add:
 	add	sp,3
 	la	r1,_xref_symbol_table
 	add	r1,r0
-	la	r2,786576
+	la	r2,197128
 	lc	r0,16
 	sw	r0,-3(fp)
 
@@ -7513,7 +7605,7 @@ _xref_update_switch_current:
 
 	la	r0,_xref_symbol_name
 	push	r0
-	la	r0,786576
+	la	r0,197128
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -7578,11 +7670,19 @@ _cond_push:
 	lw	r0,9(fp)
 	la	r1,787707
 	lw	r2,0(r1)
+	lc	r1,32
+	clu	r2,r1
+	brt	_cp_room
+	la	r0,_err_cond_deep
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_cp_room:
 	push	r2
 	la	r0,_mul3
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,787710
+	la	r1,199712
 	add	r1,r0
 	lw	r0,9(fp)
 	sw	r0,0(r1)
@@ -7612,7 +7712,7 @@ _cond_top:
 	la	r0,_mul3
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,787710
+	la	r1,199712
 	add	r1,r0
 	lw	r0,0(r1)
 	bra	ct_ret
@@ -7639,7 +7739,7 @@ _cond_set_top:
 	la	r0,_mul3
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,787710
+	la	r1,199712
 	add	r1,r0
 	lw	r0,9(fp)
 	sw	r0,0(r1)
@@ -7662,7 +7762,7 @@ _cond_pop:
 	la	r0,_mul3
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,787710
+	la	r1,199712
 	add	r1,r0
 	la	r0,0
 	sw	r0,0(r1)
@@ -7818,7 +7918,7 @@ _handle_srcbuf:
 	add	sp,-3
 	la	r0,_extract_kw_arg
 	jal	r1,(r0)
-	la	r0,786576
+	la	r0,197128
 	push	r0
 	la	r0,_atoi
 	jal	r1,(r0)
@@ -7846,7 +7946,7 @@ _handle_include:
 	jal	r1,(r0)
 	la	r0,_kw_include
 	push	r0
-	la	r0,786576
+	la	r0,197128
 	push	r0
 	la	r0,_emit_list_line1
 	jal	r1,(r0)
@@ -7884,7 +7984,7 @@ _handle_include:
 _hi_missing:
 	la	r0,_missing_txt
 	push	r0
-	la	r0,786576
+	la	r0,197128
 	push	r0
 	la	r0,_emit_list_line1
 	jal	r1,(r0)
@@ -7908,7 +8008,7 @@ _handle_copy:
 	jal	r1,(r0)
 	la	r0,_kw_copy
 	push	r0
-	la	r0,786576
+	la	r0,197128
 	push	r0
 	la	r0,_emit_list_line1
 	jal	r1,(r0)
@@ -7946,7 +8046,7 @@ _handle_copy:
 _hc_missing:
 	la	r0,_missing_txt
 	push	r0
-	la	r0,786576
+	la	r0,197128
 	push	r0
 	la	r0,_emit_list_line1
 	jal	r1,(r0)
@@ -8193,7 +8293,7 @@ _handle_incbuf:
 	add	sp,-3
 	la	r0,_extract_kw_arg
 	jal	r1,(r0)
-	la	r0,786576
+	la	r0,197128
 	push	r0
 	la	r0,_atoi
 	jal	r1,(r0)
@@ -8257,7 +8357,7 @@ _parse_struct_kw_arg:
 	lw	r1,9(fp)
 	la	r0,0
 	sb	r0,0(r1)
-	la	r2,786432
+	la	r2,196608
 
 _pska_skip:
 	lbu	r0,0(r2)
@@ -8358,7 +8458,7 @@ _struct_select_top_ptr:
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r1,787987
+	la	r1,200288
 	add	r0,r1
 	bra	_sstp_ret
 
@@ -8386,11 +8486,11 @@ _struct_select_top_sel_ptr:
 
 	add	r0,-1
 	push	r0
-	la	r0,_mul12
+	la	r0,_mul256
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r1,788083
+	la	r1,201216
 	add	r0,r1
 	bra	_sstsp_ret
 
@@ -8423,7 +8523,7 @@ _struct_do_top_ptr:
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r1,787936
+	la	r1,200096
 	add	r0,r1
 	bra	_sdtp_ret
 
@@ -8444,15 +8544,15 @@ _parse_struct_if:
 	push	r1
 	mov	fp,sp
 
-	la	r1,787885
+	la	r1,197648
 	la	r0,0
 	sb	r0,0(r1)
-	la	r1,787901
+	la	r1,197908
 	sb	r0,0(r1)
-	la	r1,787917
+	la	r1,198168
 	sb	r0,0(r1)
 
-	la	r2,786432
+	la	r2,196608
 
 _psi_skip:
 	lbu	r0,0(r2)
@@ -8508,7 +8608,7 @@ _psi_after_kw_ret:
 	jmp	(r1)
 
 _psi_cc:
-	la	r1,787885
+	la	r1,197648
 
 _psi_cc_loop:
 	lbu	r0,0(r2)
@@ -8563,7 +8663,7 @@ _psi_sep1_ret:
 _psi_check_flag:
 	la	r0,_cc_zset_txt
 	push	r0
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -8573,7 +8673,7 @@ _psi_check_flag:
 
 	la	r0,_cc_zclr_txt
 	push	r0
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -8581,7 +8681,7 @@ _psi_check_flag:
 	ceq	r0,z
 	brf	_psi_ret
 
-	la	r1,787901
+	la	r1,197908
 
 _psi_lhs_loop:
 	lbu	r0,0(r2)
@@ -8630,7 +8730,7 @@ _psi_sep2_skip:
 	bra	_psi_sep2
 
 _psi_rhs:
-	la	r1,787917
+	la	r1,198168
 
 _psi_rhs_loop:
 	lbu	r0,0(r2)
@@ -8925,7 +9025,7 @@ _struct_if_top_ptr:
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r1,787813
+	la	r1,199808
 	add	r0,r1
 	bra	_sitp_ret
 
@@ -8954,7 +9054,7 @@ _emit_struct_if_test:
 
 	la	r0,_cc_zset_txt
 	push	r0
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -8993,7 +9093,7 @@ _emit_struct_if_test:
 _esit_zclr:
 	la	r0,_cc_zclr_txt
 	push	r0
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -9030,7 +9130,7 @@ _esit_zclr:
 	jmp	(r1)
 
 _esit_cmp_setup:
-	la	r0,787917
+	la	r0,198168
 	push	r0
 	la	r0,_is_number_str
 	jal	r1,(r0)
@@ -9038,7 +9138,7 @@ _esit_cmp_setup:
 	ceq	r0,z
 	brt	_esit_cmp_direct
 
-	la	r0,787901
+	la	r0,197908
 	push	r0
 	la	r0,_select_if_temp
 	jal	r1,(r0)
@@ -9057,7 +9157,7 @@ _esit_cmp_setup:
 	push	r0
 	lw	r0,-3(fp)
 	push	r0
-	la	r0,787917
+	la	r0,198168
 	push	r0
 	la	r0,_emit_inst2
 	jal	r1,(r0)
@@ -9071,7 +9171,7 @@ _esit_cmp_direct:
 _esit_cmp_emit:
 	la	r0,_cc_eq_txt
 	push	r0
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -9085,7 +9185,7 @@ _esit_cmp_emit:
 _esit_cmp_ne:
 	la	r0,_cc_ne_txt
 	push	r0
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -9099,7 +9199,7 @@ _esit_cmp_ne:
 _esit_cmp_lt:
 	la	r0,_cc_lt_txt
 	push	r0
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -9115,7 +9215,7 @@ _esit_cmp_lu:
 
 _esit_emit_cmp:
 	push	r0
-	la	r0,787901
+	la	r0,197908
 	push	r0
 	lw	r0,-3(fp)
 	ceq	r0,z
@@ -9124,7 +9224,7 @@ _esit_emit_cmp:
 	bra	_esit_emit_cmp_call
 
 _esit_emit_cmp_rhs:
-	la	r0,787917
+	la	r0,198168
 	push	r0
 
 _esit_emit_cmp_call:
@@ -9147,7 +9247,7 @@ _esit_emit_cmp_call:
 _esit_branch:
 	la	r0,_cc_ne_txt
 	push	r0
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -9204,18 +9304,20 @@ _handle_struct_if:
 
 	la	r1,787807
 	lw	r0,0(r1)
-	lc	r2,8
+	lc	r2,32
 	clu	r0,r2
 	brt	_hsi_start
-	la	r1,_hsi_ret
-	jmp	(r1)
+	la	r0,_err_if_deep
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
 
 _hsi_start:
 	push	r0
 	la	r0,_mul9
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,787813
+	la	r1,199808
 	add	r0,r1
 	sw	r0,-3(fp)
 
@@ -9458,18 +9560,20 @@ _handle_struct_do:
 
 	la	r1,787933
 	lw	r0,0(r1)
-	lc	r2,8
+	lc	r2,32
 	clu	r0,r2
 	brt	_hsd_start
-	la	r1,_hsd_ret
-	jmp	(r1)
+	la	r0,_err_do_deep
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
 
 _hsd_start:
 	push	r0
 	la	r0,_mul6
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,787936
+	la	r1,200096
 	add	r0,r1
 	sw	r0,-3(fp)
 
@@ -9645,7 +9749,7 @@ _emit_struct_branch_if_true:
 
 	la	r0,_cc_zset_txt
 	push	r0
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -9684,7 +9788,7 @@ _emit_struct_branch_if_true:
 _esbf_zclr:
 	la	r0,_cc_zclr_txt
 	push	r0
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -9721,7 +9825,7 @@ _esbf_zclr:
 	jmp	(r1)
 
 _esbf_cmp_setup:
-	la	r0,787917
+	la	r0,198168
 	push	r0
 	la	r0,_is_number_str
 	jal	r1,(r0)
@@ -9729,7 +9833,7 @@ _esbf_cmp_setup:
 	ceq	r0,z
 	brt	_esbf_cmp_direct
 
-	la	r0,787901
+	la	r0,197908
 	push	r0
 	la	r0,_select_if_temp
 	jal	r1,(r0)
@@ -9748,7 +9852,7 @@ _esbf_cmp_setup:
 	push	r0
 	lw	r0,-3(fp)
 	push	r0
-	la	r0,787917
+	la	r0,198168
 	push	r0
 	la	r0,_emit_inst2
 	jal	r1,(r0)
@@ -9762,7 +9866,7 @@ _esbf_cmp_direct:
 _esbf_cmp_emit:
 	la	r0,_cc_eq_txt
 	push	r0
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -9776,7 +9880,7 @@ _esbf_cmp_emit:
 _esbf_cmp_ne:
 	la	r0,_cc_ne_txt
 	push	r0
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -9790,7 +9894,7 @@ _esbf_cmp_ne:
 _esbf_cmp_lt:
 	la	r0,_cc_lt_txt
 	push	r0
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -9806,7 +9910,7 @@ _esbf_cmp_lu:
 
 _esbf_emit_cmp:
 	push	r0
-	la	r0,787901
+	la	r0,197908
 	push	r0
 	lw	r0,-3(fp)
 	ceq	r0,z
@@ -9815,7 +9919,7 @@ _esbf_emit_cmp:
 	bra	_esbf_emit_cmp_call
 
 _esbf_emit_cmp_rhs:
-	la	r0,787917
+	la	r0,198168
 	push	r0
 
 _esbf_emit_cmp_call:
@@ -9838,7 +9942,7 @@ _esbf_emit_cmp_call:
 _esbf_branch:
 	la	r0,_cc_ne_txt
 	push	r0
-	la	r0,787885
+	la	r0,197648
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -9898,7 +10002,7 @@ _emit_struct_select_eq_test:
 	jal	r1,(r0)
 	sw	r0,-6(fp)
 
-	la	r0,787917
+	la	r0,198168
 	push	r0
 	la	r0,_is_number_str
 	jal	r1,(r0)
@@ -9906,7 +10010,7 @@ _emit_struct_select_eq_test:
 	ceq	r0,z
 	brt	_esst_cmp_direct
 
-	la	r0,787901
+	la	r0,197908
 	push	r0
 	la	r0,_select_if_temp
 	jal	r1,(r0)
@@ -9925,7 +10029,7 @@ _emit_struct_select_eq_test:
 	push	r0
 	lw	r0,-3(fp)
 	push	r0
-	la	r0,787917
+	la	r0,198168
 	push	r0
 	la	r0,_emit_inst2
 	jal	r1,(r0)
@@ -9939,7 +10043,7 @@ _esst_cmp_direct:
 _esst_cmp_emit:
 	la	r0,_ceq_txt
 	push	r0
-	la	r0,787901
+	la	r0,197908
 	push	r0
 	lw	r0,-3(fp)
 	ceq	r0,z
@@ -9948,7 +10052,7 @@ _esst_cmp_emit:
 	bra	_esst_cmp_call
 
 _esst_rhs_direct:
-	la	r0,787917
+	la	r0,198168
 	push	r0
 
 _esst_cmp_call:
@@ -10010,28 +10114,30 @@ _handle_struct_select:
 
 	la	r1,787984
 	lw	r0,0(r1)
-	lc	r2,8
+	lc	r2,32
 	clu	r0,r2
 	brt	_hss_start
-	la	r1,_hss_ret
-	jmp	(r1)
+	la	r0,_err_sel_deep
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
 
 _hss_start:
 	push	r0
 	la	r0,_mul12
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,787987
+	la	r1,200288
 	add	r0,r1
 	sw	r0,-3(fp)
 
 	la	r1,787984
 	lw	r0,0(r1)
 	push	r0
-	la	r0,_mul12
+	la	r0,_mul256
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,788083
+	la	r1,201216
 	add	r0,r1
 	sw	r0,-6(fp)
 
@@ -10127,7 +10233,7 @@ _hsw_maybe_close:
 	add	sp,6
 
 _hsw_parse:
-	la	r0,788179
+	la	r0,198428
 	push	r0
 	la	r0,_parse_struct_kw_arg
 	jal	r1,(r0)
@@ -10135,15 +10241,15 @@ _hsw_parse:
 
 	lw	r0,-6(fp)
 	push	r0
-	la	r0,787901
+	la	r0,197908
 	push	r0
 	la	r0,_copy_strz
 	jal	r1,(r0)
 	add	sp,6
 
-	la	r0,788179
+	la	r0,198428
 	push	r0
-	la	r0,787917
+	la	r0,198168
 	push	r0
 	la	r0,_copy_strz
 	jal	r1,(r0)
@@ -10151,7 +10257,7 @@ _hsw_parse:
 
 	la	r0,_kw_when
 	push	r0
-	la	r0,787917
+	la	r0,198168
 	push	r0
 	la	r0,_emit_ann_line1
 	jal	r1,(r0)
@@ -10403,7 +10509,7 @@ _hldiag_update_switch_current:
 
 	la	r0,_hldiag_symbol_name
 	push	r0
-	la	r0,786576
+	la	r0,197128
 	push	r0
 	la	r0,_streq
 	jal	r1,(r0)
@@ -10578,7 +10684,7 @@ _hwum_ret:
 ; _hldiag_check_unknown_mnemonic: At pass-through, warn when the line's
 ; first mnemonic-position token is not a known COR24 mnemonic. Skips
 ; blanks, comments, '.'-prefixed raw directives, and pure labels. Uses
-; _parse_name_buf (786576) as scratch; safe because the line has already
+; _parse_name_buf (197128) as scratch; safe because the line has already
 ; been dispatched past any hlasm-owned directive path.
 _hldiag_check_unknown_mnemonic:
 	push	fp
@@ -10591,7 +10697,7 @@ _hldiag_check_unknown_mnemonic:
 	ceq	r0,z
 	brt	_hcum_ret
 
-	la	r2,786432
+	la	r2,196608
 
 _hcum_skipws:
 	lbu	r0,0(r2)
@@ -10626,7 +10732,7 @@ _hcum_got_start:
 	add	sp,3
 	mov	r2,r0
 
-	la	r1,786576
+	la	r1,197128
 	lbu	r0,0(r1)
 	ceq	r0,z
 	brt	_hcum_ret
@@ -10650,7 +10756,7 @@ _hcum_after_check:
 	ceq	r0,r1
 	brt	_hcum_ret
 
-	la	r1,786576
+	la	r1,197128
 	la	r0,_mn_table
 	push	r1
 	push	r0
@@ -10660,7 +10766,7 @@ _hcum_after_check:
 	ceq	r0,z
 	brf	_hcum_ret
 
-	la	r0,786576
+	la	r0,197128
 	push	r0
 	la	r0,_hldiag_warn_unknown_mnemonic
 	jal	r1,(r0)
@@ -10673,7 +10779,7 @@ _hcum_ret:
 	pop	fp
 	jmp	(r1)
 
-; _hldiag_mark_undef_current: Record _parse_name_buf (786576) in the undef-
+; _hldiag_mark_undef_current: Record _parse_name_buf (197128) in the undef-
 ; symbol table if HLDIAG is on and the name is not already there. Invoked
 ; from _eval_expr_ptr's _eep_zero_term (symbol-lookup miss) so SET/EQU
 ; expressions that silently resolve undefined terms to 0 get captured.
@@ -10707,7 +10813,7 @@ _hmu_loop:
 	la	r1,_xref_undef_names
 	add	r1,r0
 	push	r1
-	la	r1,786576
+	la	r1,197128
 	push	r1
 	la	r0,_streq
 	jal	r1,(r0)
@@ -10733,7 +10839,7 @@ _hmu_add:
 	add	sp,3
 	la	r1,_xref_undef_names
 	add	r1,r0
-	la	r2,786576
+	la	r2,197128
 	lc	r0,16
 	sw	r0,-3(fp)
 
@@ -12157,19 +12263,19 @@ _include_lookup_slot:
 ; --- Structured IF lowering scratch/state (runtime arena) ---
 ; 787807 active structured-IF depth
 ; 787810 next label id
-; 787813 IF frame stack base, 8 entries * 9 bytes
+; 199808 IF frame stack base, 8 entries * 9 bytes
 ;        +0 false label id, +3 end label id, +6 else seen
-; 787885 cc buffer
-; 787901 lhs buffer
-; 787917 rhs buffer
+; 197648 cc buffer
+; 197908 lhs buffer
+; 198168 rhs buffer
 ; 787933 active structured-DO depth
-; 787936 DO frame stack base, 8 entries * 6 bytes
+; 200096 DO frame stack base, 8 entries * 6 bytes
 ;        +0 top label id, +3 end label id
 ; 787984 active structured-SELECT depth
-; 787987 SELECT frame stack base, 8 entries * 12 bytes
+; 200288 SELECT frame stack base, 8 entries * 12 bytes
 ;        +0 next label id, +3 end label id, +6 arm open, +9 otherwise seen
-; 788083 SELECT selector buffer base, 8 entries * 12 bytes
-; 788179 SELECT WHEN scratch buffer
+; 201216 SELECT selector buffer base, 8 entries * 12 bytes
+; 198428 SELECT WHEN scratch buffer
 
 _push_txt:
 	.byte	112,117,115,104,0
