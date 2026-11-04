@@ -1,8 +1,8 @@
-Loaded 20593 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.nOrFR8E2N2/hlasm.lgo
+Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.pnhSSRj9S5/hlasm.lgo
 Loaded 184 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d34_copy_macro_library_main.bin' at 0x090000
 Loaded 109 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d34_copy_macro_library_macros.bin' at 0x081000
 Loaded 40 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/demos/./d34_copy_macro_library_symbols.bin' at 0x081100
-Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-54039.cfg' at 0x07F000
+Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-70899.cfg' at 0x07F000
 [UART TX @ 210000] ';'  (0x3B)
 [UART TX @ 210000] ' '  (0x20)
 [UART TX @ 210000] 'D'  (0x44)
@@ -88,19 +88,25 @@ Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-54039.cfg' at 0x07F000
 [UART TX @ 260000] '\n'
 [UART TX @ 260000] ''  (0x0D)
 [UART TX @ 260000] '\n'
+[UART TX @ 270000] ' '  (0x20)
+[UART TX @ 270000] 'n'  (0x6E)
+[UART TX @ 270000] 'o'  (0x6F)
+[UART TX @ 270000] 'p'  (0x70)
 [UART TX @ 270000] ''  (0x0D)
 [UART TX @ 270000] '\n'
-[UART TX @ 270000] ' '  (0x20)
-[UART TX @ 270000] 'a'  (0x61)
-[UART TX @ 270000] 'd'  (0x64)
-[UART TX @ 270000] 'd'  (0x64)
-[UART TX @ 270000] ' '  (0x20)
-[UART TX @ 270000] 'r'  (0x72)
-[UART TX @ 270000] '0'  (0x30)
-[UART TX @ 270000] ','  (0x2C)
-[UART TX @ 270000] '1'  (0x31)
 [UART TX @ 270000] ''  (0x0D)
 [UART TX @ 270000] '\n'
+[UART TX @ 280000] ' '  (0x20)
+[UART TX @ 280000] 'a'  (0x61)
+[UART TX @ 280000] 'd'  (0x64)
+[UART TX @ 280000] 'd'  (0x64)
+[UART TX @ 280000] ' '  (0x20)
+[UART TX @ 280000] 'r'  (0x72)
+[UART TX @ 280000] '0'  (0x30)
+[UART TX @ 280000] ','  (0x2C)
+[UART TX @ 280000] '1'  (0x31)
+[UART TX @ 280000] ''  (0x0D)
+[UART TX @ 280000] '\n'
 [UART TX @ 280000] ''  (0x0D)
 [UART TX @ 280000] '\n'
 [UART TX @ 280000] ' '  (0x20)
@@ -113,24 +119,24 @@ Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-54039.cfg' at 0x07F000
 [UART TX @ 280000] '7'  (0x37)
 [UART TX @ 280000] ''  (0x0D)
 [UART TX @ 280000] '\n'
-[UART TX @ 282731] ' '  (0x20)
-[UART TX @ 282731] 'p'  (0x70)
-[UART TX @ 282731] 'o'  (0x6F)
-[UART TX @ 282731] 'p'  (0x70)
-[UART TX @ 282731] ' '  (0x20)
-[UART TX @ 282731] 'r'  (0x72)
-[UART TX @ 282731] '1'  (0x31)
-[UART TX @ 282731] ''  (0x0D)
-[UART TX @ 282731] '\n'
-[UART TX @ 282731] ' '  (0x20)
-[UART TX @ 282731] 'p'  (0x70)
-[UART TX @ 282731] 'o'  (0x6F)
-[UART TX @ 282731] 'p'  (0x70)
-[UART TX @ 282731] ' '  (0x20)
-[UART TX @ 282731] 'r'  (0x72)
-[UART TX @ 282731] '0'  (0x30)
-[UART TX @ 282731] ''  (0x0D)
-[UART TX @ 282731] '\n'
+[UART TX @ 283971] ' '  (0x20)
+[UART TX @ 283971] 'p'  (0x70)
+[UART TX @ 283971] 'o'  (0x6F)
+[UART TX @ 283971] 'p'  (0x70)
+[UART TX @ 283971] ' '  (0x20)
+[UART TX @ 283971] 'r'  (0x72)
+[UART TX @ 283971] '1'  (0x31)
+[UART TX @ 283971] ''  (0x0D)
+[UART TX @ 283971] '\n'
+[UART TX @ 283971] ' '  (0x20)
+[UART TX @ 283971] 'p'  (0x70)
+[UART TX @ 283971] 'o'  (0x6F)
+[UART TX @ 283971] 'p'  (0x70)
+[UART TX @ 283971] ' '  (0x20)
+[UART TX @ 283971] 'r'  (0x72)
+[UART TX @ 283971] '0'  (0x30)
+[UART TX @ 283971] ''  (0x0D)
+[UART TX @ 283971] '\n'
 
 UART output: ; Demo 34: COPY-based macro and symbol library workflow
 
@@ -139,6 +145,7 @@ UART output: ; Demo 34: COPY-based macro and symbol library workflow
  push r0
  push r1
 
+ nop
 
  add r0,1
 
@@ -147,4 +154,4 @@ UART output: ; Demo 34: COPY-based macro and symbol library workflow
  pop r0
 
 
-Executed 282731 instructions
+Executed 283971 instructions

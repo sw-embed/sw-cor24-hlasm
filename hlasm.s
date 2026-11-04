@@ -2496,35 +2496,23 @@ _emit_crlf:
 	mov	sp,fp
 	pop	fp
 	jmp	(r1)
-
 ; _symbol_enabled: Return 1 if named SET/EQU symbol is active and nonzero.
 ; Arg on stack: symbol_name_ptr
+; The caller's _parse_name_buf is saved in its own buffer (209408) and restored.
 _symbol_enabled:
 	push	fp
 	push	r2
 	push	r1
 	mov	fp,sp
-	add	sp,-24
+	add	sp,-3
 
-	la	r1,197128
-	la	r2,0
-	add	r2,fp
-	add	r2,-18
-	la	r0,16
-	sw	r0,-21(fp)
-_sye_save:
-	lbu	r0,0(r1)
-	sb	r0,0(r2)
-	add	r1,1
-	add	r2,1
-	lw	r0,-21(fp)
-	add	r0,-1
-	sw	r0,-21(fp)
-	ceq	r0,z
-	brt	_sye_saved
-	bra	_sye_save
-
-_sye_saved:
+	la	r0,197128
+	push	r0
+	la	r0,209408
+	push	r0
+	la	r0,_copy_strz
+	jal	r1,(r0)
+	add	sp,6
 
 	lw	r0,9(fp)
 	push	r0
@@ -2547,31 +2535,20 @@ _sye_saved:
 	la	r0,1
 	bra	_sye_ret
 
-	_syme_off:
+_syme_off:
 	la	r0,0
 
 _sye_ret:
-	sw	r0,-24(fp)
-	la	r1,0
-	add	r1,fp
-	add	r1,-18
-	la	r2,197128
-	la	r0,16
-	sw	r0,-21(fp)
-_sye_restore:
-	lbu	r0,0(r1)
-	sb	r0,0(r2)
-	add	r1,1
-	add	r2,1
-	lw	r0,-21(fp)
-	add	r0,-1
-	sw	r0,-21(fp)
-	ceq	r0,z
-	brt	_syme_ret
-	bra	_sye_restore
+	sw	r0,-3(fp)
+	la	r0,209408
+	push	r0
+	la	r0,197128
+	push	r0
+	la	r0,_copy_strz
+	jal	r1,(r0)
+	add	sp,6
 
-	_syme_ret:
-	lw	r0,-24(fp)
+	lw	r0,-3(fp)
 	mov	sp,fp
 	pop	r1
 	pop	r2
@@ -3644,6 +3621,15 @@ _ira_wa_loop:
 	add	r1,3
 	clu	r1,r2
 	brt	_ira_wa_loop
+
+; XREF macro expansion counters at 0x038800 (256 x 3 bytes).
+	la	r1,231424
+	la	r2,232192
+_ira_xc_loop:
+	sw	r0,0(r1)
+	add	r1,3
+	clu	r1,r2
+	brt	_ira_xc_loop
 
 	la	r1,786597
 	la	r0,1
@@ -6256,6 +6242,27 @@ _store_parse_name_value:
 	mov	fp,sp
 	add	sp,-6
 
+; Symbol names are at most 31 characters (40-byte entries: name + NUL at +0,
+; value at +32).
+	la	r1,197128
+	la	r2,0
+_spnv_len:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_spnv_len_done
+	add	r1,1
+	add	r2,1
+	bra	_spnv_len
+_spnv_len_done:
+	lc	r0,32
+	clu	r2,r0
+	brt	_spnv_len_ok
+	la	r0,_err_sym_long
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_spnv_len_ok:
+
 	la	r0,_sym_find
 	jal	r1,(r0)
 	la	r1,787560
@@ -6263,21 +6270,31 @@ _store_parse_name_value:
 	clu	r0,r1
 	brf	_spnv_new
 	push	r0
-	la	r0,_mul9
+	la	r0,_mul40
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,787563
+	la	r1,65536
 	add	r1,r0
 	bra	_spnv_store
 
 _spnv_new:
 	la	r1,787560
 	lw	r0,0(r1)
+	la	r2,512
+	clu	r0,r2
+	brt	_spnv_room
+	la	r0,_err_sym_full
 	push	r0
-	la	r0,_mul9
+	la	r0,_fatal
+	jal	r1,(r0)
+_spnv_room:
+	la	r1,787560
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_mul40
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,787563
+	la	r1,65536
 	add	r1,r0
 	la	r2,787560
 	lw	r0,0(r2)
@@ -6300,7 +6317,7 @@ _spnv_name:
 _spnv_after:
 	lw	r1,-3(fp)
 	lw	r0,9(fp)
-	sw	r0,6(r1)
+	sw	r0,32(r1)
 
 	mov	sp,fp
 	pop	r1
@@ -7283,10 +7300,10 @@ sf_loop:
 	brf	sf_not_found
 	lw	r0,-3(fp)
 	push	r0
-	la	r0,_mul9
+	la	r0,_mul40
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,787563
+	la	r1,65536
 	add	r1,r0
 	push	r1
 	la	r1,197128
@@ -7344,9 +7361,7 @@ _handle_equ:
 
 	sw	r2,-6(fp)
 	la	r1,197128
-	la	r2,0
-	add	r2,fp
-	add	r2,-24
+	la	r2,209668
 _heq_save_name:
 	lbu	r0,0(r1)
 	sb	r0,0(r2)
@@ -7375,9 +7390,7 @@ _heq_saved:
 	add	sp,3
 	sw	r0,-3(fp)
 
-	la	r1,0
-	add	r1,fp
-	add	r1,-24
+	la	r1,209668
 	la	r2,197128
 _heq_restore_name:
 	lbu	r0,0(r1)
@@ -7433,9 +7446,7 @@ _set_symbol:
 
 	sw	r2,-6(fp)
 	la	r1,197128
-	la	r2,0
-	add	r2,fp
-	add	r2,-24
+	la	r2,209928
 _ss_save_name:
 	lbu	r0,0(r1)
 	sb	r0,0(r2)
@@ -7475,9 +7486,7 @@ _ss_no_val:
 	sw	r0,-3(fp)
 
 _ss_store:
-	la	r1,0
-	add	r1,fp
-	add	r1,-24
+	la	r1,209928
 	la	r2,197128
 _ss_restore_name:
 	lbu	r0,0(r1)
@@ -7535,10 +7544,10 @@ _xmsc_loop:
 
 	lw	r0,-3(fp)
 	push	r0
-	la	r0,_mul16
+	la	r0,_mul32
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_xref_symbol_table
+	la	r1,212992
 	add	r1,r0
 	push	r1
 	la	r1,197128
@@ -7557,18 +7566,18 @@ _xmsc_loop:
 _xmsc_add:
 	la	r1,_xref_symbol_count
 	lw	r0,0(r1)
-	lc	r2,16
+	la	r2,512
 	clu	r0,r2
 	brf	_xmsc_ret
 
 	push	r0
-	la	r0,_mul16
+	la	r0,_mul32
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_xref_symbol_table
+	la	r1,212992
 	add	r1,r0
 	la	r2,197128
-	lc	r0,16
+	lc	r0,32
 	sw	r0,-3(fp)
 
 _xmsc_copy:
@@ -7641,12 +7650,12 @@ _lookup_symbol:
 	brf	ls_no
 	lw	r0,-3(fp)
 	push	r0
-	la	r0,_mul9
+	la	r0,_mul40
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,787563
+	la	r1,65536
 	add	r1,r0
-	lw	r0,6(r1)
+	lw	r0,32(r1)
 	la	r1,786594
 	sw	r0,0(r1)
 	la	r0,1
@@ -8087,11 +8096,15 @@ _xref_mark_macro_expand:
 
 	lw	r0,6(fp)
 	add	r0,-1
-	la	r1,_xref_expand_counts
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,231424
 	add	r1,r0
-	lbu	r0,0(r1)
+	lw	r0,0(r1)
 	add	r0,1
-	sb	r0,0(r1)
+	sw	r0,0(r1)
 
 	mov	sp,fp
 	pop	r1
@@ -8208,10 +8221,14 @@ _exr_expand_loop:
 	clu	r0,r1
 	brf	_exr_symbols
 
-	la	r1,_xref_expand_counts
 	lw	r0,-6(fp)
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,231424
 	add	r1,r0
-	lbu	r2,0(r1)
+	lw	r2,0(r1)
 	ceq	r2,z
 	brt	_exr_expand_next
 
@@ -8251,10 +8268,10 @@ _exr_symbol_loop:
 
 	lw	r0,-6(fp)
 	push	r0
-	la	r0,_mul16
+	la	r0,_mul32
 	jal	r1,(r0)
 	add	sp,3
-	la	r2,_xref_symbol_table
+	la	r2,212992
 	add	r2,r0
 	la	r0,_xref_symbol_txt
 	push	r0
@@ -10807,10 +10824,10 @@ _hmu_loop:
 
 	lw	r0,-3(fp)
 	push	r0
-	la	r0,_mul16
+	la	r0,_mul32
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_xref_undef_names
+	la	r1,229376
 	add	r1,r0
 	push	r1
 	la	r1,197128
@@ -10829,18 +10846,18 @@ _hmu_loop:
 _hmu_add:
 	la	r1,_xref_undef_count
 	lw	r0,0(r1)
-	lc	r2,16
+	lc	r2,64
 	clu	r0,r2
 	brf	_hmu_ret
 
 	push	r0
-	la	r0,_mul16
+	la	r0,_mul32
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_xref_undef_names
+	la	r1,229376
 	add	r1,r0
 	la	r2,197128
-	lc	r0,16
+	lc	r0,32
 	sw	r0,-3(fp)
 
 _hmu_copy:
@@ -10910,10 +10927,10 @@ _ehur_loop:
 
 	lw	r0,-3(fp)
 	push	r0
-	la	r0,_mul16
+	la	r0,_mul32
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,_xref_undef_names
+	la	r1,229376
 	add	r1,r0
 	push	r1
 	la	r0,_emit_strz
@@ -12385,30 +12402,10 @@ _sel_skip_suffix:
 _xref_copy_used:
 	.byte	0,0,0,0,0,0,0,0
 
-_xref_expand_counts:
-	.byte	0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0
 
 _xref_symbol_count:
 	.word	0
 
-_xref_symbol_table:
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 _xref_symbol_name:
 	.byte	72,76,88,82,69,70,0
@@ -12473,23 +12470,6 @@ _hldiag_undef_sym_txt:
 _xref_undef_count:
 	.word	0
 
-_xref_undef_names:
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 ; Must stay last: end of the mutable data saved between relax passes.
 _image_end:

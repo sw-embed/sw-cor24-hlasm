@@ -15,8 +15,13 @@ if [[ ! -f "$SRCSET" ]]; then
     exit 1
 fi
 
-cfg_txt="/tmp/sw-cor24-hlasm-sourceset-$$.cfg.txt"
-cfg_bin="/tmp/sw-cor24-hlasm-sourceset-$$.cfg"
+# Source images and the config are built in a private directory: tests run
+# in parallel and several source sets share members, so building .bin files
+# next to the sources raced (a test could load a half-written image).
+work_dir="$(mktemp -d "${TMPDIR:-/tmp}/sw-cor24-hlasm-sourceset.XXXXXX")"
+trap 'rm -rf "$work_dir"' EXIT
+cfg_txt="$work_dir/sourceset.cfg.txt"
+cfg_bin="$work_dir/sourceset.cfg"
 spec_stack="|"
 
 root_dir="."
@@ -134,7 +139,7 @@ process_sourceset() {
                 fi
 
                 src_part="$(resolve_path "$2")"
-                bin_part="${src_part%.hlasm}.bin"
+                bin_part="$work_dir/main_$(basename "${src_part%.hlasm}").bin"
 
                 if [[ ! -f "$src_part" ]]; then
                     echo "ERROR: $src_part not found"
@@ -153,7 +158,7 @@ process_sourceset() {
                 fi
 
                 src_part="$(resolve_path "$3")"
-                bin_part="${src_part%.hlasm}.bin"
+                bin_part="$work_dir/slot$(( slot_count + 1 ))_$(basename "${src_part%.hlasm}").bin"
 
                 if [[ ! -f "$src_part" ]]; then
                     echo "ERROR: $src_part not found"
@@ -183,7 +188,7 @@ process_sourceset "$SRCSET"
 
 bash reg-rs/make_cfg.sh "$cfg_txt" "$cfg_bin"
 
-exec scripts/run-kernel.sh hlasm.s \
+scripts/run-kernel.sh hlasm.s \
     "${load_args[@]}" \
     --load-binary "${cfg_bin}@520192" \
     --stack-kilobytes 3 \

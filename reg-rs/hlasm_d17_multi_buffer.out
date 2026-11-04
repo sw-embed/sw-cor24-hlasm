@@ -1,24 +1,24 @@
-Loaded 20593 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.GZP7HYHSkv/hlasm.lgo
+Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.5Td6yHnB8N/hlasm.lgo
 Loaded 37 bytes from 'demos/d17_multi_buffer_main.bin' at 0x080000
 Loaded 23 bytes from 'demos/d17_multi_buffer_extra.bin' at 0x081000
 Loaded 9 bytes from 'reg-rs/s9_multibuf.cfg' at 0x07F000
-[UART TX @ 136851] '_'  (0x5F)
-[UART TX @ 136851] 'h'  (0x68)
-[UART TX @ 136851] ':'  (0x3A)
-[UART TX @ 136851] ''  (0x0D)
-[UART TX @ 136851] '\n'
-[UART TX @ 136851] ' '  (0x20)
-[UART TX @ 136851] 'b'  (0x62)
-[UART TX @ 136851] 'r'  (0x72)
-[UART TX @ 136851] 'a'  (0x61)
-[UART TX @ 136851] ' '  (0x20)
-[UART TX @ 136851] '_'  (0x5F)
-[UART TX @ 136851] 'h'  (0x68)
-[UART TX @ 136851] ''  (0x0D)
-[UART TX @ 136851] '\n'
+[UART TX @ 134309] '_'  (0x5F)
+[UART TX @ 134309] 'h'  (0x68)
+[UART TX @ 134309] ':'  (0x3A)
+[UART TX @ 134309] ''  (0x0D)
+[UART TX @ 134309] '\n'
+[UART TX @ 134309] ' '  (0x20)
+[UART TX @ 134309] 'b'  (0x62)
+[UART TX @ 134309] 'r'  (0x72)
+[UART TX @ 134309] 'a'  (0x61)
+[UART TX @ 134309] ' '  (0x20)
+[UART TX @ 134309] '_'  (0x5F)
+[UART TX @ 134309] 'h'  (0x68)
+[UART TX @ 134309] ''  (0x0D)
+[UART TX @ 134309] '\n'
 
 UART output: _h:
  bra _h
 
 
-Executed 136851 instructions
+Executed 134309 instructions

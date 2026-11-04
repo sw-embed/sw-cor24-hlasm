@@ -1,25 +1,25 @@
-Loaded 20593 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.Ol8D1eKL0B/hlasm.lgo
+Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.wQreMqQoEQ/hlasm.lgo
 Loaded 124 bytes from 'demos/d05_set_ifeq.bin' at 0x080000
-[UART TX @ 150000] ' '  (0x20)
-[UART TX @ 150000] 'n'  (0x6E)
-[UART TX @ 150000] 'o'  (0x6F)
-[UART TX @ 150000] 'p'  (0x70)
-[UART TX @ 150000] ''  (0x0D)
-[UART TX @ 150000] '\n'
-[UART TX @ 158869] ' '  (0x20)
-[UART TX @ 158869] 's'  (0x73)
-[UART TX @ 158869] 'u'  (0x75)
-[UART TX @ 158869] 'b'  (0x62)
-[UART TX @ 158869] ' '  (0x20)
-[UART TX @ 158869] 'r'  (0x72)
-[UART TX @ 158869] '0'  (0x30)
-[UART TX @ 158869] ','  (0x2C)
-[UART TX @ 158869] '1'  (0x31)
-[UART TX @ 158869] ''  (0x0D)
-[UART TX @ 158869] '\n'
+[UART TX @ 140000] ' '  (0x20)
+[UART TX @ 140000] 'n'  (0x6E)
+[UART TX @ 140000] 'o'  (0x6F)
+[UART TX @ 140000] 'p'  (0x70)
+[UART TX @ 140000] ''  (0x0D)
+[UART TX @ 140000] '\n'
+[UART TX @ 157285] ' '  (0x20)
+[UART TX @ 157285] 's'  (0x73)
+[UART TX @ 157285] 'u'  (0x75)
+[UART TX @ 157285] 'b'  (0x62)
+[UART TX @ 157285] ' '  (0x20)
+[UART TX @ 157285] 'r'  (0x72)
+[UART TX @ 157285] '0'  (0x30)
+[UART TX @ 157285] ','  (0x2C)
+[UART TX @ 157285] '1'  (0x31)
+[UART TX @ 157285] ''  (0x0D)
+[UART TX @ 157285] '\n'
 
 UART output:  nop
  sub r0,1
 
 
-Executed 158869 instructions
+Executed 157285 instructions

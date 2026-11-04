@@ -12,7 +12,7 @@ IFEQ BINVAL,5
 ENDIFASM
 
 IFEQ HEXSUF,42
- sub r0,1
+ add r0,-1
 ENDIFASM
 
 IF cc_eq, r0,0x2A

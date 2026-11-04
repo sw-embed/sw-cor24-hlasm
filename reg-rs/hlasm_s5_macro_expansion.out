@@ -1,30 +1,30 @@
-Loaded 20593 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.7RB73R0NNN/hlasm.lgo
+Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.y7y5JPskmq/hlasm.lgo
 Loaded 33 bytes from 'reg-rs/s5_macro.bin' at 0x080000
-[UART TX @ 130000] ' '  (0x20)
-[UART TX @ 130000] 'a'  (0x61)
-[UART TX @ 130000] 'd'  (0x64)
-[UART TX @ 130000] 'd'  (0x64)
-[UART TX @ 130000] ' '  (0x20)
-[UART TX @ 130000] 'r'  (0x72)
-[UART TX @ 130000] '0'  (0x30)
-[UART TX @ 130000] ','  (0x2C)
-[UART TX @ 130000] '1'  (0x31)
-[UART TX @ 130000] ''  (0x0D)
-[UART TX @ 130000] '\n'
-[UART TX @ 133223] ' '  (0x20)
-[UART TX @ 133223] 'a'  (0x61)
-[UART TX @ 133223] 'd'  (0x64)
-[UART TX @ 133223] 'd'  (0x64)
-[UART TX @ 133223] ' '  (0x20)
-[UART TX @ 133223] 'r'  (0x72)
-[UART TX @ 133223] '0'  (0x30)
-[UART TX @ 133223] ','  (0x2C)
-[UART TX @ 133223] '1'  (0x31)
-[UART TX @ 133223] ''  (0x0D)
-[UART TX @ 133223] '\n'
+[UART TX @ 129579] ' '  (0x20)
+[UART TX @ 129579] 'a'  (0x61)
+[UART TX @ 129579] 'd'  (0x64)
+[UART TX @ 129579] 'd'  (0x64)
+[UART TX @ 129579] ' '  (0x20)
+[UART TX @ 129579] 'r'  (0x72)
+[UART TX @ 129579] '0'  (0x30)
+[UART TX @ 129579] ','  (0x2C)
+[UART TX @ 129579] '1'  (0x31)
+[UART TX @ 129579] ''  (0x0D)
+[UART TX @ 129579] '\n'
+[UART TX @ 129579] ' '  (0x20)
+[UART TX @ 129579] 'a'  (0x61)
+[UART TX @ 129579] 'd'  (0x64)
+[UART TX @ 129579] 'd'  (0x64)
+[UART TX @ 129579] ' '  (0x20)
+[UART TX @ 129579] 'r'  (0x72)
+[UART TX @ 129579] '0'  (0x30)
+[UART TX @ 129579] ','  (0x2C)
+[UART TX @ 129579] '1'  (0x31)
+[UART TX @ 129579] ''  (0x0D)
+[UART TX @ 129579] '\n'
 
 UART output:  add r0,1
  add r0,1
 
 
-Executed 133223 instructions
+Executed 129579 instructions

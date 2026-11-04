@@ -1,4 +1,4 @@
-Loaded 20593 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.nx7PGIAwSX/hlasm.lgo
+Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.9A3wwEWzGf/hlasm.lgo
 Loaded 80 bytes from 'demos/d37_hldiag_baseline.bin' at 0x080000
 [UART TX @ 140000] ';'  (0x3B)
 [UART TX @ 140000] ' '  (0x20)
@@ -65,49 +65,49 @@ Loaded 80 bytes from 'demos/d37_hldiag_baseline.bin' at 0x080000
 [UART TX @ 150000] '1'  (0x31)
 [UART TX @ 150000] ''  (0x0D)
 [UART TX @ 150000] '\n'
-[UART TX @ 152382] ' '  (0x20)
-[UART TX @ 152382] 'n'  (0x6E)
-[UART TX @ 152382] 'o'  (0x6F)
-[UART TX @ 152382] 'p'  (0x70)
-[UART TX @ 152382] ''  (0x0D)
-[UART TX @ 152382] '\n'
-[UART TX @ 152382] ';'  (0x3B)
-[UART TX @ 152382] ' '  (0x20)
-[UART TX @ 152382] '!'  (0x21)
-[UART TX @ 152382] '!'  (0x21)
-[UART TX @ 152382] ' '  (0x20)
-[UART TX @ 152382] 'h'  (0x68)
-[UART TX @ 152382] 'l'  (0x6C)
-[UART TX @ 152382] 'a'  (0x61)
-[UART TX @ 152382] 's'  (0x73)
-[UART TX @ 152382] 'm'  (0x6D)
-[UART TX @ 152382] ':'  (0x3A)
-[UART TX @ 152382] ' '  (0x20)
-[UART TX @ 152382] 'H'  (0x48)
-[UART TX @ 152382] 'L'  (0x4C)
-[UART TX @ 152382] 'D'  (0x44)
-[UART TX @ 152382] 'I'  (0x49)
-[UART TX @ 152382] 'A'  (0x41)
-[UART TX @ 152382] 'G'  (0x47)
-[UART TX @ 152382] ' '  (0x20)
-[UART TX @ 152382] 'a'  (0x61)
-[UART TX @ 152382] 'c'  (0x63)
-[UART TX @ 152382] 't'  (0x74)
-[UART TX @ 152382] 'i'  (0x69)
-[UART TX @ 152382] 'v'  (0x76)
-[UART TX @ 152382] 'e'  (0x65)
-[UART TX @ 152382] ' '  (0x20)
-[UART TX @ 152382] 'a'  (0x61)
-[UART TX @ 152382] 't'  (0x74)
-[UART TX @ 152382] ' '  (0x20)
-[UART TX @ 152382] 's'  (0x73)
-[UART TX @ 152382] 'r'  (0x72)
-[UART TX @ 152382] 'c'  (0x63)
-[UART TX @ 152382] '0'  (0x30)
-[UART TX @ 152382] ':'  (0x3A)
-[UART TX @ 152382] '4'  (0x34)
-[UART TX @ 152382] ''  (0x0D)
-[UART TX @ 152382] '\n'
+[UART TX @ 150000] ' '  (0x20)
+[UART TX @ 150000] 'n'  (0x6E)
+[UART TX @ 150000] 'o'  (0x6F)
+[UART TX @ 150000] 'p'  (0x70)
+[UART TX @ 150000] ''  (0x0D)
+[UART TX @ 150000] '\n'
+[UART TX @ 150000] ';'  (0x3B)
+[UART TX @ 150000] ' '  (0x20)
+[UART TX @ 150000] '!'  (0x21)
+[UART TX @ 150000] '!'  (0x21)
+[UART TX @ 150000] ' '  (0x20)
+[UART TX @ 150000] 'h'  (0x68)
+[UART TX @ 150000] 'l'  (0x6C)
+[UART TX @ 150000] 'a'  (0x61)
+[UART TX @ 150000] 's'  (0x73)
+[UART TX @ 150000] 'm'  (0x6D)
+[UART TX @ 150000] ':'  (0x3A)
+[UART TX @ 150000] ' '  (0x20)
+[UART TX @ 150000] 'H'  (0x48)
+[UART TX @ 150000] 'L'  (0x4C)
+[UART TX @ 150000] 'D'  (0x44)
+[UART TX @ 150000] 'I'  (0x49)
+[UART TX @ 150000] 'A'  (0x41)
+[UART TX @ 150000] 'G'  (0x47)
+[UART TX @ 150000] ' '  (0x20)
+[UART TX @ 150000] 'a'  (0x61)
+[UART TX @ 150000] 'c'  (0x63)
+[UART TX @ 150000] 't'  (0x74)
+[UART TX @ 150000] 'i'  (0x69)
+[UART TX @ 150000] 'v'  (0x76)
+[UART TX @ 150000] 'e'  (0x65)
+[UART TX @ 150000] ' '  (0x20)
+[UART TX @ 150000] 'a'  (0x61)
+[UART TX @ 150802] 't'  (0x74)
+[UART TX @ 150802] ' '  (0x20)
+[UART TX @ 150802] 's'  (0x73)
+[UART TX @ 150802] 'r'  (0x72)
+[UART TX @ 150802] 'c'  (0x63)
+[UART TX @ 150802] '0'  (0x30)
+[UART TX @ 150802] ':'  (0x3A)
+[UART TX @ 150802] '4'  (0x34)
+[UART TX @ 150802] ''  (0x0D)
+[UART TX @ 150802] '\n'
 
 UART output: ; Demo 37: opt-in HLDIAG diagnostic channel baseline
  add r0,1
@@ -115,4 +115,4 @@ UART output: ; Demo 37: opt-in HLDIAG diagnostic channel baseline
 ; !! hlasm: HLDIAG active at src0:4
 
 
-Executed 152382 instructions
+Executed 150802 instructions
