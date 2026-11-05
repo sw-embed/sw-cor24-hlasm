@@ -1,0 +1,4 @@
+command = "bash reg-rs/check_limits.sh symname 2>&1"
+timeout = 60
+exit_code = 0
+desc = "Capacity limit: symbol names of 31 characters (at the limit ok, one past it stops with ERROR)"

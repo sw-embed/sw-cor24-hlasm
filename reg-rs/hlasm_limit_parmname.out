@@ -1,0 +1,2 @@
+parmname_at_31: ok, 1 output lines, last:  add r0,1
+parmname_over_32: ERROR: macro parameter name longer than 31 characters

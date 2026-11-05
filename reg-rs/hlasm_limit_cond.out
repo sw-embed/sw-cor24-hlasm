@@ -1,0 +1,2 @@
+cond_at_32: ok, 1 output lines, last:  nop
+cond_over_33: ERROR: conditional assembly nested deeper than 32

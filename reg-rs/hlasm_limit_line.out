@@ -1,0 +1,2 @@
+line_at_256: ok, 2 output lines, last:  nop
+line_over_257: ERROR: input line longer than 256 characters

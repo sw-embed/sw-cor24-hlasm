@@ -1,0 +1,2 @@
+symname_at_31: ok, 1 output lines, last:  nop
+symname_over_32: ERROR: symbol name longer than 31 characters

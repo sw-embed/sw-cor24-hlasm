@@ -1,0 +1,2 @@
+macros_at_256: ok, 1 output lines, last:  nop
+macros_over_257: ERROR: macro table overflow (256 macros)

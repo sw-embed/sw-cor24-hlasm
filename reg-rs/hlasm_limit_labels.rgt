@@ -1,0 +1,4 @@
+command = "bash reg-rs/check_limits.sh labels 2>&1"
+timeout = 60
+exit_code = 0
+desc = "Structured label ids past 999 (400 IFs, ids up to 1200) still assemble with cor24-asm"

@@ -1,0 +1,4 @@
+command = "bash reg-rs/check_limits.sh cond 2>&1"
+timeout = 60
+exit_code = 0
+desc = "Capacity limit: conditional assembly nested 32 deep (at the limit ok, one past it stops with ERROR)"
