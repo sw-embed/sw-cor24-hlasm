@@ -1,4 +1,4 @@
-Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.53kW29r8L3/hlasm.lgo
+Loaded 18576 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.P1xtVEjoLy/hlasm.lgo
 Loaded 24 bytes from 'reg-rs/s4_comments.bin' at 0x080000
 [UART TX @ 120000] 'n'  (0x6E)
 [UART TX @ 120000] 'o'  (0x6F)
@@ -15,20 +15,20 @@ Loaded 24 bytes from 'reg-rs/s4_comments.bin' at 0x080000
 [UART TX @ 120000] 't'  (0x74)
 [UART TX @ 120000] ''  (0x0D)
 [UART TX @ 120000] '\n'
-[UART TX @ 122137] 'a'  (0x61)
-[UART TX @ 122137] 'd'  (0x64)
-[UART TX @ 122137] 'd'  (0x64)
-[UART TX @ 122137] ' '  (0x20)
-[UART TX @ 122137] 'r'  (0x72)
-[UART TX @ 122137] '0'  (0x30)
-[UART TX @ 122137] ','  (0x2C)
-[UART TX @ 122137] 'r'  (0x72)
-[UART TX @ 122137] '1'  (0x31)
-[UART TX @ 122137] ''  (0x0D)
-[UART TX @ 122137] '\n'
+[UART TX @ 121588] 'a'  (0x61)
+[UART TX @ 121588] 'd'  (0x64)
+[UART TX @ 121588] 'd'  (0x64)
+[UART TX @ 121588] ' '  (0x20)
+[UART TX @ 121588] 'r'  (0x72)
+[UART TX @ 121588] '0'  (0x30)
+[UART TX @ 121588] ','  (0x2C)
+[UART TX @ 121588] 'r'  (0x72)
+[UART TX @ 121588] '1'  (0x31)
+[UART TX @ 121588] ''  (0x0D)
+[UART TX @ 121588] '\n'
 
 UART output: nop ; comment
 add r0,r1
 
 
-Executed 122137 instructions
+Executed 121588 instructions

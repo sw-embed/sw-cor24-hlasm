@@ -1,4 +1,4 @@
-Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.xXFO9XAS4r/hlasm.lgo
+Loaded 18576 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.qREjcZT3tR/hlasm.lgo
 Loaded 257 bytes from 'demos/d33_symbols_and_exprs.bin' at 0x080000
 [UART TX @ 190000] ';'  (0x3B)
 [UART TX @ 190000] ' '  (0x20)
@@ -38,25 +38,25 @@ Loaded 257 bytes from 'demos/d33_symbols_and_exprs.bin' at 0x080000
 [UART TX @ 190000] 's'  (0x73)
 [UART TX @ 190000] 'e'  (0x65)
 [UART TX @ 190000] 'm'  (0x6D)
-[UART TX @ 200000] 'b'  (0x62)
-[UART TX @ 200000] 'l'  (0x6C)
-[UART TX @ 200000] 'y'  (0x79)
-[UART TX @ 200000] '-'  (0x2D)
-[UART TX @ 200000] 't'  (0x74)
-[UART TX @ 200000] 'i'  (0x69)
-[UART TX @ 200000] 'm'  (0x6D)
-[UART TX @ 200000] 'e'  (0x65)
-[UART TX @ 200000] ' '  (0x20)
-[UART TX @ 200000] 'e'  (0x65)
-[UART TX @ 200000] 'x'  (0x78)
-[UART TX @ 200000] 'p'  (0x70)
-[UART TX @ 200000] 'r'  (0x72)
-[UART TX @ 200000] 'e'  (0x65)
-[UART TX @ 200000] 's'  (0x73)
-[UART TX @ 200000] 's'  (0x73)
-[UART TX @ 200000] 'i'  (0x69)
-[UART TX @ 200000] 'o'  (0x6F)
-[UART TX @ 200000] 'n'  (0x6E)
+[UART TX @ 190000] 'b'  (0x62)
+[UART TX @ 190000] 'l'  (0x6C)
+[UART TX @ 190000] 'y'  (0x79)
+[UART TX @ 190000] '-'  (0x2D)
+[UART TX @ 190000] 't'  (0x74)
+[UART TX @ 190000] 'i'  (0x69)
+[UART TX @ 190000] 'm'  (0x6D)
+[UART TX @ 190000] 'e'  (0x65)
+[UART TX @ 190000] ' '  (0x20)
+[UART TX @ 190000] 'e'  (0x65)
+[UART TX @ 190000] 'x'  (0x78)
+[UART TX @ 190000] 'p'  (0x70)
+[UART TX @ 190000] 'r'  (0x72)
+[UART TX @ 190000] 'e'  (0x65)
+[UART TX @ 190000] 's'  (0x73)
+[UART TX @ 190000] 's'  (0x73)
+[UART TX @ 190000] 'i'  (0x69)
+[UART TX @ 190000] 'o'  (0x6F)
+[UART TX @ 190000] 'n'  (0x6E)
 [UART TX @ 200000] 's'  (0x73)
 [UART TX @ 200000] ''  (0x0D)
 [UART TX @ 200000] '\n'
@@ -90,21 +90,21 @@ Loaded 257 bytes from 'demos/d33_symbols_and_exprs.bin' at 0x080000
 [UART TX @ 240000] ':'  (0x3A)
 [UART TX @ 240000] ''  (0x0D)
 [UART TX @ 240000] '\n'
-[UART TX @ 250000] ' '  (0x20)
-[UART TX @ 250000] '.'  (0x2E)
-[UART TX @ 250000] 'w'  (0x77)
-[UART TX @ 250000] 'o'  (0x6F)
-[UART TX @ 250000] 'r'  (0x72)
-[UART TX @ 250000] 'd'  (0x64)
-[UART TX @ 250000] ' '  (0x20)
-[UART TX @ 250000] 'm'  (0x6D)
-[UART TX @ 250000] 'a'  (0x61)
-[UART TX @ 250000] 'r'  (0x72)
-[UART TX @ 250000] 'k'  (0x6B)
-[UART TX @ 250000] '+'  (0x2B)
-[UART TX @ 250000] '3'  (0x33)
-[UART TX @ 250000] ''  (0x0D)
-[UART TX @ 250000] '\n'
+[UART TX @ 240000] ' '  (0x20)
+[UART TX @ 240000] '.'  (0x2E)
+[UART TX @ 240000] 'w'  (0x77)
+[UART TX @ 240000] 'o'  (0x6F)
+[UART TX @ 240000] 'r'  (0x72)
+[UART TX @ 240000] 'd'  (0x64)
+[UART TX @ 240000] ' '  (0x20)
+[UART TX @ 240000] 'm'  (0x6D)
+[UART TX @ 240000] 'a'  (0x61)
+[UART TX @ 240000] 'r'  (0x72)
+[UART TX @ 240000] 'k'  (0x6B)
+[UART TX @ 240000] '+'  (0x2B)
+[UART TX @ 240000] '3'  (0x33)
+[UART TX @ 240000] ''  (0x0D)
+[UART TX @ 240000] '\n'
 [UART TX @ 250000] ' '  (0x20)
 [UART TX @ 250000] '.'  (0x2E)
 [UART TX @ 250000] 'w'  (0x77)
@@ -140,13 +140,13 @@ Loaded 257 bytes from 'demos/d33_symbols_and_exprs.bin' at 0x080000
 [UART TX @ 250000] '2'  (0x32)
 [UART TX @ 250000] ''  (0x0D)
 [UART TX @ 250000] '\n'
-[UART TX @ 252781] 't'  (0x74)
-[UART TX @ 252781] 'a'  (0x61)
-[UART TX @ 252781] 'i'  (0x69)
-[UART TX @ 252781] 'l'  (0x6C)
-[UART TX @ 252781] ':'  (0x3A)
-[UART TX @ 252781] ''  (0x0D)
-[UART TX @ 252781] '\n'
+[UART TX @ 252232] 't'  (0x74)
+[UART TX @ 252232] 'a'  (0x61)
+[UART TX @ 252232] 'i'  (0x69)
+[UART TX @ 252232] 'l'  (0x6C)
+[UART TX @ 252232] ':'  (0x3A)
+[UART TX @ 252232] ''  (0x0D)
+[UART TX @ 252232] '\n'
 
 UART output: ; Demo 33: EQU aliases and small assembly-time expressions
 
@@ -161,4 +161,4 @@ mark:
 tail:
 
 
-Executed 252781 instructions
+Executed 252232 instructions

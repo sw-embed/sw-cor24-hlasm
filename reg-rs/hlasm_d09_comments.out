@@ -1,4 +1,4 @@
-Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.D3DPmaHbXk/hlasm.lgo
+Loaded 18576 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.P06Pb7hmTm/hlasm.lgo
 Loaded 84 bytes from 'demos/d09_comments.bin' at 0x080000
 [UART TX @ 140000] 'n'  (0x6E)
 [UART TX @ 140000] 'o'  (0x6F)
@@ -81,17 +81,17 @@ Loaded 84 bytes from 'demos/d09_comments.bin' at 0x080000
 [UART TX @ 160000] ':'  (0x3A)
 [UART TX @ 160000] ''  (0x0D)
 [UART TX @ 160000] '\n'
-[UART TX @ 163881] ' '  (0x20)
-[UART TX @ 163881] 'b'  (0x62)
-[UART TX @ 163881] 'r'  (0x72)
-[UART TX @ 163881] 'a'  (0x61)
-[UART TX @ 163881] ' '  (0x20)
-[UART TX @ 163881] 'h'  (0x68)
-[UART TX @ 163881] 'a'  (0x61)
-[UART TX @ 163881] 'l'  (0x6C)
-[UART TX @ 163881] 't'  (0x74)
-[UART TX @ 163881] ''  (0x0D)
-[UART TX @ 163881] '\n'
+[UART TX @ 163332] ' '  (0x20)
+[UART TX @ 163332] 'b'  (0x62)
+[UART TX @ 163332] 'r'  (0x72)
+[UART TX @ 163332] 'a'  (0x61)
+[UART TX @ 163332] ' '  (0x20)
+[UART TX @ 163332] 'h'  (0x68)
+[UART TX @ 163332] 'a'  (0x61)
+[UART TX @ 163332] 'l'  (0x6C)
+[UART TX @ 163332] 't'  (0x74)
+[UART TX @ 163332] ''  (0x0D)
+[UART TX @ 163332] '\n'
 
 UART output: nop
 ; this is a comment
@@ -102,4 +102,4 @@ halt:
  bra halt
 
 
-Executed 163881 instructions
+Executed 163332 instructions

@@ -1,4 +1,4 @@
-Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.bJ7P6RhncP/hlasm.lgo
+Loaded 18576 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.xNHGpobj6S/hlasm.lgo
 Loaded 261 bytes from 'demos/d26_branch_range_hardening.bin' at 0x080000
 [UART TX @ 280000] ';'  (0x3B)
 [UART TX @ 280000] ' '  (0x20)
@@ -72,21 +72,21 @@ Loaded 261 bytes from 'demos/d26_branch_range_hardening.bin' at 0x080000
 [UART TX @ 280000] 'u'  (0x75)
 [UART TX @ 280000] 's'  (0x73)
 [UART TX @ 280000] 'h'  (0x68)
-[UART TX @ 290000] ' '  (0x20)
-[UART TX @ 290000] 'r'  (0x72)
-[UART TX @ 290000] '2'  (0x32)
-[UART TX @ 290000] ''  (0x0D)
-[UART TX @ 290000] '\n'
-[UART TX @ 290000] ' '  (0x20)
-[UART TX @ 290000] 'l'  (0x6C)
-[UART TX @ 290000] 'c'  (0x63)
-[UART TX @ 290000] ' '  (0x20)
-[UART TX @ 290000] 'r'  (0x72)
-[UART TX @ 290000] '2'  (0x32)
-[UART TX @ 290000] ','  (0x2C)
-[UART TX @ 290000] '0'  (0x30)
-[UART TX @ 290000] ''  (0x0D)
-[UART TX @ 290000] '\n'
+[UART TX @ 280000] ' '  (0x20)
+[UART TX @ 280000] 'r'  (0x72)
+[UART TX @ 280000] '2'  (0x32)
+[UART TX @ 280000] ''  (0x0D)
+[UART TX @ 280000] '\n'
+[UART TX @ 280000] ' '  (0x20)
+[UART TX @ 280000] 'l'  (0x6C)
+[UART TX @ 280000] 'c'  (0x63)
+[UART TX @ 280000] ' '  (0x20)
+[UART TX @ 280000] 'r'  (0x72)
+[UART TX @ 280000] '2'  (0x32)
+[UART TX @ 280000] ','  (0x2C)
+[UART TX @ 280000] '0'  (0x30)
+[UART TX @ 280000] ''  (0x0D)
+[UART TX @ 280000] '\n'
 [UART TX @ 290000] ' '  (0x20)
 [UART TX @ 290000] 'c'  (0x63)
 [UART TX @ 290000] 'e'  (0x65)
@@ -411,10 +411,10 @@ Loaded 261 bytes from 'demos/d26_branch_range_hardening.bin' at 0x080000
 [UART TX @ 350000] ':'  (0x3A)
 [UART TX @ 350000] ''  (0x0D)
 [UART TX @ 350000] '\n'
-[UART TX @ 360000] ' '  (0x20)
-[UART TX @ 360000] 'n'  (0x6E)
-[UART TX @ 360000] 'o'  (0x6F)
-[UART TX @ 360000] 'p'  (0x70)
+[UART TX @ 350000] ' '  (0x20)
+[UART TX @ 350000] 'n'  (0x6E)
+[UART TX @ 350000] 'o'  (0x6F)
+[UART TX @ 350000] 'p'  (0x70)
 [UART TX @ 360000] ''  (0x0D)
 [UART TX @ 360000] '\n'
 [UART TX @ 360000] ' '  (0x20)
@@ -477,49 +477,49 @@ Loaded 261 bytes from 'demos/d26_branch_range_hardening.bin' at 0x080000
 [UART TX @ 380000] 'p'  (0x70)
 [UART TX @ 380000] ''  (0x0D)
 [UART TX @ 380000] '\n'
-[UART TX @ 384513] ' '  (0x20)
-[UART TX @ 384513] 'a'  (0x61)
-[UART TX @ 384513] 'd'  (0x64)
-[UART TX @ 384513] 'd'  (0x64)
-[UART TX @ 384513] ' '  (0x20)
-[UART TX @ 384513] 'r'  (0x72)
-[UART TX @ 384513] '0'  (0x30)
-[UART TX @ 384513] ','  (0x2C)
-[UART TX @ 384513] '1'  (0x31)
-[UART TX @ 384513] ''  (0x0D)
-[UART TX @ 384513] '\n'
-[UART TX @ 384513] ' '  (0x20)
-[UART TX @ 384513] 'b'  (0x62)
-[UART TX @ 384513] 'r'  (0x72)
-[UART TX @ 384513] 'a'  (0x61)
-[UART TX @ 384513] ' '  (0x20)
-[UART TX @ 384513] '_'  (0x5F)
-[UART TX @ 384513] 'h'  (0x68)
-[UART TX @ 384513] 'l'  (0x6C)
-[UART TX @ 384513] 'd'  (0x64)
-[UART TX @ 384513] 'o'  (0x6F)
-[UART TX @ 384513] '_'  (0x5F)
-[UART TX @ 384513] '4'  (0x34)
-[UART TX @ 384513] '_'  (0x5F)
-[UART TX @ 384513] 't'  (0x74)
-[UART TX @ 384513] 'o'  (0x6F)
-[UART TX @ 384513] 'p'  (0x70)
-[UART TX @ 384513] ''  (0x0D)
-[UART TX @ 384513] '\n'
-[UART TX @ 384513] '_'  (0x5F)
-[UART TX @ 384513] 'h'  (0x68)
-[UART TX @ 384513] 'l'  (0x6C)
-[UART TX @ 384513] 'd'  (0x64)
-[UART TX @ 384513] 'o'  (0x6F)
-[UART TX @ 384513] '_'  (0x5F)
-[UART TX @ 384513] '5'  (0x35)
-[UART TX @ 384513] '_'  (0x5F)
-[UART TX @ 384513] 'e'  (0x65)
-[UART TX @ 384513] 'n'  (0x6E)
-[UART TX @ 384513] 'd'  (0x64)
-[UART TX @ 384513] ':'  (0x3A)
-[UART TX @ 384513] ''  (0x0D)
-[UART TX @ 384513] '\n'
+[UART TX @ 383964] ' '  (0x20)
+[UART TX @ 383964] 'a'  (0x61)
+[UART TX @ 383964] 'd'  (0x64)
+[UART TX @ 383964] 'd'  (0x64)
+[UART TX @ 383964] ' '  (0x20)
+[UART TX @ 383964] 'r'  (0x72)
+[UART TX @ 383964] '0'  (0x30)
+[UART TX @ 383964] ','  (0x2C)
+[UART TX @ 383964] '1'  (0x31)
+[UART TX @ 383964] ''  (0x0D)
+[UART TX @ 383964] '\n'
+[UART TX @ 383964] ' '  (0x20)
+[UART TX @ 383964] 'b'  (0x62)
+[UART TX @ 383964] 'r'  (0x72)
+[UART TX @ 383964] 'a'  (0x61)
+[UART TX @ 383964] ' '  (0x20)
+[UART TX @ 383964] '_'  (0x5F)
+[UART TX @ 383964] 'h'  (0x68)
+[UART TX @ 383964] 'l'  (0x6C)
+[UART TX @ 383964] 'd'  (0x64)
+[UART TX @ 383964] 'o'  (0x6F)
+[UART TX @ 383964] '_'  (0x5F)
+[UART TX @ 383964] '4'  (0x34)
+[UART TX @ 383964] '_'  (0x5F)
+[UART TX @ 383964] 't'  (0x74)
+[UART TX @ 383964] 'o'  (0x6F)
+[UART TX @ 383964] 'p'  (0x70)
+[UART TX @ 383964] ''  (0x0D)
+[UART TX @ 383964] '\n'
+[UART TX @ 383964] '_'  (0x5F)
+[UART TX @ 383964] 'h'  (0x68)
+[UART TX @ 383964] 'l'  (0x6C)
+[UART TX @ 383964] 'd'  (0x64)
+[UART TX @ 383964] 'o'  (0x6F)
+[UART TX @ 383964] '_'  (0x5F)
+[UART TX @ 383964] '5'  (0x35)
+[UART TX @ 383964] '_'  (0x5F)
+[UART TX @ 383964] 'e'  (0x65)
+[UART TX @ 383964] 'n'  (0x6E)
+[UART TX @ 383964] 'd'  (0x64)
+[UART TX @ 383964] ':'  (0x3A)
+[UART TX @ 383964] ''  (0x0D)
+[UART TX @ 383964] '\n'
 
 UART output: ; Demo 26: structured control flow emits long-range-safe lowering
  push r2
@@ -568,4 +568,4 @@ _hldo_6_skip:
 _hldo_5_end:
 
 
-Executed 384513 instructions
+Executed 383964 instructions

@@ -1,4 +1,4 @@
-Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.9A3wwEWzGf/hlasm.lgo
+Loaded 18576 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.zJbvnD7i7v/hlasm.lgo
 Loaded 80 bytes from 'demos/d37_hldiag_baseline.bin' at 0x080000
 [UART TX @ 140000] ';'  (0x3B)
 [UART TX @ 140000] ' '  (0x20)
@@ -98,16 +98,16 @@ Loaded 80 bytes from 'demos/d37_hldiag_baseline.bin' at 0x080000
 [UART TX @ 150000] 'e'  (0x65)
 [UART TX @ 150000] ' '  (0x20)
 [UART TX @ 150000] 'a'  (0x61)
-[UART TX @ 150802] 't'  (0x74)
-[UART TX @ 150802] ' '  (0x20)
-[UART TX @ 150802] 's'  (0x73)
-[UART TX @ 150802] 'r'  (0x72)
-[UART TX @ 150802] 'c'  (0x63)
-[UART TX @ 150802] '0'  (0x30)
-[UART TX @ 150802] ':'  (0x3A)
-[UART TX @ 150802] '4'  (0x34)
-[UART TX @ 150802] ''  (0x0D)
-[UART TX @ 150802] '\n'
+[UART TX @ 150000] 't'  (0x74)
+[UART TX @ 150000] ' '  (0x20)
+[UART TX @ 150000] 's'  (0x73)
+[UART TX @ 150000] 'r'  (0x72)
+[UART TX @ 150000] 'c'  (0x63)
+[UART TX @ 150000] '0'  (0x30)
+[UART TX @ 150000] ':'  (0x3A)
+[UART TX @ 150253] '4'  (0x34)
+[UART TX @ 150253] ''  (0x0D)
+[UART TX @ 150253] '\n'
 
 UART output: ; Demo 37: opt-in HLDIAG diagnostic channel baseline
  add r0,1
@@ -115,4 +115,4 @@ UART output: ; Demo 37: opt-in HLDIAG diagnostic channel baseline
 ; !! hlasm: HLDIAG active at src0:4
 
 
-Executed 150802 instructions
+Executed 150253 instructions

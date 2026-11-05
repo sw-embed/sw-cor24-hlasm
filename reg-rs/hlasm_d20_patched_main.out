@@ -1,24 +1,24 @@
-Loaded 20175 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.NUnKi9Iexm/hlasm.lgo
+Loaded 18576 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.NRQJL9jMnX/hlasm.lgo
 Loaded 41 bytes from 'demos/d20_patched_main_main.bin' at 0x090000
 Loaded 27 bytes from 'demos/d20_patched_main_extra.bin' at 0x081000
 Loaded 29 bytes from 'reg-rs/s12_patched_main.cfg' at 0x07F000
-[UART TX @ 136727] '_'  (0x5F)
-[UART TX @ 136727] 'h'  (0x68)
-[UART TX @ 136727] ':'  (0x3A)
-[UART TX @ 136727] ''  (0x0D)
-[UART TX @ 136727] '\n'
-[UART TX @ 136727] ' '  (0x20)
-[UART TX @ 136727] 'b'  (0x62)
-[UART TX @ 136727] 'r'  (0x72)
-[UART TX @ 136727] 'a'  (0x61)
-[UART TX @ 136727] ' '  (0x20)
-[UART TX @ 136727] '_'  (0x5F)
-[UART TX @ 136727] 'h'  (0x68)
-[UART TX @ 136727] ''  (0x0D)
-[UART TX @ 136727] '\n'
+[UART TX @ 136178] '_'  (0x5F)
+[UART TX @ 136178] 'h'  (0x68)
+[UART TX @ 136178] ':'  (0x3A)
+[UART TX @ 136178] ''  (0x0D)
+[UART TX @ 136178] '\n'
+[UART TX @ 136178] ' '  (0x20)
+[UART TX @ 136178] 'b'  (0x62)
+[UART TX @ 136178] 'r'  (0x72)
+[UART TX @ 136178] 'a'  (0x61)
+[UART TX @ 136178] ' '  (0x20)
+[UART TX @ 136178] '_'  (0x5F)
+[UART TX @ 136178] 'h'  (0x68)
+[UART TX @ 136178] ''  (0x0D)
+[UART TX @ 136178] '\n'
 
 UART output: _h:
  bra _h
 
 
-Executed 136727 instructions
+Executed 136178 instructions

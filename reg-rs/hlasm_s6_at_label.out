@@ -1,59 +1,59 @@
-Loaded 20175 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.e1pJtrYXE8/hlasm.lgo
+Loaded 18576 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.OzKLDFC7UV/hlasm.lgo
 Loaded 47 bytes from 'reg-rs/s6_at_label.bin' at 0x080000
-[UART TX @ 139129] 'L'  (0x4C)
-[UART TX @ 139129] '0'  (0x30)
-[UART TX @ 139129] '0'  (0x30)
-[UART TX @ 139129] '0'  (0x30)
-[UART TX @ 139129] '1'  (0x31)
-[UART TX @ 139129] ':'  (0x3A)
-[UART TX @ 139129] ' '  (0x20)
-[UART TX @ 139129] 'a'  (0x61)
-[UART TX @ 139129] 'd'  (0x64)
-[UART TX @ 139129] 'd'  (0x64)
-[UART TX @ 139129] ' '  (0x20)
-[UART TX @ 139129] 'r'  (0x72)
-[UART TX @ 139129] '0'  (0x30)
-[UART TX @ 139129] ','  (0x2C)
-[UART TX @ 139129] '1'  (0x31)
-[UART TX @ 139129] ''  (0x0D)
-[UART TX @ 139129] '\n'
-[UART TX @ 139129] ' '  (0x20)
-[UART TX @ 139129] 'b'  (0x62)
-[UART TX @ 139129] ' '  (0x20)
-[UART TX @ 139129] 'L'  (0x4C)
-[UART TX @ 139129] '0'  (0x30)
-[UART TX @ 139129] '0'  (0x30)
-[UART TX @ 139129] '0'  (0x30)
-[UART TX @ 139129] '1'  (0x31)
-[UART TX @ 139129] ''  (0x0D)
-[UART TX @ 139129] '\n'
-[UART TX @ 139129] 'L'  (0x4C)
-[UART TX @ 139129] '0'  (0x30)
-[UART TX @ 139129] '0'  (0x30)
-[UART TX @ 139129] '0'  (0x30)
-[UART TX @ 139129] '2'  (0x32)
-[UART TX @ 139129] ':'  (0x3A)
-[UART TX @ 139129] ' '  (0x20)
-[UART TX @ 139129] 'a'  (0x61)
-[UART TX @ 139129] 'd'  (0x64)
-[UART TX @ 139129] 'd'  (0x64)
-[UART TX @ 139129] ' '  (0x20)
-[UART TX @ 139129] 'r'  (0x72)
-[UART TX @ 139129] '0'  (0x30)
-[UART TX @ 139129] ','  (0x2C)
-[UART TX @ 139129] '1'  (0x31)
-[UART TX @ 139129] ''  (0x0D)
-[UART TX @ 139129] '\n'
-[UART TX @ 139129] ' '  (0x20)
-[UART TX @ 139129] 'b'  (0x62)
-[UART TX @ 139129] ' '  (0x20)
-[UART TX @ 139129] 'L'  (0x4C)
-[UART TX @ 139129] '0'  (0x30)
-[UART TX @ 139129] '0'  (0x30)
-[UART TX @ 139129] '0'  (0x30)
-[UART TX @ 139129] '2'  (0x32)
-[UART TX @ 139129] ''  (0x0D)
-[UART TX @ 139129] '\n'
+[UART TX @ 138580] 'L'  (0x4C)
+[UART TX @ 138580] '0'  (0x30)
+[UART TX @ 138580] '0'  (0x30)
+[UART TX @ 138580] '0'  (0x30)
+[UART TX @ 138580] '1'  (0x31)
+[UART TX @ 138580] ':'  (0x3A)
+[UART TX @ 138580] ' '  (0x20)
+[UART TX @ 138580] 'a'  (0x61)
+[UART TX @ 138580] 'd'  (0x64)
+[UART TX @ 138580] 'd'  (0x64)
+[UART TX @ 138580] ' '  (0x20)
+[UART TX @ 138580] 'r'  (0x72)
+[UART TX @ 138580] '0'  (0x30)
+[UART TX @ 138580] ','  (0x2C)
+[UART TX @ 138580] '1'  (0x31)
+[UART TX @ 138580] ''  (0x0D)
+[UART TX @ 138580] '\n'
+[UART TX @ 138580] ' '  (0x20)
+[UART TX @ 138580] 'b'  (0x62)
+[UART TX @ 138580] ' '  (0x20)
+[UART TX @ 138580] 'L'  (0x4C)
+[UART TX @ 138580] '0'  (0x30)
+[UART TX @ 138580] '0'  (0x30)
+[UART TX @ 138580] '0'  (0x30)
+[UART TX @ 138580] '1'  (0x31)
+[UART TX @ 138580] ''  (0x0D)
+[UART TX @ 138580] '\n'
+[UART TX @ 138580] 'L'  (0x4C)
+[UART TX @ 138580] '0'  (0x30)
+[UART TX @ 138580] '0'  (0x30)
+[UART TX @ 138580] '0'  (0x30)
+[UART TX @ 138580] '2'  (0x32)
+[UART TX @ 138580] ':'  (0x3A)
+[UART TX @ 138580] ' '  (0x20)
+[UART TX @ 138580] 'a'  (0x61)
+[UART TX @ 138580] 'd'  (0x64)
+[UART TX @ 138580] 'd'  (0x64)
+[UART TX @ 138580] ' '  (0x20)
+[UART TX @ 138580] 'r'  (0x72)
+[UART TX @ 138580] '0'  (0x30)
+[UART TX @ 138580] ','  (0x2C)
+[UART TX @ 138580] '1'  (0x31)
+[UART TX @ 138580] ''  (0x0D)
+[UART TX @ 138580] '\n'
+[UART TX @ 138580] ' '  (0x20)
+[UART TX @ 138580] 'b'  (0x62)
+[UART TX @ 138580] ' '  (0x20)
+[UART TX @ 138580] 'L'  (0x4C)
+[UART TX @ 138580] '0'  (0x30)
+[UART TX @ 138580] '0'  (0x30)
+[UART TX @ 138580] '0'  (0x30)
+[UART TX @ 138580] '2'  (0x32)
+[UART TX @ 138580] ''  (0x0D)
+[UART TX @ 138580] '\n'
 
 UART output: L0001: add r0,1
  b L0001
@@ -61,4 +61,4 @@ L0002: add r0,1
  b L0002
 
 
-Executed 139129 instructions
+Executed 138580 instructions

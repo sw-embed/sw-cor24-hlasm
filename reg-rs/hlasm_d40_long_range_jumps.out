@@ -1,4 +1,4 @@
-Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.3eLn9ufFgQ/hlasm.lgo
+Loaded 18576 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.ygZjCBKK51/hlasm.lgo
 Loaded 1464 bytes from 'demos/d40_long_range_jumps.bin' at 0x080000
 [UART TX @ 660000] ';'  (0x3B)
 [UART TX @ 660000] ' '  (0x20)
@@ -547,12 +547,12 @@ Loaded 1464 bytes from 'demos/d40_long_range_jumps.bin' at 0x080000
 [UART TX @ 730000] 'l'  (0x6C)
 [UART TX @ 730000] 'c'  (0x63)
 [UART TX @ 730000] ' '  (0x20)
-[UART TX @ 740000] 'r'  (0x72)
-[UART TX @ 740000] '1'  (0x31)
-[UART TX @ 740000] ','  (0x2C)
-[UART TX @ 740000] '0'  (0x30)
-[UART TX @ 740000] ''  (0x0D)
-[UART TX @ 740000] '\n'
+[UART TX @ 730000] 'r'  (0x72)
+[UART TX @ 730000] '1'  (0x31)
+[UART TX @ 730000] ','  (0x2C)
+[UART TX @ 730000] '0'  (0x30)
+[UART TX @ 730000] ''  (0x0D)
+[UART TX @ 730000] '\n'
 [UART TX @ 740000] ' '  (0x20)
 [UART TX @ 740000] 'b'  (0x62)
 [UART TX @ 740000] 'r'  (0x72)
@@ -750,9 +750,9 @@ Loaded 1464 bytes from 'demos/d40_long_range_jumps.bin' at 0x080000
 [UART TX @ 750000] 'r'  (0x72)
 [UART TX @ 750000] '2'  (0x32)
 [UART TX @ 750000] ','  (0x2C)
-[UART TX @ 760000] '0'  (0x30)
-[UART TX @ 760000] ''  (0x0D)
-[UART TX @ 760000] '\n'
+[UART TX @ 750000] '0'  (0x30)
+[UART TX @ 750000] ''  (0x0D)
+[UART TX @ 750000] '\n'
 [UART TX @ 760000] ' '  (0x20)
 [UART TX @ 760000] 'l'  (0x6C)
 [UART TX @ 760000] 'a'  (0x61)
@@ -830,9 +830,9 @@ Loaded 1464 bytes from 'demos/d40_long_range_jumps.bin' at 0x080000
 [UART TX @ 780000] 'r'  (0x72)
 [UART TX @ 780000] '2'  (0x32)
 [UART TX @ 780000] ','  (0x2C)
-[UART TX @ 790000] '0'  (0x30)
-[UART TX @ 790000] ''  (0x0D)
-[UART TX @ 790000] '\n'
+[UART TX @ 780000] '0'  (0x30)
+[UART TX @ 780000] ''  (0x0D)
+[UART TX @ 780000] '\n'
 [UART TX @ 790000] ' '  (0x20)
 [UART TX @ 790000] 'l'  (0x6C)
 [UART TX @ 790000] 'a'  (0x61)
@@ -909,10 +909,10 @@ Loaded 1464 bytes from 'demos/d40_long_range_jumps.bin' at 0x080000
 [UART TX @ 810000] ' '  (0x20)
 [UART TX @ 810000] 'r'  (0x72)
 [UART TX @ 810000] '2'  (0x32)
-[UART TX @ 820000] ','  (0x2C)
-[UART TX @ 820000] '0'  (0x30)
-[UART TX @ 820000] ''  (0x0D)
-[UART TX @ 820000] '\n'
+[UART TX @ 810000] ','  (0x2C)
+[UART TX @ 810000] '0'  (0x30)
+[UART TX @ 810000] ''  (0x0D)
+[UART TX @ 810000] '\n'
 [UART TX @ 820000] ' '  (0x20)
 [UART TX @ 820000] 'l'  (0x6C)
 [UART TX @ 820000] 'a'  (0x61)
@@ -988,11 +988,11 @@ Loaded 1464 bytes from 'demos/d40_long_range_jumps.bin' at 0x080000
 [UART TX @ 840000] 'a'  (0x61)
 [UART TX @ 840000] ' '  (0x20)
 [UART TX @ 840000] 'r'  (0x72)
-[UART TX @ 850000] '2'  (0x32)
-[UART TX @ 850000] ','  (0x2C)
-[UART TX @ 850000] '0'  (0x30)
-[UART TX @ 850000] ''  (0x0D)
-[UART TX @ 850000] '\n'
+[UART TX @ 840000] '2'  (0x32)
+[UART TX @ 840000] ','  (0x2C)
+[UART TX @ 840000] '0'  (0x30)
+[UART TX @ 840000] ''  (0x0D)
+[UART TX @ 840000] '\n'
 [UART TX @ 850000] ' '  (0x20)
 [UART TX @ 850000] 'l'  (0x6C)
 [UART TX @ 850000] 'a'  (0x61)
@@ -1068,11 +1068,11 @@ Loaded 1464 bytes from 'demos/d40_long_range_jumps.bin' at 0x080000
 [UART TX @ 870000] 'a'  (0x61)
 [UART TX @ 870000] ' '  (0x20)
 [UART TX @ 870000] 'r'  (0x72)
-[UART TX @ 880000] '2'  (0x32)
-[UART TX @ 880000] ','  (0x2C)
-[UART TX @ 880000] '0'  (0x30)
-[UART TX @ 880000] ''  (0x0D)
-[UART TX @ 880000] '\n'
+[UART TX @ 870000] '2'  (0x32)
+[UART TX @ 870000] ','  (0x2C)
+[UART TX @ 870000] '0'  (0x30)
+[UART TX @ 870000] ''  (0x0D)
+[UART TX @ 870000] '\n'
 [UART TX @ 880000] ' '  (0x20)
 [UART TX @ 880000] 'l'  (0x6C)
 [UART TX @ 880000] 'a'  (0x61)
@@ -1143,17 +1143,17 @@ Loaded 1464 bytes from 'demos/d40_long_range_jumps.bin' at 0x080000
 [UART TX @ 900000] '0'  (0x30)
 [UART TX @ 900000] ''  (0x0D)
 [UART TX @ 900000] '\n'
-[UART TX @ 910000] ' '  (0x20)
-[UART TX @ 910000] 'a'  (0x61)
-[UART TX @ 910000] 'd'  (0x64)
-[UART TX @ 910000] 'd'  (0x64)
-[UART TX @ 910000] ' '  (0x20)
-[UART TX @ 910000] 'r'  (0x72)
-[UART TX @ 910000] '1'  (0x31)
-[UART TX @ 910000] ','  (0x2C)
-[UART TX @ 910000] '1'  (0x31)
-[UART TX @ 910000] ''  (0x0D)
-[UART TX @ 910000] '\n'
+[UART TX @ 900000] ' '  (0x20)
+[UART TX @ 900000] 'a'  (0x61)
+[UART TX @ 900000] 'd'  (0x64)
+[UART TX @ 900000] 'd'  (0x64)
+[UART TX @ 900000] ' '  (0x20)
+[UART TX @ 900000] 'r'  (0x72)
+[UART TX @ 900000] '1'  (0x31)
+[UART TX @ 900000] ','  (0x2C)
+[UART TX @ 900000] '1'  (0x31)
+[UART TX @ 900000] ''  (0x0D)
+[UART TX @ 900000] '\n'
 [UART TX @ 910000] ' '  (0x20)
 [UART TX @ 910000] 'p'  (0x70)
 [UART TX @ 910000] 'u'  (0x75)
@@ -1278,19 +1278,19 @@ Loaded 1464 bytes from 'demos/d40_long_range_jumps.bin' at 0x080000
 [UART TX @ 910000] '2'  (0x32)
 [UART TX @ 910000] ''  (0x0D)
 [UART TX @ 910000] '\n'
-[UART TX @ 920000] ' '  (0x20)
-[UART TX @ 920000] 'c'  (0x63)
-[UART TX @ 920000] 'e'  (0x65)
-[UART TX @ 920000] 'q'  (0x71)
-[UART TX @ 920000] ' '  (0x20)
-[UART TX @ 920000] 'r'  (0x72)
-[UART TX @ 920000] '1'  (0x31)
-[UART TX @ 920000] ','  (0x2C)
-[UART TX @ 920000] 'r'  (0x72)
-[UART TX @ 920000] '2'  (0x32)
-[UART TX @ 920000] ''  (0x0D)
-[UART TX @ 920000] '\n'
-[UART TX @ 920000] ' '  (0x20)
+[UART TX @ 910000] ' '  (0x20)
+[UART TX @ 910000] 'c'  (0x63)
+[UART TX @ 910000] 'e'  (0x65)
+[UART TX @ 910000] 'q'  (0x71)
+[UART TX @ 910000] ' '  (0x20)
+[UART TX @ 910000] 'r'  (0x72)
+[UART TX @ 910000] '1'  (0x31)
+[UART TX @ 910000] ','  (0x2C)
+[UART TX @ 910000] 'r'  (0x72)
+[UART TX @ 910000] '2'  (0x32)
+[UART TX @ 910000] ''  (0x0D)
+[UART TX @ 910000] '\n'
+[UART TX @ 910000] ' '  (0x20)
 [UART TX @ 920000] 'p'  (0x70)
 [UART TX @ 920000] 'o'  (0x6F)
 [UART TX @ 920000] 'p'  (0x70)
@@ -1440,10 +1440,10 @@ Loaded 1464 bytes from 'demos/d40_long_range_jumps.bin' at 0x080000
 [UART TX @ 940000] '0'  (0x30)
 [UART TX @ 940000] ''  (0x0D)
 [UART TX @ 940000] '\n'
-[UART TX @ 950000] ' '  (0x20)
-[UART TX @ 950000] 'l'  (0x6C)
-[UART TX @ 950000] 'a'  (0x61)
-[UART TX @ 950000] ' '  (0x20)
+[UART TX @ 940000] ' '  (0x20)
+[UART TX @ 940000] 'l'  (0x6C)
+[UART TX @ 940000] 'a'  (0x61)
+[UART TX @ 940000] ' '  (0x20)
 [UART TX @ 950000] 'r'  (0x72)
 [UART TX @ 950000] '2'  (0x32)
 [UART TX @ 950000] ','  (0x2C)
@@ -1520,10 +1520,10 @@ Loaded 1464 bytes from 'demos/d40_long_range_jumps.bin' at 0x080000
 [UART TX @ 970000] '0'  (0x30)
 [UART TX @ 970000] ''  (0x0D)
 [UART TX @ 970000] '\n'
-[UART TX @ 980000] ' '  (0x20)
-[UART TX @ 980000] 'l'  (0x6C)
-[UART TX @ 980000] 'a'  (0x61)
-[UART TX @ 980000] ' '  (0x20)
+[UART TX @ 970000] ' '  (0x20)
+[UART TX @ 970000] 'l'  (0x6C)
+[UART TX @ 970000] 'a'  (0x61)
+[UART TX @ 970000] ' '  (0x20)
 [UART TX @ 980000] 'r'  (0x72)
 [UART TX @ 980000] '2'  (0x32)
 [UART TX @ 980000] ','  (0x2C)
@@ -1600,9 +1600,9 @@ Loaded 1464 bytes from 'demos/d40_long_range_jumps.bin' at 0x080000
 [UART TX @ 1000000] '0'  (0x30)
 [UART TX @ 1000000] ''  (0x0D)
 [UART TX @ 1000000] '\n'
-[UART TX @ 1010000] ' '  (0x20)
-[UART TX @ 1010000] 'l'  (0x6C)
-[UART TX @ 1010000] 'a'  (0x61)
+[UART TX @ 1000000] ' '  (0x20)
+[UART TX @ 1000000] 'l'  (0x6C)
+[UART TX @ 1000000] 'a'  (0x61)
 [UART TX @ 1010000] ' '  (0x20)
 [UART TX @ 1010000] 'r'  (0x72)
 [UART TX @ 1010000] '2'  (0x32)
@@ -1680,9 +1680,9 @@ Loaded 1464 bytes from 'demos/d40_long_range_jumps.bin' at 0x080000
 [UART TX @ 1030000] '0'  (0x30)
 [UART TX @ 1030000] ''  (0x0D)
 [UART TX @ 1030000] '\n'
-[UART TX @ 1040000] ' '  (0x20)
-[UART TX @ 1040000] 'l'  (0x6C)
-[UART TX @ 1040000] 'a'  (0x61)
+[UART TX @ 1030000] ' '  (0x20)
+[UART TX @ 1030000] 'l'  (0x6C)
+[UART TX @ 1030000] 'a'  (0x61)
 [UART TX @ 1040000] ' '  (0x20)
 [UART TX @ 1040000] 'r'  (0x72)
 [UART TX @ 1040000] '2'  (0x32)
@@ -1760,8 +1760,8 @@ Loaded 1464 bytes from 'demos/d40_long_range_jumps.bin' at 0x080000
 [UART TX @ 1060000] '0'  (0x30)
 [UART TX @ 1060000] ''  (0x0D)
 [UART TX @ 1060000] '\n'
-[UART TX @ 1070000] ' '  (0x20)
-[UART TX @ 1070000] 'l'  (0x6C)
+[UART TX @ 1060000] ' '  (0x20)
+[UART TX @ 1060000] 'l'  (0x6C)
 [UART TX @ 1070000] 'a'  (0x61)
 [UART TX @ 1070000] ' '  (0x20)
 [UART TX @ 1070000] 'r'  (0x72)
@@ -1801,16 +1801,16 @@ Loaded 1464 bytes from 'demos/d40_long_range_jumps.bin' at 0x080000
 [UART TX @ 1070000] 'i'  (0x69)
 [UART TX @ 1070000] 'f'  (0x66)
 [UART TX @ 1070000] '_'  (0x5F)
-[UART TX @ 1080000] '4'  (0x34)
-[UART TX @ 1080000] '_'  (0x5F)
-[UART TX @ 1080000] 'f'  (0x66)
-[UART TX @ 1080000] 'a'  (0x61)
-[UART TX @ 1080000] 'l'  (0x6C)
-[UART TX @ 1080000] 's'  (0x73)
-[UART TX @ 1080000] 'e'  (0x65)
-[UART TX @ 1080000] ''  (0x0D)
-[UART TX @ 1080000] '\n'
-[UART TX @ 1080000] '_'  (0x5F)
+[UART TX @ 1070000] '4'  (0x34)
+[UART TX @ 1070000] '_'  (0x5F)
+[UART TX @ 1070000] 'f'  (0x66)
+[UART TX @ 1070000] 'a'  (0x61)
+[UART TX @ 1070000] 'l'  (0x6C)
+[UART TX @ 1070000] 's'  (0x73)
+[UART TX @ 1070000] 'e'  (0x65)
+[UART TX @ 1070000] ''  (0x0D)
+[UART TX @ 1070000] '\n'
+[UART TX @ 1070000] '_'  (0x5F)
 [UART TX @ 1080000] 'h'  (0x68)
 [UART TX @ 1080000] 'l'  (0x6C)
 [UART TX @ 1080000] 'i'  (0x69)
@@ -1983,24 +1983,24 @@ Loaded 1464 bytes from 'demos/d40_long_range_jumps.bin' at 0x080000
 [UART TX @ 1110000] ')'  (0x29)
 [UART TX @ 1110000] ''  (0x0D)
 [UART TX @ 1110000] '\n'
-[UART TX @ 1117160] 'h'  (0x68)
-[UART TX @ 1117160] 'a'  (0x61)
-[UART TX @ 1117160] 'l'  (0x6C)
-[UART TX @ 1117160] 't'  (0x74)
-[UART TX @ 1117160] ':'  (0x3A)
-[UART TX @ 1117160] ''  (0x0D)
-[UART TX @ 1117160] '\n'
-[UART TX @ 1117160] ' '  (0x20)
-[UART TX @ 1117160] 'b'  (0x62)
-[UART TX @ 1117160] 'r'  (0x72)
-[UART TX @ 1117160] 'a'  (0x61)
-[UART TX @ 1117160] ' '  (0x20)
-[UART TX @ 1117160] 'h'  (0x68)
-[UART TX @ 1117160] 'a'  (0x61)
-[UART TX @ 1117160] 'l'  (0x6C)
-[UART TX @ 1117160] 't'  (0x74)
-[UART TX @ 1117160] ''  (0x0D)
-[UART TX @ 1117160] '\n'
+[UART TX @ 1116611] 'h'  (0x68)
+[UART TX @ 1116611] 'a'  (0x61)
+[UART TX @ 1116611] 'l'  (0x6C)
+[UART TX @ 1116611] 't'  (0x74)
+[UART TX @ 1116611] ':'  (0x3A)
+[UART TX @ 1116611] ''  (0x0D)
+[UART TX @ 1116611] '\n'
+[UART TX @ 1116611] ' '  (0x20)
+[UART TX @ 1116611] 'b'  (0x62)
+[UART TX @ 1116611] 'r'  (0x72)
+[UART TX @ 1116611] 'a'  (0x61)
+[UART TX @ 1116611] ' '  (0x20)
+[UART TX @ 1116611] 'h'  (0x68)
+[UART TX @ 1116611] 'a'  (0x61)
+[UART TX @ 1116611] 'l'  (0x6C)
+[UART TX @ 1116611] 't'  (0x74)
+[UART TX @ 1116611] ''  (0x0D)
+[UART TX @ 1116611] '\n'
 
 UART output: ; Demo 40: structured jumps beyond bra range.
 ; The loop body is 40 four-byte instructions (160 bytes), so DOEXIT's jump
@@ -2142,4 +2142,4 @@ halt:
  bra halt
 
 
-Executed 1117160 instructions
+Executed 1116611 instructions

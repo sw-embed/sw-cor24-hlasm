@@ -6,12 +6,16 @@
 ; Source buffer descriptor (9 bytes):
 ;   +0: base address, +3: length, +6: position
 ;
-; Bootstrap memory map:
+; Bootstrap memory map (details: "Runtime memory map" near the data section):
+;   0x010000-0x03FFFF symbol/macro tables, macro body pool, work area
+;              (line and name buffers, assembly-time stacks), XREF tables
 ;   0x07F000  config block for extra source buffers
-;   0x080000+ preloaded ASCII source/include buffers
-;   0x0C0000+ runtime arena (line buffer, descriptors, source-return stack,
-;              macro/symbol state)
-;   EBR stack: prefer cor24-run --stack-kilobytes 3 unless a future SRAM
+;   0x080000+ preloaded ASCII source/include buffers (main default length
+;              32767 bytes)
+;   0x0C0000+ runtime arena (counters, source descriptors, source-return
+;              stack), 4700 bytes
+;   0x0D0000+ relax snapshot; 0x0E0000+ relax tables
+;   EBR stack: prefer cor24-emu --stack-kilobytes 3 unless a future SRAM
 ;              fallback stack is explicitly needed
 ;
 ; Source config block at 0x07F000:
@@ -43,6 +47,29 @@ _main:
 	mov	fp,sp
 	push	r2
 	mov	fp,sp
+
+; Layout guards: the image must end below the tables at 0x010000, and the
+; first relax snapshot region must fit its 1 KB slot at 0x0D0000.
+	la	r0,_image_end
+	la	r1,65536
+	clu	r0,r1
+	brt	_main_img_ok
+	la	r0,_err_layout
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_main_img_ok:
+	la	r0,_line_is_keyword
+	la	r1,_const_A
+	sub	r0,r1
+	la	r1,1025
+	clu	r0,r1
+	brt	_main_snap_ok
+	la	r0,_err_layout
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_main_snap_ok:
 
 	la	r0,_relax_begin_pass
 	jal	r1,(r0)
@@ -4253,25 +4280,6 @@ _cc_table:
 	.byte 99,99,95,122,99,108,114,0
 	.byte 0
 
-; --- Line buffer (128 bytes) ---
-_line_buf:
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
 
 ; --- Keyword prefix table (for _is_structured) ---
 
@@ -5145,24 +5153,6 @@ _mul39:
 	add	r0,r0
 	add	r0,r1
 	sub	r0,r2
-	mov	sp,fp
-	pop	r2
-	pop	r1
-	pop	fp
-	jmp	(r1)
-
-_mul16:
-	push	fp
-	push	r1
-	push	r2
-	mov	fp,sp
-
-	lw	r0,9(fp)
-	add	r0,r0
-	add	r0,r0
-	add	r0,r0
-	add	r0,r0
-
 	mov	sp,fp
 	pop	r2
 	pop	r1
@@ -11028,8 +11018,8 @@ _ehur_ret:
 ; and push r2 / la r2,L_far / jmp (r2) otherwise.
 ; Relax state at 0x0E0000 (917504):
 ;   +0 pos  +3 jump count  +6 line length  +16 line buffer (256 bytes)
-;   918528 label_pos[1024]  921600 jump_pos[1024]  924672 jump_tgt[1024]
-;   927744 label_def[1024]  928768 label_far[1024]  929792 jump_far[1024]
+;   921600 label_pos[4096]  933888 jump_pos[4096]  946176 jump_tgt[4096]
+;   958464 label_def[4096]  962560 label_far[4096]  966656 jump_far[4096]
 ; Data snapshot at 0x0D0000 (851968).
 
 ; _relax_begin_pass: Prepare relax state at the start of each pass.
@@ -11050,9 +11040,9 @@ _relax_begin_pass:
 	jal	r1,(r0)
 	add	sp,3
 
-	; clear label_def, label_far and jump_far (3072 bytes) a word at a time
-	la	r2,927744
-	la	r1,930816
+	; clear label_def, label_far and jump_far (12288 bytes) a word at a time
+	la	r2,958464
+	la	r1,970752
 	lc	r0,0
 
 _rbp_zero:
@@ -11596,17 +11586,17 @@ _emit_relaxed_jump:
 	ceq	r2,z
 	brf	_erj_pass2
 
-	la	r0,1024
+	la	r0,4096
 	clu	r1,r0
 	brf	_erj_p1_overflow
 	lw	r0,12(fp)
-	la	r2,1024
+	la	r2,4096
 	clu	r0,r2
 	brf	_erj_emit_near
 
 	lw	r0,-6(fp)
 	push	r0
-	la	r0,921600
+	la	r0,933888
 	push	r0
 	la	r0,_rx_addr3
 	jal	r1,(r0)
@@ -11617,7 +11607,7 @@ _emit_relaxed_jump:
 
 	lw	r0,-6(fp)
 	push	r0
-	la	r0,924672
+	la	r0,946176
 	push	r0
 	la	r0,_rx_addr3
 	jal	r1,(r0)
@@ -11628,24 +11618,24 @@ _emit_relaxed_jump:
 
 _erj_p1_overflow:
 	lw	r0,12(fp)
-	la	r2,1024
+	la	r2,4096
 	clu	r0,r2
 	brf	_erj_emit_near
-	la	r2,928768
+	la	r2,962560
 	add	r2,r0
 	lc	r0,1
 	sb	r0,0(r2)
 	bra	_erj_emit_near
 
 _erj_pass2:
-	la	r0,1024
+	la	r0,4096
 	clu	r1,r0
 	brf	_erj_emit_near
 	lw	r0,12(fp)
-	la	r2,1024
+	la	r2,4096
 	clu	r0,r2
 	brf	_erj_emit_near
-	la	r2,929792
+	la	r2,966656
 	add	r2,r1
 	lbu	r0,0(r2)
 	sw	r0,-3(fp)
@@ -11747,10 +11737,10 @@ _relax_label_def:
 	ceq	r2,z
 	brt	_rld_tramp
 	lw	r0,12(fp)
-	la	r2,1024
+	la	r2,4096
 	clu	r0,r2
 	brf	_rld_tramp
-	la	r2,928768
+	la	r2,962560
 	add	r2,r0
 	lbu	r0,0(r2)
 	ceq	r0,z
@@ -11805,13 +11795,13 @@ _rld_record:
 	ceq	r2,z
 	brf	_rld_ret
 	lw	r0,12(fp)
-	la	r2,1024
+	la	r2,4096
 	clu	r0,r2
 	brf	_rld_ret
 
 	lw	r0,12(fp)
 	push	r0
-	la	r0,918528
+	la	r0,921600
 	push	r0
 	la	r0,_rx_addr3
 	jal	r1,(r0)
@@ -11821,7 +11811,7 @@ _rld_record:
 	sw	r2,0(r0)
 
 	lw	r0,12(fp)
-	la	r2,927744
+	la	r2,958464
 	add	r2,r0
 	lc	r0,1
 	sb	r0,0(r2)
@@ -11857,7 +11847,7 @@ _rr_loop:
 	jmp	(r0)
 
 _rr_in_count:
-	la	r0,1024
+	la	r0,4096
 	clu	r1,r0
 	brt	_rr_in_table
 	la	r0,_rr_ret
@@ -11865,7 +11855,7 @@ _rr_in_count:
 
 _rr_in_table:
 	push	r1
-	la	r0,924672
+	la	r0,946176
 	push	r0
 	la	r0,_rx_addr3
 	jal	r1,(r0)
@@ -11873,18 +11863,18 @@ _rr_in_table:
 	lw	r0,0(r0)
 	sw	r0,-6(fp)
 
-	la	r2,1024
+	la	r2,4096
 	clu	r0,r2
 	brf	_rr_far_jump
 
-	la	r2,927744
+	la	r2,958464
 	add	r2,r0
 	lbu	r2,0(r2)
 	ceq	r2,z
 	brt	_rr_far_target
 
 	push	r0
-	la	r0,918528
+	la	r0,921600
 	push	r0
 	la	r0,_rx_addr3
 	jal	r1,(r0)
@@ -11894,7 +11884,7 @@ _rr_in_table:
 
 	lw	r0,-3(fp)
 	push	r0
-	la	r0,921600
+	la	r0,933888
 	push	r0
 	la	r0,_rx_addr3
 	jal	r1,(r0)
@@ -11910,14 +11900,14 @@ _rr_in_table:
 
 _rr_far_target:
 	lw	r0,-6(fp)
-	la	r2,928768
+	la	r2,962560
 	add	r2,r0
 	lc	r0,1
 	sb	r0,0(r2)
 
 _rr_far_jump:
 	lw	r0,-3(fp)
-	la	r2,929792
+	la	r2,966656
 	add	r2,r0
 	lc	r0,1
 	sb	r0,0(r2)
@@ -12015,6 +12005,10 @@ _err_do_deep:
 _err_sel_deep:
 	.byte	83,69,76,69,67,84,32,110,101,115,116,101,100,32,100,101,101,112,101,114,32,116,104,97,110,32,51,50,0
 
+_err_layout:
+	.byte	104,108,97,115,109,32,105,109,97,103,101,32,111,118,101,114,108,97,112,115,32,105,116,115,32,116,97,98,108,101,115,32,40,108,97,121,111,117,116,32,99,104,101,99,107,41,0
+
+
 ; Powers of ten for _emit_dec24 and _emit_num4_to_buf (0-terminated).
 _dec_pow:
 	.word	10000000,1000000,100000,10000,1000,100,10,1,0
@@ -12029,131 +12023,6 @@ _id_buf:
 _relax_pass:
 	.word	0
 
-; --- Source descriptor table ---
-; Main source buffer is loaded at 0x080000.
-; Optional source buffer 2 is enabled by a small config block at 0x07F000:
-;   +0 non-zero enables buffer 2
-;   +3 base address of buffer 2
-;   +6 length of buffer 2
-_src_count:
-	.word	1
-
-_src_active_idx:
-	.word	0
-
-_src_copy_idx:
-	.word	0
-
-_src_desc:
-	.word	524288
-	.word	32767
-	.word	0
-
-_src_desc2:
-	.word	0
-	.word	0
-	.word	0
-
-_src_desc3:
-	.word	0
-	.word	0
-	.word	0
-
-_src_desc4:
-	.word	0
-	.word	0
-	.word	0
-
-; --- Step 5: Macro data ---
-_emb_end:
-	.word	0
-
-_macro_count:
-	.word	0
-
-_macro_table:
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-
-_macro_buf:
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-
-; --- Step 6: Expansion data ---
-_expand_buf:
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-
-_expand_write_ptr:
-	.word	0
-
-_expand_counter:
-	.word	1
-
-_macro_state:
-	.word	0
-
-_macro_rec_idx:
-	.word	0
-
-_macro_body_start:
-	.word	_macro_buf
 
 _kw_macro:
 	.byte	77,65,67,82,79,0
@@ -12269,66 +12138,44 @@ _kw_elseasm:
 _kw_endifasm:
 	.byte	69,78,68,73,70,65,83,77,0
 
-_symbol_count:
-	.word	0
 
-_symbol_table:
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-	.byte	0,0,0,0,0,0,0,0,0
-
-_cond_depth:
-	.word	0
-
-_cond_stack:
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-
-_parse_name_buf:
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-	.byte	0, 0, 0, 0, 0, 0, 0, 0
-
-_lookup_sym_val:
-	.word	0
-
-_include_lookup_slot:
-	.word	0
-
-; --- Structured IF lowering scratch/state (runtime arena) ---
-; 787807 active structured-IF depth
-; 787810 next label id
-; 199808 IF frame stack base, 8 entries * 9 bytes
-;        +0 false label id, +3 end label id, +6 else seen
-; 197648 cc buffer
-; 197908 lhs buffer
-; 198168 rhs buffer
-; 787933 active structured-DO depth
-; 200096 DO frame stack base, 8 entries * 6 bytes
-;        +0 top label id, +3 end label id
-; 787984 active structured-SELECT depth
-; 200288 SELECT frame stack base, 8 entries * 12 bytes
-;        +0 next label id, +3 end label id, +6 arm open, +9 otherwise seen
-; 201216 SELECT selector buffer base, 8 entries * 12 bytes
-; 198428 SELECT WHEN scratch buffer
+; --- Runtime memory map (see docs/limits-and-lifting-plan.md) ---
+; Every table below has a capacity check that stops with "ERROR: ..." via
+; _fatal; nothing overflows silently.
+;
+; 0x010000 (65536)   symbol table: 512 x 40 bytes (name + NUL at +0, value +32)
+; 0x018000 (98304)   macro table: 256 x 39 bytes (name + NUL at +0,
+;                    body start +33, body end +36)
+; 0x020000 (131072)  macro body pool, to 0x02FFFF (64 KB)
+; 0x030000 (196608)  work area, cleared at each pass start (4576 bytes):
+;   196608 input line (256 chars + NUL; 260 bytes)
+;   196868 scanner token buffer (260)
+;   197128 _parse_name_buf (260)
+;   197388 spare (260)
+;   197648 IF/DO cc buffer (260)
+;   197908 lhs buffer (260)
+;   198168 rhs buffer (260)
+;   198428 SELECT WHEN scratch buffer (260)
+;   198688 macro expansion buffer (1024; lines limited to 256)
+;   199712 conditional-assembly stack: 32 x 3 bytes
+;   199808 IF frame stack: 32 x 9 bytes
+;          +0 false label id, +3 end label id, +6 else seen
+;   200096 DO frame stack: 32 x 6 bytes (+0 top label id, +3 end label id)
+;   200288 SELECT frame stack: 32 x 12 bytes
+;          +0 next label id, +3 end label id, +6 arm open, +9 otherwise seen
+;   200672 macro parameter names: 16 x 32 bytes
+; 201216             SELECT selector strings: 32 x 256 bytes
+; 209408 / 209668 / 209928  name save buffers for _symbol_enabled,
+;                    _handle_equ and _set_symbol (260 each)
+; 0x034000 (212992)  XREF symbol names: 512 x 32 bytes
+; 0x038000 (229376)  HLDIAG undefined-symbol names: 64 x 32 bytes
+; 0x038800 (231424)  XREF macro expansion counters: 256 x 3 bytes (cleared
+;                    at each pass start)
+; 0x0C0000 (786432)  arena of counters and source state (4700 bytes, cleared
+;                    at each pass start); e.g. 787560 symbol count, 786645
+;                    macro count, 787707 cond depth, 787807/787933/787984
+;                    IF/DO/SELECT depth, 787810 next structured label id
+; 0x0D0000 / 0x0E0000  relax snapshot and tables (see _relax_begin_pass)
 
 _push_txt:
 	.byte	112,117,115,104,0
