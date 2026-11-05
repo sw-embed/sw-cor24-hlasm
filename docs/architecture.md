@@ -49,17 +49,18 @@ COR24 24-bit RISC: 3 GP registers (r0-r2), fp, sp, z, iv, ir,
 
 | Region | Address | Contents |
 |--------|---------|----------|
-| Code + immutable tables | 0x000000+ | HLASM macro-assembler assembly |
+| Code + immutable tables | 0x000000+ | HLASM macro-assembler assembly (must end below 0x010000) |
+| Assembler tables | 0x010000-0x03FFFF | Symbol table (512), macro table (256), 64 KB macro body pool, work area (line/name/operand buffers, expansion buffer, 32-deep stacks), XREF/HLDIAG tables |
 | Source config block | 0x07F000 | Extra-source descriptor config loaded by `--load-binary` |
 | Source/include buffers | 0x080000-0x0BFFFF | Preloaded ASCII HLASM input buffers |
-| Runtime arena | 0x0C0000-0x0C055E | Mutable assembler state in SRAM |
+| Runtime arena | 0x0C0000-0x0C125B | Counters, source descriptors, source-return stack |
+| Relaxation state | 0x0D0000-0x0ECFFF | Two-pass structured-jump snapshot and tables |
 | Stack | 0xFEEC00 | Preferred 3K EBR stack (`--stack-kilobytes 3`) |
 
-The runtime arena currently contains the line buffer, source descriptor table,
-source-return stack, macro table/body pool, expansion buffer state, symbol
-table, conditional stack, and a small include-lookup scratch word. This keeps
-loaded source text and assembler-owned mutable state in separate SRAM regions,
-which is the first bootstrap-oriented layout.
+Every table has a capacity check that stops with `ERROR: ...` instead of
+overflowing; the limits and the exact layout are in
+`docs/limits-and-lifting-plan.md`. Loaded source text and assembler-owned
+mutable state stay in separate SRAM regions.
 
 Named library members use the same low-SRAM table as named includes. `COPY name`
 is treated as an explicit HLASM-style alias for that path, so macro and symbol

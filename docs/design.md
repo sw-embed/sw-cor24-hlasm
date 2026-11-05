@@ -283,19 +283,21 @@ Follows the pattern from sw-cor24-forth and sw-cor24-rpg-ii:
 
 ### Macro Table Entry
 
-Fixed-size records in memory:
-- Name (up to 16 chars, null-terminated)
-- Param count (1 byte)
-- Param names (up to 8 params, 8 chars each)
-- Default values (up to 8, 24-bit integers)
-- Body pointer (offset into source buffer)
-- Body length (24-bit)
+As implemented (see docs/limits-and-lifting-plan.md for all limits), 256
+fixed-size 39-byte records at 0x018000:
+- Name (up to 31 chars, null-terminated) at +0
+- Body start (24-bit pointer into the 64 KB body pool at 0x020000) at +33
+- Body end (24-bit pointer) at +36
+
+Parameter names (up to 16, 31 chars each) are resolved while the body is
+recorded: each `&name` becomes `&` plus one index character, so the stored
+body needs no parameter table. Default values are not implemented yet.
 
 ### Symbol Table Entry
 
-- Name (up to 16 chars)
-- Value (24-bit integer for SET symbols)
-- Type flag: SET, LABEL, MACRO
+As implemented, 512 fixed-size 40-byte records at 0x010000:
+- Name (up to 31 chars, null-terminated) at +0
+- Value (24-bit integer for SET/EQU symbols) at +32
 
 ### Token
 

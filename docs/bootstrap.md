@@ -66,22 +66,25 @@ bootstrap workflow later.
 
 ## Step 11 Memory Map
 
-The first explicit bootstrap-oriented map is now:
+The map (updated for the step-4 capacity lifts of the tinyc-macro-ports
+saga; full detail in `docs/limits-and-lifting-plan.md` and the "Runtime
+memory map" comment in `hlasm.s`) is:
 
+- `0x010000-0x03FFFF`: symbol table (512), macro table (256), 64 KB macro
+  body pool, work area (input line, name and operand buffers, expansion
+  buffer, 32-deep assembly-time stacks), XREF/HLDIAG tables
 - `0x07F000`: source-switch config block
 - `0x080000-0x0BFFFF`: preloaded ASCII source/include buffers
-- `0x0C0000-0x0C055E`: `hlasm` runtime arena
+- `0x0C0000-0x0C125B`: `hlasm` runtime arena (4700 bytes)
+- `0x0D0000-0x0ECFFF`: structured-jump relaxation snapshot and tables
 - `0xFEE000-0xFEEBFF`: preferred 3K EBR stack (`cor24-emu --stack-kilobytes 3`)
 
-The current runtime arena packs the mutable assembler state into middle SRAM:
+The runtime arena now holds the counters and source state:
 
-- line buffer
 - source descriptor table and counters
 - source-return stack for include-style buffer calls
-- macro table and macro body pool
-- expansion buffer state
-- symbol table
-- conditional stack
+- symbol, macro and conditional counts, structured nesting depths, and
+  macro recording/expansion state
 
 That keeps the bootstrap input side in low SRAM, keeps mutable assembler-owned
 state out of the loaded source window, and leaves the rest of SRAM available
@@ -170,7 +173,7 @@ compatible with repeated `cor24-emu --load-binary ...@addr` flags today while
 leaving room for a later heap-backed descriptor arena.
 
 When the main override words are zero, stage0 keeps the default main window at
-`0x080000/4096`. When they are non-zero, stage0 uses the patched main source
+`0x080000` with a 32767-byte length. When they are non-zero, stage0 uses the patched main source
 window and still appends extra source buffers from the legacy record area.
 
 The first directive-driven source switch is now `SRCBUF <slot>`. It activates

@@ -109,13 +109,14 @@ it to 0, the restore puts it back to 0, and it is then set to 1.
 
 ### Memory
 
-- 0x0D0000 (851968): data snapshot (region 1 at +0, region 2 at +1024)
+- 0x0D0000 (851968): data snapshot (region 1 at +0, region 2 at +1024;
+  `_main` stops with an ERROR if region 1 outgrows its 1 KB slot)
 - 0x0E0000 (917504): relax state: +0 position, +3 jump count, +6 line
-  length, +16 line buffer (256 bytes); label_pos[1024] at 918528,
-  jump_pos[1024] at 921600, jump_tgt[1024] at 924672 (3 bytes each);
-  label_def[1024] at 927744, label_far[1024] at 928768, jump_far[1024] at
-  929792 (1 byte each).
-- Label ids or jump numbers >= 1024: the jump is always far, and a
+  length, +16 line buffer (256 bytes); label_pos[4096] at 921600,
+  jump_pos[4096] at 933888, jump_tgt[4096] at 946176 (3 bytes each);
+  label_def[4096] at 958464, label_far[4096] at 962560, jump_far[4096] at
+  966656 (1 byte each). (These were 1024 entries until step 4.)
+- Label ids or jump numbers >= 4096: the jump is always far, and a
   non-`_skip` label with such an id always gets a trampoline (consistent,
   always correct).
 

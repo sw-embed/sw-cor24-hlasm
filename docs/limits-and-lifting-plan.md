@@ -1,7 +1,8 @@
 # hlasm Limits and Lifting Plan
 
-Status: audit complete (2026-10-31, tinyc-macro-ports saga step 2). Lifts are
-scheduled as saga steps (see "Schedule").
+Status: audit complete (2026-10-31, tinyc-macro-ports saga step 2). Step 3
+fixed D1-D3 and D7; step 4 lifted the table limits (see "Now" below).
+The remaining lifts are scheduled as saga steps (see "Schedule").
 
 This document records every capacity limit and known defect in `hlasm.s`,
 who needs it raised, and how to lift it. Its consumers are:
@@ -41,42 +42,50 @@ who needs it raised, and how to lift it. Its consumers are:
    limits are the table sizes hard-coded in the arena, not the space
    available.
 
+Step 4 addressed findings 1, 2, 3, 5 and 6: every table limit now stops
+with an ERROR, the tables were resized (see "Now" in the limits table), and
+`reg-rs/check_limits.sh` tests each limit. Finding 4 is step 5 (M1).
+
 The audit's scratch tests are reproducible. Each is a `.hlasm` file run
 through hlasm at a chosen size; they become regression tests when each lift
 lands.
 
 ## Limits table
 
-Key to the Check column:
+Key to the Check column (as audited, before step 4):
 - "none": no bound check; overflow corrupts or hangs.
 - "silent": checked, but the excess is dropped without a message.
 
-| # | Limit | Today | Check | Overflow | Needed by | Lift to |
+"Now" gives the value after step 4 (capacity-tables-and-guards). Every
+limit marked "ERROR" stops with an `ERROR: ...` line from `_fatal`, and
+each has a reg-rs test (`hlasm_limit_*`) at the limit and one past it.
+
+| # | Limit | Audited | Check | Overflow | Needed by | Now |
 |---|---|---|---|---|---|---|
-| L1 | Symbol entries | 16 x 9 B | none | 17-19 corrupt the cond stack; 20 or more hang | ports, plsw B1, self-host | 512 |
-| L2 | Symbol name length | 5 chars | none | lookup fails silently | everyone | 31 chars |
-| L3 | Symbol value | 24-bit, wraps | - | wraps | - | keep (24-bit machine) |
-| L4 | Macros | 32 x 39 B | none | 33 or more hang | macro library, plsw B1 | 256 |
-| L5 | Macro name | 31 chars | silent | rest dropped | - | keep; give an error |
-| L6 | Named params | 8, names of at most 8 chars | silent | dropped or mangled | library macros | 16 params, 31-char names |
-| L7 | Positional params | `&1`-`&9` | - | missing argument gives empty | - | keep |
-| L8 | Macro body pool | 1,023 B **total** | none | truncated; empty at about 1,160 B | macro library (fatal today) | 64 KB |
-| L9 | Expansion buffer | 129 B | none | 132 B corrupts `\@`; 140 B or more swallows the rest of the source | long macro lines | 256 B, checked |
-| L10 | Nested macro calls | not supported | - | inner call emitted raw | library layering (PUTS calls PUTC), plsw B5 | expansion stack, depth 8 |
-| L11 | `\@` counter | 0001-9999 | none | `L:000` (invalid label) | self-host | 6 digits |
-| L12 | Cond-asm stack | 8 x 3 B | none | overwrites the src-return stack; at 9 levels inside an INCLUDE the rest of the parent file is lost | plsw B3 | 32, checked |
-| L13 | IF / DO / SELECT depth | 8 each | silent | opener dropped, body emitted unconditionally | plsw B3 | 32, error |
-| L14 | cc / lhs / rhs operand buffers | 16 B each | none | operands spill into each other; DO depth corrupted | long names | 32 B, checked |
-| L15 | Selector / WHEN buffers | 12 B (x8) | none | overflow into the EOF flag and param count | - | 32 B, checked |
-| L16 | Structured label id | 999 | none | `_hlif_:00_false`; cor24-asm rejects it | ports, self-host (B4) | 6 digits; relax tables 4,096 |
-| L17 | Input line | nominal 128 B; arena space 165 B | **none** | 166 B garbage; 175 B or more hang | plsw G5 | 256 B, error past the limit |
-| L18 | Main buffer | 32,767 B default (docs say 4,096) | stops at length or NUL | truncated mid-line | self-host | sourceset sets the length; document it |
-| L19 | Extra buffers / include slots | 3 (config block layout) | host-side only | - | macro library members, self-host | 32 records; new config layout |
-| L20 | Include name | 8 chars | host-side only | - | readable member names | 15 chars |
-| L21 | Include nesting | 8 | silent | INCLUDE ignored | - | 16, error |
-| L22 | HLXREF symbols / HLDIAG names | 16 x 16 B | silent | extras ignored | larger programs | follow L1 |
-| L23 | XREF expand counts | 16 B (but 32 macros) | none | macros 17-32 corrupt `_xref_symbol_count`, even with HLXREF off | - | follow L4 |
-| L24 | Relax tables | 1,024 ids or jumps; line sizer 255 B | yes | far form (safe, larger) | self-host | 4,096 |
+| L1 | Symbol entries | 16 x 9 B | none | 17-19 corrupt the cond stack; 20 or more hang | ports, plsw B1, self-host | **512, ERROR** |
+| L2 | Symbol name length | 5 chars | none | lookup fails silently | everyone | **31 chars, ERROR** |
+| L3 | Symbol value | 24-bit, wraps | - | wraps | - | unchanged (24-bit machine) |
+| L4 | Macros | 32 x 39 B | none | 33 or more hang | macro library, plsw B1 | **256, ERROR** |
+| L5 | Macro name | 31 chars | silent | rest dropped | - | **31 chars, ERROR** |
+| L6 | Named params | 8, names of at most 8 chars | silent | dropped or mangled | library macros | **16 params, 31-char names, ERROR** |
+| L7 | Positional params | `&1`-`&9` | - | missing argument gives empty | - | unchanged |
+| L8 | Macro body pool | 1,023 B **total** | none | truncated; empty at about 1,160 B | macro library (fatal today) | **64 KB, ERROR** |
+| L9 | Expansion buffer | 129 B | none | 132 B corrupts `\@`; 140 B or more swallows the rest of the source | long macro lines | **expanded lines up to 256 chars (1 KB buffer), ERROR** |
+| L10 | Nested macro calls | not supported | - | inner call emitted raw | library layering (PUTS calls PUTC), plsw B5 | step 6 (macro-layering) |
+| L11 | `\@` counter | 0001-9999 | none | `L:000` (invalid label) | self-host | **4 digits zero-padded, wider past 9999** (unique; existing outputs unchanged) |
+| L12 | Cond-asm stack | 8 x 3 B | none | overwrites the src-return stack; at 9 levels inside an INCLUDE the rest of the parent file is lost | plsw B3 | **32, ERROR** |
+| L13 | IF / DO / SELECT depth | 8 each | silent | opener dropped, body emitted unconditionally | plsw B3 | **32 each, ERROR** |
+| L14 | cc / lhs / rhs operand buffers | 16 B each | none | operands spill into each other; DO depth corrupted | long names | **260 B each (a whole line), cannot overflow** |
+| L15 | Selector / WHEN buffers | 12 B (x8) | none | overflow into the EOF flag and param count | - | **256 B x 32 selectors, 260 B WHEN, cannot overflow** |
+| L16 | Structured label id | 999 | none | `_hlif_:00_false`; cor24-asm rejects it | ports, self-host (B4) | **any 24-bit id** (`_emit_dec24` full range); tested to 1200 |
+| L17 | Input line | nominal 128 B; arena space 165 B | **none** | 166 B garbage; 175 B or more hang | plsw G5 | **256 chars, ERROR** |
+| L18 | Main buffer | 32,767 B default (docs say 4,096) | stops at length or NUL | truncated mid-line | self-host | documented (sourceset sets any length up to the 0x0BFFFF window) |
+| L19 | Extra buffers / include slots | 3 (config block layout) | host-side only | - | macro library members, self-host | step 7 |
+| L20 | Include name | 8 chars | host-side only | - | readable member names | step 7 |
+| L21 | Include nesting | 8 | silent | INCLUDE ignored | - | step 7 |
+| L22 | HLXREF symbols / HLDIAG names | 16 x 16 B | silent | extras ignored | larger programs | **512 / 64 names of 31 chars** |
+| L23 | XREF expand counts | 16 B (but 32 macros) | none | macros 17-32 corrupt `_xref_symbol_count`, even with HLXREF off | - | **256 x 3-byte counters** (bytes also wrapped at 256) |
+| L24 | Relax tables | 1,024 ids or jumps; line sizer 255 B | yes | far form (safe, larger) | self-host | **4,096** (beyond: far form, still correct) |
 
 ## Defects
 
@@ -85,11 +94,11 @@ Key to the Check column:
 | D1 | DOEXIT exited when its condition was **false** (design.md says true) | d40 printed `10`, not `32` | **fixed (step 3):** `_emit_struct_branch_if_true` inverts the skip branch; d40 prints `32` |
 | D2 | A compare with `r2` on the left emitted `ceq r2,r1`; only `ceq r1,r2` (and r0 pairs) is encodable | d26 assembly check | **fixed (step 3):** `_emit_inst2` swaps `ceq` register operands into ascending order |
 | D3 | `0b` literals reached `lc` unconverted (`lc r2,0b10`) | d32 assembly check | **fixed (step 3):** `_emit_inst2` emits a `0b` second operand in decimal (via `_emit_dec24`, so 0-999 until step 4 widens it) |
-| D4 | SET symbols of 6 or more chars silently fail (L2) | d32 golden | fixed by the L2 lift; rebase the d32 golden |
+| D4 | SET symbols of 6 or more chars silently failed (L2) | d32 golden | **fixed (step 4):** 31-char names; d18, d20, d32, d34 and d35 now emit the blocks their long-named symbols select (d18 and d20 had been emitting nothing) |
 | D5 | Default params `&V=5` store the name as `V=5`; `&V` then expands to empty even when an argument is passed | audit B6 | parse `=default` (see M2) |
 | D6 | `\xNN` string escape gives `x`,`N`,`N`; unknown escapes drop the backslash | audit G4 | add `\xNN`; error on unknown escapes |
-| D7 | The demos' own fake source lines (`sub r0,r0`, `xor r0,r0`, `shl r0,1`, undefined `_body`) | `check_structured_asm.sh` | **fixed (step 3):** rewritten as `lc r0,0`, `shl r0,r1`, `nop`; every structured demo now assembles |
-| D8 | Docs are stale: the arena spans 0xC0000-0xC125B (4,700 B), not 0xC055E; the main buffer is 32,767 B, not 4,096 | audit | update `docs/bootstrap.md` and the `hlasm.s` header |
+| D7 | The demos' own fake source lines (`sub r0,r0`, `xor r0,r0`, `shl r0,1`, `sub r0,1`, undefined `_body`) | `check_structured_asm.sh` | **fixed (steps 3-4)** in the structured demos: rewritten as `lc r0,0`, `shl r0,r1`, `add r0,-1`, `nop`; every structured demo now assembles. The non-structured demos d05, d07 and d10 still contain `sub r0,1` (not checked by the assembler test) |
+| D8 | Docs were stale: the arena spans 0xC0000-0xC125B (4,700 B), not 0xC055E; the main buffer is 32,767 B, not 4,096 | audit | **fixed (step 4):** `hlasm.s` header and `docs/bootstrap.md` updated |
 
 ## Language gaps
 
@@ -120,43 +129,55 @@ about 300-450M for a 30K-line build, and about 150M for self-hosting
 hlasm's 12K lines. That is acceptable at `--speed 0` with plsw-style budgets
 (`-n 2000000000`).
 
+Step 4 added about 10K instructions of fixed cost per run (clearing the
+work area and the larger relax flag tables at pass start): d01 went from
+116,864 to 126,601 and d31 from 1,867,549 to 1,886,538.
+
 Cheap wins, scheduled after correctness:
 - skip the sizer's work for comment-only lines in pass 1;
 - hash the symbol and macro lookups once the tables reach hundreds of
   entries (a linear scan at 512 entries would otherwise dominate);
 - avoid re-reading the include table per line.
 
-## Memory map after the lifts
+## Memory map (implemented in step 4)
 
-The new tables go into the unused low SRAM. Source buffers and the config
-block stay where they are, so the sourceset tools are unaffected.
+The new tables use the unused low SRAM. Source buffers and the config block
+stay where they were, so the sourceset tools are unaffected. The same map
+is in the "Runtime memory map" comment in `hlasm.s`.
 
 | Range | Use |
 |---|---|
-| 0x000000-~0x006000 | hlasm image (grows with the lifts) |
-| 0x010000-0x017FFF | symbol table: 512 x 40 B (31-char name + NUL, value, flags) |
-| 0x018000-0x01FFFF | macro table: 256 x 48 B, plus parameter descriptors |
+| 0x000000-~0x005100 | hlasm image; `_main` stops with an ERROR if it would reach 0x010000 |
+| 0x010000-0x014FFF | symbol table: 512 x 40 B (name + NUL at +0, value at +32) |
+| 0x018000-0x01A6FF | macro table: 256 x 39 B (name + NUL, body start +33, body end +36) |
 | 0x020000-0x02FFFF | macro body pool: 64 KB |
-| 0x030000-0x0303FF | expansion stack: 8 x 256 B line buffers + state |
-| 0x030400-0x0307FF | cond stack (32), IF/DO/SELECT stacks (32 each), operand buffers |
-| 0x07F000 | source config block (new layout: up to 32 records, 15-char names) |
+| 0x030000-0x0311DF | work area, cleared at each pass start: input line, token and name buffers, cc/lhs/rhs and WHEN buffers (260 B each), 1 KB expansion buffer, cond/IF/DO/SELECT stacks (32 each), 16 x 32 B parameter names |
+| 0x031200-0x0331FF | SELECT selector strings: 32 x 256 B |
+| 0x033200-0x03350F | name save buffers for `_symbol_enabled`, `_handle_equ`, `_set_symbol` |
+| 0x034000-0x037FFF | XREF symbol names: 512 x 32 B |
+| 0x038000-0x0387FF | HLDIAG undefined-symbol names: 64 x 32 B |
+| 0x038800-0x038AFF | XREF macro expansion counters: 256 x 3 B (cleared at each pass start) |
+| 0x07F000 | source config block (unchanged until step 7) |
 | 0x080000-0x0BFFFF | source buffers |
-| 0x0C0000-0x0C125B | existing arena (remaining small state, line buffer moved to 256 B) |
-| 0x0D0000 | relax snapshot (now includes the moved tables' counters only) |
-| 0x0E0000- | relax tables, 4,096 entries (about 49 KB) |
+| 0x0C0000-0x0C125B | arena: counters, source descriptors, source-return stack (cleared at each pass start) |
+| 0x0D0000 | relax snapshot |
+| 0x0E0000-0x0ECFFF | relax state and tables, 4,096 entries |
 
 Rule for the snapshot: everything that `_relax_snapshot` must restore is
-either in the two image regions or is re-initialised at pass start. New
-tables are re-initialised (counts zeroed) at pass start, not snapshotted.
-The 1.6 KB of dead legacy tables in the image (`_symbol_table`,
-`_macro_table`, `_macro_buf`, and similar) is removed at the same time.
+either in the two image regions or is re-initialised at pass start. The
+moved tables are only read below their counts, and the counts live in the
+arena, which is cleared at pass start, so the tables themselves need no
+snapshot. About 1.8 KB of dead legacy tables in the image (`_symbol_table`,
+`_macro_table`, `_macro_buf`, `_expand_buf`, `_cond_stack`, `_src_desc*`,
+`_parse_name_buf` and the 128-byte `_line_buf`) were removed.
 
-## Overflow policy
+## Overflow policy (implemented in step 4)
 
-Every table gets one guard, implemented as a shared routine:
-`_fatal(msg)` prints `ERROR: <member>:<line>: <table> overflow` and halts
-(`bra` to self). Nothing hangs, truncates, or drops data silently. A reg-rs
-test per table hits its limit + 1 and checks for the message.
+Every table has one guard that calls the shared routine `_fatal(msg)`. It
+prints `ERROR: <message>` on the UART (also during the sizing pass, by
+switching to the emitting path) and halts with `bra` to self, which
+cor24-emu detects. Nothing hangs, truncates, or drops data silently. Step 7
+adds `<member>:<line>:` to the message (M7).
 
 ## System services plan (storage, printing, buffer I/O)
 
@@ -252,19 +273,19 @@ plsw or self-hosting need come later.
 
 In this saga (tinyc-macro-ports), inserted after step 2:
 
-1. **fix-lowering-defects:** D1 DOEXIT polarity, D2 `ceq` operand order,
+1. **fix-lowering-defects** (saga step 3, done): D1 DOEXIT polarity, D2 `ceq` operand order,
    D3 `0b` literals, D7 the demos' fake instructions.
    `check_structured_asm.sh` must report every structured demo `ok`.
-2. **capacity-tables-and-guards:**
+2. **capacity-tables-and-guards** (saga step 4, done):
    - L1, L2, L4, L6, L8, L9, L11-L17, L22-L24, D4, D8.
    - Move the tables to the new memory map, add the `_fatal` overflow
      policy, add limit + 1 tests, and remove the dead legacy tables.
-3. **equ-and-expressions:** M1 (EQU and operand substitution), M4
+3. **equ-and-expressions** (saga step 5): M1 (EQU and operand substitution), M4
    (expression evaluator), D6 (`\xNN`).
-4. **macro-layering:** L10 and M3 (re-feed expansions through the line
+4. **macro-layering** (saga step 6): L10 and M3 (re-feed expansions through the line
    processor: nested calls and directives in bodies), M2 and D5
    (default and keyword params).
-5. **include-capacity-and-diagnostics:** L19-L21 (new config layout, 32
+5. **include-capacity-and-diagnostics** (saga step 7): L19-L21 (new config layout, 32
    members, 15-char names) and M7 (member:line in errors).
 
 Then the existing steps continue: e2e harness, survey, the macro library
