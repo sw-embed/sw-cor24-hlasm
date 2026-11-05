@@ -1,8 +1,9 @@
 number = 4
 slug = "capacity-tables-and-guards"
-status = "pending"
+status = "completed"
 description = "Lift hlasm's table limits per docs/limits-and-lifting-plan.md (L1 symbols->51..."
 role = "production"
 context_files = []
 created_at = "2026-10-31T12:56:15"
-commits = []
+completed_at = "2026-11-05T15:16:12"
+commits = ["90fa6d807a1abb76e3bc43dc0e413f6dba2a7171"]
