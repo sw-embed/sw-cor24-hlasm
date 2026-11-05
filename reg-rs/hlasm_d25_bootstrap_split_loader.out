@@ -1,15 +1,15 @@
 === Assembling hlasm.s ===
-Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.gEzKnadKK8/hlasm.lgo
+Loaded 20175 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.54DvFZL47Q/hlasm.lgo
 
 Executed 1000 instructions
 Assemble check OK.
 
 === Bootstrap Source Set ===
-Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.MYMXoYj5E7/hlasm.lgo
-Loaded 151 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/bootstrap/./hlasm0_split_main.bin' at 0x090000
-Loaded 112 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/bootstrap/./hlasm0_common.bin' at 0x081000
-Loaded 45 bytes from '/Users/mike/github/sw-embed/sw-cor24-hlasm/bootstrap/./hlasm0_io.bin' at 0x081100
-Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-72845.cfg' at 0x07F000
+Loaded 20175 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.pfACRioC3J/hlasm.lgo
+Loaded 151 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.mLOzbZ/main_hlasm0_split_main.bin' at 0x090000
+Loaded 112 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.mLOzbZ/slot1_hlasm0_common.bin' at 0x081000
+Loaded 45 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.mLOzbZ/slot2_hlasm0_io.bin' at 0x081100
+Loaded 54 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.mLOzbZ/sourceset.cfg' at 0x07F000
 [UART TX @ 230000] '_'  (0x5F)
 [UART TX @ 230000] 'm'  (0x6D)
 [UART TX @ 230000] 'a'  (0x61)
@@ -206,23 +206,23 @@ Loaded 54 bytes from '/tmp/sw-cor24-hlasm-sourceset-72845.cfg' at 0x07F000
 [UART TX @ 280000] ':'  (0x3A)
 [UART TX @ 280000] ''  (0x0D)
 [UART TX @ 280000] '\n'
-[UART TX @ 284442] ' '  (0x20)
-[UART TX @ 284442] '.'  (0x2E)
-[UART TX @ 284442] 'w'  (0x77)
-[UART TX @ 284442] 'o'  (0x6F)
-[UART TX @ 284442] 'r'  (0x72)
-[UART TX @ 284442] 'd'  (0x64)
-[UART TX @ 284442] ' '  (0x20)
-[UART TX @ 284442] '1'  (0x31)
-[UART TX @ 284442] '6'  (0x36)
-[UART TX @ 284442] '7'  (0x37)
-[UART TX @ 284442] '1'  (0x31)
-[UART TX @ 284442] '1'  (0x31)
-[UART TX @ 284442] '9'  (0x39)
-[UART TX @ 284442] '3'  (0x33)
-[UART TX @ 284442] '6'  (0x36)
-[UART TX @ 284442] ''  (0x0D)
-[UART TX @ 284442] '\n'
+[UART TX @ 284598] ' '  (0x20)
+[UART TX @ 284598] '.'  (0x2E)
+[UART TX @ 284598] 'w'  (0x77)
+[UART TX @ 284598] 'o'  (0x6F)
+[UART TX @ 284598] 'r'  (0x72)
+[UART TX @ 284598] 'd'  (0x64)
+[UART TX @ 284598] ' '  (0x20)
+[UART TX @ 284598] '1'  (0x31)
+[UART TX @ 284598] '6'  (0x36)
+[UART TX @ 284598] '7'  (0x37)
+[UART TX @ 284598] '1'  (0x31)
+[UART TX @ 284598] '1'  (0x31)
+[UART TX @ 284598] '9'  (0x39)
+[UART TX @ 284598] '3'  (0x33)
+[UART TX @ 284598] '6'  (0x36)
+[UART TX @ 284598] ''  (0x0D)
+[UART TX @ 284598] '\n'
 
 UART output: _main:
  push fp
@@ -246,4 +246,4 @@ _tx:
  .word 16711936
 
 
-Executed 284442 instructions
+Executed 284598 instructions

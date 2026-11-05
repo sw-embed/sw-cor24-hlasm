@@ -1,38 +1,38 @@
-Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.MeH9tKRkFm/hlasm.lgo
+Loaded 20175 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.Pz2yfJ8oJL/hlasm.lgo
 Loaded 60 bytes from 'demos/d08_macro_and_cond.bin' at 0x080000
-[UART TX @ 134862] 'I'  (0x49)
-[UART TX @ 134862] 'F'  (0x46)
-[UART TX @ 134862] 'D'  (0x44)
-[UART TX @ 134862] 'E'  (0x45)
-[UART TX @ 134862] 'F'  (0x46)
-[UART TX @ 134862] ' '  (0x20)
-[UART TX @ 134862] 'D'  (0x44)
-[UART TX @ 134862] 'E'  (0x45)
-[UART TX @ 134862] 'B'  (0x42)
-[UART TX @ 134862] 'U'  (0x55)
-[UART TX @ 134862] 'G'  (0x47)
-[UART TX @ 134862] ''  (0x0D)
-[UART TX @ 134862] '\n'
-[UART TX @ 134862] ' '  (0x20)
-[UART TX @ 134862] 'n'  (0x6E)
-[UART TX @ 134862] 'o'  (0x6F)
-[UART TX @ 134862] 'p'  (0x70)
-[UART TX @ 134862] ''  (0x0D)
-[UART TX @ 134862] '\n'
-[UART TX @ 134862] 'E'  (0x45)
-[UART TX @ 134862] 'N'  (0x4E)
-[UART TX @ 134862] 'D'  (0x44)
-[UART TX @ 134862] 'I'  (0x49)
-[UART TX @ 134862] 'F'  (0x46)
-[UART TX @ 134862] 'A'  (0x41)
-[UART TX @ 134862] 'S'  (0x53)
-[UART TX @ 134862] 'M'  (0x4D)
-[UART TX @ 134862] ''  (0x0D)
-[UART TX @ 134862] '\n'
+[UART TX @ 134916] 'I'  (0x49)
+[UART TX @ 134916] 'F'  (0x46)
+[UART TX @ 134916] 'D'  (0x44)
+[UART TX @ 134916] 'E'  (0x45)
+[UART TX @ 134916] 'F'  (0x46)
+[UART TX @ 134916] ' '  (0x20)
+[UART TX @ 134916] 'D'  (0x44)
+[UART TX @ 134916] 'E'  (0x45)
+[UART TX @ 134916] 'B'  (0x42)
+[UART TX @ 134916] 'U'  (0x55)
+[UART TX @ 134916] 'G'  (0x47)
+[UART TX @ 134916] ''  (0x0D)
+[UART TX @ 134916] '\n'
+[UART TX @ 134916] ' '  (0x20)
+[UART TX @ 134916] 'n'  (0x6E)
+[UART TX @ 134916] 'o'  (0x6F)
+[UART TX @ 134916] 'p'  (0x70)
+[UART TX @ 134916] ''  (0x0D)
+[UART TX @ 134916] '\n'
+[UART TX @ 134916] 'E'  (0x45)
+[UART TX @ 134916] 'N'  (0x4E)
+[UART TX @ 134916] 'D'  (0x44)
+[UART TX @ 134916] 'I'  (0x49)
+[UART TX @ 134916] 'F'  (0x46)
+[UART TX @ 134916] 'A'  (0x41)
+[UART TX @ 134916] 'S'  (0x53)
+[UART TX @ 134916] 'M'  (0x4D)
+[UART TX @ 134916] ''  (0x0D)
+[UART TX @ 134916] '\n'
 
 UART output: IFDEF DEBUG
  nop
 ENDIFASM
 
 
-Executed 134862 instructions
+Executed 134916 instructions

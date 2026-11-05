@@ -3644,7 +3644,7 @@ _ira_xc_loop:
 	sw	r0,6(r1)
 
 	la	r1,786642
-	la	r0,789552
+	la	r0,131072
 	sw	r0,0(r1)
 
 	la	r1,790704
@@ -3656,7 +3656,7 @@ _ira_xc_loop:
 	sw	r0,0(r1)
 
 	la	r1,790716
-	la	r0,789552
+	la	r0,131072
 	sw	r0,0(r1)
 
 	la	r1,787810
@@ -4613,13 +4613,21 @@ _emn_copy:
 	push	r1
 	la	r2,786645
 	lw	r2,0(r2)
+	la	r0,256
+	clu	r2,r0
+	brt	_emn_room
+	la	r0,_err_mac_full
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_emn_room:
 
 	push	r2
 	la	r0,_mul39
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r2,788304
+	la	r2,98304
 	add	r2,r0
 	sw	r2,-6(fp)
 	pop	r1
@@ -4656,6 +4664,19 @@ _emn_cloop:
 
 _emn_long_pop:
 	pop	r2
+	push	r1
+	lbu	r0,0(r1)
+	push	r0
+	la	r0,_is_macro_name_char
+	jal	r1,(r0)
+	add	sp,3
+	pop	r1
+	ceq	r0,z
+	brt	_emn_long_skip
+	la	r0,_err_mac_long
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
 _emn_long_skip:
 	lbu	r0,0(r1)
 	ceq	r0,z
@@ -4699,7 +4720,7 @@ _emn_name_end:
 	la	r0,_mul39
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,788304
+	la	r1,98304
 	add	r1,r0
 
 	la	r0,790716
@@ -5220,6 +5241,21 @@ _record_macro_line:
 	la	r1,_rml_done
 	jmp	(r1)
 _rml_has_len:
+; Body pool is 0x020000-0x02FFFF. A recorded line is never longer than the
+; source line plus a newline (\name and &name shrink to &N), so check first.
+	la	r1,790716
+	lw	r0,0(r1)
+	lw	r1,9(fp)
+	add	r0,r1
+	add	r0,2
+	la	r1,196608
+	clu	r1,r0
+	brf	_rml_room
+	la	r0,_err_pool_full
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_rml_room:
 
 	la	r0,196608
 	sw	r0,-3(fp)
@@ -5439,7 +5475,7 @@ _finish_macro:
 	la	r0,_mul39
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,788304
+	la	r1,98304
 	add	r1,r0
 
 ; Store body end position
@@ -5519,7 +5555,7 @@ _lm_tbl_loop:
 	jal	r1,(r0)
 	add	sp,3
 
-	la	r1,788304
+	la	r1,98304
 	add	r1,r0
 
 ; Compare table name (r1) with line_buf name (saved at 0(fp))
@@ -5601,7 +5637,7 @@ _expand_macro:
 	la	r0,_mul39
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,788304
+	la	r1,98304
 	add	r1,r0
 
 	push	r1
@@ -8194,7 +8230,7 @@ _exr_macro_loop:
 	la	r0,_mul39
 	jal	r1,(r0)
 	add	sp,3
-	la	r2,788304
+	la	r2,98304
 	add	r2,r0
 	la	r0,_xref_macro_txt
 	push	r0
@@ -8237,7 +8273,7 @@ _exr_expand_loop:
 	la	r0,_mul39
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,788304
+	la	r1,98304
 	add	r1,r0
 	la	r0,_xref_expand_txt
 	push	r0

@@ -1,24 +1,24 @@
-Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.p7dvYIh2sf/hlasm.lgo
+Loaded 20175 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.mQMulw8AhR/hlasm.lgo
 Loaded 47 bytes from 'demos/d21_directed_switch_main.bin' at 0x090000
 Loaded 24 bytes from 'demos/d21_directed_switch_extra.bin' at 0x081000
 Loaded 29 bytes from 'reg-rs/s13_directed_switch.cfg' at 0x07F000
-[UART TX @ 137381] '_'  (0x5F)
-[UART TX @ 137381] 'h'  (0x68)
-[UART TX @ 137381] ':'  (0x3A)
-[UART TX @ 137381] ''  (0x0D)
-[UART TX @ 137381] '\n'
-[UART TX @ 137381] ' '  (0x20)
-[UART TX @ 137381] 'b'  (0x62)
-[UART TX @ 137381] 'r'  (0x72)
-[UART TX @ 137381] 'a'  (0x61)
-[UART TX @ 137381] ' '  (0x20)
-[UART TX @ 137381] '_'  (0x5F)
-[UART TX @ 137381] 'h'  (0x68)
-[UART TX @ 137381] ''  (0x0D)
-[UART TX @ 137381] '\n'
+[UART TX @ 137419] '_'  (0x5F)
+[UART TX @ 137419] 'h'  (0x68)
+[UART TX @ 137419] ':'  (0x3A)
+[UART TX @ 137419] ''  (0x0D)
+[UART TX @ 137419] '\n'
+[UART TX @ 137419] ' '  (0x20)
+[UART TX @ 137419] 'b'  (0x62)
+[UART TX @ 137419] 'r'  (0x72)
+[UART TX @ 137419] 'a'  (0x61)
+[UART TX @ 137419] ' '  (0x20)
+[UART TX @ 137419] '_'  (0x5F)
+[UART TX @ 137419] 'h'  (0x68)
+[UART TX @ 137419] ''  (0x0D)
+[UART TX @ 137419] '\n'
 
 UART output: _h:
  bra _h
 
 
-Executed 137381 instructions
+Executed 137419 instructions

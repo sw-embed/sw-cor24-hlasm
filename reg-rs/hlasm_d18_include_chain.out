@@ -1,4 +1,4 @@
-Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.J2dx0TVmrz/hlasm.lgo
+Loaded 20175 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.WMyReaGhZ5/hlasm.lgo
 Loaded 43 bytes from 'demos/d18_include_main.bin' at 0x080000
 Loaded 45 bytes from 'demos/d18_include_mid.bin' at 0x081000
 Loaded 38 bytes from 'demos/d18_include_tail.bin' at 0x082000
@@ -17,22 +17,22 @@ Loaded 15 bytes from 'reg-rs/s10_include.cfg' at 0x07F000
 [UART TX @ 160000] 'h'  (0x68)
 [UART TX @ 160000] ''  (0x0D)
 [UART TX @ 160000] '\n'
-[UART TX @ 167637] 't'  (0x74)
-[UART TX @ 167637] 'a'  (0x61)
-[UART TX @ 167637] 'i'  (0x69)
-[UART TX @ 167637] 'l'  (0x6C)
-[UART TX @ 167637] ':'  (0x3A)
-[UART TX @ 167637] ''  (0x0D)
-[UART TX @ 167637] '\n'
-[UART TX @ 167637] ' '  (0x20)
-[UART TX @ 167637] 'b'  (0x62)
-[UART TX @ 167637] 'r'  (0x72)
-[UART TX @ 167637] 'a'  (0x61)
-[UART TX @ 167637] ' '  (0x20)
-[UART TX @ 167637] '_'  (0x5F)
-[UART TX @ 167637] 'h'  (0x68)
-[UART TX @ 167637] ''  (0x0D)
-[UART TX @ 167637] '\n'
+[UART TX @ 167675] 't'  (0x74)
+[UART TX @ 167675] 'a'  (0x61)
+[UART TX @ 167675] 'i'  (0x69)
+[UART TX @ 167675] 'l'  (0x6C)
+[UART TX @ 167675] ':'  (0x3A)
+[UART TX @ 167675] ''  (0x0D)
+[UART TX @ 167675] '\n'
+[UART TX @ 167675] ' '  (0x20)
+[UART TX @ 167675] 'b'  (0x62)
+[UART TX @ 167675] 'r'  (0x72)
+[UART TX @ 167675] 'a'  (0x61)
+[UART TX @ 167675] ' '  (0x20)
+[UART TX @ 167675] '_'  (0x5F)
+[UART TX @ 167675] 'h'  (0x68)
+[UART TX @ 167675] ''  (0x0D)
+[UART TX @ 167675] '\n'
 
 UART output: _h:
  bra _h
@@ -40,4 +40,4 @@ tail:
  bra _h
 
 
-Executed 167637 instructions
+Executed 167675 instructions

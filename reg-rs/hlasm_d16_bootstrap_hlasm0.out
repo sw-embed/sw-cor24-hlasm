@@ -1,4 +1,4 @@
-Loaded 20105 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.Y5Yso6JBQp/hlasm.lgo
+Loaded 20175 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.sxD20g61Br/hlasm.lgo
 Loaded 284 bytes from 'bootstrap/hlasm0.bin' at 0x080000
 [UART TX @ 220000] '_'  (0x5F)
 [UART TX @ 220000] 'm'  (0x6D)
@@ -196,23 +196,23 @@ Loaded 284 bytes from 'bootstrap/hlasm0.bin' at 0x080000
 [UART TX @ 270000] ':'  (0x3A)
 [UART TX @ 270000] ''  (0x0D)
 [UART TX @ 270000] '\n'
-[UART TX @ 274342] ' '  (0x20)
-[UART TX @ 274342] '.'  (0x2E)
-[UART TX @ 274342] 'w'  (0x77)
-[UART TX @ 274342] 'o'  (0x6F)
-[UART TX @ 274342] 'r'  (0x72)
-[UART TX @ 274342] 'd'  (0x64)
-[UART TX @ 274342] ' '  (0x20)
-[UART TX @ 274342] '1'  (0x31)
-[UART TX @ 274342] '6'  (0x36)
-[UART TX @ 274342] '7'  (0x37)
-[UART TX @ 274342] '1'  (0x31)
-[UART TX @ 274342] '1'  (0x31)
-[UART TX @ 274342] '9'  (0x39)
-[UART TX @ 274342] '3'  (0x33)
-[UART TX @ 274342] '6'  (0x36)
-[UART TX @ 274342] ''  (0x0D)
-[UART TX @ 274342] '\n'
+[UART TX @ 274498] ' '  (0x20)
+[UART TX @ 274498] '.'  (0x2E)
+[UART TX @ 274498] 'w'  (0x77)
+[UART TX @ 274498] 'o'  (0x6F)
+[UART TX @ 274498] 'r'  (0x72)
+[UART TX @ 274498] 'd'  (0x64)
+[UART TX @ 274498] ' '  (0x20)
+[UART TX @ 274498] '1'  (0x31)
+[UART TX @ 274498] '6'  (0x36)
+[UART TX @ 274498] '7'  (0x37)
+[UART TX @ 274498] '1'  (0x31)
+[UART TX @ 274498] '1'  (0x31)
+[UART TX @ 274498] '9'  (0x39)
+[UART TX @ 274498] '3'  (0x33)
+[UART TX @ 274498] '6'  (0x36)
+[UART TX @ 274498] ''  (0x0D)
+[UART TX @ 274498] '\n'
 
 UART output: _main:
  push fp
@@ -236,4 +236,4 @@ _tx:
  .word 16711936
 
 
-Executed 274342 instructions
+Executed 274498 instructions
