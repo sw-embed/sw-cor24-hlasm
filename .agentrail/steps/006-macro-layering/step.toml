@@ -1,6 +1,6 @@
 number = 6
 slug = "macro-layering"
-status = "pending"
+status = "in-progress"
 description = "Implement L10, M3, M2/D5 from docs/limits-and-lifting-plan.md: feed macro exp..."
 role = "production"
 context_files = []

@@ -1,0 +1,2 @@
+default_at_63: ok, 1 output lines, last:  nop ;zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+default_over_64: ERROR: macro parameter default longer than 63 characters

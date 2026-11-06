@@ -49,6 +49,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d39 | HLDIAG undefined symbol | WORKS |
 | d40 | Long-range structured jumps (far form + trampoline) | WORKS |
 | d41 | EQU constants, expressions, symbols in operands (prints CA4Y2! when run) | WORKS |
+| d42 | Macro layering: nested/recursive calls, directives and IF in bodies, default/keyword params, &SYSNARG (prints Hi!***-7Vok. when run) | WORKS |
 
 ## Demo Policy
 
@@ -81,10 +82,10 @@ Current supported baseline:
 - HLASM-style named parameters `&name` in both the definition header and body
   expand stably
 - macro names up to 31 characters are supported
-- multi-macro/local-label robustness is not complete yet
-- macro bodies are plain text expansion; conditional-assembly directives and
-  structured control-flow keywords are supported as top-level source forms,
-  not as reparsed directives nested inside macro bodies
+- `&NAME=default` header parameters and `NAME=value` keyword arguments
+- expanded lines go back through the line processor, so bodies may call
+  macros (8 deep), and use conditional assembly and structured statements;
+  `&SYSNARG` is the positional argument count (demo d42)
 
 ```
 MACRO name

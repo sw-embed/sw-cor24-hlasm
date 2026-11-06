@@ -1,0 +1,4 @@
+command = "bash reg-rs/check_limits.sh macdepth 2>&1"
+timeout = 60
+exit_code = 0
+desc = "Capacity limit: macro calls nested 8 deep (at the limit ok, one past it stops with ERROR)"

@@ -1,0 +1,69 @@
+; Demo 42: macro layering -- macros that call macros, directives and
+; structured IF inside macro bodies, default and keyword parameters, and a
+; body that adapts to its argument count (&SYSNARG). Assembled and run on
+; cor24-emu this prints "Hi!***-7Vok." (see hlasm_d42_macro_layering_run).
+UART EQU -65280
+SET VERBOSE,1
+
+; PUTC: print the character in register &R (r0 when omitted)
+MACRO PUTC &R=r0
+L\@:
+ lb r1,1(r2)
+ cls r1,z
+ brt L\@
+ sb &R,0(r2)
+MEND
+
+; PUTCH: load a character constant and print it (calls PUTC)
+MACRO PUTCH &C
+ lc r0,&C
+ PUTC
+MEND
+
+; PUTS: print one to three characters; the body depends on the argument count
+MACRO PUTS &A,&B,&C
+ PUTCH &A
+IFNE &SYSNARG,1
+ PUTCH &B
+IFNE &SYSNARG,2
+ PUTCH &C
+ENDIFASM
+ENDIFASM
+MEND
+
+; REPC: print &C &N times (once by default), by calling itself
+MACRO REPC &C,&N=1
+IFNE &N,0
+ PUTCH &C
+ REPC &C,&N-1
+ENDIFASM
+MEND
+
+; MAX: &D = larger of &D and &S (signed), with a structured IF in the body
+MACRO MAX &D,&S
+IF cc_lt, &D, &S
+ mov &D,&S
+ENDIF
+MEND
+
+; TRACE: print &C only when VERBOSE is defined
+MACRO TRACE &C
+IFDEF VERBOSE
+ PUTCH &C
+ENDIFASM
+MEND
+
+ la r2,UART
+ PUTS 'H','i','!'
+ REPC '*',3
+ REPC '-'
+ lc r0,3
+ lc r1,7
+ MAX S=r1,D=r0
+ add r0,'0'
+ PUTC R=r0
+ TRACE 'V'
+ PUTS 'o','k'
+ PUTS '.'
+halt:
+ bra halt

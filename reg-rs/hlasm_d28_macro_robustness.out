@@ -1,60 +1,10 @@
-Loaded 20697 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.oY4GCJs0Ek/hlasm.lgo
+Loaded 21733 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.75p7DdoJ2Q/hlasm.lgo
 Loaded 239 bytes from 'demos/d28_macro_robustness.bin' at 0x080000
-[UART TX @ 200000] 'L'  (0x4C)
-[UART TX @ 200000] '0'  (0x30)
-[UART TX @ 200000] '0'  (0x30)
-[UART TX @ 200000] '0'  (0x30)
-[UART TX @ 200000] '1'  (0x31)
-[UART TX @ 200000] ':'  (0x3A)
-[UART TX @ 200000] ' '  (0x20)
-[UART TX @ 200000] 'p'  (0x70)
-[UART TX @ 200000] 'u'  (0x75)
-[UART TX @ 200000] 's'  (0x73)
-[UART TX @ 200000] 'h'  (0x68)
-[UART TX @ 200000] ' '  (0x20)
-[UART TX @ 200000] 'r'  (0x72)
-[UART TX @ 200000] '0'  (0x30)
-[UART TX @ 200000] ''  (0x0D)
-[UART TX @ 200000] '\n'
-[UART TX @ 210000] ' '  (0x20)
-[UART TX @ 210000] 'b'  (0x62)
-[UART TX @ 210000] ' '  (0x20)
-[UART TX @ 210000] 'L'  (0x4C)
-[UART TX @ 210000] '0'  (0x30)
-[UART TX @ 210000] '0'  (0x30)
-[UART TX @ 210000] '0'  (0x30)
-[UART TX @ 210000] '1'  (0x31)
-[UART TX @ 210000] ''  (0x0D)
-[UART TX @ 210000] '\n'
-[UART TX @ 220000] 'L'  (0x4C)
-[UART TX @ 220000] '0'  (0x30)
-[UART TX @ 220000] '0'  (0x30)
-[UART TX @ 220000] '0'  (0x30)
-[UART TX @ 220000] '2'  (0x32)
-[UART TX @ 220000] ':'  (0x3A)
-[UART TX @ 220000] ' '  (0x20)
-[UART TX @ 220000] 's'  (0x73)
-[UART TX @ 220000] 't'  (0x74)
-[UART TX @ 220000] ' '  (0x20)
-[UART TX @ 220000] 'r'  (0x72)
-[UART TX @ 220000] '1'  (0x31)
-[UART TX @ 220000] ''  (0x0D)
-[UART TX @ 220000] '\n'
-[UART TX @ 220000] ' '  (0x20)
-[UART TX @ 220000] 'b'  (0x62)
-[UART TX @ 220000] ' '  (0x20)
-[UART TX @ 220000] 'L'  (0x4C)
-[UART TX @ 220000] '0'  (0x30)
-[UART TX @ 220000] '0'  (0x30)
-[UART TX @ 220000] '0'  (0x30)
-[UART TX @ 220000] '2'  (0x32)
-[UART TX @ 220000] ''  (0x0D)
-[UART TX @ 220000] '\n'
 [UART TX @ 230000] 'L'  (0x4C)
 [UART TX @ 230000] '0'  (0x30)
 [UART TX @ 230000] '0'  (0x30)
 [UART TX @ 230000] '0'  (0x30)
-[UART TX @ 230000] '3'  (0x33)
+[UART TX @ 230000] '1'  (0x31)
 [UART TX @ 230000] ':'  (0x3A)
 [UART TX @ 230000] ' '  (0x20)
 [UART TX @ 230000] 'p'  (0x70)
@@ -63,7 +13,7 @@ Loaded 239 bytes from 'demos/d28_macro_robustness.bin' at 0x080000
 [UART TX @ 230000] 'h'  (0x68)
 [UART TX @ 230000] ' '  (0x20)
 [UART TX @ 230000] 'r'  (0x72)
-[UART TX @ 230000] '2'  (0x32)
+[UART TX @ 230000] '0'  (0x30)
 [UART TX @ 230000] ''  (0x0D)
 [UART TX @ 230000] '\n'
 [UART TX @ 230000] ' '  (0x20)
@@ -73,15 +23,65 @@ Loaded 239 bytes from 'demos/d28_macro_robustness.bin' at 0x080000
 [UART TX @ 230000] '0'  (0x30)
 [UART TX @ 230000] '0'  (0x30)
 [UART TX @ 230000] '0'  (0x30)
-[UART TX @ 230000] '3'  (0x33)
+[UART TX @ 230000] '1'  (0x31)
 [UART TX @ 230000] ''  (0x0D)
 [UART TX @ 230000] '\n'
-[UART TX @ 235161] 'i'  (0x69)
-[UART TX @ 235161] 'n'  (0x6E)
-[UART TX @ 235161] 'c'  (0x63)
-[UART TX @ 235161] 'x'  (0x78)
-[UART TX @ 235161] ''  (0x0D)
-[UART TX @ 235161] '\n'
+[UART TX @ 250000] 'L'  (0x4C)
+[UART TX @ 250000] '0'  (0x30)
+[UART TX @ 250000] '0'  (0x30)
+[UART TX @ 250000] '0'  (0x30)
+[UART TX @ 250000] '2'  (0x32)
+[UART TX @ 250000] ':'  (0x3A)
+[UART TX @ 250000] ' '  (0x20)
+[UART TX @ 250000] 's'  (0x73)
+[UART TX @ 250000] 't'  (0x74)
+[UART TX @ 250000] ' '  (0x20)
+[UART TX @ 250000] 'r'  (0x72)
+[UART TX @ 250000] '1'  (0x31)
+[UART TX @ 250000] ''  (0x0D)
+[UART TX @ 250000] '\n'
+[UART TX @ 250000] ' '  (0x20)
+[UART TX @ 250000] 'b'  (0x62)
+[UART TX @ 250000] ' '  (0x20)
+[UART TX @ 250000] 'L'  (0x4C)
+[UART TX @ 250000] '0'  (0x30)
+[UART TX @ 250000] '0'  (0x30)
+[UART TX @ 250000] '0'  (0x30)
+[UART TX @ 250000] '2'  (0x32)
+[UART TX @ 250000] ''  (0x0D)
+[UART TX @ 250000] '\n'
+[UART TX @ 270000] 'L'  (0x4C)
+[UART TX @ 270000] '0'  (0x30)
+[UART TX @ 270000] '0'  (0x30)
+[UART TX @ 270000] '0'  (0x30)
+[UART TX @ 270000] '3'  (0x33)
+[UART TX @ 270000] ':'  (0x3A)
+[UART TX @ 270000] ' '  (0x20)
+[UART TX @ 270000] 'p'  (0x70)
+[UART TX @ 270000] 'u'  (0x75)
+[UART TX @ 270000] 's'  (0x73)
+[UART TX @ 270000] 'h'  (0x68)
+[UART TX @ 270000] ' '  (0x20)
+[UART TX @ 270000] 'r'  (0x72)
+[UART TX @ 270000] '2'  (0x32)
+[UART TX @ 270000] ''  (0x0D)
+[UART TX @ 270000] '\n'
+[UART TX @ 270000] ' '  (0x20)
+[UART TX @ 270000] 'b'  (0x62)
+[UART TX @ 270000] ' '  (0x20)
+[UART TX @ 270000] 'L'  (0x4C)
+[UART TX @ 270000] '0'  (0x30)
+[UART TX @ 270000] '0'  (0x30)
+[UART TX @ 270000] '0'  (0x30)
+[UART TX @ 270000] '3'  (0x33)
+[UART TX @ 270000] ''  (0x0D)
+[UART TX @ 270000] '\n'
+[UART TX @ 273821] 'i'  (0x69)
+[UART TX @ 273821] 'n'  (0x6E)
+[UART TX @ 273821] 'c'  (0x63)
+[UART TX @ 273821] 'x'  (0x78)
+[UART TX @ 273821] ''  (0x0D)
+[UART TX @ 273821] '\n'
 
 UART output: L0001: push r0
  b L0001
@@ -92,4 +92,4 @@ L0003: push r2
 incx
 
 
-Executed 235161 instructions
+Executed 273821 instructions

@@ -1,0 +1,4 @@
+command = "bash reg-rs/check_limits.sh default 2>&1"
+timeout = 60
+exit_code = 0
+desc = "Capacity limit: 63-character macro parameter default (at the limit ok, one past it stops with ERROR)"

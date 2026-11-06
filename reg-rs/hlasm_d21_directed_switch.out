@@ -1,24 +1,24 @@
-Loaded 20697 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.iDWFyFqrf1/hlasm.lgo
+Loaded 21788 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.mc5wvNud3B/hlasm.lgo
 Loaded 47 bytes from 'demos/d21_directed_switch_main.bin' at 0x090000
 Loaded 24 bytes from 'demos/d21_directed_switch_extra.bin' at 0x081000
 Loaded 29 bytes from 'reg-rs/s13_directed_switch.cfg' at 0x07F000
-[UART TX @ 145951] '_'  (0x5F)
-[UART TX @ 145951] 'h'  (0x68)
-[UART TX @ 145951] ':'  (0x3A)
-[UART TX @ 145951] ''  (0x0D)
-[UART TX @ 145951] '\n'
-[UART TX @ 145951] ' '  (0x20)
-[UART TX @ 145951] 'b'  (0x62)
-[UART TX @ 145951] 'r'  (0x72)
-[UART TX @ 145951] 'a'  (0x61)
-[UART TX @ 145951] ' '  (0x20)
-[UART TX @ 145951] '_'  (0x5F)
-[UART TX @ 145951] 'h'  (0x68)
-[UART TX @ 145951] ''  (0x0D)
-[UART TX @ 145951] '\n'
+[UART TX @ 157681] '_'  (0x5F)
+[UART TX @ 157681] 'h'  (0x68)
+[UART TX @ 157681] ':'  (0x3A)
+[UART TX @ 157681] ''  (0x0D)
+[UART TX @ 157681] '\n'
+[UART TX @ 157681] ' '  (0x20)
+[UART TX @ 157681] 'b'  (0x62)
+[UART TX @ 157681] 'r'  (0x72)
+[UART TX @ 157681] 'a'  (0x61)
+[UART TX @ 157681] ' '  (0x20)
+[UART TX @ 157681] '_'  (0x5F)
+[UART TX @ 157681] 'h'  (0x68)
+[UART TX @ 157681] ''  (0x0D)
+[UART TX @ 157681] '\n'
 
 UART output: _h:
  bra _h
 
 
-Executed 145951 instructions
+Executed 157681 instructions

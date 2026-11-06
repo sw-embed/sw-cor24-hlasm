@@ -1,0 +1,2 @@
+macdepth_at_8: ok, 8 output lines, last:  nop ;8
+macdepth_over_9: ERROR: macro calls nested deeper than 8

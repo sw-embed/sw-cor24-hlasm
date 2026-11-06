@@ -797,6 +797,9 @@ _ml_is_elseasm:
 	bra	_mle_done
 
 _mle_was_skip:
+	lc	r2,2
+	ceq	r0,r2
+	brt	_mle_done
 	la	r0,0
 	sw	r0,0(r1)
 
@@ -941,6 +944,26 @@ _read_line:
 	sw	r0,0(fp)
 	la	r1,788191
 	sw	r0,0(r1)
+
+; lines of an active macro expansion come before source lines
+_rl_exp:
+	la	r1,790719
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_rl_src
+	la	r0,_exp_next_line
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_rl_exp
+	add	r0,-1
+	mov	sp,fp
+	pop	r2
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+_rl_src:
 	la	r1,196608
 
 _rl_loop:
@@ -4755,6 +4778,9 @@ _emn_name_end:
 	la	r0,_parse_macro_params
 	jal	r1,(r0)
 
+	la	r0,_write_macro_header
+	jal	r1,(r0)
+
 	la	r0,_kw_macro
 	push	r0
 	lw	r0,-6(fp)
@@ -4885,6 +4911,14 @@ _pmp_param_start_ok:
 _pmp_param_slot:
 	lw	r0,-6(fp)
 	push	r0
+	la	r0,_default_slot
+	jal	r1,(r0)
+	add	sp,3
+	lc	r1,0
+	sb	r1,0(r0)
+
+	lw	r0,-6(fp)
+	push	r0
 	la	r0,_mul32
 	jal	r1,(r0)
 	add	sp,3
@@ -4907,6 +4941,9 @@ _pmp_param_copy:
 	lc	r1,44
 	ceq	r0,r1
 	brt	_pmp_param_done_pop
+	lc	r1,61
+	ceq	r0,r1
+	brt	_pmp_default
 	lw	r1,-9(fp)
 	lc	r2,31
 	clu	r1,r2
@@ -4939,6 +4976,18 @@ _pmp_param_skip:
 	add	r0,1
 	sw	r0,-3(fp)
 	bra	_pmp_param_copy
+
+; &NAME=default: the name ends at '=', the default text is kept per index
+_pmp_default:
+	lw	r0,-3(fp)
+	add	r0,1
+	push	r0
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_pmp_copy_default
+	jal	r1,(r0)
+	add	sp,6
+	sw	r0,-3(fp)
 
 _pmp_param_done_pop:
 _pmp_param_done:
@@ -5623,14 +5672,30 @@ _lm_ret:
 	pop	fp
 	jmp	(r1)
 
-; _expand_macro: Expand a macro with parameter substitution and \@ labels.
+; --- Macro expansion stack ---
+; A call pushes a frame; _read_line then takes lines from the innermost frame
+; (via _exp_next_line) before reading source, so expanded lines go through
+; the whole line processor: macro calls nest and directives work in bodies.
+; 790719 depth (0..8). Frames at 233472, 64 bytes each:
+;   +0 body read ptr, +3 body end, +6 \@ / &SYSNDX number,
+;   +9 positional argument count, +12 + (N-1)*3 value ptr of parameter N
+;   (0 = none; N = 1..16).
+; Argument strings at 233984 + depth*512 (a call line is at most 256 chars).
+; The pool header written by _write_macro_header holds the parameter names
+; and defaults: count byte, then per parameter name strz and default strz.
+
+; _expand_macro: Push an expansion frame for a macro call in the line buffer.
 ; Arg on stack: macro index (1-based from _lookup_macro)
+; Frame: push fp, r1, r2, r2 = 12 bytes. Arg at 12(fp).
+; 0(fp) entry ptr, -3 frame ptr, -6 string write ptr, -9 header names ptr,
+; -12 scan ptr, -15 positional count, -18 arg end, -21 param count
 _expand_macro:
 	push	fp
 	push	r1
 	push	r2
 	push	r2
 	mov	fp,sp
+	add	sp,-21
 
 	lw	r0,12(fp)
 	push	r0
@@ -5646,50 +5711,252 @@ _expand_macro:
 	add	sp,3
 	la	r1,98304
 	add	r1,r0
+	sw	r1,0(fp)
 
-	push	r1
 	la	r0,_expand_txt
 	push	r0
 	push	r1
 	la	r0,_emit_list_line1
 	jal	r1,(r0)
 	add	sp,6
-	pop	r1
 
-	lw	r2,33(r1)
+	la	r1,790719
+	lw	r0,0(r1)
+	lc	r2,8
+	clu	r0,r2
+	brt	_exm_room
+	la	r0,_err_mac_deep
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_exm_room:
+	push	r0
+	la	r0,_mul32
+	jal	r1,(r0)
+	add	sp,3
+	add	r0,r0
+	la	r1,233472
+	add	r0,r1
+	sw	r0,-3(fp)
+
+	la	r1,790719
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_mul256
+	jal	r1,(r0)
+	add	sp,3
+	add	r0,r0
+	la	r1,233984
+	add	r0,r1
+	sw	r0,-6(fp)
+
+; clear the positional count and the 16 value pointers
+	lw	r1,-3(fp)
+	add	r1,9
+	lc	r2,17
+	lc	r0,0
+_exm_clear:
+	sw	r0,0(r1)
+	add	r1,3
+	add	r2,-1
+	ceq	r2,z
+	brf	_exm_clear
+	sw	r0,-15(fp)
+
+; header: parameter count, then names/defaults; the body follows it
+	lw	r1,0(fp)
+	lw	r1,33(r1)
+	lbu	r0,0(r1)
+	sw	r0,-21(fp)
+	add	r1,1
+	sw	r1,-9(fp)
+	mov	r2,r0
+	add	r2,r0
+_exm_skip_hdr:
+	ceq	r2,z
+	brt	_exm_body
+	push	r1
+	la	r0,_skip_strz
+	jal	r1,(r0)
+	add	sp,3
+	mov	r1,r0
+	add	r2,-1
+	bra	_exm_skip_hdr
+_exm_body:
+	lw	r2,-3(fp)
+	sw	r1,0(r2)
+	lw	r1,0(fp)
 	lw	r0,36(r1)
-	sw	r0,0(fp)
-
-	la	r1,786642
+	sw	r0,3(r2)
+	la	r1,790707
+	lw	r0,0(r1)
+	sw	r0,6(r2)
+	add	r0,1
 	sw	r0,0(r1)
 
-	sw	r2,3(fp)
+; skip indentation and the macro name in the call line
+	la	r1,196608
+_exm_ind:
+	lbu	r0,0(r1)
+	lc	r2,32
+	ceq	r0,r2
+	brt	_exm_ind_adv
+	lc	r2,9
+	ceq	r0,r2
+	brf	_exm_name
+_exm_ind_adv:
+	add	r1,1
+	bra	_exm_ind
+_exm_name:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_exm_args_far
+	lc	r2,32
+	ceq	r0,r2
+	brt	_exm_args_far
+	lc	r2,9
+	ceq	r0,r2
+	brt	_exm_args_far
+	add	r1,1
+	bra	_exm_name
+_exm_args_far:
+	sw	r1,-12(fp)
 
-_exm_loop:
-	lw	r0,0(fp)
-	lw	r2,3(fp)
-	clu	r2,r0
-	brf	_exm_done
-
-	push	r2
-	la	r0,_expand_body_line
+; one argument per pass: skip blanks, stop at end or ';', find its end
+_exm_arg:
+	lw	r0,-12(fp)
+	push	r0
+	la	r0,_skip_ws_ptr
 	jal	r1,(r0)
 	add	sp,3
+	sw	r0,-12(fp)
+	lbu	r1,0(r0)
+	ceq	r1,z
+	brf	_exm_arg_nz
+	la	r1,_exm_defaults
+	jmp	(r1)
+_exm_arg_nz:
+	lc	r2,59
+	ceq	r1,r2
+	brf	_exm_arg_go
+	la	r1,_exm_defaults
+	jmp	(r1)
+_exm_arg_go:
+	push	r0
+	la	r0,_arg_end
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-18(fp)
 
+; keyword argument NAME=value when NAME is a parameter of this macro
+	lw	r0,-21(fp)
+	push	r0
+	lw	r0,-9(fp)
+	push	r0
+	lw	r0,-12(fp)
+	push	r0
+	la	r0,_keyword_param
+	jal	r1,(r0)
+	add	sp,9
+	ceq	r0,z
+	brt	_exm_positional
+	push	r0
+	lw	r1,-12(fp)
+_exm_kw_eq:
+	lbu	r0,0(r1)
+	add	r1,1
+	lc	r2,61
+	ceq	r0,r2
+	brf	_exm_kw_eq
+	sw	r1,-12(fp)
+	pop	r0
+	bra	_exm_store
+
+_exm_positional:
+	lw	r0,-15(fp)
+	add	r0,1
+	sw	r0,-15(fp)
+	lc	r1,17
+	clu	r0,r1
+	brt	_exm_store
+	la	r0,_err_arg_full
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+
+; r0 = parameter number: point its slot at a copy of [scan ptr, arg end)
+_exm_store:
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	lw	r1,-3(fp)
+	add	r1,r0
+	lw	r0,-6(fp)
+	sw	r0,9(r1)
+	lw	r0,-6(fp)
+	push	r0
+	lw	r0,-18(fp)
+	push	r0
+	lw	r0,-12(fp)
+	push	r0
+	la	r0,_copy_range
+	jal	r1,(r0)
+	add	sp,9
+	sw	r0,-6(fp)
+
+; after the argument: a comma starts the next one, anything else ends them
+	lw	r0,-18(fp)
+	push	r0
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	lbu	r1,0(r0)
+	lc	r2,44
+	ceq	r1,r2
+	brf	_exm_defaults
+	add	r0,1
+	sw	r0,-12(fp)
+	la	r1,_exm_arg
+	jmp	(r1)
+
+; parameters with no (or an empty) argument take their default
+_exm_defaults:
+	lw	r2,-3(fp)
+	lw	r0,-15(fp)
+	sw	r0,9(r2)
+	add	r2,12
+	lw	r1,-9(fp)
+_exm_def_loop:
+	lw	r0,-21(fp)
 	ceq	r0,z
 	brt	_exm_done
-
-	sw	r0,3(fp)
-
-	push	r0
-	la	r0,_emit_expand_buf
+	add	r0,-1
+	sw	r0,-21(fp)
+	push	r1
+	la	r0,_skip_strz
 	jal	r1,(r0)
 	add	sp,3
-
-	bra	_exm_loop
+	mov	r1,r0
+	lw	r0,0(r2)
+	ceq	r0,z
+	brt	_exm_def_use
+	lbu	r0,0(r0)
+	ceq	r0,z
+	brf	_exm_def_next
+_exm_def_use:
+	sw	r1,0(r2)
+_exm_def_next:
+	push	r1
+	la	r0,_skip_strz
+	jal	r1,(r0)
+	add	sp,3
+	mov	r1,r0
+	add	r2,3
+	bra	_exm_def_loop
 
 _exm_done:
-	la	r1,790707
+	la	r1,790719
 	lw	r0,0(r1)
 	add	r0,1
 	sw	r0,0(r1)
@@ -5701,198 +5968,673 @@ _exm_done:
 	pop	fp
 	jmp	(r1)
 
-; _expand_body_line: Read one body line, expand &N and \@ into _expand_buf.
-; Arg on stack: current body position pointer
-; Returns: r0 = updated position (past line), or 0 if at end
-; Frame: push fp, r1, r2, r2, r2 = 15 bytes. Arg at 15(fp).
-; 0(fp) = write ptr into _expand_buf
-_expand_body_line:
+; _exp_next_line: Write the next line of the innermost expansion into the
+; input line buffer, replacing &N with argument N, \@ and &SYSNDX with the
+; expansion number, and &SYSNARG with the positional argument count.
+; Returns: r0 = line length + 1, or 0 if the expansion has ended (its frame
+; is popped).
+; Frame: push fp, r1, r2 = 9 bytes.
+; -3(fp) frame ptr, -6 write ptr, -9 read ptr
+_exp_next_line:
 	push	fp
 	push	r1
 	push	r2
-	push	r2
-	push	r2
 	mov	fp,sp
+	add	sp,-9
 
-	la	r1,198688
-	sw	r1,0(fp)
+	la	r1,790719
+	lw	r0,0(r1)
+	add	r0,-1
+	push	r0
+	la	r0,_mul32
+	jal	r1,(r0)
+	add	sp,3
+	add	r0,r0
+	la	r1,233472
+	add	r0,r1
+	sw	r0,-3(fp)
+	mov	r2,r0
+	lw	r1,0(r2)
+	sw	r1,-9(fp)
+	lw	r0,3(r2)
+	clu	r1,r0
+	brt	_enl_start
 
-	lw	r2,15(fp)
+	la	r1,790719
+	lw	r0,0(r1)
+	add	r0,-1
+	sw	r0,0(r1)
+	la	r0,0
+	la	r1,_enl_ret
+	jmp	(r1)
 
-_ebl_loop:
-; _expand_buf is 1024 bytes; every path returns here after writing at most
-; one argument (< 257 bytes), so checking for > 256 here cannot overrun it.
-	lw	r0,0(fp)
-	la	r1,198945
+_enl_start:
+	la	r0,196608
+	sw	r0,-6(fp)
+
+_enl_loop:
+	lw	r0,-6(fp)
+	la	r1,196865
 	clu	r0,r1
-	brt	_ebl_room
+	brt	_enl_room
 	la	r0,_err_exp_long
 	push	r0
 	la	r0,_fatal
 	jal	r1,(r0)
-_ebl_room:
-	la	r1,786642
-	lw	r1,0(r1)
-	clu	r2,r1
-	brf	_ebl_nf
-
-	lbu	r0,0(r2)
-
-	ceq	r0,z
-	brt	_ebl_eol_near
-
-	lc	r1,10
-	ceq	r0,r1
-	brt	_ebl_eol_near
-
-	bra	_ebl_cont
-
-_ebl_nf:
-	la	r1,_ebl_done
+_enl_room:
+	lw	r2,-3(fp)
+	lw	r0,3(r2)
+	lw	r1,-9(fp)
+	clu	r1,r0
+	brt	_enl_more
+	la	r1,_enl_eol
 	jmp	(r1)
-
-_ebl_eol_near:
-	la	r1,_ebl_eol
-	jmp	(r1)
-
-_ebl_cont:
-	lc	r1,38
-	ceq	r0,r1
-	brt	_ebl_amp
-
-	lc	r1,92
-	ceq	r0,r1
-	brt	_ebl_bslash
-
-_ebl_copy:
-	lw	r1,0(fp)
-	sb	r0,0(r1)
+_enl_more:
+	lbu	r0,0(r1)
+	lc	r2,10
+	ceq	r0,r2
+	brf	_enl_not_nl
 	add	r1,1
-	sw	r1,0(fp)
+	sw	r1,-9(fp)
+	la	r1,_enl_eol
+	jmp	(r1)
+_enl_not_nl:
+	lc	r2,38
+	ceq	r0,r2
+	brt	_enl_amp
+	lc	r2,92
+	ceq	r0,r2
+	brt	_enl_bslash
+_enl_copy:
+	lw	r2,-6(fp)
+	sb	r0,0(r2)
 	add	r2,1
-	bra	_ebl_loop
+	sw	r2,-6(fp)
+	add	r1,1
+	sw	r1,-9(fp)
+	bra	_enl_loop
 
-_ebl_amp:
-	add	r2,1
-	lbu	r0,0(r2)
-	add	r2,1
+_enl_bslash:
+	lbu	r2,1(r1)
+	lc	r0,64
+	ceq	r0,r2
+	brt	_enl_ndx2
+	lc	r0,92
+	bra	_enl_copy
 
-	lc	r1,48
-	sub	r0,r1
-
-	push	r2
-	sw	r2,6(fp)
+_enl_amp:
+	lbu	r0,1(r1)
+	lc	r2,48
+	sub	r0,r2
+	ceq	r0,z
+	brt	_enl_sys
+	lc	r2,17
+	clu	r0,r2
+	brf	_enl_sys
+; &N: copy argument N (nothing when absent)
+	add	r1,2
+	sw	r1,-9(fp)
 	push	r0
-	la	r0,_get_arg_start
+	la	r0,_mul3
 	jal	r1,(r0)
 	add	sp,3
-	lw	r2,6(fp)
-
-	ceq	r0,z
-	brf	_ebl_has_arg
-
-	pop	r2
-	la	r1,_ebl_loop
-	jmp	(r1)
-
-_ebl_has_arg:
-_ebl_arg_loop:
-	lbu	r1,0(r0)
-
+	lw	r2,-3(fp)
+	add	r2,r0
+	lw	r1,9(r2)
 	ceq	r1,z
-	brt	_ebl_arg_done
-
-	lc	r2,44
-	ceq	r1,r2
-	brt	_ebl_arg_done
-
-	lc	r2,32
-	ceq	r1,r2
-	brt	_ebl_arg_done
-
-	lc	r2,9
-	ceq	r1,r2
-	brt	_ebl_arg_done
-
-	lw	r2,0(fp)
-	sb	r1,0(r2)
+	brt	_enl_loop_far
+	lw	r2,-6(fp)
+_enl_arg_copy:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_enl_arg_done
+	sb	r0,0(r2)
+	add	r1,1
 	add	r2,1
-	sw	r2,0(fp)
-
-	add	r0,1
-	bra	_ebl_arg_loop
-
-_ebl_arg_done:
-	pop	r2
-	la	r1,_ebl_loop
+	bra	_enl_arg_copy
+_enl_arg_done:
+	sw	r2,-6(fp)
+_enl_loop_far:
+	la	r1,_enl_loop
 	jmp	(r1)
 
-_ebl_bslash:
-	add	r2,1
-	lbu	r0,0(r2)
+_enl_ndx2:
+	add	r1,2
+	sw	r1,-9(fp)
+	bra	_enl_ndx
 
-	lc	r1,64
-	ceq	r0,r1
-	brf	_ebl_bslash_plain
-
-	add	r2,1
-
-	push	r2
-
+_enl_sys:
+	add	r1,1
+	push	r1
+	la	r0,_sysndx_txt
+	push	r0
+	push	r1
+	la	r0,_match_word
+	jal	r1,(r0)
+	add	sp,6
+	pop	r1
+	ceq	r0,z
+	brt	_enl_sys_narg
+	add	r1,6
+	sw	r1,-9(fp)
+_enl_ndx:
+	lw	r0,-6(fp)
 	la	r1,790704
-	lw	r0,0(fp)
 	sw	r0,0(r1)
-
-	la	r0,790707
-	lw	r0,0(r0)
+	lw	r2,-3(fp)
+	lw	r0,6(r2)
 	push	r0
 	la	r0,_emit_num4_to_buf
 	jal	r1,(r0)
 	add	sp,3
-
 	la	r1,790704
 	lw	r0,0(r1)
-	sw	r0,0(fp)
-
-	pop	r2
-	la	r1,_ebl_loop
+	sw	r0,-6(fp)
+	la	r1,_enl_loop
 	jmp	(r1)
 
-_ebl_bslash_plain:
-	lw	r1,0(fp)
-	lc	r0,92
-	sb	r0,0(r1)
-	add	r1,1
-	sw	r1,0(fp)
-	la	r1,_ebl_loop
-	jmp	(r1)
+_enl_sys_narg:
+	push	r1
+	la	r0,_sysnarg_txt
+	push	r0
+	push	r1
+	la	r0,_match_word
+	jal	r1,(r0)
+	add	sp,6
+	pop	r1
+	ceq	r0,z
+	brf	_enl_narg
+; plain '&': keep it
+	add	r1,-1
+	lc	r0,38
+	la	r2,_enl_copy
+	jmp	(r2)
 
-_ebl_eol:
-	lw	r0,0(fp)
-	la	r1,0
-	sb	r1,0(r0)
-
-	lbu	r0,0(r2)
+_enl_narg:
+	add	r1,7
+	sw	r1,-9(fp)
+	lw	r2,-3(fp)
+	lw	r0,9(r2)
+	lw	r2,-6(fp)
 	lc	r1,10
-	ceq	r0,r1
-	brf	_ebl_ret
-
+	clu	r0,r1
+	brt	_enl_narg_one
+	lc	r1,49
+	sb	r1,0(r2)
 	add	r2,1
+	add	r0,-10
+_enl_narg_one:
+	add	r0,48
+	sb	r0,0(r2)
+	add	r2,1
+	sw	r2,-6(fp)
+	la	r1,_enl_loop
+	jmp	(r1)
 
-_ebl_ret:
+_enl_eol:
+	lw	r2,-6(fp)
+	lc	r0,0
+	sb	r0,0(r2)
+	lw	r1,-3(fp)
+	lw	r0,-9(fp)
+	sw	r0,0(r1)
+	la	r1,196607
 	mov	r0,r2
-	bra	_ebl_exit
+	sub	r0,r1
 
-_ebl_done:
-	la	r0,0
-	lw	r1,0(fp)
-	la	r2,0
-	sb	r2,0(r1)
-
-_ebl_exit:
+_enl_ret:
 	mov	sp,fp
 	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _match_word: Return 1 if the text at ptr is word, not followed by a macro
+; name character, else 0.
+; Args on stack: ptr (9 fp), word (12 fp)
+_match_word:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r1,9(fp)
+	lw	r2,12(fp)
+_mw_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_mw_tail
+	push	r2
+	lbu	r2,0(r1)
+	ceq	r0,r2
 	pop	r2
+	brf	_mw_no
+	add	r1,1
+	add	r2,1
+	bra	_mw_loop
+_mw_tail:
+	lbu	r0,0(r1)
+	push	r0
+	la	r0,_is_macro_name_char
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brf	_mw_no
+	la	r0,1
+	bra	_mw_ret
+_mw_no:
+	la	r0,0
+_mw_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _skip_strz: Return the pointer just past the NUL of the string at ptr.
+; Arg on stack: ptr
+_skip_strz:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r0,9(fp)
+_sks_loop:
+	lbu	r1,0(r0)
+	add	r0,1
+	ceq	r1,z
+	brf	_sks_loop
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _copy_range: Copy [src, end) to dst and NUL-terminate it.
+; Args on stack: src (9 fp), end (12 fp), dst (15 fp)
+; Returns: r0 = dst just past the NUL
+_copy_range:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r1,9(fp)
+	lw	r2,15(fp)
+_cr_loop:
+	lw	r0,12(fp)
+	clu	r1,r0
+	brf	_cr_done
+	lbu	r0,0(r1)
+	sb	r0,0(r2)
+	add	r1,1
+	add	r2,1
+	bra	_cr_loop
+_cr_done:
+	lc	r0,0
+	sb	r0,0(r2)
+	add	r2,1
+	mov	r0,r2
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _arg_end: Return the end of the macro argument (or default) at ptr: the
+; first NUL, or comma, blank, tab or ';' outside quotes and parentheses.
+; A backslash inside quotes escapes the next character.
+; Arg on stack: ptr
+; Frame: push fp, r1, r2 = 9 bytes. -3(fp) quote char, -6 paren depth
+_arg_end:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-6
+
+	lc	r0,0
+	sw	r0,-3(fp)
+	sw	r0,-6(fp)
+	lw	r1,9(fp)
+_ae_loop:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brf	_ae_nz
+	la	r2,_ae_done
+	jmp	(r2)
+_ae_nz:
+	lw	r2,-3(fp)
+	ceq	r2,z
+	brt	_ae_open
+; inside quotes
+	ceq	r0,r2
+	brf	_ae_in_bs
+	lc	r2,0
+	sw	r2,-3(fp)
+	bra	_ae_next
+_ae_in_bs:
+	lc	r2,92
+	ceq	r0,r2
+	brf	_ae_next
+	lbu	r0,1(r1)
+	ceq	r0,z
+	brt	_ae_next
+	add	r1,1
+	bra	_ae_next
+_ae_open:
+	lc	r2,39
+	ceq	r0,r2
+	brt	_ae_quote
+	lc	r2,34
+	ceq	r0,r2
+	brt	_ae_quote
+	lc	r2,40
+	ceq	r0,r2
+	brt	_ae_lpar
+	lc	r2,41
+	ceq	r0,r2
+	brt	_ae_rpar
+	lw	r2,-6(fp)
+	ceq	r2,z
+	brf	_ae_next
+	lc	r2,44
+	ceq	r0,r2
+	brt	_ae_done
+	lc	r2,32
+	ceq	r0,r2
+	brt	_ae_done
+	lc	r2,9
+	ceq	r0,r2
+	brt	_ae_done
+	lc	r2,59
+	ceq	r0,r2
+	brt	_ae_done
+	bra	_ae_next
+_ae_quote:
+	sw	r0,-3(fp)
+	bra	_ae_next
+_ae_lpar:
+	lw	r0,-6(fp)
+	add	r0,1
+	sw	r0,-6(fp)
+	bra	_ae_next
+_ae_rpar:
+	lw	r0,-6(fp)
+	ceq	r0,z
+	brt	_ae_next
+	add	r0,-1
+	sw	r0,-6(fp)
+_ae_next:
+	add	r1,1
+	la	r2,_ae_loop
+	jmp	(r2)
+_ae_done:
+	mov	r0,r1
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _keyword_param: If the argument at ptr is NAME=... and NAME is one of the
+; macro's parameters, return that parameter's number (1-based), else 0.
+; Args on stack: ptr (9 fp), header names ptr (12 fp), param count (15 fp)
+; Frame: push fp, r1, r2 = 9 bytes. -3(fp) name end, -6 number, -9 entry ptr
+_keyword_param:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-9
+
+	lw	r1,9(fp)
+_kwp_name:
+	lbu	r0,0(r1)
+	push	r1
+	push	r0
+	la	r0,_is_macro_name_char
+	jal	r1,(r0)
+	add	sp,3
+	pop	r1
+	ceq	r0,z
+	brt	_kwp_name_end
+	add	r1,1
+	bra	_kwp_name
+_kwp_name_end:
+	lw	r0,9(fp)
+	ceq	r0,r1
+	brt	_kwp_no
+	lbu	r0,0(r1)
+	lc	r2,61
+	ceq	r0,r2
+	brf	_kwp_no
+	sw	r1,-3(fp)
+	lc	r0,1
+	sw	r0,-6(fp)
+	lw	r0,12(fp)
+	sw	r0,-9(fp)
+
+_kwp_entry:
+	lw	r0,-6(fp)
+	lw	r1,15(fp)
+	clu	r1,r0
+	brt	_kwp_no
+; compare [ptr, name end) with the entry name (NUL-terminated)
+	lw	r1,9(fp)
+	lw	r2,-9(fp)
+_kwp_cmp:
+	lw	r0,-3(fp)
+	clu	r1,r0
+	brf	_kwp_cmp_end
+	lbu	r0,0(r1)
+	push	r1
+	lbu	r1,0(r2)
+	ceq	r0,r1
+	pop	r1
+	brf	_kwp_next
+	add	r1,1
+	add	r2,1
+	bra	_kwp_cmp
+_kwp_cmp_end:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brf	_kwp_next
+	lw	r0,-6(fp)
+	bra	_kwp_ret
+_kwp_next:
+	lw	r0,-9(fp)
+	push	r0
+	la	r0,_skip_strz
+	jal	r1,(r0)
+	add	sp,3
+	push	r0
+	la	r0,_skip_strz
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-9(fp)
+	lw	r0,-6(fp)
+	add	r0,1
+	sw	r0,-6(fp)
+	bra	_kwp_entry
+_kwp_no:
+	la	r0,0
+_kwp_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _write_macro_header: Write the parameter header of the macro being defined
+; at the pool write position: count byte, then for each parameter its name
+; strz (from 200672) and default strz (from 238080). The body follows.
+_write_macro_header:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-3
+
+; header is at most 1 + 16 * (32 + 64) bytes
+	la	r1,790716
+	lw	r0,0(r1)
+	la	r2,1600
+	add	r0,r2
+	la	r2,196608
+	clu	r0,r2
+	brt	_wmh_room
+	la	r0,_err_pool_full
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_wmh_room:
+	la	r1,788194
+	lw	r0,0(r1)
+	la	r1,790716
+	lw	r2,0(r1)
+	sb	r0,0(r2)
+	add	r2,1
+	lc	r0,0
+	sw	r0,-3(fp)
+_wmh_loop:
+	lw	r0,-3(fp)
+	la	r1,788194
+	lw	r1,0(r1)
+	clu	r0,r1
+	brf	_wmh_done
+	push	r0
+	la	r0,_mul32
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,200672
+	add	r0,r1
+	push	r2
+	push	r0
+	la	r0,_copy_strz_end
+	jal	r1,(r0)
+	add	sp,6
+	mov	r2,r0
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_default_slot
+	jal	r1,(r0)
+	add	sp,3
+	push	r2
+	push	r0
+	la	r0,_copy_strz_end
+	jal	r1,(r0)
+	add	sp,6
+	mov	r2,r0
+	lw	r0,-3(fp)
+	add	r0,1
+	sw	r0,-3(fp)
+	bra	_wmh_loop
+_wmh_done:
+	la	r1,790716
+	sw	r2,0(r1)
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _copy_strz_end: Copy the string at src to dst.
+; Args on stack: src (9 fp), dst (12 fp)
+; Returns: r0 = dst just past the NUL
+_copy_strz_end:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r1,9(fp)
+	lw	r2,12(fp)
+_cse_loop:
+	lbu	r0,0(r1)
+	sb	r0,0(r2)
+	add	r1,1
+	add	r2,1
+	ceq	r0,z
+	brf	_cse_loop
+	mov	r0,r2
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _default_slot: r0 = 238080 + index * 64, the default text of parameter
+; index (0-based) of the macro being defined.
+; Arg on stack: index
+_default_slot:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_mul32
+	jal	r1,(r0)
+	add	sp,3
+	add	r0,r0
+	la	r1,238080
+	add	r0,r1
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _pmp_copy_default: Copy the default text at src (after '=') into the slot
+; of parameter index; at most 63 characters.
+; Args on stack: index (9 fp), src (12 fp)
+; Returns: r0 = end of the default text
+_pmp_copy_default:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r0,12(fp)
+	push	r0
+	la	r0,_arg_end
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+	lw	r1,12(fp)
+	sub	r0,r1
+	lc	r1,64
+	clu	r0,r1
+	brt	_pcd_ok
+	la	r0,_err_def_long
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_pcd_ok:
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_default_slot
+	jal	r1,(r0)
+	add	sp,3
+	push	r0
+	push	r2
+	lw	r0,12(fp)
+	push	r0
+	la	r0,_copy_range
+	jal	r1,(r0)
+	add	sp,9
+	mov	r0,r2
+
+	mov	sp,fp
 	pop	r2
 	pop	r1
 	pop	fp
@@ -5987,182 +6729,6 @@ _en4_next:
 _en4_ret:
 	mov	sp,fp
 	pop	r2
-	pop	r2
-	pop	r1
-	pop	fp
-	jmp	(r1)
-
-; _get_arg_start: Find Nth argument (1-based) in invocation line _line_buf.
-; Arg on stack: arg number (1-based)
-; Returns: r0 = pointer to arg in _line_buf, or 0 if not found
-; Frame: push fp, r1, r2, r2 = 12 bytes. Arg at 12(fp).
-; 0(fp) = current arg index counter
-_get_arg_start:
-	push	fp
-	push	r1
-	push	r2
-	push	r2
-	mov	fp,sp
-
-	la	r2,196608
-
-; skip indentation before the macro name (as _lookup_macro does), so an
-; indented call " PUTC r0" finds "r0" and not the macro name
-_gas_skip_indent:
-	lbu	r0,0(r2)
-	lc	r1,32
-	ceq	r0,r1
-	brt	_gas_indent_adv
-	lc	r1,9
-	ceq	r0,r1
-	brf	_gas_skip_name
-_gas_indent_adv:
-	add	r2,1
-	bra	_gas_skip_indent
-
-_gas_skip_name:
-	lbu	r0,0(r2)
-	ceq	r0,z
-	brt	_gas_no_arg_hop
-
-	lc	r1,32
-	ceq	r0,r1
-	brt	_gas_found_ws
-
-	lc	r1,9
-	ceq	r0,r1
-	brt	_gas_found_ws
-
-	add	r2,1
-	bra	_gas_skip_name
-
-_gas_no_arg_hop:
-	la	r1,_gas_no_arg
-	jmp	(r1)
-
-_gas_found_ws:
-	add	r2,1
-_gas_skip_ws:
-	lbu	r0,0(r2)
-	ceq	r0,z
-	brt	_gas_no_arg
-
-	lc	r1,32
-	ceq	r0,r1
-	brt	_gas_skip_ws2
-
-	lc	r1,9
-	ceq	r0,r1
-	brt	_gas_skip_ws2
-
-	bra	_gas_count
-
-_gas_skip_ws2:
-	add	r2,1
-	bra	_gas_skip_ws
-
-_gas_count:
-	lw	r0,12(fp)
-	la	r1,1
-	ceq	r0,r1
-	brt	_gas_found
-
-	la	r1,1
-	sw	r1,0(fp)
-
-_gas_skip_loop:
-	lw	r0,0(fp)
-	lw	r1,12(fp)
-	ceq	r0,r1
-	brt	_gas_found
-
-	lbu	r0,0(r2)
-	ceq	r0,z
-	brt	_gas_no_arg
-
-	lc	r1,44
-	ceq	r0,r1
-	brf	_gas_not_comma
-
-	add	r2,1
-	lw	r0,0(fp)
-	add	r0,1
-	sw	r0,0(fp)
-
-_gas_skip_arg:
-	lbu	r0,0(r2)
-	ceq	r0,z
-	brt	_gas_no_arg
-
-	lc	r1,32
-	ceq	r0,r1
-	brf	_gsa_not_sp
-
-	add	r2,1
-	bra	_gas_skip_arg
-
-_gsa_not_sp:
-	lc	r1,9
-	ceq	r0,r1
-	brf	_gas_skip_loop
-
-	add	r2,1
-	bra	_gas_skip_arg
-
-_gas_not_comma:
-	add	r2,1
-	bra	_gas_skip_loop
-
-_gas_skip_arg:
-	lbu	r0,0(r2)
-	ceq	r0,z
-	brt	_gas_no_arg
-
-	lc	r1,32
-	ceq	r0,r1
-	brt	_gas_skip_arg
-
-	lc	r1,9
-	ceq	r0,r1
-	brt	_gas_skip_arg
-
-	lc	r1,44
-	ceq	r0,r1
-	brt	_gas_skip_arg
-
-	add	r2,1
-	bra	_gas_skip_arg
-
-_gas_found:
-	mov	r0,r2
-	bra	_gas_ret
-
-_gas_no_arg:
-	la	r0,0
-
-_gas_ret:
-	mov	sp,fp
-	pop	r2
-	pop	r2
-	pop	r1
-	pop	fp
-	jmp	(r1)
-
-; _emit_expand_buf: Emit _expand_buf as one output line (symbol operands
-; rewritten by _emit_subst_text) followed by CR+LF.
-_emit_expand_buf:
-	push	fp
-	push	r1
-	push	r2
-	mov	fp,sp
-
-	la	r0,198688
-	push	r0
-	la	r0,_emit_subst_text
-	jal	r1,(r0)
-	add	sp,3
-
-	mov	sp,fp
 	pop	r2
 	pop	r1
 	pop	fp
@@ -7599,11 +8165,20 @@ ls_ret:
 
 ; _cond_push: Push state onto cond stack, increment depth.
 ; Arg on stack: state (0=include, 1=skip)
+; Inside a skipped region the state is 2 (skipped by an enclosing
+; conditional), which ELSEASM leaves alone.
 _cond_push:
 	push	fp
 	push	r2
 	push	r1
 	mov	fp,sp
+	la	r0,_cond_top
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_cp_state
+	lc	r0,2
+	sw	r0,9(fp)
+_cp_state:
 	lw	r0,9(fp)
 	la	r1,787707
 	lw	r2,0(r1)
@@ -7778,19 +8353,59 @@ hinf_do_push:
 	pop	fp
 	jmp	(r1)
 
-; _handle_ifeq: IFEQ name,value -- include if symbol value == literal.
+; _cond_lhs_value: Value of the first operand of IFEQ/IFNE in the line
+; buffer: an expression (a symbol, or a number such as a substituted &SYSNARG).
+; Undefined symbols count as 0 and are not reported to HLDIAG.
+; Returns: r0 = value
+_cond_lhs_value:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	la	r0,196608
+	push	r0
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+_clv_kw:
+	lbu	r0,0(r2)
+	push	r0
+	la	r0,_is_alpha
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_clv_kw_end
+	add	r2,1
+	bra	_clv_kw
+_clv_kw_end:
+	push	r2
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	push	r0
+	la	r0,1
+	push	r0
+	la	r0,_eval_full
+	jal	r1,(r0)
+	add	sp,6
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _handle_ifeq: IFEQ expr,value -- include if the two values are equal.
 _handle_ifeq:
 	push	fp
 	push	r2
 	push	r1
 	mov	fp,sp
 	add	sp,-3
-	la	r0,_extract_kw_arg
+	la	r0,_cond_lhs_value
 	jal	r1,(r0)
-	la	r0,_lookup_symbol
-	jal	r1,(r0)
-	la	r1,786594
-	lw	r0,0(r1)
 	sw	r0,-3(fp)
 	la	r0,_parse_cond_value
 	jal	r1,(r0)
@@ -7812,19 +8427,15 @@ hieq_push:
 	pop	fp
 	jmp	(r1)
 
-; _handle_ifne: IFNE name,value -- opposite of IFEQ.
+; _handle_ifne: IFNE expr,value -- opposite of IFEQ.
 _handle_ifne:
 	push	fp
 	push	r2
 	push	r1
 	mov	fp,sp
 	add	sp,-3
-	la	r0,_extract_kw_arg
+	la	r0,_cond_lhs_value
 	jal	r1,(r0)
-	la	r0,_lookup_symbol
-	jal	r1,(r0)
-	la	r1,786594
-	lw	r0,0(r1)
 	sw	r0,-3(fp)
 	la	r0,_parse_cond_value
 	jal	r1,(r0)
@@ -13395,6 +14006,21 @@ _err_div_zero:
 _err_bad_escape:
 	.byte	117,110,107,110,111,119,110,32,101,115,99,97,112,101,32,105,110,32,115,116,114,105,110,103,32,111,114,32,99,104,97,114,97,99,116,101,114,32,108,105,116,101,114,97,108,0
 
+_err_mac_deep:
+	.byte	109,97,99,114,111,32,99,97,108,108,115,32,110,101,115,116,101,100,32,100,101,101,112,101,114,32,116,104,97,110,32,56,0
+
+_err_arg_full:
+	.byte	109,111,114,101,32,116,104,97,110,32,49,54,32,109,97,99,114,111,32,97,114,103,117,109,101,110,116,115,0
+
+_err_def_long:
+	.byte	109,97,99,114,111,32,112,97,114,97,109,101,116,101,114,32,100,101,102,97,117,108,116,32,108,111,110,103,101,114,32,116,104,97,110,32,54,51,32,99,104,97,114,97,99,116,101,114,115,0
+
+_sysndx_txt:
+	.byte	83,89,83,78,68,88,0
+
+_sysnarg_txt:
+	.byte	83,89,83,78,65,82,71,0
+
 _w_byte_txt:
 	.byte	46,98,121,116,101,0
 
@@ -13561,6 +14187,10 @@ _kw_endifasm:
 ;                    _handle_equ and _set_symbol (260 each)
 ; 0x034000 (212992)  XREF symbol names: 512 x 32 bytes
 ; 0x038000 (229376)  HLDIAG undefined-symbol names: 64 x 32 bytes
+; 0x039000 (233472)  macro expansion frames: 8 x 64 bytes, depth at 790719
+;                    (see "Macro expansion stack")
+; 0x039200 (233984)  argument strings per frame: 8 x 512 bytes
+; 0x03A200 (238080)  parameter defaults while parsing a MACRO line: 16 x 64
 ; 0x038800 (231424)  XREF macro expansion counters: 256 x 3 bytes (cleared
 ;                    at each pass start)
 ; 0x0C0000 (786432)  arena of counters and source state (4700 bytes, cleared

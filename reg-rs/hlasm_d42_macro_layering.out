@@ -1,0 +1,104 @@
+Loaded 1261 bytes from 'demos/d42_macro_layering.bin' at 0x080000
+; Demo 42: macro layering -- macros that call macros, directives and
+; structured IF inside macro bodies, default and keyword parameters, and a
+; body that adapts to its argument count (&SYSNARG). Assembled and run on
+; cor24-emu this prints "Hi!***-7Vok." (see hlasm_d42_macro_layering_run).
+
+; PUTC: print the character in register &R (r0 when omitted)
+
+; PUTCH: load a character constant and print it (calls PUTC)
+
+; PUTS: print one to three characters; the body depends on the argument count
+
+; REPC: print &C &N times (once by default), by calling itself
+
+; MAX: &D = larger of &D and &S (signed), with a structured IF in the body
+
+; TRACE: print &C only when VERBOSE is defined
+
+ la r2,-65280
+ lc r0,72
+L0003:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0003
+ sb r0,0(r2)
+ lc r0,105
+L0005:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0005
+ sb r0,0(r2)
+ lc r0,33
+L0007:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0007
+ sb r0,0(r2)
+ lc r0,42
+L0010:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0010
+ sb r0,0(r2)
+ lc r0,42
+L0013:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0013
+ sb r0,0(r2)
+ lc r0,42
+L0016:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0016
+ sb r0,0(r2)
+ lc r0,45
+L0020:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0020
+ sb r0,0(r2)
+ lc r0,3
+ lc r1,7
+ cls r0,r1
+ brt _hlif_3_skip
+ bra _hlif_1_false
+_hlif_3_skip:
+ mov r0,r1
+_hlif_1_false:
+_hlif_2_end:
+ add r0,48
+L0023:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0023
+ sb r0,0(r2)
+ lc r0,86
+L0026:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0026
+ sb r0,0(r2)
+ lc r0,111
+L0029:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0029
+ sb r0,0(r2)
+ lc r0,107
+L0031:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0031
+ sb r0,0(r2)
+ lc r0,46
+L0034:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0034
+ sb r0,0(r2)
+halt:
+ bra halt
+
+Executed 2021248 instructions

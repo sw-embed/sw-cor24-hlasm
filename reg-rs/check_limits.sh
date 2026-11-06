@@ -100,6 +100,22 @@ gen_expand() {
     printf 'MACRO EX &A\n nop ;&A\nMEND\nEX %s\n' "$(rep $(( $1 - 6 )) y)"
 }
 
+# Macro call depth <n>: R calls itself until &N is 1.
+gen_macdepth() {
+    printf 'MACRO R &N\nIFNE &N,1\n R &N-1\nENDIFASM\n nop ;&N\nMEND\nR %d\n' "$1"
+}
+
+gen_args() {
+    local i
+    local call=""
+    for ((i = 1; i <= $1; i++)); do call="$call${call:+,}$i"; done
+    printf 'MACRO AR\n nop ;&SYSNARG\nMEND\nAR %s\n' "$call"
+}
+
+gen_default() {
+    printf 'MACRO DF &X=%s\n nop ;&X\nMEND\nDF\n' "$(rep "$1" z)"
+}
+
 gen_cond() {
     local i
     printf 'SET ON,1\n'
@@ -154,6 +170,9 @@ case "${1:-}" in
     parmname) case_pair parmname 31 32 400000 ;;
     pool)     case_pair pool 261 262 60000000 ;;
     expand)   case_pair expand 256 257 400000 ;;
+    macdepth) case_pair macdepth 8 9 2000000 ;;
+    args)     case_pair args 16 17 800000 ;;
+    default)  case_pair default 63 64 400000 ;;
     cond)     case_pair cond 32 33 2000000 ;;
     if)       case_pair if 32 33 4000000 ;;
     do)       case_pair do 32 33 4000000 ;;
@@ -173,7 +192,7 @@ case "${1:-}" in
             "$(grep -o '_hlif_[0-9]*_' "$WORK/labels_400.txt" | tr -dc '0-9\n' | sort -n | tail -1)"
         ;;
     *)
-        echo "Usage: $0 line|symname|symbols|macname|macros|params|parmname|pool|expand|cond|if|do|select|labels"
+        echo "Usage: $0 line|symname|symbols|macname|macros|params|parmname|pool|expand|macdepth|args|default|cond|if|do|select|labels"
         exit 1
         ;;
 esac

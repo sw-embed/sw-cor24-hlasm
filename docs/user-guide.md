@@ -281,11 +281,81 @@ Output:
 - `\@` expands to a number unique to each expansion (`0001`, `0002`, ...),
   so a label like `L\@:` inside a macro is distinct every time the macro is
   used (see `PUTC` above).
-- A missing argument expands to nothing.
+- A missing argument expands to nothing, unless the parameter has a default.
 - Symbols in a macro's output are substituted like any other line, so
   `PUTC 'H'` produces `lc r0,72`.
-- Arguments are separated by commas; an argument ends at a comma, blank or
-  end of line.
+- Arguments are separated by commas; an argument ends at a comma, blank,
+  `;` or end of line, except inside quotes or parentheses, so `','`, `' '`
+  and `(a,b)` are single arguments.
+
+### Defaults and keyword arguments
+
+`&name=value` in the header gives a parameter a default (at most 63
+characters). At the call, `name=value` sets a parameter by name, in any
+order and mixed with positional arguments. An omitted or empty argument
+takes the default:
+
+```
+MACRO REPC &C,&N=1
+...
+MEND
+ REPC '-'            ; N is 1
+ REPC '*',3
+ REPC N=2,C='+'
+```
+
+### Macros that call macros, and directives in bodies
+
+Each expanded line goes back through hlasm like a source line. A body can
+call other macros, call itself, and use `SET`, `EQU`, `IFDEF`/`IFEQ`/`IFNE`,
+structured `IF`/`DO`/`SELECT` and the data directives. Two names help bodies
+adapt to their call:
+
+- `&SYSNARG` is the number of positional arguments given;
+- `&SYSNDX` is the expansion number, the same as `\@`.
+
+This example is from demo d42 (`demos/d42_macro_layering.hlasm`):
+
+```
+MACRO PUTCH &C
+ lc r0,&C
+ PUTC
+MEND
+
+; PUTS: print one to three characters
+MACRO PUTS &A,&B,&C
+ PUTCH &A
+IFNE &SYSNARG,1
+ PUTCH &B
+IFNE &SYSNARG,2
+ PUTCH &C
+ENDIFASM
+ENDIFASM
+MEND
+
+; REPC: print &C &N times, by calling itself
+MACRO REPC &C,&N=1
+IFNE &N,0
+ PUTCH &C
+ REPC &C,&N-1
+ENDIFASM
+MEND
+
+; MAX: &D = larger of &D and &S
+MACRO MAX &D,&S
+IF cc_lt, &D, &S
+ mov &D,&S
+ENDIF
+MEND
+```
+
+`PUTS 'H','i','!'` expands `PUTCH` three times, and each `PUTCH` expands
+`PUTC`. `REPC '*',3` expands to three `PUTCH '*'` calls and stops when `&N`
+evaluates to 0. `MAX S=r1,D=r0` uses keyword arguments.
+
+Macro calls can be nested 8 deep, counting every call still being expanded
+(a recursive macro can call itself 7 times). A macro definition (`MACRO` ...
+`MEND`) cannot appear inside a macro body.
 
 ## Conditional assembly
 
@@ -319,12 +389,13 @@ Output:
 |---|---|
 | `IFDEF name` | the symbol is defined and not 0 |
 | `IFNDEF name` | the symbol is not defined |
-| `IFEQ name,expr` | the symbol's value equals the expression |
-| `IFNE name,expr` | the symbol's value differs from the expression |
+| `IFEQ expr,expr` | the two values are equal (an undefined symbol counts as 0) |
+| `IFNE expr,expr` | the two values differ |
 | `ELSEASM` | the preceding condition was false |
 | `ENDIFASM` | ends the block |
 
-Blocks nest up to 32 deep.
+Blocks nest up to 32 deep. Everything inside a skipped block is skipped,
+including nested blocks whose own condition is true.
 
 ## Structured control flow
 
@@ -602,6 +673,9 @@ line; nothing is silently truncated.
 | Parameter name | 31 characters | `macro parameter name longer than 31 characters` |
 | All macro bodies | 64 KB | `macro body pool overflow (65536 bytes)` |
 | Expanded macro line | 256 characters | `expanded macro line longer than 256 characters` |
+| Macro call nesting | 8 | `macro calls nested deeper than 8` |
+| Macro arguments | 16 | `more than 16 macro arguments` |
+| Parameter default | 63 characters | `macro parameter default longer than 63 characters` |
 | Conditional nesting | 32 | `conditional assembly nested deeper than 32` |
 | IF / DO / SELECT nesting | 32 each | `IF nested deeper than 32` (and DO, SELECT) |
 | Division | non-zero divisor | `division by zero in expression` |
@@ -620,10 +694,6 @@ Values are 24-bit and wrap like COR24 arithmetic. Structured labels and
 
 These are planned (see `docs/limits-and-lifting-plan.md` for the schedule):
 
-- **Macros calling macros, and directives inside macro bodies.** A macro
-  body is expanded as text: a macro name or `IF`/`IFDEF` inside a body is
-  copied to the output rather than processed.
-- **Default and keyword parameters** (`&V=5`, `NAME=value`).
 - **More include members**: a source set can name 3 members with names of
   up to 8 characters, and error messages do not yet name the member and
   line.

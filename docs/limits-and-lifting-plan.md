@@ -2,7 +2,8 @@
 
 Status: audit complete (2026-10-31, tinyc-macro-ports saga step 2). Step 3
 fixed D1-D3 and D7; step 4 lifted the table limits (see "Now" below); step 5
-added M1 (EQU in operands), M4 (expressions) and D6 (string escapes).
+added M1 (EQU in operands), M4 (expressions) and D6 (string escapes);
+step 6 added L10, M2 and M3 (macro layering) and fixed D5 and D12.
 The remaining lifts are scheduled as saga steps (see "Schedule").
 
 This document records every capacity limit and known defect in `hlasm.s`,
@@ -72,7 +73,7 @@ each has a reg-rs test (`hlasm_limit_*`) at the limit and one past it.
 | L7 | Positional params | `&1`-`&9` | - | missing argument gives empty | - | unchanged |
 | L8 | Macro body pool | 1,023 B **total** | none | truncated; empty at about 1,160 B | macro library (fatal today) | **64 KB, ERROR** |
 | L9 | Expansion buffer | 129 B | none | 132 B corrupts `\@`; 140 B or more swallows the rest of the source | long macro lines | **expanded lines up to 256 chars (1 KB buffer), ERROR** |
-| L10 | Nested macro calls | not supported | - | inner call emitted raw | library layering (PUTS calls PUTC), plsw B5 | step 6 (macro-layering) |
+| L10 | Nested macro calls | not supported | - | inner call emitted raw | library layering (PUTS calls PUTC), plsw B5 | **8 calls deep (recursion allowed), ERROR**; 16 arguments per call, ERROR |
 | L11 | `\@` counter | 0001-9999 | none | `L:000` (invalid label) | self-host | **4 digits zero-padded, wider past 9999** (unique; existing outputs unchanged) |
 | L12 | Cond-asm stack | 8 x 3 B | none | overwrites the src-return stack; at 9 levels inside an INCLUDE the rest of the parent file is lost | plsw B3 | **32, ERROR** |
 | L13 | IF / DO / SELECT depth | 8 each | silent | opener dropped, body emitted unconditionally | plsw B3 | **32 each, ERROR** |
@@ -96,21 +97,22 @@ each has a reg-rs test (`hlasm_limit_*`) at the limit and one past it.
 | D2 | A compare with `r2` on the left emitted `ceq r2,r1`; only `ceq r1,r2` (and r0 pairs) is encodable | d26 assembly check | **fixed (step 3):** `_emit_inst2` swaps `ceq` register operands into ascending order |
 | D3 | `0b` literals reached `lc` unconverted (`lc r2,0b10`) | d32 assembly check | **fixed (step 3):** `_emit_inst2` emits a `0b` second operand in decimal (via `_emit_dec24`, so 0-999 until step 4 widens it) |
 | D4 | SET symbols of 6 or more chars silently failed (L2) | d32 golden | **fixed (step 4):** 31-char names; d18, d20, d32, d34 and d35 now emit the blocks their long-named symbols select (d18 and d20 had been emitting nothing) |
-| D5 | Default params `&V=5` store the name as `V=5`; `&V` then expands to empty even when an argument is passed | audit B6 | parse `=default` (see M2) |
+| D5 | Default params `&V=5` store the name as `V=5`; `&V` then expands to empty even when an argument is passed | audit B6 | **fixed (step 6):** the name ends at `=`; the default (at most 63 chars, ERROR beyond) is kept in the macro header (see M2) |
 | D6 | `\xNN` string escape gave `x`,`N`,`N`; unknown escapes dropped the backslash | audit G4 | **fixed (step 5):** `\xNN`, `\\`, `\"`, `\'` added; unknown escapes and bad hex digits stop with an ERROR |
 | D7 | The demos' own fake source lines (`sub r0,r0`, `xor r0,r0`, `shl r0,1`, `sub r0,1`, undefined `_body`) | `check_structured_asm.sh` | **fixed (steps 3-4)** in the structured demos: rewritten as `lc r0,0`, `shl r0,r1`, `add r0,-1`, `nop`; every structured demo now assembles. The non-structured demos d05, d07 and d10 still contain `sub r0,1` (not checked by the assembler test) |
 | D8 | Docs were stale: the arena spans 0xC0000-0xC125B (4,700 B), not 0xC055E; the main buffer is 32,767 B, not 4,096 | audit | **fixed (step 4):** `hlasm.s` header and `docs/bootstrap.md` updated |
 | D9 | An indented macro call (` PUTC r0`) passed the macro name as the first argument | found writing d41 | **fixed (step 5):** `_get_arg_start` skips the indentation like `_lookup_macro` |
 | D10 | IF/DOEXIT/WHEN compares with a constant outside -128..127 emitted an invalid `lc` | found writing d41 | **fixed (step 5):** `_emit_inst2` loads such constants with `la` |
 | D11 | cor24-asm rejects label arithmetic in `.word` (`.word mark+3` in d33 passes through hlasm but has never been assembled) | found writing d41 | open: an assembler limitation, not hlasm; d33 only checks hlasm's text |
+| D12 | A conditional nested inside a skipped conditional was evaluated on its own, so a true inner IFDEF/IFEQ/IFNE (or an ELSEASM) turned output back on inside the skipped block | found writing d42 | **fixed (step 6):** a conditional pushed inside a skipped region gets state 2 (skipped by its parent), which ELSEASM does not flip |
 
 ## Language gaps
 
 | # | Gap | Today | Needed by | Plan |
 |---|---|---|---|---|
 | M1 | Symbol values in operands (EQU) | SET drove conditionals only | ports (named constants, MMIO addresses), plsw | **done (step 5):** in instruction, `.byte` and `.word` operands (source and macro expansions) and IF/DOEXIT/WHEN compares, an operand whose identifiers are all SET/EQU symbols and that has something to compute is emitted as its decimal value; in `d(reg)` only `d` is rewritten. Registers, labels and plain literals pass through unchanged. Syntax stays HLASM-style `name EQU expr` (and `SET name,expr`) |
-| M2 | Default and keyword params (B6) | broken (D5) | library macros with optional args | `&V=5` header syntax; keyword args `V=7` at the call |
-| M3 | Directives inside macro bodies (B5) | bodies are raw text | library macros that vary with argument count or target | re-feed expanded lines through the line processor (which also gives L10) |
+| M2 | Default and keyword params (B6) | broken (D5) | library macros with optional args | **done (step 6):** `&V=5` in the header; at the call `V=7` sets parameter V by name, in any order with positional arguments; an omitted or empty argument takes the default. Arguments may contain commas and blanks inside quotes or parentheses (`','`, `' '`, `(a,b)`) |
+| M3 | Directives inside macro bodies (B5) | bodies are raw text | library macros that vary with argument count or target | **done (step 6):** a call pushes an expansion frame (depth 8) and `_read_line` feeds the substituted body lines back through the line processor, so bodies may hold macro calls (L10), SET/EQU, conditional assembly, structured IF/DO/SELECT and data directives. `&SYSNARG` gives the positional argument count and `&SYSNDX` the expansion number (same as `\@`); IFEQ/IFNE now take an expression as their first operand, so `IFNE &SYSNARG,1` works |
 | M4 | Expressions (G2) | `+` and `-` only; `*`, `/`, `<<`, `( )`, `'A'` gave 0 | table offsets, sizes | **done (step 5):** `\| ^ & << >> + - * / %` with C precedence, unary `- ~ +`, `( )`, `'c'` literals; `>>` is arithmetic, `/` and `%` truncate toward zero, division by zero is an ERROR |
 | M5 | Compound conditions (G1) | extra terms silently ignored | plsw | `IF cc_eq,r0,1,AND,cc_ne,r1,2` lowered as short-circuit branches; error on malformed input |
 | M6 | DSECT / FIELD (G3) | passes through raw | plsw records, services control blocks | `DSECT name` / `FIELD name,size` / `DEND` defining offset symbols via M1 |
@@ -141,6 +143,11 @@ Step 5 added operand evaluation on every instruction line, about 8-20%:
 d01 126,601 to 136,366, d31 1,886,538 to 2,106,813. A fast path for plain
 register and literal operands is the obvious first optimization.
 
+Step 6 sends expanded macro lines through the whole line processor instead
+of printing them directly, so macro-heavy sources cost more; plain lines are
+unchanged: d01 136,366 to 136,398, d15 176,001 to 191,561, d31 2,106,813 to
+2,299,745, d16 392,620 to 447,994 (its test budget was raised to 1M).
+
 
 Cheap wins, scheduled after correctness:
 - skip the sizer's work for comment-only lines in pass 1;
@@ -166,6 +173,9 @@ is in the "Runtime memory map" comment in `hlasm.s`.
 | 0x034000-0x037FFF | XREF symbol names: 512 x 32 B |
 | 0x038000-0x0387FF | HLDIAG undefined-symbol names: 64 x 32 B |
 | 0x038800-0x038AFF | XREF macro expansion counters: 256 x 3 B (cleared at each pass start) |
+| 0x039000-0x0391FF | macro expansion frames: 8 x 64 B (body pointer and end, `\@` number, argument count, 16 argument pointers); depth at 790719 in the arena (step 6) |
+| 0x039200-0x03A1FF | argument strings of each frame: 8 x 512 B (step 6) |
+| 0x03A200-0x03A5FF | parameter defaults while a MACRO header is parsed: 16 x 64 B (step 6) |
 | 0x07F000 | source config block (unchanged until step 7) |
 | 0x080000-0x0BFFFF | source buffers |
 | 0x0C0000-0x0C125B | arena: counters, source descriptors, source-return stack (cleared at each pass start) |
@@ -291,9 +301,9 @@ In this saga (tinyc-macro-ports), inserted after step 2:
      policy, add limit + 1 tests, and remove the dead legacy tables.
 3. **equ-and-expressions** (saga step 5, done): M1 (EQU and operand substitution), M4
    (expression evaluator), D6 (`\xNN`).
-4. **macro-layering** (saga step 6): L10 and M3 (re-feed expansions through the line
+4. **macro-layering** (saga step 6, done): L10 and M3 (re-feed expansions through the line
    processor: nested calls and directives in bodies), M2 and D5
-   (default and keyword params).
+   (default and keyword params), D12 (nested conditionals in skipped blocks).
 5. **include-capacity-and-diagnostics** (saga step 7): L19-L21 (new config layout, 32
    members, 15-char names) and M7 (member:line in errors).
 

@@ -1,13 +1,13 @@
-Loaded 20697 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.fAOveWfDGk/hlasm.lgo
+Loaded 21788 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.vccAr1usmx/hlasm.lgo
 Loaded 106 bytes from 'demos/d07_nested_cond.bin' at 0x080000
-[UART TX @ 146223] ' '  (0x20)
-[UART TX @ 146223] 'n'  (0x6E)
-[UART TX @ 146223] 'o'  (0x6F)
-[UART TX @ 146223] 'p'  (0x70)
-[UART TX @ 146223] ''  (0x0D)
-[UART TX @ 146223] '\n'
+[UART TX @ 146439] ' '  (0x20)
+[UART TX @ 146439] 'n'  (0x6E)
+[UART TX @ 146439] 'o'  (0x6F)
+[UART TX @ 146439] 'p'  (0x70)
+[UART TX @ 146439] ''  (0x0D)
+[UART TX @ 146439] '\n'
 
 UART output:  nop
 
 
-Executed 146223 instructions
+Executed 146439 instructions

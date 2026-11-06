@@ -1,0 +1,2 @@
+args_at_16: ok, 1 output lines, last:  nop ;16
+args_over_17: ERROR: more than 16 macro arguments

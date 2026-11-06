@@ -14,7 +14,10 @@ every feature with examples, limits and error messages).
 - Named constants and expressions: `EQU`, `SET`, `* / % << >> & | ^ ~ ( )`,
   character literals; values are substituted into instruction and data
   operands (cor24-asm has no EQU)
-- Macros with named and positional parameters and `\@` local labels
+- Macros with named, positional, default and keyword parameters and `\@`
+  local labels; macros can call macros (8 deep, recursion allowed), and
+  bodies can use conditional assembly, structured statements and
+  `&SYSNARG` (argument count)
 - Conditional assembly: `IFDEF`, `IFNDEF`, `IFEQ`, `IFNE`, `ELSEASM`
 - Structured control flow: IF/ELSEIF/ELSE/ENDIF, DO/DOEXIT/ITERATE/ENDDO,
   SELECT/WHEN/OTHERWISE/ENDSEL, with automatic long-range jumps
@@ -23,8 +26,8 @@ every feature with examples, limits and error messages).
 - Multi-file sources: `INCLUDE` / `COPY` members through source sets
 - Optional annotations, listing, cross-reference and diagnostics
 - Plain assembly passthrough; checked limits that stop with `ERROR:`
-- Planned: nested macro calls, directives inside macro bodies, default
-  parameters (see docs/limits-and-lifting-plan.md)
+- Planned: more include members and member:line in errors, compound
+  conditions, DSECT (see docs/limits-and-lifting-plan.md)
 
 ## Opt-in Source Switches
 
