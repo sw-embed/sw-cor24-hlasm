@@ -6,12 +6,25 @@ source and produces plain COR24 assembly output via UART.
 
 Part of the [COR24 ecosystem](https://github.com/sw-embed/sw-cor24-project).
 
-## Features (Planned)
+## Features
 
-- Structured control flow: IF/ELSEIF/ELSE/ENDIF, DO/ENDDO, SELECT/ENDSEL
-- Real macros with parameters, defaults, and local labels
-- Conditional assembly: IFDEF, IFEQ, SET symbols
-- Plain assembly passthrough
+**How to use it: [docs/user-guide.md](docs/user-guide.md)** (setup, running,
+every feature with examples, limits and error messages).
+
+- Named constants and expressions: `EQU`, `SET`, `* / % << >> & | ^ ~ ( )`,
+  character literals; values are substituted into instruction and data
+  operands (cor24-asm has no EQU)
+- Macros with named and positional parameters and `\@` local labels
+- Conditional assembly: `IFDEF`, `IFNDEF`, `IFEQ`, `IFNE`, `ELSEASM`
+- Structured control flow: IF/ELSEIF/ELSE/ENDIF, DO/DOEXIT/ITERATE/ENDDO,
+  SELECT/WHEN/OTHERWISE/ENDSEL, with automatic long-range jumps
+- Data conveniences: `.ascii`, `.asciz` (with `\xNN` escapes), `.space`,
+  `.fill`
+- Multi-file sources: `INCLUDE` / `COPY` members through source sets
+- Optional annotations, listing, cross-reference and diagnostics
+- Plain assembly passthrough; checked limits that stop with `ERROR:`
+- Planned: nested macro calls, directives inside macro bodies, default
+  parameters (see docs/limits-and-lifting-plan.md)
 
 ## Opt-in Source Switches
 

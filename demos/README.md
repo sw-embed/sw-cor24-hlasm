@@ -48,6 +48,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d38 | HLDIAG unknown mnemonic | WORKS |
 | d39 | HLDIAG undefined symbol | WORKS |
 | d40 | Long-range structured jumps (far form + trampoline) | WORKS |
+| d41 | EQU constants, expressions, symbols in operands (prints CA4Y2! when run) | WORKS |
 
 ## Demo Policy
 
@@ -147,8 +148,10 @@ SET BITS,0b101010
 SET SAME,2Ah
 ```
 
-Small assembly-time symbol arithmetic is also supported for `SET`, `EQU`,
-`IFEQ`, and `IFNE`:
+Assembly-time expressions (`| ^ & << >> + - * / %`, unary `- ~`, parentheses,
+character literals; see docs/user-guide.md) work in `SET`, `EQU`,
+`IFEQ`, `IFNE`, structured compares, and instruction/.byte/.word operands,
+where symbol expressions are replaced by their decimal values (demo d41):
 ```
 MASK EQU 0x20
 STEP EQU 2
@@ -331,7 +334,7 @@ SELECT r0
     WHEN 1
         add r2,1
     OTHERWISE
-        add r3,1
+        lc r1,0
 ENDSEL
 ```
 

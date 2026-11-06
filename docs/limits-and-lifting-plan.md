@@ -1,7 +1,8 @@
 # hlasm Limits and Lifting Plan
 
 Status: audit complete (2026-10-31, tinyc-macro-ports saga step 2). Step 3
-fixed D1-D3 and D7; step 4 lifted the table limits (see "Now" below).
+fixed D1-D3 and D7; step 4 lifted the table limits (see "Now" below); step 5
+added M1 (EQU in operands), M4 (expressions) and D6 (string escapes).
 The remaining lifts are scheduled as saga steps (see "Schedule").
 
 This document records every capacity limit and known defect in `hlasm.s`,
@@ -96,18 +97,21 @@ each has a reg-rs test (`hlasm_limit_*`) at the limit and one past it.
 | D3 | `0b` literals reached `lc` unconverted (`lc r2,0b10`) | d32 assembly check | **fixed (step 3):** `_emit_inst2` emits a `0b` second operand in decimal (via `_emit_dec24`, so 0-999 until step 4 widens it) |
 | D4 | SET symbols of 6 or more chars silently failed (L2) | d32 golden | **fixed (step 4):** 31-char names; d18, d20, d32, d34 and d35 now emit the blocks their long-named symbols select (d18 and d20 had been emitting nothing) |
 | D5 | Default params `&V=5` store the name as `V=5`; `&V` then expands to empty even when an argument is passed | audit B6 | parse `=default` (see M2) |
-| D6 | `\xNN` string escape gives `x`,`N`,`N`; unknown escapes drop the backslash | audit G4 | add `\xNN`; error on unknown escapes |
+| D6 | `\xNN` string escape gave `x`,`N`,`N`; unknown escapes dropped the backslash | audit G4 | **fixed (step 5):** `\xNN`, `\\`, `\"`, `\'` added; unknown escapes and bad hex digits stop with an ERROR |
 | D7 | The demos' own fake source lines (`sub r0,r0`, `xor r0,r0`, `shl r0,1`, `sub r0,1`, undefined `_body`) | `check_structured_asm.sh` | **fixed (steps 3-4)** in the structured demos: rewritten as `lc r0,0`, `shl r0,r1`, `add r0,-1`, `nop`; every structured demo now assembles. The non-structured demos d05, d07 and d10 still contain `sub r0,1` (not checked by the assembler test) |
 | D8 | Docs were stale: the arena spans 0xC0000-0xC125B (4,700 B), not 0xC055E; the main buffer is 32,767 B, not 4,096 | audit | **fixed (step 4):** `hlasm.s` header and `docs/bootstrap.md` updated |
+| D9 | An indented macro call (` PUTC r0`) passed the macro name as the first argument | found writing d41 | **fixed (step 5):** `_get_arg_start` skips the indentation like `_lookup_macro` |
+| D10 | IF/DOEXIT/WHEN compares with a constant outside -128..127 emitted an invalid `lc` | found writing d41 | **fixed (step 5):** `_emit_inst2` loads such constants with `la` |
+| D11 | cor24-asm rejects label arithmetic in `.word` (`.word mark+3` in d33 passes through hlasm but has never been assembled) | found writing d41 | open: an assembler limitation, not hlasm; d33 only checks hlasm's text |
 
 ## Language gaps
 
 | # | Gap | Today | Needed by | Plan |
 |---|---|---|---|---|
-| M1 | Symbol values in operands (EQU) | SET drives conditionals only | ports (named constants, MMIO addresses), plsw | `EQU name,expr` and SET values substituted for whole-word identifiers in operand fields, emitted as decimal literals |
+| M1 | Symbol values in operands (EQU) | SET drove conditionals only | ports (named constants, MMIO addresses), plsw | **done (step 5):** in instruction, `.byte` and `.word` operands (source and macro expansions) and IF/DOEXIT/WHEN compares, an operand whose identifiers are all SET/EQU symbols and that has something to compute is emitted as its decimal value; in `d(reg)` only `d` is rewritten. Registers, labels and plain literals pass through unchanged. Syntax stays HLASM-style `name EQU expr` (and `SET name,expr`) |
 | M2 | Default and keyword params (B6) | broken (D5) | library macros with optional args | `&V=5` header syntax; keyword args `V=7` at the call |
 | M3 | Directives inside macro bodies (B5) | bodies are raw text | library macros that vary with argument count or target | re-feed expanded lines through the line processor (which also gives L10) |
-| M4 | Expressions (G2) | `+` and `-` only; `*`, `/`, `<<`, `( )`, `'A'` give 0 | table offsets, sizes | precedence-climbing evaluator: `* / % << >> & \| ( )` and character literals |
+| M4 | Expressions (G2) | `+` and `-` only; `*`, `/`, `<<`, `( )`, `'A'` gave 0 | table offsets, sizes | **done (step 5):** `\| ^ & << >> + - * / %` with C precedence, unary `- ~ +`, `( )`, `'c'` literals; `>>` is arithmetic, `/` and `%` truncate toward zero, division by zero is an ERROR |
 | M5 | Compound conditions (G1) | extra terms silently ignored | plsw | `IF cc_eq,r0,1,AND,cc_ne,r1,2` lowered as short-circuit branches; error on malformed input |
 | M6 | DSECT / FIELD (G3) | passes through raw | plsw records, services control blocks | `DSECT name` / `FIELD name,size` / `DEND` defining offset symbols via M1 |
 | M7 | Diagnostics (G6) | no file or line context; overflows silent | everyone | `ERROR: <member>:<line>: <message>` on the UART, and a non-zero `HLDIAG` count |
@@ -132,6 +136,11 @@ hlasm's 12K lines. That is acceptable at `--speed 0` with plsw-style budgets
 Step 4 added about 10K instructions of fixed cost per run (clearing the
 work area and the larger relax flag tables at pass start): d01 went from
 116,864 to 126,601 and d31 from 1,867,549 to 1,886,538.
+
+Step 5 added operand evaluation on every instruction line, about 8-20%:
+d01 126,601 to 136,366, d31 1,886,538 to 2,106,813. A fast path for plain
+register and literal operands is the obvious first optimization.
+
 
 Cheap wins, scheduled after correctness:
 - skip the sizer's work for comment-only lines in pass 1;
@@ -280,7 +289,7 @@ In this saga (tinyc-macro-ports), inserted after step 2:
    - L1, L2, L4, L6, L8, L9, L11-L17, L22-L24, D4, D8.
    - Move the tables to the new memory map, add the `_fatal` overflow
      policy, add limit + 1 tests, and remove the dead legacy tables.
-3. **equ-and-expressions** (saga step 5): M1 (EQU and operand substitution), M4
+3. **equ-and-expressions** (saga step 5, done): M1 (EQU and operand substitution), M4
    (expression evaluator), D6 (`\xNN`).
 4. **macro-layering** (saga step 6): L10 and M3 (re-feed expansions through the line
    processor: nested calls and directives in bodies), M2 and D5
