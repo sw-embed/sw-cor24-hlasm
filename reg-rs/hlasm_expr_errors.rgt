@@ -1,0 +1,4 @@
+command = "bash reg-rs/check_expr_errors.sh 2>&1"
+timeout = 60
+exit_code = 0
+desc = "Division by zero and bad string/char escapes stop with ERROR; valid hex escapes work"

@@ -1,43 +1,11 @@
-Loaded 18576 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.P06Pb7hmTm/hlasm.lgo
+Loaded 20697 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.LmqI4mKKJE/hlasm.lgo
 Loaded 84 bytes from 'demos/d09_comments.bin' at 0x080000
-[UART TX @ 140000] 'n'  (0x6E)
-[UART TX @ 140000] 'o'  (0x6F)
-[UART TX @ 140000] 'p'  (0x70)
-[UART TX @ 140000] ''  (0x0D)
-[UART TX @ 140000] '\n'
-[UART TX @ 150000] ';'  (0x3B)
-[UART TX @ 150000] ' '  (0x20)
-[UART TX @ 150000] 't'  (0x74)
-[UART TX @ 150000] 'h'  (0x68)
-[UART TX @ 150000] 'i'  (0x69)
-[UART TX @ 150000] 's'  (0x73)
-[UART TX @ 150000] ' '  (0x20)
-[UART TX @ 150000] 'i'  (0x69)
-[UART TX @ 150000] 's'  (0x73)
-[UART TX @ 150000] ' '  (0x20)
-[UART TX @ 150000] 'a'  (0x61)
-[UART TX @ 150000] ' '  (0x20)
-[UART TX @ 150000] 'c'  (0x63)
-[UART TX @ 150000] 'o'  (0x6F)
-[UART TX @ 150000] 'm'  (0x6D)
-[UART TX @ 150000] 'm'  (0x6D)
-[UART TX @ 150000] 'e'  (0x65)
-[UART TX @ 150000] 'n'  (0x6E)
-[UART TX @ 150000] 't'  (0x74)
-[UART TX @ 150000] ''  (0x0D)
-[UART TX @ 150000] '\n'
-[UART TX @ 150000] ' '  (0x20)
-[UART TX @ 150000] 'a'  (0x61)
-[UART TX @ 150000] 'd'  (0x64)
-[UART TX @ 150000] 'd'  (0x64)
-[UART TX @ 150000] ' '  (0x20)
-[UART TX @ 150000] 'r'  (0x72)
-[UART TX @ 150000] '0'  (0x30)
-[UART TX @ 150000] ','  (0x2C)
-[UART TX @ 150000] '1'  (0x31)
-[UART TX @ 150000] ''  (0x0D)
-[UART TX @ 150000] '\n'
-[UART TX @ 160000] '#'  (0x23)
+[UART TX @ 160000] 'n'  (0x6E)
+[UART TX @ 160000] 'o'  (0x6F)
+[UART TX @ 160000] 'p'  (0x70)
+[UART TX @ 160000] ''  (0x0D)
+[UART TX @ 160000] '\n'
+[UART TX @ 160000] ';'  (0x3B)
 [UART TX @ 160000] ' '  (0x20)
 [UART TX @ 160000] 't'  (0x74)
 [UART TX @ 160000] 'h'  (0x68)
@@ -46,11 +14,6 @@ Loaded 84 bytes from 'demos/d09_comments.bin' at 0x080000
 [UART TX @ 160000] ' '  (0x20)
 [UART TX @ 160000] 'i'  (0x69)
 [UART TX @ 160000] 's'  (0x73)
-[UART TX @ 160000] ' '  (0x20)
-[UART TX @ 160000] 'a'  (0x61)
-[UART TX @ 160000] 'l'  (0x6C)
-[UART TX @ 160000] 's'  (0x73)
-[UART TX @ 160000] 'o'  (0x6F)
 [UART TX @ 160000] ' '  (0x20)
 [UART TX @ 160000] 'a'  (0x61)
 [UART TX @ 160000] ' '  (0x20)
@@ -64,34 +27,71 @@ Loaded 84 bytes from 'demos/d09_comments.bin' at 0x080000
 [UART TX @ 160000] ''  (0x0D)
 [UART TX @ 160000] '\n'
 [UART TX @ 160000] ' '  (0x20)
-[UART TX @ 160000] 'b'  (0x62)
-[UART TX @ 160000] 'r'  (0x72)
 [UART TX @ 160000] 'a'  (0x61)
-[UART TX @ 160000] ' '  (0x20)
-[UART TX @ 160000] 'h'  (0x68)
-[UART TX @ 160000] 'a'  (0x61)
-[UART TX @ 160000] 'l'  (0x6C)
-[UART TX @ 160000] 't'  (0x74)
-[UART TX @ 160000] ''  (0x0D)
-[UART TX @ 160000] '\n'
-[UART TX @ 160000] 'h'  (0x68)
-[UART TX @ 160000] 'a'  (0x61)
-[UART TX @ 160000] 'l'  (0x6C)
-[UART TX @ 160000] 't'  (0x74)
-[UART TX @ 160000] ':'  (0x3A)
-[UART TX @ 160000] ''  (0x0D)
-[UART TX @ 160000] '\n'
-[UART TX @ 163332] ' '  (0x20)
-[UART TX @ 163332] 'b'  (0x62)
-[UART TX @ 163332] 'r'  (0x72)
-[UART TX @ 163332] 'a'  (0x61)
-[UART TX @ 163332] ' '  (0x20)
-[UART TX @ 163332] 'h'  (0x68)
-[UART TX @ 163332] 'a'  (0x61)
-[UART TX @ 163332] 'l'  (0x6C)
-[UART TX @ 163332] 't'  (0x74)
-[UART TX @ 163332] ''  (0x0D)
-[UART TX @ 163332] '\n'
+[UART TX @ 160000] 'd'  (0x64)
+[UART TX @ 160000] 'd'  (0x64)
+[UART TX @ 170000] ' '  (0x20)
+[UART TX @ 170000] 'r'  (0x72)
+[UART TX @ 170000] '0'  (0x30)
+[UART TX @ 170000] ','  (0x2C)
+[UART TX @ 170000] '1'  (0x31)
+[UART TX @ 170000] ''  (0x0D)
+[UART TX @ 170000] '\n'
+[UART TX @ 170000] '#'  (0x23)
+[UART TX @ 170000] ' '  (0x20)
+[UART TX @ 170000] 't'  (0x74)
+[UART TX @ 170000] 'h'  (0x68)
+[UART TX @ 170000] 'i'  (0x69)
+[UART TX @ 170000] 's'  (0x73)
+[UART TX @ 170000] ' '  (0x20)
+[UART TX @ 170000] 'i'  (0x69)
+[UART TX @ 170000] 's'  (0x73)
+[UART TX @ 170000] ' '  (0x20)
+[UART TX @ 170000] 'a'  (0x61)
+[UART TX @ 170000] 'l'  (0x6C)
+[UART TX @ 170000] 's'  (0x73)
+[UART TX @ 170000] 'o'  (0x6F)
+[UART TX @ 170000] ' '  (0x20)
+[UART TX @ 170000] 'a'  (0x61)
+[UART TX @ 170000] ' '  (0x20)
+[UART TX @ 170000] 'c'  (0x63)
+[UART TX @ 170000] 'o'  (0x6F)
+[UART TX @ 170000] 'm'  (0x6D)
+[UART TX @ 170000] 'm'  (0x6D)
+[UART TX @ 170000] 'e'  (0x65)
+[UART TX @ 170000] 'n'  (0x6E)
+[UART TX @ 170000] 't'  (0x74)
+[UART TX @ 170000] ''  (0x0D)
+[UART TX @ 170000] '\n'
+[UART TX @ 180000] ' '  (0x20)
+[UART TX @ 180000] 'b'  (0x62)
+[UART TX @ 180000] 'r'  (0x72)
+[UART TX @ 180000] 'a'  (0x61)
+[UART TX @ 180000] ' '  (0x20)
+[UART TX @ 180000] 'h'  (0x68)
+[UART TX @ 180000] 'a'  (0x61)
+[UART TX @ 180000] 'l'  (0x6C)
+[UART TX @ 180000] 't'  (0x74)
+[UART TX @ 180000] ''  (0x0D)
+[UART TX @ 180000] '\n'
+[UART TX @ 180000] 'h'  (0x68)
+[UART TX @ 180000] 'a'  (0x61)
+[UART TX @ 180000] 'l'  (0x6C)
+[UART TX @ 180000] 't'  (0x74)
+[UART TX @ 180000] ':'  (0x3A)
+[UART TX @ 180000] ''  (0x0D)
+[UART TX @ 180000] '\n'
+[UART TX @ 186259] ' '  (0x20)
+[UART TX @ 186259] 'b'  (0x62)
+[UART TX @ 186259] 'r'  (0x72)
+[UART TX @ 186259] 'a'  (0x61)
+[UART TX @ 186259] ' '  (0x20)
+[UART TX @ 186259] 'h'  (0x68)
+[UART TX @ 186259] 'a'  (0x61)
+[UART TX @ 186259] 'l'  (0x6C)
+[UART TX @ 186259] 't'  (0x74)
+[UART TX @ 186259] ''  (0x0D)
+[UART TX @ 186259] '\n'
 
 UART output: nop
 ; this is a comment
@@ -102,4 +102,4 @@ halt:
  bra halt
 
 
-Executed 163332 instructions
+Executed 186259 instructions

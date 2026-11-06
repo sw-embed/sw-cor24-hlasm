@@ -1,0 +1,62 @@
+; Demo 41: EQU constants, expressions, and symbols in operands.
+; cor24-asm has no EQU, so hlasm replaces symbol expressions in instruction,
+; .byte and .word operands (and in IF/DOEXIT/WHEN compares) with decimal
+; values. Labels and registers are left for cor24-asm. Assembled and run on
+; cor24-emu this prints "CA4Y2!" (see hlasm_d41_equ_and_expressions_run).
+UART EQU -65280
+CH_A EQU 'A'
+STEP EQU 3*4-10
+MASK EQU (1<<4)|0x0F
+HALF EQU 100/7
+REM EQU 100%7
+NEG EQU -17/5
+INV EQU ~0&0xFF
+BIG EQU 1000
+OFFS EQU 6
+SET COUNT,STEP+1
+
+MACRO PUTC &R
+L\@:
+ lb r1,1(r2)
+ cls r1,z
+ brt L\@
+ sb &R,OFFS-6(r2)
+MEND
+
+ la r2,UART
+ lc r0,CH_A+STEP
+ PUTC r0
+ lc r0,0
+DO
+ add r0,1
+ DOEXIT cc_eq, r0, COUNT
+ENDDO
+SELECT r0
+WHEN COUNT
+ lc r0,CH_A
+OTHERWISE
+ lc r0,'?'
+ENDSEL
+ PUTC r0
+ lc r0,'0'+HALF-10
+ PUTC r0
+ la r1,BIG
+IF cc_eq, r1, BIG
+ lc r0,'Y'
+ELSE
+ lc r0,'N'
+ENDIF
+ PUTC r0
+ lc r0,'5'+NEG
+ PUTC r0
+ la r0,msg
+ lb r0,2(r0)
+ PUTC r0
+halt:
+ bra halt
+
+table:
+ .byte STEP,CH_A,MASK,INV,REM
+ .word BIG*2,msg
+msg:
+.asciz "hi\x21"

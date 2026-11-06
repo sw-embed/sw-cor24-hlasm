@@ -1,0 +1,91 @@
+Loaded 1014 bytes from 'demos/d41_equ_and_expressions.bin' at 0x080000
+; Demo 41: EQU constants, expressions, and symbols in operands.
+; cor24-asm has no EQU, so hlasm replaces symbol expressions in instruction,
+; .byte and .word operands (and in IF/DOEXIT/WHEN compares) with decimal
+; values. Labels and registers are left for cor24-asm. Assembled and run on
+; cor24-emu this prints "CA4Y2!" (see hlasm_d41_equ_and_expressions_run).
+
+
+ la r2,-65280
+ lc r0,67
+L0001:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0001
+ sb r0,0(r2)
+ lc r0,0
+_hldo_1_top:
+ add r0,1
+ push r2
+ lc r2,3
+ ceq r0,r2
+ pop r2
+ brf _hldo_3_skip
+ bra _hldo_2_end
+_hldo_3_skip:
+ bra _hldo_1_top
+_hldo_2_end:
+ push r2
+ lc r2,3
+ ceq r0,r2
+ pop r2
+ brt _hlsel_6_skip
+ bra _hlsel_5_next
+_hlsel_6_skip:
+ lc r0,65
+ bra _hlsel_4_end
+_hlsel_5_next:
+ lc r0,63
+_hlsel_4_end:
+L0002:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0002
+ sb r0,0(r2)
+ lc r0,52
+L0003:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0003
+ sb r0,0(r2)
+ la r1,1000
+ push r2
+ la r2,1000
+ ceq r1,r2
+ pop r2
+ brt _hlif_9_skip
+ bra _hlif_7_false
+_hlif_9_skip:
+ lc r0,89
+ bra _hlif_8_end
+_hlif_7_false:
+ lc r0,78
+_hlif_8_end:
+L0004:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0004
+ sb r0,0(r2)
+ lc r0,50
+L0005:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0005
+ sb r0,0(r2)
+ la r0,msg
+ lb r0,2(r0)
+L0006:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0006
+ sb r0,0(r2)
+halt:
+ bra halt
+
+table:
+ .byte 2,65,31,255,2
+ .word 2000,msg
+msg:
+.byte 104,105,33,0
+
+Executed 1221010 instructions

@@ -1,12 +1,12 @@
-Loaded 18576 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.Q5VGP9JYaC/hlasm.lgo
+Loaded 20697 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.5bYOWquLqo/hlasm.lgo
 Loaded 19 bytes from 'reg-rs/s4_skip.bin' at 0x080000
-[UART TX @ 117151] 'n'  (0x6E)
-[UART TX @ 117151] 'o'  (0x6F)
-[UART TX @ 117151] 'p'  (0x70)
-[UART TX @ 117151] ''  (0x0D)
-[UART TX @ 117151] '\n'
+[UART TX @ 118162] 'n'  (0x6E)
+[UART TX @ 118162] 'o'  (0x6F)
+[UART TX @ 118162] 'p'  (0x70)
+[UART TX @ 118162] ''  (0x0D)
+[UART TX @ 118162] '\n'
 
 UART output: nop
 
 
-Executed 117151 instructions
+Executed 118162 instructions

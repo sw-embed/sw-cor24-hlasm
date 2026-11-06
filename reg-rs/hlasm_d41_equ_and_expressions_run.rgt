@@ -1,0 +1,4 @@
+command = "bash -c 'scripts/run-kernel.sh <(scripts/run-kernel.sh hlasm.s --load-binary demos/d41_equ_and_expressions.bin@524288 --speed 0 -n 6000000 -q 2>/dev/null) --speed 0 -n 20000 -q 2>&1'"
+timeout = 30
+exit_code = 0
+desc = "Demo 41 assembled with cor24-asm and run on cor24-emu (prints CA4Y2!)"

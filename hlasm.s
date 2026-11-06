@@ -1045,7 +1045,8 @@ _rl_empty:
 	pop	fp
 	jmp	(r1)
 
-; _emit_line: Write runtime line buffer contents to UART followed by CR+LF.
+; _emit_line: Write the runtime line buffer to UART followed by CR+LF
+; (symbol operands rewritten by _emit_subst_text).
 ; Arg on stack: line length
 ; Frame: push fp, r1, r2 = 9 bytes. Arg at 9(fp).
 _emit_line:
@@ -1056,26 +1057,16 @@ _emit_line:
 
 	lw	r0,9(fp)
 	ceq	r0,z
-	brt	_el_end_str
+	brt	_el_empty
 
-	la	r1,196608
-
-_el_loop:
-	lbu	r0,0(r1)
-	ceq	r0,z
-	brt	_el_end_str
-
-	push	r1
+	la	r0,196608
 	push	r0
-	la	r0,_emit_char
+	la	r0,_emit_subst_text
 	jal	r1,(r0)
 	add	sp,3
-	pop	r1
+	bra	_el_done
 
-	add	r1,1
-	bra	_el_loop
-
-_el_end_str:
+_el_empty:
 	la	r0,_emit_crlf
 	jal	r1,(r0)
 
@@ -3052,6 +3043,32 @@ _emit_inst2:
 	push	r1
 	mov	fp,sp
 
+; lc takes -128..127; a larger constant (e.g. an IF compare value) uses la.
+	lw	r0,12(fp)
+	la	r1,_lc_txt
+	ceq	r0,r1
+	brf	_ei2_ceq
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_is_number_str
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_ei2_ceq
+	lw	r0,6(fp)
+	push	r0
+	la	r0,_atoi
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,128
+	add	r0,r1
+	la	r1,256
+	clu	r0,r1
+	brt	_ei2_ceq
+	la	r0,_la_txt
+	sw	r0,12(fp)
+
+_ei2_ceq:
 	lw	r0,12(fp)
 	la	r1,_ceq_txt
 	ceq	r0,r1
@@ -5989,6 +6006,20 @@ _get_arg_start:
 
 	la	r2,196608
 
+; skip indentation before the macro name (as _lookup_macro does), so an
+; indented call " PUTC r0" finds "r0" and not the macro name
+_gas_skip_indent:
+	lbu	r0,0(r2)
+	lc	r1,32
+	ceq	r0,r1
+	brt	_gas_indent_adv
+	lc	r1,9
+	ceq	r0,r1
+	brf	_gas_skip_name
+_gas_indent_adv:
+	add	r2,1
+	bra	_gas_skip_indent
+
 _gas_skip_name:
 	lbu	r0,0(r2)
 	ceq	r0,z
@@ -6117,33 +6148,19 @@ _gas_ret:
 	pop	fp
 	jmp	(r1)
 
-; _emit_expand_buf: Emit _expand_buf contents to UART followed by CR+LF.
+; _emit_expand_buf: Emit _expand_buf as one output line (symbol operands
+; rewritten by _emit_subst_text) followed by CR+LF.
 _emit_expand_buf:
 	push	fp
 	push	r1
 	push	r2
 	mov	fp,sp
 
-	la	r1,198688
-
-_eeb_loop:
-	lbu	r0,0(r1)
-	ceq	r0,z
-	brt	_eeb_done
-
-	push	r1
+	la	r0,198688
 	push	r0
-	la	r0,_emit_char
+	la	r0,_emit_subst_text
 	jal	r1,(r0)
 	add	sp,3
-	pop	r1
-
-	add	r1,1
-	bra	_eeb_loop
-
-_eeb_done:
-	la	r0,_emit_crlf
-	jal	r1,(r0)
 
 	mov	sp,fp
 	pop	r2
@@ -6351,8 +6368,9 @@ _spnv_after:
 	pop	fp
 	jmp	(r1)
 
-; _eval_expr_ptr: Evaluate a small assembly-time expression at ptr.
-; Supports literals and known symbols joined by + / -.
+; _eval_expr_ptr: Evaluate an assembly-time expression at ptr (see
+; _eval_full for the grammar). Undefined symbols count as 0 and are
+; reported under HLDIAG.
 ; Args on stack: ptr
 ; Returns: r0 = value
 _eval_expr_ptr:
@@ -6360,112 +6378,13 @@ _eval_expr_ptr:
 	push	r2
 	push	r1
 	mov	fp,sp
-	add	sp,-9
-
-	la	r0,0
-	sw	r0,-3(fp)
-	la	r0,1
-	sw	r0,-6(fp)
-	lw	r2,9(fp)
-
-_eep_loop:
-	push	r2
-	la	r0,_skip_ws_ptr
-	jal	r1,(r0)
-	add	sp,3
-	mov	r2,r0
-
-	lbu	r0,0(r2)
-	ceq	r0,z
-	brt	_eep_ret_near
-	lc	r1,44
-	ceq	r0,r1
-	brt	_eep_ret_near
-	lc	r1,59
-	ceq	r0,r1
-	brt	_eep_ret_near
-	lc	r1,43
-	ceq	r0,r1
-	brt	_eep_plus
-	lc	r1,45
-	ceq	r0,r1
-	brt	_eep_minus
-	bra	_eep_term
-
-_eep_ret_near:
-	la	r1,_eep_ret
-	jmp	(r1)
-
-_eep_term:
-	mov	r0,r2
-	sw	r0,-9(fp)
-	push	r2
-	la	r0,_copy_expr_token
-	jal	r1,(r0)
-	add	sp,3
-	mov	r2,r0
-	lw	r0,-9(fp)
-	ceq	r0,r2
-	brt	_eep_ret
-
-	la	r0,197128
+	lw	r0,9(fp)
 	push	r0
-	la	r0,_is_number_str
-	jal	r1,(r0)
-	add	sp,3
-	ceq	r0,z
-	brt	_eep_sym
-
-	la	r0,197128
+	lc	r0,0
 	push	r0
-	la	r0,_atoi
+	la	r0,_eval_full
 	jal	r1,(r0)
-	add	sp,3
-	sw	r0,-9(fp)
-	bra	_eep_apply
-
-_eep_sym:
-	la	r0,_lookup_symbol
-	jal	r1,(r0)
-	ceq	r0,z
-	brt	_eep_zero_term
-	la	r1,786594
-	lw	r0,0(r1)
-	sw	r0,-9(fp)
-	bra	_eep_apply
-
-_eep_zero_term:
-	la	r0,_hldiag_mark_undef_current
-	jal	r1,(r0)
-	la	r0,0
-	sw	r0,-9(fp)
-
-_eep_apply:
-	lw	r0,-9(fp)
-	lw	r1,-6(fp)
-	mul	r0,r1
-	lw	r1,-3(fp)
-	add	r1,r0
-	sw	r1,-3(fp)
-	la	r1,_eep_loop
-	jmp	(r1)
-
-_eep_plus:
-	la	r0,1
-	sw	r0,-6(fp)
-	add	r2,1
-	la	r1,_eep_loop
-	jmp	(r1)
-
-_eep_minus:
-	la	r0,-1
-	sw	r0,-6(fp)
-	add	r2,1
-	la	r1,_eep_loop
-	jmp	(r1)
-
-_eep_ret:
-	lw	r0,-3(fp)
+	add	sp,6
 	mov	sp,fp
 	pop	r1
 	pop	r2
@@ -6680,47 +6599,6 @@ _hdf_ret:
 	pop	fp
 	jmp	(r1)
 
-; _emit_ascii_escape: Map simple escape char to byte value.
-; Arg on stack: escaped char
-; Returns: r0 = mapped byte
-_emit_ascii_escape:
-	push	fp
-	push	r1
-	mov	fp,sp
-
-	lw	r0,6(fp)
-	la	r1,110
-	ceq	r0,r1
-	brt	_eae_n
-	la	r1,114
-	ceq	r0,r1
-	brt	_eae_r
-	la	r1,116
-	ceq	r0,r1
-	brt	_eae_t
-	la	r1,48
-	ceq	r0,r1
-	brt	_eae_z
-	bra	_eae_ret
-
-_eae_n:
-	la	r0,10
-	bra	_eae_ret
-_eae_r:
-	la	r0,13
-	bra	_eae_ret
-_eae_t:
-	la	r0,9
-	bra	_eae_ret
-_eae_z:
-	la	r0,0
-
-_eae_ret:
-	mov	sp,fp
-	pop	r1
-	pop	fp
-	jmp	(r1)
-
 ; _emit_ascii_line: Lower a quoted string to a .byte list.
 ; Args on stack: add_zero (9 fp), ptr (12 fp)
 _emit_ascii_line:
@@ -6763,10 +6641,34 @@ _eal_escape:
 	lbu	r0,0(r2)
 	ceq	r0,z
 	brt	_eal_done_chars
+	lc	r1,120
+	ceq	r0,r1
+	brt	_eal_hex
 	push	r0
-	la	r0,_emit_ascii_escape
+	la	r0,_string_escape
 	jal	r1,(r0)
 	add	sp,3
+	bra	_eal_emit
+
+; \xNN: exactly two hex digits; r2 ends on the second digit
+_eal_hex:
+	add	r2,1
+	push	r2
+	la	r0,_eal_hex_digit
+	jal	r1,(r0)
+	pop	r2
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r0
+	push	r0
+	add	r2,1
+	push	r2
+	la	r0,_eal_hex_digit
+	jal	r1,(r0)
+	pop	r2
+	pop	r1
+	add	r0,r1
 
 	_eal_emit:
 		push	r0
@@ -9089,6 +8991,13 @@ _emit_struct_if_test:
 	push	r2
 	push	r1
 	mov	fp,sp
+
+; rhs that is a symbol expression becomes its decimal value
+	la	r0,198168
+	push	r0
+	la	r0,_subst_buf
+	jal	r1,(r0)
+	add	sp,3
 	add	sp,-6
 
 	la	r0,_alloc_struct_label_id
@@ -9784,6 +9693,13 @@ _emit_struct_branch_if_true:
 	push	r2
 	push	r1
 	mov	fp,sp
+
+; rhs that is a symbol expression becomes its decimal value
+	la	r0,198168
+	push	r0
+	la	r0,_subst_buf
+	jal	r1,(r0)
+	add	sp,3
 	add	sp,-6
 
 	la	r0,_alloc_struct_label_id
@@ -10039,6 +9955,13 @@ _emit_struct_select_eq_test:
 	push	r2
 	push	r1
 	mov	fp,sp
+
+; rhs that is a symbol expression becomes its decimal value
+	la	r0,198168
+	push	r0
+	la	r0,_subst_buf
+	jal	r1,(r0)
+	add	sp,3
 	add	sp,-6
 
 	la	r0,_alloc_struct_label_id
@@ -11962,6 +11885,1463 @@ _rx_data_txt:
 _rx_glob_txt:
 	.byte	103,108,111,98,0
 
+; --- Assembly-time expressions and operand substitution ---
+; Expression grammar (lowest to highest precedence):
+;   |   ^   &   << >>   + -   * / %   unary - ~ +   ( ) number 'c' symbol
+; Numbers: decimal, 0x hex, 0b binary, h-suffixed hex. 'c' is a character
+; literal (escapes \n \t \r \0 \\ \'). A symbol is a SET/EQU name.
+; State (runtime arena, cleared at pass start):
+;   786648 _ev_pos      current parse pointer
+;   786651 _ev_undef    identifiers that are not symbols (registers, labels)
+;   786654 _ev_nontriv  1 if a symbol, operator, ( ), 'c' or 0b was used
+;   786657 _ev_err      1 on a syntax error
+;   786660 _ev_quiet    1 = do not report undefined symbols to HLDIAG
+;   786663 _div_rem     remainder from _sdiv
+
+; _eval_full: Evaluate the expression at ptr. Leaves _ev_pos after it.
+; Args on stack: quiet (9 fp), ptr (12 fp)
+; Returns: r0 = value
+_eval_full:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	la	r2,786648
+	lw	r0,12(fp)
+	sw	r0,0(r2)
+	lc	r0,0
+	sw	r0,3(r2)
+	sw	r0,6(r2)
+	sw	r0,9(r2)
+	lw	r0,9(fp)
+	sw	r0,12(r2)
+
+	la	r0,_ev_or
+	jal	r1,(r0)
+	push	r0
+	la	r0,_ev_skip
+	jal	r1,(r0)
+	pop	r0
+
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _ev_skip: Skip spaces/tabs at _ev_pos. Returns: r0 = char there.
+_ev_skip:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	la	r2,786648
+	lw	r1,0(r2)
+_evs_loop:
+	lbu	r0,0(r1)
+	lc	r2,32
+	ceq	r0,r2
+	brt	_evs_adv
+	lc	r2,9
+	ceq	r0,r2
+	brt	_evs_adv
+	la	r2,786648
+	sw	r1,0(r2)
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+_evs_adv:
+	add	r1,1
+	bra	_evs_loop
+
+; _ev_take: Advance _ev_pos by n and mark the expression non-trivial.
+; Arg on stack: n (9 fp)
+_ev_take:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	la	r2,786648
+	lw	r1,0(r2)
+	lw	r0,9(fp)
+	add	r1,r0
+	sw	r1,0(r2)
+	lc	r0,1
+	sw	r0,6(r2)
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _ev_next2: r0 = character at _ev_pos+1 (call right after _ev_skip).
+_ev_next2:
+	push	fp
+	push	r1
+	mov	fp,sp
+	la	r1,786648
+	lw	r1,0(r1)
+	lbu	r0,1(r1)
+	mov	sp,fp
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; Binary levels. Each keeps the left value at -3(fp).
+_ev_or:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-3
+	la	r0,_ev_xor
+	jal	r1,(r0)
+	sw	r0,-3(fp)
+_evo_loop:
+	la	r0,_ev_skip
+	jal	r1,(r0)
+	lc	r1,124
+	ceq	r0,r1
+	brf	_evo_ret
+	lc	r0,1
+	push	r0
+	la	r0,_ev_take
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_ev_xor
+	jal	r1,(r0)
+	lw	r1,-3(fp)
+	or	r0,r1
+	sw	r0,-3(fp)
+	bra	_evo_loop
+_evo_ret:
+	lw	r0,-3(fp)
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+_ev_xor:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-3
+	la	r0,_ev_and
+	jal	r1,(r0)
+	sw	r0,-3(fp)
+_evx_loop:
+	la	r0,_ev_skip
+	jal	r1,(r0)
+	lc	r1,94
+	ceq	r0,r1
+	brf	_evx_ret
+	lc	r0,1
+	push	r0
+	la	r0,_ev_take
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_ev_and
+	jal	r1,(r0)
+	lw	r1,-3(fp)
+	xor	r0,r1
+	sw	r0,-3(fp)
+	bra	_evx_loop
+_evx_ret:
+	lw	r0,-3(fp)
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+_ev_and:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-3
+	la	r0,_ev_shift
+	jal	r1,(r0)
+	sw	r0,-3(fp)
+_eva_loop:
+	la	r0,_ev_skip
+	jal	r1,(r0)
+	lc	r1,38
+	ceq	r0,r1
+	brf	_eva_ret
+	lc	r0,1
+	push	r0
+	la	r0,_ev_take
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_ev_shift
+	jal	r1,(r0)
+	lw	r1,-3(fp)
+	and	r0,r1
+	sw	r0,-3(fp)
+	bra	_eva_loop
+_eva_ret:
+	lw	r0,-3(fp)
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; << and >> (>> is arithmetic, like the 24-bit signed values it shifts)
+_ev_shift:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-6
+	la	r0,_ev_add
+	jal	r1,(r0)
+	sw	r0,-3(fp)
+_evh_loop:
+	la	r0,_ev_skip
+	jal	r1,(r0)
+	sw	r0,-6(fp)
+	lc	r1,60
+	ceq	r0,r1
+	brt	_evh_cand
+	lc	r1,62
+	ceq	r0,r1
+	brf	_evh_ret
+_evh_cand:
+	la	r0,_ev_next2
+	jal	r1,(r0)
+	lw	r1,-6(fp)
+	ceq	r0,r1
+	brf	_evh_ret
+	lc	r0,2
+	push	r0
+	la	r0,_ev_take
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_ev_add
+	jal	r1,(r0)
+	mov	r1,r0
+	lw	r0,-6(fp)
+	lc	r2,60
+	ceq	r0,r2
+	lw	r0,-3(fp)
+	brf	_evh_right
+	shl	r0,r1
+	bra	_evh_store
+_evh_right:
+	sra	r0,r1
+_evh_store:
+	sw	r0,-3(fp)
+	bra	_evh_loop
+_evh_ret:
+	lw	r0,-3(fp)
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+_ev_add:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-6
+	la	r0,_ev_mul
+	jal	r1,(r0)
+	sw	r0,-3(fp)
+_evd_loop:
+	la	r0,_ev_skip
+	jal	r1,(r0)
+	sw	r0,-6(fp)
+	lc	r1,43
+	ceq	r0,r1
+	brt	_evd_op
+	lc	r1,45
+	ceq	r0,r1
+	brf	_evd_ret
+_evd_op:
+	lc	r0,1
+	push	r0
+	la	r0,_ev_take
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_ev_mul
+	jal	r1,(r0)
+	mov	r1,r0
+	lw	r0,-6(fp)
+	lc	r2,43
+	ceq	r0,r2
+	lw	r0,-3(fp)
+	brf	_evd_sub
+	add	r0,r1
+	bra	_evd_store
+_evd_sub:
+	sub	r0,r1
+_evd_store:
+	sw	r0,-3(fp)
+	bra	_evd_loop
+_evd_ret:
+	lw	r0,-3(fp)
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+_ev_mul:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-6
+	la	r0,_ev_unary
+	jal	r1,(r0)
+	sw	r0,-3(fp)
+_evm_loop:
+	la	r0,_ev_skip
+	jal	r1,(r0)
+	sw	r0,-6(fp)
+	lc	r1,42
+	ceq	r0,r1
+	brt	_evm_op
+	lc	r1,47
+	ceq	r0,r1
+	brt	_evm_op
+	lc	r1,37
+	ceq	r0,r1
+	brf	_evm_ret
+_evm_op:
+	lc	r0,1
+	push	r0
+	la	r0,_ev_take
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_ev_unary
+	jal	r1,(r0)
+	mov	r1,r0
+	lw	r0,-6(fp)
+	lc	r2,42
+	ceq	r0,r2
+	brf	_evm_div
+	lw	r0,-3(fp)
+	mul	r0,r1
+	bra	_evm_store
+_evm_div:
+	push	r1
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_sdiv
+	jal	r1,(r0)
+	add	sp,6
+	lw	r1,-6(fp)
+	lc	r2,37
+	ceq	r1,r2
+	brf	_evm_store
+	la	r1,786663
+	lw	r0,0(r1)
+_evm_store:
+	sw	r0,-3(fp)
+	bra	_evm_loop
+_evm_ret:
+	lw	r0,-3(fp)
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+_ev_unary:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-3
+	la	r0,_ev_skip
+	jal	r1,(r0)
+	sw	r0,-3(fp)
+	lc	r1,45
+	ceq	r0,r1
+	brt	_evu_op
+	lc	r1,126
+	ceq	r0,r1
+	brt	_evu_op
+	lc	r1,43
+	ceq	r0,r1
+	brt	_evu_op
+	la	r0,_ev_primary
+	jal	r1,(r0)
+	bra	_evu_ret
+_evu_op:
+	lc	r0,1
+	push	r0
+	la	r0,_ev_take
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_ev_unary
+	jal	r1,(r0)
+	lw	r1,-3(fp)
+	lc	r2,45
+	ceq	r1,r2
+	brt	_evu_neg
+	lc	r2,126
+	ceq	r1,r2
+	brf	_evu_ret
+	la	r1,-1
+	xor	r0,r1
+	bra	_evu_ret
+_evu_neg:
+	mov	r1,r0
+	lc	r0,0
+	sub	r0,r1
+_evu_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _ev_primary: ( expr ) | number | 'c' | symbol. Sets _ev_err on anything else.
+_ev_primary:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-3
+	la	r0,_ev_skip
+	jal	r1,(r0)
+	lc	r1,40
+	ceq	r0,r1
+	brf	_evp_not_paren
+
+	lc	r0,1
+	push	r0
+	la	r0,_ev_take
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_ev_or
+	jal	r1,(r0)
+	sw	r0,-3(fp)
+	la	r0,_ev_skip
+	jal	r1,(r0)
+	lc	r1,41
+	ceq	r0,r1
+	brt	_evp_paren_ok
+	la	r1,_evp_err_keep
+	jmp	(r1)
+_evp_paren_ok:
+	lc	r0,1
+	push	r0
+	la	r0,_ev_take
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,_evp_ret_val
+	jmp	(r1)
+
+_evp_not_paren:
+	lc	r1,39
+	ceq	r0,r1
+	brf	_evp_not_char
+	la	r1,_evp_char
+	jmp	(r1)
+
+_evp_not_char:
+	lc	r1,48
+	clu	r0,r1
+	brt	_evp_ident
+	lc	r1,58
+	clu	r0,r1
+	brf	_evp_ident
+	la	r1,_evp_number
+	jmp	(r1)
+
+_evp_ident:
+	push	r0
+	la	r0,_is_macro_name_char
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_evp_err
+
+	la	r0,_ev_copy_word
+	jal	r1,(r0)
+
+	la	r0,197128
+	push	r0
+	la	r0,_reg_table
+	push	r0
+	la	r0,_lookup
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	_evp_undef
+
+	la	r0,_lookup_symbol
+	jal	r1,(r0)
+	ceq	r0,z
+	brt	_evp_unknown
+	la	r1,786594
+	lw	r0,0(r1)
+	sw	r0,-3(fp)
+	la	r1,786654
+	lc	r0,1
+	sw	r0,0(r1)
+	la	r1,_evp_ret_val
+	jmp	(r1)
+
+_evp_unknown:
+	la	r1,786660
+	lw	r0,0(r1)
+	ceq	r0,z
+	brf	_evp_undef
+	la	r0,_hldiag_mark_undef_current
+	jal	r1,(r0)
+_evp_undef:
+	la	r1,786651
+	lw	r0,0(r1)
+	add	r0,1
+	sw	r0,0(r1)
+	lc	r0,0
+	sw	r0,-3(fp)
+	bra	_evp_ret_val
+
+_evp_err:
+	lc	r0,0
+	sw	r0,-3(fp)
+_evp_err_keep:
+	la	r1,786657
+	lc	r0,1
+	sw	r0,0(r1)
+	bra	_evp_ret_val
+
+_evp_number:
+	la	r0,_ev_copy_word
+	jal	r1,(r0)
+	la	r0,197128
+	push	r0
+	la	r0,_is_number_str
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_evp_err
+	la	r0,197128
+	push	r0
+	la	r0,_atoi
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-3(fp)
+	; 0b literals are not understood by cor24-asm: force a rewrite
+	la	r1,197128
+	lbu	r0,1(r1)
+	lc	r1,98
+	ceq	r0,r1
+	brt	_evp_num_bin
+	lc	r1,66
+	ceq	r0,r1
+	brf	_evp_ret_val
+_evp_num_bin:
+	la	r1,786654
+	lc	r0,1
+	sw	r0,0(r1)
+	bra	_evp_ret_val
+
+; 'c' or '\e': value of the character
+_evp_char:
+	la	r2,786648
+	lw	r1,0(r2)
+	lbu	r0,1(r1)
+	lc	r2,92
+	ceq	r0,r2
+	brf	_evp_char_plain
+	lbu	r0,2(r1)
+	push	r1
+	push	r0
+	la	r0,_string_escape
+	jal	r1,(r0)
+	add	sp,3
+	pop	r1
+	sw	r0,-3(fp)
+	lc	r2,3
+	bra	_evp_char_close
+_evp_char_plain:
+	sw	r0,-3(fp)
+	lc	r2,2
+_evp_char_close:
+	add	r1,r2
+	lbu	r0,0(r1)
+	lc	r1,39
+	ceq	r0,r1
+	brf	_evp_err_keep
+	add	r2,1
+	push	r2
+	la	r0,_ev_take
+	jal	r1,(r0)
+	add	sp,3
+
+_evp_ret_val:
+	lw	r0,-3(fp)
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _ev_copy_word: Copy [0-9A-Za-z_]* at _ev_pos into _parse_name_buf and
+; advance _ev_pos past it (at most 255 characters).
+_ev_copy_word:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-6
+	la	r2,786648
+	lw	r0,0(r2)
+	sw	r0,-3(fp)
+	la	r0,197128
+	sw	r0,-6(fp)
+_ecw_loop:
+	lw	r1,-3(fp)
+	lbu	r0,0(r1)
+	push	r0
+	la	r0,_is_macro_name_char
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_ecw_done
+	lw	r1,-6(fp)
+	la	r2,197383
+	clu	r1,r2
+	brf	_ecw_done
+	lw	r2,-3(fp)
+	lbu	r0,0(r2)
+	sb	r0,0(r1)
+	add	r1,1
+	sw	r1,-6(fp)
+	add	r2,1
+	sw	r2,-3(fp)
+	bra	_ecw_loop
+_ecw_done:
+	lw	r1,-6(fp)
+	lc	r0,0
+	sb	r0,0(r1)
+	la	r2,786648
+	lw	r0,-3(fp)
+	sw	r0,0(r2)
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _sdiv: Signed 24-bit division (truncates toward zero, like C).
+; Args on stack: divisor (12 fp), dividend (9 fp)
+; Returns: r0 = quotient; remainder (sign of the dividend) at 786663.
+; -3 |dividend|  -6 |divisor|  -9 quotient  -12 remainder  -15 bit  -18 signs
+_sdiv:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-18
+
+	lw	r0,12(fp)
+	ceq	r0,z
+	brf	_sd_nonzero
+	la	r0,_err_div_zero
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_sd_nonzero:
+	lc	r2,0
+	lw	r0,9(fp)
+	cls	r0,z
+	brf	_sd_a_pos
+	mov	r1,r0
+	lc	r0,0
+	sub	r0,r1
+	lc	r2,3
+_sd_a_pos:
+	sw	r0,-3(fp)
+	lw	r0,12(fp)
+	cls	r0,z
+	brf	_sd_b_pos
+	mov	r1,r0
+	lc	r0,0
+	sub	r0,r1
+	add	r2,1
+_sd_b_pos:
+	sw	r0,-6(fp)
+	sw	r2,-18(fp)
+	lc	r0,0
+	sw	r0,-9(fp)
+	sw	r0,-12(fp)
+	lc	r0,23
+	sw	r0,-15(fp)
+
+_sd_loop:
+	lw	r0,-12(fp)
+	add	r0,r0
+	sw	r0,-12(fp)
+	lw	r0,-3(fp)
+	lw	r1,-15(fp)
+	srl	r0,r1
+	lc	r1,1
+	and	r0,r1
+	lw	r1,-12(fp)
+	add	r0,r1
+	sw	r0,-12(fp)
+	lw	r0,-9(fp)
+	add	r0,r0
+	sw	r0,-9(fp)
+	lw	r0,-12(fp)
+	lw	r1,-6(fp)
+	clu	r0,r1
+	brt	_sd_next
+	sub	r0,r1
+	sw	r0,-12(fp)
+	lw	r0,-9(fp)
+	add	r0,1
+	sw	r0,-9(fp)
+_sd_next:
+	lw	r0,-15(fp)
+	ceq	r0,z
+	brt	_sd_signs
+	add	r0,-1
+	sw	r0,-15(fp)
+	bra	_sd_loop
+
+; signs: +3 if the dividend was negative, +1 if the divisor was
+_sd_signs:
+	lw	r2,-18(fp)
+	lw	r0,-12(fp)
+	lc	r1,2
+	clu	r1,r2
+	brf	_sd_rem_store
+	mov	r1,r0
+	lc	r0,0
+	sub	r0,r1
+_sd_rem_store:
+	la	r1,786663
+	sw	r0,0(r1)
+	lw	r0,-9(fp)
+	lc	r1,1
+	ceq	r1,r2
+	brt	_sd_neg_q
+	lc	r1,3
+	ceq	r1,r2
+	brt	_sd_neg_q
+	bra	_sd_ret
+_sd_neg_q:
+	mov	r1,r0
+	lc	r0,0
+	sub	r0,r1
+_sd_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _string_escape: Map the character after a backslash to its byte value:
+; n t r 0 \ " ' are accepted; anything else stops with an ERROR (\x is
+; handled by the caller because it consumes two more characters).
+; Arg on stack: escaped char (9 fp)
+; Returns: r0 = byte value
+_string_escape:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	lw	r0,9(fp)
+	lc	r1,110
+	ceq	r0,r1
+	brt	_se_n
+	lc	r1,116
+	ceq	r0,r1
+	brt	_se_t
+	lc	r1,114
+	ceq	r0,r1
+	brt	_se_r
+	lc	r1,48
+	ceq	r0,r1
+	brt	_se_z
+	lc	r1,92
+	ceq	r0,r1
+	brt	_se_ret
+	lc	r1,34
+	ceq	r0,r1
+	brt	_se_ret
+	lc	r1,39
+	ceq	r0,r1
+	brt	_se_ret
+	la	r0,_err_bad_escape
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_se_n:
+	lc	r0,10
+	bra	_se_ret
+_se_t:
+	lc	r0,9
+	bra	_se_ret
+_se_r:
+	lc	r0,13
+	bra	_se_ret
+_se_z:
+	lc	r0,0
+_se_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _eal_hex_digit: Value of the hex digit at ptr; ERROR if it is not one.
+; Arg on stack: ptr (9 fp)
+_eal_hex_digit:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	lw	r2,9(fp)
+	lbu	r0,0(r2)
+	push	r0
+	la	r0,_is_hex_digit
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brf	_ehd_ok
+	la	r0,_err_bad_escape
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_ehd_ok:
+	lw	r2,9(fp)
+	lbu	r0,0(r2)
+	push	r0
+	la	r0,_hex_digit_val
+	jal	r1,(r0)
+	add	sp,3
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_sdec: Print a 24-bit value as signed decimal.
+; Arg on stack: value (9 fp)
+_emit_sdec:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	lw	r0,9(fp)
+	cls	r0,z
+	brf	_esd_pos
+	lc	r0,45
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+	lw	r1,9(fp)
+	lc	r0,0
+	sub	r0,r1
+	bra	_esd_emit
+_esd_pos:
+	lw	r0,9(fp)
+_esd_emit:
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _fmt_sdec: Write a 24-bit value as signed decimal + NUL into buf.
+; Args on stack: value (12 fp), buf (9 fp)
+_fmt_sdec:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-9
+	lw	r2,9(fp)
+	lw	r0,12(fp)
+	cls	r0,z
+	brf	_fsd_pos
+	lc	r1,45
+	sb	r1,0(r2)
+	add	r2,1
+	mov	r1,r0
+	lc	r0,0
+	sub	r0,r1
+_fsd_pos:
+	sw	r0,-3(fp)
+	lc	r0,0
+	sw	r0,-6(fp)
+	la	r0,_dec_pow
+	sw	r0,-9(fp)
+_fsd_pow:
+	lw	r1,-9(fp)
+	lw	r1,0(r1)
+	ceq	r1,z
+	brt	_fsd_done
+	lc	r0,0
+	push	r0
+_fsd_sub:
+	lw	r0,-3(fp)
+	clu	r0,r1
+	brt	_fsd_digit
+	sub	r0,r1
+	sw	r0,-3(fp)
+	pop	r0
+	add	r0,1
+	push	r0
+	bra	_fsd_sub
+_fsd_digit:
+	pop	r0
+	ceq	r0,z
+	brf	_fsd_emit
+	push	r0
+	lw	r0,-6(fp)
+	ceq	r0,z
+	pop	r0
+	brf	_fsd_emit
+	push	r0
+	lc	r0,1
+	ceq	r0,r1
+	pop	r0
+	brf	_fsd_next
+_fsd_emit:
+	add	r0,48
+	sb	r0,0(r2)
+	add	r2,1
+	lc	r0,1
+	sw	r0,-6(fp)
+_fsd_next:
+	lw	r0,-9(fp)
+	add	r0,3
+	sw	r0,-9(fp)
+	bra	_fsd_pow
+_fsd_done:
+	lc	r0,0
+	sb	r0,0(r2)
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _operand_value: Try to evaluate a NUL-terminated operand quietly.
+; Arg on stack: ptr (9 fp)
+; Returns: r0 = 1 if it is a complete expression of literals and symbols
+; that is worth rewriting (uses a symbol, operator, ( ), 'c' or 0b);
+; then the value is at 786666.
+_operand_value:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	lw	r0,9(fp)
+	push	r0
+	lc	r0,1
+	push	r0
+	la	r0,_eval_full
+	jal	r1,(r0)
+	add	sp,6
+	la	r1,786666
+	sw	r0,0(r1)
+	la	r2,786648
+	lw	r1,0(r2)
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brf	_ov_no
+	lw	r0,3(r2)
+	ceq	r0,z
+	brf	_ov_no
+	lw	r0,9(r2)
+	ceq	r0,z
+	brf	_ov_no
+	lw	r0,6(r2)
+	bra	_ov_ret
+_ov_no:
+	lc	r0,0
+_ov_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _subst_buf: If the operand text in buf is a symbol expression, replace it
+; with its signed decimal value (used for IF/DOEXIT and WHEN operands).
+; Arg on stack: buf (9 fp)
+_subst_buf:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_operand_value
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_sb_ret
+	la	r1,786666
+	lw	r0,0(r1)
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_fmt_sdec
+	jal	r1,(r0)
+	add	sp,6
+_sb_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_range: Emit the characters in [start, end).
+; Args on stack: end (12 fp), start (9 fp)
+_emit_range:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	lw	r2,9(fp)
+_er_loop:
+	lw	r1,12(fp)
+	clu	r2,r1
+	brf	_er_ret
+	lbu	r0,0(r2)
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+	add	r2,1
+	bra	_er_loop
+_er_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_operand: Emit one operand [start, end), rewriting it (or the
+; displacement before a trailing "(reg)") to decimal when it is a symbol
+; expression; otherwise emit it unchanged. Leading and trailing blanks are
+; kept. Uses the scratch buffer at 197388.
+; Args on stack: end (12 fp), start (9 fp)
+; -3 text start  -6 text end  -9 value end (before "(reg)")
+_emit_operand:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-9
+
+	lw	r2,9(fp)
+_eo_lead:
+	lw	r1,12(fp)
+	clu	r2,r1
+	brt	_eo_raw_nr1
+	la	r1,_eo_raw
+	jmp	(r1)
+_eo_raw_nr1:
+	lbu	r0,0(r2)
+	lc	r1,32
+	ceq	r0,r1
+	brt	_eo_lead_adv
+	lc	r1,9
+	ceq	r0,r1
+	brf	_eo_lead_done
+_eo_lead_adv:
+	add	r2,1
+	bra	_eo_lead
+_eo_lead_done:
+	sw	r2,-3(fp)
+	lw	r2,12(fp)
+_eo_trail:
+	add	r2,-1
+	lbu	r0,0(r2)
+	lc	r1,32
+	ceq	r0,r1
+	brt	_eo_trail
+	lc	r1,9
+	ceq	r0,r1
+	brt	_eo_trail
+	add	r2,1
+	sw	r2,-6(fp)
+	sw	r2,-9(fp)
+
+; trailing "(reg)": evaluate only the displacement in front of it
+	add	r2,-1
+	lbu	r0,0(r2)
+	lc	r1,41
+	ceq	r0,r1
+	brf	_eo_copy
+_eo_find_open:
+	lw	r1,-3(fp)
+	clu	r1,r2
+	brf	_eo_copy
+	add	r2,-1
+	lbu	r0,0(r2)
+	lc	r1,40
+	ceq	r0,r1
+	brf	_eo_find_open
+	; r2 = '(' ; copy the inside and check that it is a register name
+	mov	r1,r2
+	add	r1,1
+	la	r0,197388
+	push	r2
+	push	r0
+_eo_reg_copy:
+	lbu	r0,0(r1)
+	lc	r2,41
+	ceq	r0,r2
+	brt	_eo_reg_end
+	pop	r2
+	sb	r0,0(r2)
+	add	r2,1
+	push	r2
+	add	r1,1
+	bra	_eo_reg_copy
+_eo_reg_end:
+	pop	r2
+	lc	r0,0
+	sb	r0,0(r2)
+	pop	r2
+	la	r0,197388
+	push	r0
+	la	r0,_reg_table
+	push	r0
+	la	r0,_lookup
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brt	_eo_copy
+	sw	r2,-9(fp)
+
+; copy the value text to the scratch buffer and try to evaluate it
+_eo_copy:
+	lw	r1,-3(fp)
+	lw	r2,-9(fp)
+	clu	r1,r2
+	brf	_eo_raw
+	la	r2,197388
+_eo_copy_loop:
+	lw	r0,-9(fp)
+	clu	r1,r0
+	brf	_eo_copy_done
+	lbu	r0,0(r1)
+	sb	r0,0(r2)
+	add	r1,1
+	add	r2,1
+	bra	_eo_copy_loop
+_eo_copy_done:
+	lc	r0,0
+	sb	r0,0(r2)
+	la	r0,197388
+	push	r0
+	la	r0,_operand_value
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_eo_raw
+
+	lw	r0,-3(fp)
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_range
+	jal	r1,(r0)
+	add	sp,6
+	la	r1,786666
+	lw	r0,0(r1)
+	push	r0
+	la	r0,_emit_sdec
+	jal	r1,(r0)
+	add	sp,3
+	lw	r0,12(fp)
+	push	r0
+	lw	r0,-9(fp)
+	push	r0
+	la	r0,_emit_range
+	jal	r1,(r0)
+	add	sp,6
+	bra	_eo_ret
+
+_eo_raw:
+	lw	r0,12(fp)
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_range
+	jal	r1,(r0)
+	add	sp,6
+_eo_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _emit_subst_text: Emit a NUL-terminated source line plus CRLF. On
+; instruction, .byte and .word lines, operands that are symbol expressions
+; are emitted as decimal values (cor24-asm has no EQU); everything else is
+; emitted unchanged.
+; Arg on stack: line ptr (9 fp)
+; -3 operand start  -6 scan ptr  -9 quote char (0 = none)  -12 paren depth
+_emit_subst_text:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+	add	sp,-12
+
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_est_raw_far
+	lc	r1,59
+	ceq	r0,r1
+	brt	_est_raw_far
+
+; skip an optional "label:" (the word must end in ':')
+	mov	r1,r2
+_est_lbl:
+	lbu	r0,0(r1)
+	push	r1
+	push	r0
+	la	r0,_is_macro_name_char
+	jal	r1,(r0)
+	add	sp,3
+	pop	r1
+	ceq	r0,z
+	brt	_est_lbl_end
+	add	r1,1
+	bra	_est_lbl
+_est_lbl_end:
+	lbu	r0,0(r1)
+	lc	r2,58
+	ceq	r0,r2
+	brf	_est_word_start
+	add	r1,1
+	push	r1
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	mov	r1,r0
+	bra	_est_have_word
+_est_word_start:
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	mov	r1,r0
+	bra	_est_have_word
+
+_est_raw_far:
+	la	r1,_est_raw
+	jmp	(r1)
+
+; r1 = start of the mnemonic or directive; copy it to the scratch buffer
+_est_have_word:
+	la	r2,197388
+_est_wcopy:
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brt	_est_wdone
+	push	r2
+	lc	r2,32
+	ceq	r0,r2
+	pop	r2
+	brt	_est_wdone
+	push	r2
+	lc	r2,9
+	ceq	r0,r2
+	pop	r2
+	brt	_est_wdone
+	push	r2
+	lc	r2,59
+	ceq	r0,r2
+	pop	r2
+	brt	_est_wdone
+	sb	r0,0(r2)
+	add	r1,1
+	add	r2,1
+	bra	_est_wcopy
+_est_wdone:
+	lc	r0,0
+	sb	r0,0(r2)
+	sw	r1,-3(fp)
+
+	la	r0,197388
+	push	r0
+	la	r0,_mn_table
+	push	r0
+	la	r0,_lookup
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	_est_operands
+	la	r0,_w_byte_txt
+	push	r0
+	la	r0,197388
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	_est_operands
+	la	r0,_w_word_txt
+	push	r0
+	la	r0,197388
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+	ceq	r0,z
+	brf	_est_raw_nr1
+	la	r1,_est_raw
+	jmp	(r1)
+_est_raw_nr1:
+
+; emit everything up to the operands unchanged, then each operand
+_est_operands:
+	lw	r0,-3(fp)
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_range
+	jal	r1,(r0)
+	add	sp,6
+
+_est_op_start:
+	lw	r0,-3(fp)
+	sw	r0,-6(fp)
+	lc	r0,0
+	sw	r0,-9(fp)
+	sw	r0,-12(fp)
+_est_scan:
+	lw	r2,-6(fp)
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_est_op_end
+	lw	r1,-9(fp)
+	ceq	r1,z
+	brt	_est_noq
+	ceq	r0,r1
+	brf	_est_scan_adv
+	lc	r1,0
+	sw	r1,-9(fp)
+	bra	_est_scan_adv
+_est_noq:
+	lc	r1,39
+	ceq	r0,r1
+	brt	_est_quote
+	lc	r1,34
+	ceq	r0,r1
+	brt	_est_quote
+	lc	r1,59
+	ceq	r0,r1
+	brt	_est_op_end
+	lc	r1,40
+	ceq	r0,r1
+	brt	_est_open
+	lc	r1,41
+	ceq	r0,r1
+	brt	_est_close
+	lc	r1,44
+	ceq	r0,r1
+	brf	_est_scan_adv
+	lw	r1,-12(fp)
+	ceq	r1,z
+	brt	_est_op_end
+	bra	_est_scan_adv
+_est_quote:
+	sw	r0,-9(fp)
+	bra	_est_scan_adv
+_est_open:
+	lw	r1,-12(fp)
+	add	r1,1
+	sw	r1,-12(fp)
+	bra	_est_scan_adv
+_est_close:
+	lw	r1,-12(fp)
+	add	r1,-1
+	sw	r1,-12(fp)
+_est_scan_adv:
+	add	r2,1
+	sw	r2,-6(fp)
+	bra	_est_scan
+
+; operand is [-3, -6); -6 points at ',', ';' or NUL
+_est_op_end:
+	lw	r0,-6(fp)
+	push	r0
+	lw	r0,-3(fp)
+	push	r0
+	la	r0,_emit_operand
+	jal	r1,(r0)
+	add	sp,6
+	lw	r2,-6(fp)
+	lbu	r0,0(r2)
+	lc	r1,44
+	ceq	r0,r1
+	brf	_est_rest
+	push	r0
+	la	r0,_emit_char
+	jal	r1,(r0)
+	add	sp,3
+	lw	r2,-6(fp)
+	add	r2,1
+	sw	r2,-3(fp)
+	la	r1,_est_op_start
+	jmp	(r1)
+
+; the rest (a comment, or nothing) is emitted unchanged
+_est_rest:
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+	bra	_est_crlf
+
+_est_raw:
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+_est_crlf:
+	la	r0,_emit_crlf
+	jal	r1,(r0)
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+
 ; --- Capacity limits: _fatal messages ---
 _fatal_txt:
 	.byte	69,82,82,79,82,58,32,0
@@ -12008,6 +13388,18 @@ _err_sel_deep:
 _err_layout:
 	.byte	104,108,97,115,109,32,105,109,97,103,101,32,111,118,101,114,108,97,112,115,32,105,116,115,32,116,97,98,108,101,115,32,40,108,97,121,111,117,116,32,99,104,101,99,107,41,0
 
+
+_err_div_zero:
+	.byte	100,105,118,105,115,105,111,110,32,98,121,32,122,101,114,111,32,105,110,32,101,120,112,114,101,115,115,105,111,110,0
+
+_err_bad_escape:
+	.byte	117,110,107,110,111,119,110,32,101,115,99,97,112,101,32,105,110,32,115,116,114,105,110,103,32,111,114,32,99,104,97,114,97,99,116,101,114,32,108,105,116,101,114,97,108,0
+
+_w_byte_txt:
+	.byte	46,98,121,116,101,0
+
+_w_word_txt:
+	.byte	46,119,111,114,100,0
 
 ; Powers of ten for _emit_dec24 and _emit_num4_to_buf (0-terminated).
 _dec_pow:
@@ -12182,6 +13574,9 @@ _push_txt:
 
 _pop_txt:
 	.byte	112,111,112,0
+
+_la_txt:
+	.byte	108,97,0
 
 _lc_txt:
 	.byte	108,99,0

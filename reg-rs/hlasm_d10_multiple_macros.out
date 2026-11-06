@@ -1,42 +1,42 @@
-Loaded 18576 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.3KlfORY8Z3/hlasm.lgo
+Loaded 20697 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.GOysW1C6X1/hlasm.lgo
 Loaded 61 bytes from 'demos/d10_multiple_macros.bin' at 0x080000
-[UART TX @ 140000] ' '  (0x20)
-[UART TX @ 140000] 'a'  (0x61)
-[UART TX @ 140000] 'd'  (0x64)
-[UART TX @ 140000] 'd'  (0x64)
-[UART TX @ 140000] ' '  (0x20)
-[UART TX @ 140000] 'r'  (0x72)
-[UART TX @ 140000] '0'  (0x30)
-[UART TX @ 140000] ','  (0x2C)
-[UART TX @ 140000] '1'  (0x31)
-[UART TX @ 140000] ''  (0x0D)
-[UART TX @ 140000] '\n'
-[UART TX @ 144896] ' '  (0x20)
-[UART TX @ 144896] 's'  (0x73)
-[UART TX @ 144896] 'u'  (0x75)
-[UART TX @ 144896] 'b'  (0x62)
-[UART TX @ 144896] ' '  (0x20)
-[UART TX @ 144896] 'r'  (0x72)
-[UART TX @ 144896] '0'  (0x30)
-[UART TX @ 144896] ','  (0x2C)
-[UART TX @ 144896] '1'  (0x31)
-[UART TX @ 144896] ''  (0x0D)
-[UART TX @ 144896] '\n'
-[UART TX @ 144896] ' '  (0x20)
-[UART TX @ 144896] 'a'  (0x61)
-[UART TX @ 144896] 'd'  (0x64)
-[UART TX @ 144896] 'd'  (0x64)
-[UART TX @ 144896] ' '  (0x20)
-[UART TX @ 144896] 'r'  (0x72)
-[UART TX @ 144896] '0'  (0x30)
-[UART TX @ 144896] ','  (0x2C)
-[UART TX @ 144896] '1'  (0x31)
-[UART TX @ 144896] ''  (0x0D)
-[UART TX @ 144896] '\n'
+[UART TX @ 150000] ' '  (0x20)
+[UART TX @ 150000] 'a'  (0x61)
+[UART TX @ 150000] 'd'  (0x64)
+[UART TX @ 150000] 'd'  (0x64)
+[UART TX @ 150000] ' '  (0x20)
+[UART TX @ 150000] 'r'  (0x72)
+[UART TX @ 150000] '0'  (0x30)
+[UART TX @ 150000] ','  (0x2C)
+[UART TX @ 150000] '1'  (0x31)
+[UART TX @ 150000] ''  (0x0D)
+[UART TX @ 150000] '\n'
+[UART TX @ 158747] ' '  (0x20)
+[UART TX @ 158747] 's'  (0x73)
+[UART TX @ 158747] 'u'  (0x75)
+[UART TX @ 158747] 'b'  (0x62)
+[UART TX @ 158747] ' '  (0x20)
+[UART TX @ 158747] 'r'  (0x72)
+[UART TX @ 158747] '0'  (0x30)
+[UART TX @ 158747] ','  (0x2C)
+[UART TX @ 158747] '1'  (0x31)
+[UART TX @ 158747] ''  (0x0D)
+[UART TX @ 158747] '\n'
+[UART TX @ 158747] ' '  (0x20)
+[UART TX @ 158747] 'a'  (0x61)
+[UART TX @ 158747] 'd'  (0x64)
+[UART TX @ 158747] 'd'  (0x64)
+[UART TX @ 158747] ' '  (0x20)
+[UART TX @ 158747] 'r'  (0x72)
+[UART TX @ 158747] '0'  (0x30)
+[UART TX @ 158747] ','  (0x2C)
+[UART TX @ 158747] '1'  (0x31)
+[UART TX @ 158747] ''  (0x0D)
+[UART TX @ 158747] '\n'
 
 UART output:  add r0,1
  sub r0,1
  add r0,1
 
 
-Executed 144896 instructions
+Executed 158747 instructions
