@@ -109,6 +109,9 @@ just test
 # Run the split bootstrap proof
 just bootstrap
 
+# Run an HLASM program end to end (hlasm -> cor24-asm -> cor24-emu)
+scripts/hlasm-e2e.sh demos/d42_macro_layering.hlasm
+
 # Or use shell scripts directly:
 ./build.sh          # build / test / run
 ./demo.sh           # demo / test / repl
@@ -144,7 +147,7 @@ reg-rs/        -- reg-rs test specifications and baselines
   own language
 - [PRD](docs/prd.md) -- product requirements and scope
 - [Design](docs/design.md) -- syntax, lowering rules, data structures
-- [Plan](docs/plan.md) -- step-by-step implementation roadmap
+- [Plan](docs/plan.md) -- the original (phase 1) implementation roadmap
 
 ## Related Repositories
 
