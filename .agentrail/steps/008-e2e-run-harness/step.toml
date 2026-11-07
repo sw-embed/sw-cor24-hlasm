@@ -1,6 +1,6 @@
 number = 8
 slug = "e2e-run-harness"
-status = "pending"
+status = "in-progress"
 description = "Add scripts/hlasm-e2e.sh: take a .hlasm source (or sourceset with COPY member..."
 role = "production"
 context_files = []

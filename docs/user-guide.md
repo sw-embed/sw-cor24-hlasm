@@ -125,7 +125,24 @@ Quick checks:
 
 ## Running hlasm
 
-hlasm reads its source from memory at address 0x080000 (524288), so a run has
+The quickest way to run a program is `scripts/hlasm-e2e.sh`. It runs hlasm,
+assembles the result with `cor24-asm`, runs that on `cor24-emu`, and prints
+only the program's UART output:
+
+```bash
+scripts/hlasm-e2e.sh prog.hlasm              # a single source file
+scripts/hlasm-e2e.sh prog.sourceset          # MAIN plus INCLUDE/COPY members
+scripts/hlasm-e2e.sh --keep-s prog.s prog.hlasm -- -u 'input\n'
+```
+
+`--keep-s` also saves the generated assembly, `--hlasm-n` and `--run-n` set
+the two instruction budgets (10,000,000 and 1,000,000 by default), and
+arguments after `--` go to the program's `cor24-emu`. It exits 2 when hlasm
+reports an `ERROR:` or runs out of budget, 3 when `cor24-asm` rejects the
+output, and 4 when the program does not halt within its budget, with the
+reason on stderr.
+
+The rest of this section shows the stages by hand. hlasm reads its source from memory at address 0x080000 (524288), so a run has
 three parts: turn the source into a loadable image, run hlasm on the emulator
 with that image loaded, and keep the UART output.
 

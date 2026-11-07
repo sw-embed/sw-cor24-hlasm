@@ -1,0 +1,4 @@
+copy: COPY ok
+hlasm: exit 2
+asm: exit 3
+halt: exit 4

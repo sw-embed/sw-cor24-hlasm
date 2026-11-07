@@ -192,6 +192,13 @@ pattern as sw-cor24-forth and sw-cor24-rpg-ii:
 3. Preprocess filter extracts UART output
 4. Tests run via `reg-rs run -p hlasm --parallel`
 
+Tests named `hlasm_e2e_*` run a program all the way through with
+`scripts/hlasm-e2e.sh` (hlasm, then `cor24-asm`, then `cor24-emu`); their
+baseline is the running program's UART output, not hlasm's generated text,
+so they stay valid when the lowering changes but the program's behavior does
+not. `hlasm_e2e_harness` (`reg-rs/check_e2e.sh`) covers the source-set path
+and the harness's failure exit codes.
+
 ## COR24 ISA Constraints
 
 - 24-bit words (3 bytes), little-endian

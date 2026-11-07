@@ -127,7 +127,7 @@ it to 0, the restore puts it back to 0, and it is then set to 1.
 - Pass-2 output was checked per test against the old baselines: identical
   except `jmp L` -> `bra L` (no existing demo needed the far form).
 - d40 (`demos/d40_long_range_jumps.hlasm`) forces the far form and the
-  trampoline; `hlasm_d40_long_range_run` assembles and runs its output.
+  trampoline; `hlasm_e2e_d40_long_range` runs it end to end (scripts/hlasm-e2e.sh).
 - `reg-rs/check_structured_asm.sh` (test `hlasm_structured_asm_check`)
   assembles every structured demo's output; all of them report `ok`.
 

@@ -88,7 +88,8 @@ just bootstrap
 hlasm.s        -- COR24 assembly source (the macro-assembler)
 bootstrap/     -- reduced self-hosting subset sources and proof points
 build.sh       -- build / test / run script
-scripts/       -- run-kernel.sh: assemble hlasm.s (cor24-asm) and run it (cor24-emu)
+scripts/       -- run-kernel.sh: assemble a .s (cor24-asm) and run it (cor24-emu);
+                  hlasm-e2e.sh: .hlasm -> hlasm -> cor24-asm -> cor24-emu, prints UART output
 demo.sh        -- demo script
 justfile       -- just targets
 docs/          -- architecture, prd, design, plan

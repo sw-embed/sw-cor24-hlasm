@@ -1,0 +1,4 @@
+command = "bash reg-rs/check_e2e.sh 2>&1"
+timeout = 180
+exit_code = 0
+desc = "hlasm-e2e.sh: COPY sourceset prints COPY ok; hlasm, cor24-asm and no-halt failures exit 2, 3, 4"
