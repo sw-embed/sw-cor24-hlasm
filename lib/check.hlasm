@@ -1,0 +1,44 @@
+; lib/check.hlasm -- the tiny-C demos' self-test pattern (macros only):
+;   CHECKINIT                  ok = 1
+;   CHECK cc_eq,r0,25          ok = 0 unless r0 = 25   (C: if (x != 25) ok = 0;)
+;   CHECKEND "D13OK\n",42      if ok: write the text, r0 = 42; else r0 = 0
+; Needs: frame, svc_bare. The flag lives in one word, _chk_ok, defined by
+; CHECKINIT (so use CHECKINIT once per program). Each macro clobbers r0
+; and r1; CHECK leaves its operands alone.
+IFNDEF LIB_CHECK
+SET LIB_CHECK,1
+
+MACRO CHECKINIT
+ bra CK\@
+_chk_ok:
+ .word 0
+CK\@:
+ la r1,_chk_ok
+ lc r0,1
+ sw r0,0(r1)
+MEND
+
+; CHECK cond,a,b -- a structured condition (any cc_ form, a register and a
+; register or value); when it is false the ok flag is cleared.
+MACRO CHECK &C,&A,&B
+IF &C,&A,&B
+ELSE
+ la r1,_chk_ok
+ lc r0,0
+ sw r0,0(r1)
+ENDIF
+MEND
+
+; CHECKEND "text",rc -- if every CHECK held, write text and set r0 = rc
+; (a register, constant or label); otherwise r0 = 0.
+MACRO CHECKEND &T,&RC
+ la r1,_chk_ok
+ lw r0,0(r1)
+IF cc_ne,r0,0
+ WTO &T
+ LOADR r0,&RC
+ELSE
+ lc r0,0
+ENDIF
+MEND
+ENDIFASM

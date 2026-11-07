@@ -136,7 +136,7 @@ scripts/hlasm-e2e.sh --keep-s prog.s prog.hlasm -- -u 'input\n'
 ```
 
 `--keep-s` also saves the generated assembly, `--hlasm-n` and `--run-n` set
-the two instruction budgets (10,000,000 and 1,000,000 by default), and
+the two instruction budgets (200,000,000 and 1,000,000 by default), and
 arguments after `--` go to the program's `cor24-emu`. It exits 2 when hlasm
 reports an `ERROR:` or runs out of budget, 3 when `cor24-asm` rejects the
 output, and 4 when the program does not halt within its budget, with the

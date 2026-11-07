@@ -1,0 +1,62 @@
+; lib/data.hlasm -- labelled data (macros only). cor24-asm has no separate
+; data section: data is placed exactly where the macro is called, so call
+; these where execution never flows -- after a routine's RET, or in a block
+; of data after the program's routines. No registers are changed.
+IFNDEF LIB_DATA
+SET LIB_DATA,1
+
+; STR label,"text" -- a NUL-terminated string (escapes resolved by hlasm).
+MACRO STR &L,&T
+&L:
+ .ascii &T
+ .byte 0
+MEND
+
+; SPACE label,bytes -- bytes of zeroed storage.
+MACRO SPACE &L,&N
+&L:
+ .space &N
+MEND
+
+; WORDS label,v1[,...,v8] -- one 24-bit word per value (constants, symbol
+; expressions or labels).
+MACRO WORDS &L,&V1,&V2,&V3,&V4,&V5,&V6,&V7,&V8
+&L:
+ DATAITEMS .word,&V1,&V2,&V3,&V4,&V5,&V6,&V7,&V8
+MEND
+
+; BYTES label,v1[,...,v8] -- one byte per value.
+MACRO BYTES &L,&V1,&V2,&V3,&V4,&V5,&V6,&V7,&V8
+&L:
+ DATAITEMS .byte,&V1,&V2,&V3,&V4,&V5,&V6,&V7,&V8
+MEND
+
+; DATAITEMS directive,v1,...,v8 -- one directive line per value given
+; (helper for WORDS and BYTES).
+MACRO DATAITEMS &D,&V1,&V2,&V3,&V4,&V5,&V6,&V7,&V8
+IFDIFF &V1,
+ &D &V1
+ENDIFASM
+IFDIFF &V2,
+ &D &V2
+ENDIFASM
+IFDIFF &V3,
+ &D &V3
+ENDIFASM
+IFDIFF &V4,
+ &D &V4
+ENDIFASM
+IFDIFF &V5,
+ &D &V5
+ENDIFASM
+IFDIFF &V6,
+ &D &V6
+ENDIFASM
+IFDIFF &V7,
+ &D &V7
+ENDIFASM
+IFDIFF &V8,
+ &D &V8
+ENDIFASM
+MEND
+ENDIFASM

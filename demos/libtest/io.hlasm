@@ -1,0 +1,42 @@
+; Library test: UART input and the heap (GETC, GETLINE, GETMAIN, FREEMAIN).
+; Run with the UART input "Zab cd\nrest\n". Prints:
+;   Z [ab cd] 5 [res] 3
+;   524288 524294 524297 8000c
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+ START
+_main:
+ PROLOG
+ GETC
+ PUTC
+ WTO " ["
+ GETLINE buf,16
+ mov r2,r0
+ PUTS buf
+ WTO "] "
+ PUTDEC r2
+ WTO " ["
+ GETLINE buf,4
+ mov r2,r0
+ PUTS buf
+ WTO "] "
+ PUTDEC r2
+ PUTNL
+ GETMAIN r2,5
+ PUTDEC r2
+ PUTC ' '
+ GETMAIN r0,1
+ PUTDEC
+ PUTC ' '
+ GETMAIN r2,3
+ PUTDEC r2
+ PUTC ' '
+ FREEMAIN r2,3
+ GETMAIN r0,0
+ PUTHEX
+ PUTNL
+ RETURN 0
+ SPACE buf,16
+COPY svc_bare_code

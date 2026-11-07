@@ -1,0 +1,17 @@
+; lib/cor24.hlasm -- COR24-TB board addresses (symbols only, no code).
+; COPY this member before any other library member.
+IFNDEF LIB_COR24
+SET LIB_COR24,1
+; UART: data register, status register (bit 7 TX busy, bit 0 RX ready)
+UART_DATA EQU 16711936
+UART_STATUS EQU 16711937
+UART_TXBUSY EQU 128
+UART_RXREADY EQU 1
+; LED D2 (write bit 0: 0 = on, active-low) and button S2 (read bit 0:
+; 0 = pressed) share one register
+LED_REG EQU 16711680
+LED_ON EQU 0
+LED_OFF EQU 1
+; interrupt enable (bit 0: UART RX)
+INT_ENABLE EQU 16711696
+ENDIFASM

@@ -144,9 +144,9 @@ until M6 DSECT/FIELD exists.
 - Globals with initialisers become `.word`/`.byte` lists (demo58).
 - Adjacent literals are joined (demo63).
 - hlasm already turns `.ascii "text\n"` into a `.byte` list with escapes
-  resolved, and a macro body can switch to `.data` and back to `.text`.
-  That is enough for out-of-line string literals; both were verified
-  during this survey.
+  resolved. cor24-asm has no separate data section (`.data`/`.text` are
+  accepted but ignored), so string data must be placed where execution
+  does not reach; see the "as built" note in section 2.
 
 ### Heap
 
@@ -167,6 +167,23 @@ at 0xFF0010, and the handler returns with `jmp (ir)`. hlasm passes these
 lines through unchanged, so no macro is needed.
 
 ## 2. Macro library API and layout
+
+**As built (step 11).** The library is in `lib/`, and the authoritative
+macro reference is
+[c-demos-in-hlasm.md](c-demos-in-hlasm.md#the-macro-library). It differs
+from the proposal below in these ways:
+
+- The code members are `svc_bare_code` and `rt_code`. `rt.hlasm` holds only
+  macros: `DIV`, `MOD`, and `RTCALL name,args` for the string routines.
+- cor24-asm has no data section, so nothing is emitted "out of line":
+  - `WTO` calls `_svc_wto`, which prints the text stored right after the
+    call.
+  - The data macros place their data where they are called (after a `RET`).
+  - `CHECKINIT` jumps over its flag word.
+- `START` and `EXIT` are in `svc_bare`, not `frame`.
+- `CALL` pops only the arguments it actually pushed. Empty arguments passed
+  on by wrapper macros are skipped.
+- `PUTHEX` prints without leading zeros, like tc24r's `%x`.
 
 ### COPY member layout
 
@@ -344,9 +361,10 @@ These are already done in hlasm, so the library can rely on them:
   that pushes 0-3 arguments using `IFEQ &SYSNARG,n`, and pops them with
   `add sp,(&SYSNARG-1)*3`, ran correctly.
 - **B6/M2: default parameters.** `PUTC &R=r0` works.
-- **Out-of-line data from a macro.** A `WTO` body that switches to `.data`,
-  emits `S\@: .ascii "..."`, switches back and calls `_puts` ran correctly,
-  with `\n` and `\t` resolved.
+- **String data from a macro.** The survey believed a `WTO` body could
+  switch to `.data` for its text. Building the library showed cor24-asm
+  ignores sections and the text ran as code, so `WTO` calls `_svc_wto`,
+  which prints the string stored right after the call.
 - **Large frames.** `sub sp,n` takes a 24-bit immediate, so `PROLOG`
   needs no conditional for frames beyond 127 bytes.
 

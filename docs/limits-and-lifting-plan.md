@@ -107,6 +107,7 @@ each has a reg-rs test (`hlasm_limit_*`) at the limit and one past it.
 | D10 | IF/DOEXIT/WHEN compares with a constant outside -128..127 emitted an invalid `lc` | found writing d41 | **fixed (step 5):** `_emit_inst2` loads such constants with `la` |
 | D11 | cor24-asm rejects label arithmetic in `.word` (`.word mark+3` in d33 passes through hlasm but has never been assembled) | found writing d41 | open: an assembler limitation, not hlasm; d33 only checks hlasm's text |
 | D12 | A conditional nested inside a skipped conditional was evaluated on its own, so a true inner IFDEF/IFEQ/IFNE (or an ELSEASM) turned output back on inside the skipped block | found writing d42 | **fixed (step 6):** a conditional pushed inside a skipped region gets state 2 (skipped by its parent), which ELSEASM does not flip |
+| D13 | Indented `.space n` and `.fill n,v` (as in any macro body) emitted nothing: the handlers read the operand at a fixed column | found writing the macro library (`SPACE`) | **fixed (step 11):** both skip leading blanks before the directive |
 
 ## Language gaps
 

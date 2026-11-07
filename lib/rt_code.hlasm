@@ -1,0 +1,250 @@
+; lib/rt_code.hlasm -- runtime routines (see rt.hlasm). COPY it at the end
+; of the program; each routine is emitted only if RTCALL asked for it.
+; A routine comes before the helpers it uses, so it can request them.
+; Needs: frame.
+IFNDEF LIB_RT_CODE
+SET LIB_RT_CODE,1
+
+IFDEF NEED_div
+_div:
+ PROLOG
+ ARG r0,1
+ ARG r2,2
+SET NEED_rt_sdivmod,1
+ CALL _rt_sdivmod,r0,r2
+ RET
+ENDIFASM
+
+IFDEF NEED_mod
+_mod:
+ PROLOG
+ ARG r0,1
+ ARG r2,2
+SET NEED_rt_sdivmod,1
+ CALL _rt_sdivmod,r0,r2
+ la r1,_rt_rem
+ lw r0,0(r1)
+ RET
+ENDIFASM
+
+; _rt_sdivmod(a,b): signed quotient in r0, remainder (sign of a) in _rt_rem
+IFDEF NEED_rt_sdivmod
+_rt_sdivmod:
+ LOCAL SD_QS,3
+ LOCAL SD_RS,3
+ PROLOG
+ lc r0,0
+ sw r0,SD_QS(fp)
+ sw r0,SD_RS(fp)
+ ARG r2,1
+IF cc_lt,r2,0
+ lc r0,0
+ sub r0,r2
+ mov r2,r0
+ lc r0,1
+ sw r0,SD_QS(fp)
+ sw r0,SD_RS(fp)
+ENDIF
+ ARG r1,2
+IF cc_lt,r1,0
+ lc r0,0
+ sub r0,r1
+ mov r1,r0
+ lw r0,SD_QS(fp)
+ push r1
+ lc r1,1
+ xor r0,r1
+ pop r1
+ sw r0,SD_QS(fp)
+ENDIF
+SET NEED_rt_udivmod,1
+ CALL _rt_udivmod,r2,r1
+ lw r1,SD_QS(fp)
+IF cc_ne,r1,0
+ lc r1,0
+ sub r1,r0
+ mov r0,r1
+ENDIF
+ sw r0,SD_QS(fp)
+ lw r1,SD_RS(fp)
+IF cc_ne,r1,0
+ la r1,_rt_rem
+ lw r2,0(r1)
+ lc r0,0
+ sub r0,r2
+ sw r0,0(r1)
+ENDIF
+ lw r0,SD_QS(fp)
+ RET
+ENDIFASM
+
+; _rt_udivmod(a,b): unsigned shift-and-subtract division, 24 steps;
+; quotient in r0, remainder in _rt_rem
+IFDEF NEED_rt_udivmod
+_rt_udivmod:
+ LOCAL UD_I,3
+ PROLOG
+ ARG r2,1
+ lc r0,0
+ lc r1,24
+ sw r1,UD_I(fp)
+DO
+ add r0,r0
+IF cc_lt,r2,0
+ add r0,1
+ENDIF
+ add r2,r2
+ ARG r1,2
+IF cc_geu,r0,r1
+ sub r0,r1
+ add r2,1
+ENDIF
+ lw r1,UD_I(fp)
+ add r1,-1
+ sw r1,UD_I(fp)
+ DOEXIT cc_eq,r1,0
+ENDDO
+ la r1,_rt_rem
+ sw r0,0(r1)
+ mov r0,r2
+ RET
+_rt_rem:
+ .word 0
+ENDIFASM
+
+IFDEF NEED_strlen
+_strlen:
+ PROLOG
+ ARG r2,1
+DO
+ lbu r1,0(r2)
+ DOEXIT cc_eq,r1,0
+ add r2,1
+ENDDO
+ ARG r1,1
+ mov r0,r2
+ sub r0,r1
+ RET
+ENDIFASM
+
+IFDEF NEED_strcmp
+_strcmp:
+ LOCAL SC_B,3
+ PROLOG
+ ARG r2,1
+ ARG r0,2
+ sw r0,SC_B(fp)
+DO
+ lw r1,SC_B(fp)
+ lbu r1,0(r1)
+ lbu r0,0(r2)
+ DOEXIT cc_eq,r0,0
+ DOEXIT cc_ne,r0,r1
+ add r2,1
+ lw r1,SC_B(fp)
+ add r1,1
+ sw r1,SC_B(fp)
+ENDDO
+ sub r0,r1
+ RET
+ENDIFASM
+
+IFDEF NEED_strcpy
+_strcpy:
+ PROLOG
+ ARG r2,1
+ ARG r1,2
+DO
+ lbu r0,0(r1)
+ sb r0,0(r2)
+ DOEXIT cc_eq,r0,0
+ add r1,1
+ add r2,1
+ENDDO
+ ARG r0,1
+ RET
+ENDIFASM
+
+IFDEF NEED_memcpy
+_memcpy:
+ LOCAL MC_N,3
+ PROLOG
+ ARG r2,1
+ ARG r1,2
+ ARG r0,3
+ sw r0,MC_N(fp)
+DO
+ lw r0,MC_N(fp)
+ DOEXIT cc_le,r0,0
+ add r0,-1
+ sw r0,MC_N(fp)
+ lbu r0,0(r1)
+ sb r0,0(r2)
+ add r1,1
+ add r2,1
+ENDDO
+ ARG r0,1
+ RET
+ENDIFASM
+
+IFDEF NEED_memset
+_memset:
+ PROLOG
+ ARG r2,1
+ ARG r1,3
+DO
+ DOEXIT cc_le,r1,0
+ ARG r0,2
+ sb r0,0(r2)
+ add r2,1
+ add r1,-1
+ENDDO
+ ARG r0,1
+ RET
+ENDIFASM
+
+IFDEF NEED_atoi
+_atoi:
+ LOCAL AI_N,3
+ LOCAL AI_NEG,3
+ PROLOG
+ ARG r2,1
+ lc r0,0
+ sw r0,AI_N(fp)
+ sw r0,AI_NEG(fp)
+DO
+ lbu r0,0(r2)
+ DOEXIT cc_ne,r0,32
+ add r2,1
+ENDDO
+IF cc_eq,r0,45
+ lc r1,1
+ sw r1,AI_NEG(fp)
+ add r2,1
+ELSEIF cc_eq,r0,43
+ add r2,1
+ENDIF
+DO
+ lbu r0,0(r2)
+ DOEXIT cc_lt,r0,48
+ DOEXIT cc_gt,r0,57
+ add r0,-48
+ lw r1,AI_N(fp)
+ push r0
+ lc r0,10
+ mul r1,r0
+ pop r0
+ add r0,r1
+ sw r0,AI_N(fp)
+ add r2,1
+ENDDO
+ lw r0,AI_N(fp)
+ lw r1,AI_NEG(fp)
+IF cc_ne,r1,0
+ lc r1,0
+ sub r1,r0
+ mov r0,r1
+ENDIF
+ RET
+ENDIFASM
+ENDIFASM

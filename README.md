@@ -40,7 +40,7 @@ every feature with examples, limits and error messages).
 Done:
 
 - All the features above, each with demos and regression tests
-  (`./build.sh test`, 79 tests).
+  (`./build.sh test`, 85 tests).
 - Every limit in [docs/limits-and-lifting-plan.md](docs/limits-and-lifting-plan.md)
   that was scheduled has been lifted: 512 symbols, 256 macros, 64 KB of macro
   bodies, 32-deep nesting, 32 source members.
@@ -55,8 +55,8 @@ HLASM on top of a shared macro library, to show what macros buy over plain
 assembly. See [docs/c-demos-in-hlasm.md](docs/c-demos-in-hlasm.md) for the
 ported demos and the macros used, and
 [docs/tinyc-port-plan.md](docs/tinyc-port-plan.md) for the survey and the
-port order. The survey and the hlasm features it called for are done; the
-macro library is being written now, then the ports and a side-by-side
+port order. The survey, the hlasm features it called for, and the macro library
+(`lib/`) are done. The ports are under way, followed by a side-by-side
 showcase.
 
 Not implemented yet (planned for later sagas):
@@ -133,7 +133,8 @@ build.sh       -- build / test / run script
 scripts/       -- run-kernel.sh: assemble a .s (cor24-asm) and run it (cor24-emu);
                   hlasm-e2e.sh: .hlasm -> hlasm -> cor24-asm -> cor24-emu, prints UART output
 demo.sh        -- demo script
-demos/         -- demo programs (d01-d43) and their source sets
+demos/         -- demo programs (d01-d43), libtest/ (macro library tests)
+lib/           -- the macro library (COPY members; see docs/c-demos-in-hlasm.md)
 justfile       -- just targets
 docs/          -- user guide, architecture, plans
 reg-rs/        -- reg-rs test specifications and baselines

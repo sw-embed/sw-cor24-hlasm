@@ -1,0 +1,85 @@
+; Library test: frames and calls (PROLOG, RET, RETURN, ARG, LOCAL, CALL with
+; 0-3 register, constant and label arguments, CALL through r0 and r2) and
+; EXIT from a nested routine. Prints:
+;   sum3=60 none=7 locals=15 fptr=7 fptr2=9 lbl=77
+;   r0=99
+COPY cor24
+COPY frame
+COPY svc_bare
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ WTO "sum3="
+ lc r2,10
+ CALL _sum3,r2,20,30
+ PUTDEC
+ WTO " none="
+ CALL _seven
+ PUTDEC
+ WTO " locals="
+ CALL _locals,5
+ PUTDEC
+ WTO " fptr="
+ la r0,_seven
+ CALL r0
+ PUTDEC
+ WTO " fptr2="
+ la r2,_sum3
+ CALL r2,2,3,4
+ PUTDEC
+ WTO " lbl="
+ CALL _deref,_val
+ PUTDEC
+ PUTNL
+ CALL _deep,3
+ RETURN 1
+
+; _sum3(a,b,c) = a+b+c
+_sum3:
+ PROLOG
+ ARG r0,1
+ ARG r1,2
+ add r0,r1
+ ARG r1,3
+ add r0,r1
+ RET
+
+_seven:
+ PROLOG
+ RETURN 7
+
+; _locals(n) = n + 2n, through two named locals
+_locals:
+ LOCAL LA,3
+ LOCAL LB,3
+ PROLOG
+ ARG r0,1
+ sw r0,LA(fp)
+ add r0,r0
+ sw r0,LB(fp)
+ lw r0,LA(fp)
+ lw r1,LB(fp)
+ add r0,r1
+ RET
+
+; _deref(p) = the word at p
+_deref:
+ PROLOG
+ ARG r1,1
+ lw r0,0(r1)
+ RET
+_val:
+ .word 77
+
+; _deep(n): recurse n times, then EXIT 99 from the innermost call
+_deep:
+ PROLOG
+ ARG r0,1
+IF cc_eq,r0,0
+ EXIT 99
+ENDIF
+ add r0,-1
+ CALL _deep,r0
+ RET
+COPY svc_bare_code

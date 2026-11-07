@@ -1,0 +1,20 @@
+; Library test: LED and button. Prints the button bit twice (0 when run
+; with --switch on, else 1); the LED goes on, off, on (cor24-emu reports
+; the final state, on, in an "[LED @ n]" line when run without -q).
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY board
+ START
+_main:
+ PROLOG
+ BUTTON
+ PUTDEC
+ LEDON
+ LEDOFF
+ LEDON
+ BUTTON r2
+ PUTDEC r2
+ PUTNL
+ RETURN 0
+COPY svc_bare_code

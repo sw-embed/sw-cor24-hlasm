@@ -7293,9 +7293,14 @@ _handle_dot_space:
 	push	r1
 	mov	fp,sp
 
+; the directive may be indented (as in a macro body)
 	la	r2,196608
-	add	r2,6
 	push	r2
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	add	r0,6
+	push	r0
 	la	r0,_skip_ws_ptr
 	jal	r1,(r0)
 	add	sp,3
@@ -7325,9 +7330,14 @@ _handle_dot_fill:
 	mov	fp,sp
 	add	sp,-6
 
+; the directive may be indented (as in a macro body)
 	la	r2,196608
-	add	r2,5
 	push	r2
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	add	r0,5
+	push	r0
 	la	r0,_skip_ws_ptr
 	jal	r1,(r0)
 	add	sp,3

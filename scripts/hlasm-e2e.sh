@@ -9,7 +9,7 @@
 # INCLUDE/COPY members) goes through reg-rs/run_bootstrap_sourceset.sh.
 #
 # Options:
-#   --hlasm-n N   instruction budget for the hlasm run (default 10000000)
+#   --hlasm-n N   instruction budget for the hlasm run (default 200000000)
 #   --run-n N     instruction budget for the program run (default 1000000)
 #   --keep-s F    also write the generated assembly to F
 # Arguments after -- go to the program's cor24-emu (e.g. -u, --switch).
@@ -31,7 +31,7 @@ die() {
   exit "$code"
 }
 
-HLASM_N=10000000
+HLASM_N=200000000
 RUN_N=1000000
 KEEP_S=""
 SRC=""

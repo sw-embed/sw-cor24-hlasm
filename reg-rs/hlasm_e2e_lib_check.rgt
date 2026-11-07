@@ -1,0 +1,4 @@
+command = "bash reg-rs/check_lib.sh check 2>&1"
+timeout = 180
+exit_code = 0
+desc = "Macro library: CHECKINIT/CHECK/CHECKEND passing and failing, WORDS/BYTES/SPACE/STR"

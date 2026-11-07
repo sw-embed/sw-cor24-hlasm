@@ -1,0 +1,49 @@
+; Library test: console output (PUTC, PUTNL, PUTS, WTO, PUTDEC, PUTHEX),
+; START and the r0 report, STR. Prints:
+;   AB
+;   hi there
+;   0 7 -1 42 1000000 8388607 -8388608
+;   0 ff abc ffffff
+;   r0=5
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ PUTC 'A'
+ lc r2,66
+ PUTC r2
+ PUTNL
+ PUTS msg
+ WTO " there\n"
+ PUTDEC 0
+ PUTC ' '
+ PUTDEC 7
+ PUTC ' '
+ lc r0,-1
+ PUTDEC
+ PUTC ' '
+ PUTDEC 42
+ PUTC ' '
+ PUTDEC 1000000
+ PUTC ' '
+ PUTDEC 8388607
+ PUTC ' '
+ la r2,8388608
+ PUTDEC r2
+ PUTNL
+ PUTHEX 0
+ PUTC ' '
+ PUTHEX 255
+ PUTC ' '
+ PUTHEX 2748
+ PUTC ' '
+ lc r0,-1
+ PUTHEX r0
+ PUTNL
+ RETURN 5
+ STR msg,"hi"
+COPY svc_bare_code

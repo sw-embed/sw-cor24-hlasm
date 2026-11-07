@@ -1,0 +1,209 @@
+; lib/svc_bare_code.hlasm -- routines behind the svc_bare macros. COPY it
+; at the end of the program, after the program's own routines. Each routine
+; is emitted only when a macro asked for it (NEED_<name>), so a program
+; carries just what it uses. Routines follow the frame.hlasm convention.
+; Needs: cor24, frame, svc_bare.
+IFNDEF LIB_SVC_CODE
+SET LIB_SVC_CODE,1
+
+; _svc_getline(buf, len): read a line; see GETLINE. Placed before _svc_getc,
+; which it uses.
+IFDEF NEED_svc_getline
+_svc_getline:
+ LOCAL GL_N,3
+ PROLOG
+ ARG r2,1
+ lc r0,0
+ sw r0,GL_N(fp)
+DO
+ lw r0,GL_N(fp)
+ ARG r1,2
+ add r1,-1
+ DOEXIT cc_ge,r0,r1
+ GETC
+ DOEXIT cc_eq,r0,10
+ sb r0,0(r2)
+ add r2,1
+ lw r0,GL_N(fp)
+ add r0,1
+ sw r0,GL_N(fp)
+ENDDO
+ lc r0,0
+ sb r0,0(r2)
+ lw r0,GL_N(fp)
+ RET
+ENDIFASM
+
+; _svc_getc(): wait for UART RX ready, return the character (0-255).
+IFDEF NEED_svc_getc
+_svc_getc:
+ PROLOG
+ la r2,UART_DATA
+DO
+ lbu r0,1(r2)
+ lc r1,UART_RXREADY
+ and r0,r1
+ DOEXIT cc_ne,r0,0
+ENDDO
+ lbu r0,0(r2)
+ RET
+ENDIFASM
+
+; _svc_wto: write the NUL-terminated string that follows the call
+; (la r0,_svc_wto / jal r1,(r0) / .byte ...,0) and return just past its NUL.
+; Not a frame routine: r1 is the string address on entry.
+IFDEF NEED_svc_wto
+_svc_wto:
+ push r2
+ mov r2,r1
+DO
+ lbu r0,0(r2)
+ add r2,1
+ DOEXIT cc_eq,r0,0
+ PUTC
+ENDDO
+ mov r1,r2
+ pop r2
+ jmp (r1)
+ENDIFASM
+
+; _svc_puts(str): write a NUL-terminated string.
+IFDEF NEED_svc_puts
+_svc_puts:
+ PROLOG
+ ARG r2,1
+DO
+ lbu r0,0(r2)
+ DOEXIT cc_eq,r0,0
+ PUTC
+ add r2,1
+ENDDO
+ RET
+ENDIFASM
+
+; _svc_putdec(n): write n in signed decimal. The magnitude is handled as
+; unsigned, so -8388608 prints correctly.
+IFDEF NEED_svc_putdec
+_svc_putdec:
+ LOCAL PD_P,3
+ LOCAL PD_S,3
+ PROLOG
+ lc r0,0
+ sw r0,PD_S(fp)
+ ARG r2,1
+IF cc_lt,r2,0
+ PUTC '-'
+ lc r0,0
+ sub r0,r2
+ mov r2,r0
+ENDIF
+ la r0,_svc_pow10
+ sw r0,PD_P(fp)
+; one digit per power of ten above 1: count subtractions; skip leading 0s
+DO
+ lw r1,PD_P(fp)
+ lw r1,0(r1)
+ DOEXIT cc_eq,r1,1
+ lc r0,0
+DO
+ DOEXIT cc_lu,r2,r1
+ sub r2,r1
+ add r0,1
+ENDDO
+IF cc_eq,r0,0
+ lw r1,PD_S(fp)
+IF cc_ne,r1,0
+ PUTC '0'
+ENDIF
+ELSE
+ add r0,48
+ PUTC
+ lc r0,1
+ sw r0,PD_S(fp)
+ENDIF
+ lw r0,PD_P(fp)
+ add r0,3
+ sw r0,PD_P(fp)
+ENDDO
+ mov r0,r2
+ add r0,48
+ PUTC
+ RET
+_svc_pow10:
+ .word 1000000,100000,10000,1000,100,10,1
+ENDIFASM
+
+; _svc_puthex(n): write n in lower-case hex, no leading zeros.
+IFDEF NEED_svc_puthex
+_svc_puthex:
+ LOCAL PH_I,3
+ LOCAL PH_S,3
+ PROLOG
+ ARG r2,1
+ lc r0,0
+ sw r0,PH_S(fp)
+ lc r0,20
+ sw r0,PH_I(fp)
+DO
+ mov r0,r2
+ lw r1,PH_I(fp)
+ srl r0,r1
+ lc r1,15
+ and r0,r1
+; print from the first non-zero digit, and always the last one
+IF cc_ne,r0,0
+ lc r1,1
+ sw r1,PH_S(fp)
+ENDIF
+ lw r1,PH_I(fp)
+IF cc_eq,r1,0
+ lc r1,1
+ sw r1,PH_S(fp)
+ENDIF
+ lw r1,PH_S(fp)
+IF cc_ne,r1,0
+IF cc_lt,r0,10
+ add r0,48
+ELSE
+ add r0,87
+ENDIF
+ PUTC
+ENDIF
+ lw r0,PH_I(fp)
+ DOEXIT cc_eq,r0,0
+ add r0,-4
+ sw r0,PH_I(fp)
+ENDDO
+ RET
+ENDIFASM
+
+; _svc_getmain(size): bump-allocate size bytes, at least 3 and rounded up
+; to a whole number of words (as tc24r's malloc); returns the address.
+IFDEF NEED_svc_getmain
+IFNDEF SVC_HEAP
+SVC_HEAP EQU 524288
+ENDIFASM
+_svc_getmain:
+ PROLOG
+ ARG r2,1
+IF cc_lt,r2,3
+ lc r2,3
+ENDIF
+ mov r1,r2
+DO
+ DOEXIT cc_lt,r1,3
+ add r1,-3
+ENDDO
+IF cc_ne,r1,0
+ sub r2,r1
+ add r2,3
+ENDIF
+ la r1,_svc_heap_ptr
+ lw r0,0(r1)
+ add r2,r0
+ sw r2,0(r1)
+ RET
+_svc_heap_ptr:
+ .word SVC_HEAP
+ENDIFASM
+ENDIFASM

@@ -1,0 +1,74 @@
+; Library test: runtime routines through DIV, MOD and RTCALL. Prints:
+;   3 -3 -3 3 2 -2 2 -2 142857 1
+;   5 -4 0 hello xxxlo hexlo -123 42
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY rt
+ START
+_main:
+ PROLOG
+ DIV 17,5
+ PUTDEC
+ PUTC ' '
+ DIV -17,5
+ PUTDEC
+ PUTC ' '
+ DIV 17,-5
+ PUTDEC
+ PUTC ' '
+ DIV -17,-5
+ PUTDEC
+ PUTC ' '
+ MOD 17,5
+ PUTDEC
+ PUTC ' '
+ MOD -17,5
+ PUTDEC
+ PUTC ' '
+ MOD 17,-5
+ PUTDEC
+ PUTC ' '
+ MOD -17,-5
+ PUTDEC
+ PUTC ' '
+ la r2,1000000
+ DIV r2,7
+ PUTDEC
+ PUTC ' '
+ MOD r2,7
+ PUTDEC
+ PUTNL
+ RTCALL strlen,s1
+ PUTDEC
+ PUTC ' '
+ RTCALL strcmp,s1,s2
+ PUTDEC
+ PUTC ' '
+ RTCALL strcmp,s1,s1
+ PUTDEC
+ PUTC ' '
+ RTCALL strcpy,buf,s1
+ PUTS r0
+ PUTC ' '
+ RTCALL memset,buf,'x',3
+ PUTS buf
+ PUTC ' '
+ RTCALL memcpy,buf,s2,2
+ PUTS buf
+ PUTC ' '
+ RTCALL atoi,n1
+ PUTDEC
+ PUTC ' '
+ RTCALL atoi,n2
+ PUTDEC
+ PUTNL
+ RETURN 0
+ STR s1,"hello"
+ STR s2,"help"
+ STR n1,"  -123"
+ STR n2,"+42x"
+ SPACE buf,16
+COPY svc_bare_code
+COPY rt_code

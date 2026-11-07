@@ -1,0 +1,43 @@
+; Library test: the self-test macros and the data macros. Every CHECK holds,
+; so this prints "DATA OK" and returns 42 (SHOWRC: "r0=42").
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; WORDS: 1 + 2 + 300
+ la r2,tbl
+ lw r0,0(r2)
+ lw r1,3(r2)
+ add r0,r1
+ lw r1,6(r2)
+ add r0,r1
+ CHECK cc_eq,r0,303
+; BYTES: 'a', 'b', 0
+ la r2,bt
+ lbu r0,0(r2)
+ CHECK cc_eq,r0,'a'
+ lbu r0,2(r2)
+ CHECK cc_eq,r0,0
+; SPACE is zeroed; STR ends with NUL
+ la r2,zero
+ lw r0,3(r2)
+ CHECK cc_eq,r0,0
+ la r2,str
+ lbu r0,2(r2)
+ CHECK cc_eq,r0,0
+ lbu r0,1(r2)
+ CHECK cc_ge,r0,'i'
+ CHECK cc_lt,r0,'j'
+ CHECKEND "DATA OK\n",42
+ RET
+ WORDS tbl,1,2,300
+ BYTES bt,'a','b',0
+ SPACE zero,6
+ STR str,"hi"
+COPY svc_bare_code

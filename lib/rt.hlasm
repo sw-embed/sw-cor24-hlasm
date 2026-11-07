@@ -1,0 +1,30 @@
+; lib/rt.hlasm -- calls into the runtime routines in rt_code (macros only).
+; Needs: frame. COPY rt_code at the end of the program.
+IFNDEF LIB_RT
+SET LIB_RT,1
+
+; RTCALL name[,args] -- call runtime routine _name and make sure rt_code
+; emits it. Routines (tc24r's library semantics, result in r0):
+;   div(a,b), mod(a,b)    signed, truncating toward zero like C
+;   strlen(s)             length of a NUL-terminated string
+;   strcmp(a,b)           first differing byte of a minus that of b, or 0
+;   strcpy(dst,src)       copy including the NUL; returns dst
+;   memcpy(dst,src,n)     copy n bytes; returns dst
+;   memset(s,c,n)         set n bytes to c; returns s
+;   atoi(s)               skip blanks, optional sign, decimal digits
+; Registers as for CALL (r0, r1 clobbered).
+MACRO RTCALL &N,&A,&B,&C
+SET NEED_&N,1
+ CALL _&N,&A,&B,&C
+MEND
+
+; DIV a,b / MOD a,b -- r0 = a / b, a % b (signed); a and b are registers,
+; constants or labels.
+MACRO DIV &A,&B
+ RTCALL div,&A,&B
+MEND
+
+MACRO MOD &A,&B
+ RTCALL mod,&A,&B
+MEND
+ENDIFASM

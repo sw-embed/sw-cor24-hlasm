@@ -1,0 +1,18 @@
+; Library test: a failing CHECK clears the flag, so CHECKEND prints nothing
+; and returns 0 (SHOWRC: "r0=0").
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+ lc r0,5
+ CHECK cc_eq,r0,5
+ CHECK cc_gt,r0,5
+ CHECK cc_le,r0,5
+ CHECKEND "WRONG\n",42
+ RET
+COPY svc_bare_code

@@ -1,0 +1,163 @@
+; lib/frame.hlasm -- routine frames and calls (macros only, no code).
+;
+; The calling convention is tc24r's, so these routines and tc24r-compiled
+; ones can call each other:
+;   caller: push the arguments right to left (one word each), jal, and pop
+;           them; the result comes back in r0
+;   callee: push fp, r2, r1; mov fp,sp; locals below fp; the first argument
+;           is at 9(fp), the second at 12(fp), ...
+; r0 and r1 are scratch across a call; r2 and fp are preserved.
+;
+; A routine looks like this:
+;   _sum3:
+;    LOCAL TMP,3          ; optional: name a 3-byte local (TMP = -3)
+;    PROLOG               ; frame; reserves the LOCAL bytes
+;    ARG r0,1             ; r0 = first argument
+;    ARG r1,2
+;    add r0,r1
+;    sw r0,TMP(fp)
+;    ...
+;    RET                  ; result in r0
+IFNDEF LIB_FRAME
+SET LIB_FRAME,1
+; bytes of LOCALs declared since the last PROLOG
+SET LOCSZ,0
+
+; LOADR reg,value -- reg = value, where value is a register (mov, or nothing
+; if it is reg itself), or a constant, character or label (la).
+MACRO LOADR &R,&V
+IFDIFF &R,&V
+IFSAME &V,r0
+ mov &R,r0
+ELSEASM
+IFSAME &V,r1
+ mov &R,r1
+ELSEASM
+IFSAME &V,r2
+ mov &R,r2
+ELSEASM
+ la &R,&V
+ENDIFASM
+ENDIFASM
+ENDIFASM
+ENDIFASM
+MEND
+
+; PUSHARG value -- push one call argument: a register as it is; a constant,
+; character or label through r1 (so r1 is clobbered).
+MACRO PUSHARG &A
+IFSAME &A,r0
+ push r0
+ELSEASM
+IFSAME &A,r1
+ push r1
+ELSEASM
+IFSAME &A,r2
+ push r2
+ELSEASM
+ la r1,&A
+ push r1
+ENDIFASM
+ENDIFASM
+ENDIFASM
+MEND
+
+; CALL fn[,a1,...,a8] -- call fn with up to 8 arguments, pushed right to left
+; and popped after the call; the result is in r0. fn is a label, or r0 or
+; r2 holding a routine address. Constant and label arguments are loaded
+; through r1, so an r1 argument must have only register arguments to its
+; right; r0 and r2 arguments are always safe.
+MACRO CALL &F,&A1,&A2,&A3,&A4,&A5,&A6,&A7,&A8
+; CALLN counts the arguments actually pushed (empty ones, such as those a
+; wrapper macro passes on, are skipped)
+SET CALLN,0
+IFDIFF &A8,
+ PUSHARG &A8
+SET CALLN,CALLN+1
+ENDIFASM
+IFDIFF &A7,
+ PUSHARG &A7
+SET CALLN,CALLN+1
+ENDIFASM
+IFDIFF &A6,
+ PUSHARG &A6
+SET CALLN,CALLN+1
+ENDIFASM
+IFDIFF &A5,
+ PUSHARG &A5
+SET CALLN,CALLN+1
+ENDIFASM
+IFDIFF &A4,
+ PUSHARG &A4
+SET CALLN,CALLN+1
+ENDIFASM
+IFDIFF &A3,
+ PUSHARG &A3
+SET CALLN,CALLN+1
+ENDIFASM
+IFDIFF &A2,
+ PUSHARG &A2
+SET CALLN,CALLN+1
+ENDIFASM
+IFDIFF &A1,
+ PUSHARG &A1
+SET CALLN,CALLN+1
+ENDIFASM
+IFSAME &F,r2
+ jal r1,(r2)
+ELSEASM
+IFDIFF &F,r0
+ la r0,&F
+ENDIFASM
+ jal r1,(r0)
+ENDIFASM
+IFNE CALLN,0
+ add sp,CALLN*3
+ENDIFASM
+MEND
+
+; LOCAL name,bytes -- name a local of the given size; name becomes its
+; (negative) offset from fp. Declare locals before PROLOG. Offsets below
+; -128 do not fit lw/sw; address such locals with mov/add instead.
+MACRO LOCAL &N,&B
+SET LOCSZ,LOCSZ+&B
+SET &N,0-LOCSZ
+MEND
+
+; PROLOG [bytes] -- routine entry: save fp, r2, r1, set fp, and reserve
+; bytes of locals (default: the LOCALs declared since the last PROLOG).
+MACRO PROLOG &B
+ push fp
+ push r2
+ push r1
+ mov fp,sp
+IFDIFF &B,
+ sub sp,&B
+ELSEASM
+IFNE LOCSZ,0
+ sub sp,LOCSZ
+ENDIFASM
+ENDIFASM
+SET LOCSZ,0
+MEND
+
+; RET -- routine exit: restore sp, r1, r2, fp and return (result in r0).
+MACRO RET
+ mov sp,fp
+ pop r1
+ pop r2
+ pop fp
+ jmp (r1)
+MEND
+
+; RETURN value -- r0 = value (register, constant or label), then RET.
+MACRO RETURN &V
+ LOADR r0,&V
+ RET
+MEND
+
+; ARG reg,n -- reg = the nth argument (1-based) of the current routine.
+MACRO ARG &R,&N
+ lw &R,6+3*&N(fp)
+MEND
+ENDIFASM

@@ -1,0 +1,30 @@
+; lib/board.hlasm -- LED D2 and button S2 (macros only). Needs: cor24, frame.
+; Each macro clobbers r0 and r1.
+IFNDEF LIB_BOARD
+SET LIB_BOARD,1
+
+; LEDON / LEDOFF -- turn LED D2 on or off (it is active-low).
+MACRO LEDON
+ la r1,LED_REG
+ lc r0,LED_ON
+ sb r0,0(r1)
+MEND
+
+MACRO LEDOFF
+ la r1,LED_REG
+ lc r0,LED_OFF
+ sb r0,0(r1)
+MEND
+
+; BUTTON [reg] -- reg (default r0) = bit 0 of the button register:
+; 0 while S2 is pressed, 1 when released.
+MACRO BUTTON &R=r0
+ la r1,LED_REG
+ lbu r0,0(r1)
+ lc r1,1
+ and r0,r1
+IFDIFF &R,r0
+ mov &R,r0
+ENDIFASM
+MEND
+ENDIFASM

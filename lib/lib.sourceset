@@ -1,0 +1,17 @@
+# The hlasm macro library: one COPY member per file. A program's sourceset
+# names its MAIN first, then includes this file:
+#   ROOT .
+#   MAIN prog.hlasm
+#   SOURCESET <path to>/lib/lib.sourceset
+# and the program COPYs the members it needs: macro members at the top,
+# the code members (svc_bare_code, rt_code) at the end.
+ROOT .
+COPY cor24 cor24.hlasm
+COPY frame frame.hlasm
+COPY svc_bare svc_bare.hlasm
+COPY svc_bare_code svc_bare_code.hlasm
+COPY board board.hlasm
+COPY data data.hlasm
+COPY check check.hlasm
+COPY rt rt.hlasm
+COPY rt_code rt_code.hlasm

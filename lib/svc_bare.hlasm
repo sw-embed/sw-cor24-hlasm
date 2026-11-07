@@ -1,0 +1,138 @@
+; lib/svc_bare.hlasm -- system services interface, bare-metal target
+; (macros only). The routines these macros call are in svc_bare_code, which
+; the program COPYs at its end; a routine is emitted only if a macro here
+; asked for it (SET NEED_<name>,1). A sw-tos target can provide the same
+; macros on top of IPC without changing the programs.
+; Needs: cor24, frame.
+;
+; Register effects: every macro may clobber r0 and r1 and preserves r2 and
+; fp, unless its description says otherwise.
+IFNDEF LIB_SVC
+SET LIB_SVC,1
+
+; START [main] -- program entry: _start calls main (default _main), then
+; falls into _exit. Put it before any other code: execution begins at the
+; first byte of the program.
+MACRO START &M=_main
+_start:
+ la r0,&M
+ jal r1,(r0)
+ EXITCODE
+MEND
+
+; EXITCODE -- the program's exit path (used by START): _exit, then with
+; SET SHOWRC,1 print "r0=<n>" and a newline (n is r0, the exit code),
+; then halt (bra to itself, which cor24-emu treats as a stop).
+MACRO EXITCODE
+_exit:
+IFDEF SHOWRC
+ push r0
+ lc r0,114
+ PUTC
+ lc r0,48
+ PUTC
+ lc r0,61
+ PUTC
+ pop r0
+ push r0
+ PUTDEC
+ PUTNL
+ pop r0
+ENDIFASM
+_halt:
+ bra _halt
+MEND
+
+; EXIT [code] -- stop the program from anywhere: r0 = code (register,
+; constant or label; default: r0 as it is), then jump to _exit.
+MACRO EXIT &C=r0
+ LOADR r0,&C
+ la r1,_exit
+ jmp (r1)
+MEND
+
+; PUTC [char] -- write one character to the UART, waiting while the
+; transmitter is busy. char is a register (default r0), a constant or a
+; character such as 'A'. Inline; clobbers r0 and r1.
+MACRO PUTC &C=r0
+ LOADR r0,&C
+ push r2
+ la r2,UART_DATA
+L\@:
+ lb r1,1(r2)
+ cls r1,z
+ brt L\@
+ sb r0,0(r2)
+ pop r2
+MEND
+
+; PUTNL -- write a newline (10).
+MACRO PUTNL
+ PUTC 10
+MEND
+
+; PUTS str -- write the NUL-terminated string at str (a label or a register
+; holding its address). No newline is added.
+MACRO PUTS &S
+SET NEED_svc_puts,1
+ CALL _svc_puts,&S
+MEND
+
+; PUTDEC [reg] -- write a value in signed decimal (default r0); a
+; register, constant or label.
+MACRO PUTDEC &V=r0
+SET NEED_svc_putdec,1
+ CALL _svc_putdec,&V
+MEND
+
+; PUTHEX [reg] -- write a value in lower-case hex without leading zeros
+; (as tc24r's printf %x).
+MACRO PUTHEX &V=r0
+SET NEED_svc_puthex,1
+ CALL _svc_puthex,&V
+MEND
+
+; WTO "text" -- write a literal string (escapes such as \n are resolved by
+; hlasm). cor24-asm has no separate data section, so the text sits right
+; after a call to _svc_wto, which prints it and returns past it.
+MACRO WTO &T
+SET NEED_svc_wto,1
+ la r0,_svc_wto
+ jal r1,(r0)
+ .ascii &T
+ .byte 0
+MEND
+
+; GETC [reg] -- wait for a character from the UART and return it in r0
+; (and reg, if given and not r0).
+MACRO GETC &R=r0
+SET NEED_svc_getc,1
+ CALL _svc_getc
+IFDIFF &R,r0
+ mov &R,r0
+ENDIFASM
+MEND
+
+; GETLINE buf,len -- read UART characters into buf until a newline (not
+; stored) or len-1 characters; buf is NUL-terminated. r0 = the length.
+MACRO GETLINE &B,&L
+SET NEED_svc_getline,1
+ CALL _svc_getline,&B,&L
+MEND
+
+; GETMAIN reg,size -- allocate size bytes (rounded up to whole words) from
+; the heap (a bump allocator starting at SVC_HEAP, 0x080000 unless the
+; program defines it first); reg = the address. reg is r0 or r2.
+MACRO GETMAIN &R,&N
+SET NEED_svc_getmain,1
+ CALL _svc_getmain,&N
+IFDIFF &R,r0
+ mov &R,r0
+ENDIFASM
+MEND
+
+; FREEMAIN reg,size -- release storage. A bump allocator does not reclaim
+; it (as tc24r's free), so this generates no code.
+MACRO FREEMAIN &R,&N
+MEND
+ENDIFASM

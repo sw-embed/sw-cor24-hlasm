@@ -1,6 +1,6 @@
 number = 11
 slug = "macro-library-core"
-status = "pending"
+status = "in-progress"
 description = "Create the core hlasm macro library from docs/tinyc-port-plan.md as COPY memb..."
 role = "production"
 context_files = []
