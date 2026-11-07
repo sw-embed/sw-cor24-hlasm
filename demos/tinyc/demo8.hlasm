@@ -1,0 +1,34 @@
+; demo8.c in hlasm: #define constants become EQU symbols, used in
+; instructions, MMIO and compares; prints "D8OK" and returns ANSWER (42).
+; Output: "D8OK" then "r0=42"; cor24-emu reports the LED on.
+; (hlasm has no string-valued symbols, so GREETING is written out.)
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY board
+COPY data
+COPY check
+COPY rt
+ANSWER EQU 42
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; int a = ANSWER;
+ la r0,ANSWER
+ CHECK cc_eq,r0,42
+; led_on() writes LED_ON to LED_REG
+ LEDON
+; the symbol is not replaced inside a string: strlen is 27
+ RTCALL strlen,msg
+ CHECK cc_eq,r0,27
+; ANSWERING is a different name from ANSWER
+ANSWERING EQU 99
+ la r0,ANSWERING
+ CHECK cc_eq,r0,99
+ CHECKEND "D8OK\n",ANSWER
+ RET
+ STR msg,"ANSWER is not replaced here"
+COPY svc_bare_code
+COPY rt_code

@@ -1,0 +1,41 @@
+; demo2.c in hlasm: char values, pointers to locals (read and write through
+; them), LED on through MMIO; prints "OK" and returns 42 if every check holds.
+; Output: "OK" then "r0=42"; cor24-emu reports the LED on.
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY board
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ LOCAL X,3
+ LOCAL CH,3
+ PROLOG
+ CHECKINIT
+; char a = 65, b = 66
+ lc r0,65
+ CHECK cc_eq,r0,65
+ lc r0,66
+ CHECK cc_eq,r0,66
+; int x = 123; int *px = &x;  *px == 123
+ la r0,123
+ sw r0,X(fp)
+ LOCADDR r2,X
+ lw r0,0(r2)
+ CHECK cc_eq,r0,123
+; *px = 456;  x == 456
+ la r0,456
+ sw r0,0(r2)
+ lw r0,X(fp)
+ CHECK cc_eq,r0,456
+; char ch = 77; char *pc = &ch;  *pc == 77
+ lc r0,77
+ sb r0,CH(fp)
+ LOCADDR r2,CH
+ lbu r0,0(r2)
+ CHECK cc_eq,r0,77
+ LEDON
+ CHECKEND "OK\n",42
+ RET
+COPY svc_bare_code

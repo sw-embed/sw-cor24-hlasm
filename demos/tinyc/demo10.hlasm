@@ -1,0 +1,32 @@
+; demo10.c in hlasm: #include becomes COPY. The board constants come from
+; the library member cor24 (as <cor24.h>), the routines from the
+; demo-local member demo10_io (as "demo10_io.h"), COPYed twice to show
+; its guard. Prints "D10OK" and returns 42.
+; Output: "D10OK" then "r0=42"; cor24-emu reports the LED on.
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY board
+COPY data
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+ la r0,LED_REG
+ CHECK cc_eq,r0,0xFF0000
+ la r0,UART_STATUS
+ CHECK cc_eq,r0,0xFF0101
+ CALL _led_on
+ la r1,_chk_ok
+ lw r0,0(r1)
+IF cc_ne,r0,0
+ CALL _puts,msg
+ RETURN 42
+ENDIF
+ RETURN 0
+ STR msg,"D10OK\n"
+COPY demo10_io
+COPY demo10_io
+COPY svc_bare_code

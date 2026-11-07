@@ -1,0 +1,4 @@
+ROOT .
+MAIN demo10.hlasm
+COPY demo10_io demo10_io.hlasm
+SOURCESET ../../lib/lib.sourceset

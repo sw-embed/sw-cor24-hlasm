@@ -1,0 +1,35 @@
+; demo9.c in hlasm: a UART receive interrupt handler stores the received
+; character; main installs it, enables the interrupt and waits for it.
+; Run with UART input "A". Output: "r0=65".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+; install the handler and enable the UART RX interrupt
+ la r0,_uart_isr
+ mov iv,r0
+ la r1,INT_ENABLE
+ lc r0,1
+ sb r0,0(r1)
+; wait until the handler has stored a character
+DO
+ la r1,_rx_char
+ lw r0,0(r1)
+ DOEXIT cc_ne,r0,0
+ENDDO
+ RET
+
+; the handler: reading the data register clears the interrupt
+_uart_isr:
+ ISRENTRY
+ la r1,UART_DATA
+ lbu r0,0(r1)
+ la r1,_rx_char
+ sw r0,0(r1)
+ ISRRET
+ WORDS _rx_char,0
+COPY svc_bare_code

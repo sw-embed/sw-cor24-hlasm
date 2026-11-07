@@ -160,4 +160,37 @@ MEND
 MACRO ARG &R,&N
  lw &R,6+3*&N(fp)
 MEND
+
+; LOCADDR reg,name -- reg = the address of LOCAL name (C's &x). There is no
+; mov reg,fp, so fp goes through the stack.
+MACRO LOCADDR &R,&N
+ push fp
+ pop &R
+ add &R,&N
+MEND
+
+; ISRENTRY / ISRRET -- interrupt handler entry and exit (as tc24r's
+; __attribute__((interrupt))): save r0-r2, the C flag and fp; restore them
+; and return with jmp (ir). Install the handler with la r0,handler /
+; mov iv,r0.
+MACRO ISRENTRY
+ push r0
+ push r1
+ push r2
+ mov r2,c
+ push r2
+ push fp
+ mov fp,sp
+MEND
+
+MACRO ISRRET
+ mov sp,fp
+ pop fp
+ pop r2
+ clu z,r2
+ pop r2
+ pop r1
+ pop r0
+ jmp (ir)
+MEND
 ENDIFASM

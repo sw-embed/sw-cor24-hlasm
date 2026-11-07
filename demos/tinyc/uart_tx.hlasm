@@ -1,0 +1,15 @@
+; uart_tx.c in hlasm: send "Hi!" and a newline over the UART, return 0.
+; Output: "Hi!" then "r0=0".
+COPY cor24
+COPY frame
+COPY svc_bare
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ PUTC 'H'
+ PUTC 'i'
+ PUTC '!'
+ PUTNL
+ RETURN 0
+COPY svc_bare_code

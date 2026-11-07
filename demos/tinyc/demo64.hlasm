@@ -1,0 +1,40 @@
+; demo64.c in hlasm: write "hello" into a 5-byte global buffer, then count
+; the bytes that match; returns 5. A demo-local macro does each count.
+; Output: "r0=5". (Without SHOWRC no library routine at all would be
+; emitted -- the counterpart of tc24r's dead-code check.)
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+SET SHOWRC,1
+
+; COUNTIF n,ch: add 1 to r2 if buf[n] is ch
+MACRO COUNTIF &N,&C
+ lbu r0,&N(r1)
+IF cc_eq,r0,&C
+ add r2,1
+ENDIF
+MEND
+
+ START
+_main:
+ PROLOG
+ la r1,buf
+ lc r0,'h'
+ sb r0,0(r1)
+ lc r0,'e'
+ sb r0,1(r1)
+ lc r0,'l'
+ sb r0,2(r1)
+ sb r0,3(r1)
+ lc r0,'o'
+ sb r0,4(r1)
+ lc r2,0
+ COUNTIF 0,'h'
+ COUNTIF 1,'e'
+ COUNTIF 2,'l'
+ COUNTIF 3,'l'
+ COUNTIF 4,'o'
+ RETURN r2
+ SPACE buf,5
+COPY svc_bare_code

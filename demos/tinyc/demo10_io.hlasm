@@ -1,0 +1,23 @@
+; demo10_io.hlasm: the port of demo10_io.h, a member with an include guard
+; (as #pragma once). It holds routines, so it is COPYed after the program's
+; own code; COPYing it twice emits it once.
+IFNDEF DEMO10_IO
+SET DEMO10_IO,1
+; _puts(s): write a NUL-terminated string
+_puts:
+ PROLOG
+ ARG r2,1
+DO
+ lbu r0,0(r2)
+ DOEXIT cc_eq,r0,0
+ PUTC
+ add r2,1
+ENDDO
+ RET
+
+; _led_on(): LED D2 on
+_led_on:
+ PROLOG
+ LEDON
+ RET
+ENDIFASM

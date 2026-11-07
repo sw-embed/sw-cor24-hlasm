@@ -1,0 +1,13 @@
+; led.c in hlasm: turn LED D2 on, return 0.
+; Output: "r0=0"; cor24-emu reports the LED on.
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY board
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ LEDON
+ RETURN 0
+COPY svc_bare_code

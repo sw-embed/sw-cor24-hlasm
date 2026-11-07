@@ -1,0 +1,4 @@
+command = "bash reg-rs/check_tinyc.sh button 2>&1"
+timeout = 180
+exit_code = 0
+desc = "tiny-C button.c ported to hlasm (demos/tinyc/button.hlasm), run end to end"

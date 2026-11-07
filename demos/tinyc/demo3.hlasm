@@ -1,0 +1,37 @@
+; demo3.c in hlasm: hex literals, a string constant, strlen, and stepping a
+; char pointer through the string; prints "D3OK" and returns 0x2A.
+; Output: "D3OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY check
+COPY rt
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; int a = 0xFF; int b = 0x2A;
+ la r0,0xFF
+ CHECK cc_eq,r0,255
+ la r0,0x2A
+ CHECK cc_eq,r0,42
+; char *msg = "Hello"; strlen(msg) == 5
+ RTCALL strlen,msg
+ CHECK cc_eq,r0,5
+; char *p = msg + 1;  *p == 'e'
+ la r2,msg
+ add r2,1
+ lbu r0,0(r2)
+ CHECK cc_eq,r0,101
+; char *q = msg + 4;  *q == 'o'
+ la r2,msg
+ add r2,4
+ lbu r0,0(r2)
+ CHECK cc_eq,r0,111
+ CHECKEND "D3OK\n",0x2A
+ RET
+ STR msg,"Hello"
+COPY svc_bare_code
+COPY rt_code

@@ -1,0 +1,12 @@
+; hello.c in hlasm: print "Hello, COR24!" and return 0.
+; Output: "Hello, COR24!" then "r0=0".
+COPY cor24
+COPY frame
+COPY svc_bare
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ WTO "Hello, COR24!\n"
+ RETURN 0
+COPY svc_bare_code
