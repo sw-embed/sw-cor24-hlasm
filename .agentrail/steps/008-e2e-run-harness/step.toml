@@ -1,8 +1,9 @@
 number = 8
 slug = "e2e-run-harness"
-status = "in-progress"
+status = "completed"
 description = "Add scripts/hlasm-e2e.sh: take a .hlasm source (or sourceset with COPY member..."
 role = "production"
 context_files = []
 created_at = "2026-10-30T09:59:16"
-commits = []
+completed_at = "2026-11-07T08:48:45"
+commits = ["4302e193fae231cdfaf4bb9f76699677539dd408"]

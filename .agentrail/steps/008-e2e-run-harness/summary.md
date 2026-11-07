@@ -1,0 +1,1 @@
+Added scripts/hlasm-e2e.sh (.hlasm or sourceset -> hlasm -> cor24-asm -> cor24-emu, prints UART output, exit 2/3/4 per failing stage, --keep-s/--hlasm-n/--run-n, -- emu args). New hlasm_e2e_* convention: hlasm_e2e_d40_long_range replaces hlasm_d40_long_range_run; hlasm_e2e_harness (reg-rs/check_e2e.sh) covers a COPY sourceset and the failure exits. Docs updated. 77/77 pass.
