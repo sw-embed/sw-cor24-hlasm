@@ -1,2 +1,2 @@
 pool_at_261: ok, 0 output lines, last: 
-pool_over_262: ERROR: macro body pool overflow (65536 bytes)
+pool_over_262: ERROR: pool_over_262:263: macro body pool overflow (65536 bytes)

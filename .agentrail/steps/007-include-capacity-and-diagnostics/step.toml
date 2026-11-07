@@ -1,6 +1,6 @@
 number = 7
 slug = "include-capacity-and-diagnostics"
-status = "pending"
+status = "in-progress"
 description = "Implement L19-L21 and M7 from docs/limits-and-lifting-plan.md: new source con..."
 role = "production"
 context_files = []

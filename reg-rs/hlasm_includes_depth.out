@@ -1,0 +1,2 @@
+depth_16: 33 nop lines (expect 33), last:  nop ; main end
+depth_17: ERROR: mem_n_padded_16:3: INCLUDE nested deeper than 16

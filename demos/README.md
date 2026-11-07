@@ -197,7 +197,7 @@ SRCBUF 1            ; jump directly to preloaded source slot 1
 INCBUF 1            ; push current slot/position, read slot 1, then
                     ; return to the caller source when slot 1 hits EOF
 
-INCLUDE tail        ; resolve "tail" through the low-SRAM include-name table,
+INCLUDE tail        ; resolve "tail" through the member names in the config block,
                     ; then include that slot and resume the caller source
 
 COPY libmac         ; HLASM-style alias for a named source member, useful

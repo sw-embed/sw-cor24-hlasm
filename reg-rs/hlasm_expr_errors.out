@@ -1,7 +1,7 @@
-div_zero: ERROR: division by zero in expression
-mod_zero: ERROR: division by zero in expression
-str_bad_escape: ERROR: unknown escape in string or character literal
-str_bad_hex: ERROR: unknown escape in string or character literal
-char_bad_escape: ERROR: unknown escape in string or character literal
+div_zero: ERROR: main:1: division by zero in expression
+mod_zero: ERROR: main:1: division by zero in expression
+str_bad_escape: ERROR: main:1: unknown escape in string or character literal
+str_bad_hex: ERROR: main:1: unknown escape in string or character literal
+char_bad_escape: ERROR: main:1: unknown escape in string or character literal
 str_good: ok: .byte 65,92,34,9,0
 char_good: ok:  lc r0,11

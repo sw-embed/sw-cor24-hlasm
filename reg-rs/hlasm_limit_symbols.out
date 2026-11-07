@@ -1,2 +1,2 @@
 symbols_at_512: ok, 1 output lines, last:  nop
-symbols_over_513: ERROR: symbol table overflow (512 symbols)
+symbols_over_513: ERROR: symbols_over_51:513: symbol table overflow (512 symbols)

@@ -1,2 +1,2 @@
 expand_at_256: ok, 1 output lines, last:  nop ;yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
-expand_over_257: ERROR: expanded macro line longer than 256 characters
+expand_over_257: ERROR: expand_over_257:4: expanded macro line longer than 256 characters

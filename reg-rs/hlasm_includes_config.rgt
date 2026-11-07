@@ -1,0 +1,4 @@
+command = "bash reg-rs/check_includes.sh config 2>&1"
+timeout = 120
+exit_code = 0
+desc = "Config block with 33 members stops with ERROR; make_cfg rejects 16-character names"

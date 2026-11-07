@@ -605,10 +605,19 @@ Source-set lines:
 | `MAINADDR` / `EXTRAADDR` / `ALIGN` | load addresses and alignment (rarely needed) |
 
 A source set lifts the 32,767-byte main-source limit; together, all files
-fit in the 256 KB window at 0x080000-0x0BFFFF. Today a source set can name
-3 members, with names of up to 8 characters (see
-[Not supported yet](#not-supported-yet)). Demos d23, d24 and d34 show
-complete source sets.
+fit in the 256 KB window at 0x080000-0x0BFFFF. A source set can name up to
+32 members, with names of up to 15 characters, and `INCLUDE`/`COPY` can
+nest 16 deep. Demos d23, d24 and d34 show complete source sets.
+
+Errors name the member and line being processed, using the file name of
+the main source (at most 15 characters) and the member names:
+
+```
+ERROR: mem_n_padded_03:3: division by zero in expression
+```
+
+A line produced by a macro expansion reports the line of the macro call.
+Sources run without a source set are called `main`.
 
 ## Listings, cross-reference and diagnostics
 
@@ -680,11 +689,16 @@ line; nothing is silently truncated.
 | IF / DO / SELECT nesting | 32 each | `IF nested deeper than 32` (and DO, SELECT) |
 | Division | non-zero divisor | `division by zero in expression` |
 | String escapes | see above | `unknown escape in string or character literal` |
+| Source set members | 32 | `source config has more than 32 members` (`make_cfg.sh` also refuses) |
+| Member name | 15 characters | refused by `make_cfg.sh` |
+| INCLUDE / COPY nesting | 16 | `INCLUDE nested deeper than 16` |
 
-For example, `SET THIS_NAME_IS_MUCH_TOO_LONG_FOR_HLASM,1` gives:
+Each message is preceded by the member and line (see "Multiple source files"). For
+example, `SET THIS_NAME_IS_MUCH_TOO_LONG_FOR_HLASM,1` on line 2 of a source
+run without a source set gives:
 
 ```
-ERROR: symbol name longer than 31 characters
+ERROR: main:2: symbol name longer than 31 characters
 ```
 
 Values are 24-bit and wrap like COR24 arithmetic. Structured labels and
@@ -694,9 +708,6 @@ Values are 24-bit and wrap like COR24 arithmetic. Structured labels and
 
 These are planned (see `docs/limits-and-lifting-plan.md` for the schedule):
 
-- **More include members**: a source set can name 3 members with names of
-  up to 8 characters, and error messages do not yet name the member and
-  line.
 - **Compound conditions** (`IF cc_eq,r0,1,AND,...`) and record layouts
   (`DSECT`).
 - **Labels as values.** Labels are resolved by `cor24-asm`, not hlasm, so

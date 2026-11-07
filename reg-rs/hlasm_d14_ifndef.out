@@ -1,4 +1,4 @@
-Loaded 21788 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.uaPRV7jX1c/hlasm.lgo
+Loaded 22008 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.SlvrzBlfds/hlasm.lgo
 Loaded 61 bytes from 'demos/d14_ifndef.bin' at 0x080000
 [UART TX @ 130000] ' '  (0x20)
 [UART TX @ 130000] 'a'  (0x61)
@@ -8,11 +8,11 @@ Loaded 61 bytes from 'demos/d14_ifndef.bin' at 0x080000
 [UART TX @ 130000] 'r'  (0x72)
 [UART TX @ 130000] '0'  (0x30)
 [UART TX @ 130000] ','  (0x2C)
-[UART TX @ 131677] '1'  (0x31)
-[UART TX @ 131677] ''  (0x0D)
-[UART TX @ 131677] '\n'
+[UART TX @ 132279] '1'  (0x31)
+[UART TX @ 132279] ''  (0x0D)
+[UART TX @ 132279] '\n'
 
 UART output:  add r0,1
 
 
-Executed 131677 instructions
+Executed 132279 instructions

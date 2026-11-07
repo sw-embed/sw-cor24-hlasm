@@ -1,0 +1,4 @@
+command = "bash reg-rs/check_includes.sh location 2>&1"
+timeout = 120
+exit_code = 0
+desc = "ERROR lines name member and line (nested member; main after include return via macro call)"

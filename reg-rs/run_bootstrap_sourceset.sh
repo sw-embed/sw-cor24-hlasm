@@ -149,6 +149,9 @@ process_sourceset() {
                 bash demos/make_bin.sh "$src_part" "$bin_part" >/dev/null
                 size_part="$(wc -c < "$bin_part")"
                 printf 'main %s %s\n' "$main_addr" "$size_part" >> "$cfg_txt"
+                # the file name (at most 15 chars) names it in ERROR lines
+                main_name="$(basename "${src_part%.hlasm}")"
+                printf 'mainname %s\n' "${main_name:0:15}" >> "$cfg_txt"
                 load_args+=("--load-binary" "${bin_part}@${main_addr}")
                 ;;
             INCLUDE|COPY)

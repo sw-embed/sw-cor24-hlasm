@@ -1,0 +1,2 @@
+members: 65 nop lines (expect 65), last:  nop ; main end
+; in mem_n_padded_32

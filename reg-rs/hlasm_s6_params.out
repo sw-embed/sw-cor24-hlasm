@@ -1,4 +1,4 @@
-Loaded 21733 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.nuelpFqbuZ/hlasm.lgo
+Loaded 22008 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.tuli3aNUrW/hlasm.lgo
 Loaded 61 bytes from 'reg-rs/s6_params.bin' at 0x080000
 [UART TX @ 160000] ' '  (0x20)
 [UART TX @ 160000] 's'  (0x73)
@@ -16,22 +16,22 @@ Loaded 61 bytes from 'reg-rs/s6_params.bin' at 0x080000
 [UART TX @ 170000] '1'  (0x31)
 [UART TX @ 170000] ''  (0x0D)
 [UART TX @ 170000] '\n'
-[UART TX @ 179405] ' '  (0x20)
-[UART TX @ 179405] 's'  (0x73)
-[UART TX @ 179405] 't'  (0x74)
-[UART TX @ 179405] ' '  (0x20)
-[UART TX @ 179405] 'r'  (0x72)
-[UART TX @ 179405] '2'  (0x32)
-[UART TX @ 179405] ''  (0x0D)
-[UART TX @ 179405] '\n'
-[UART TX @ 179405] ' '  (0x20)
-[UART TX @ 179405] 's'  (0x73)
-[UART TX @ 179405] 't'  (0x74)
-[UART TX @ 179405] ' '  (0x20)
-[UART TX @ 179405] 'f'  (0x66)
-[UART TX @ 179405] 'p'  (0x70)
-[UART TX @ 179405] ''  (0x0D)
-[UART TX @ 179405] '\n'
+[UART TX @ 180000] ' '  (0x20)
+[UART TX @ 180000] 's'  (0x73)
+[UART TX @ 180000] 't'  (0x74)
+[UART TX @ 180000] ' '  (0x20)
+[UART TX @ 180000] 'r'  (0x72)
+[UART TX @ 180000] '2'  (0x32)
+[UART TX @ 180000] ''  (0x0D)
+[UART TX @ 180000] '\n'
+[UART TX @ 180000] ' '  (0x20)
+[UART TX @ 180000] 's'  (0x73)
+[UART TX @ 180000] 't'  (0x74)
+[UART TX @ 180000] ' '  (0x20)
+[UART TX @ 180000] 'f'  (0x66)
+[UART TX @ 180000] 'p'  (0x70)
+[UART TX @ 180000] ''  (0x0D)
+[UART TX @ 180000] '\n'
 
 UART output:  st r0
  st r1
@@ -39,4 +39,4 @@ UART output:  st r0
  st fp
 
 
-Executed 179405 instructions
+Executed 180007 instructions

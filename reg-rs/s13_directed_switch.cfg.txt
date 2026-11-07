@@ -1,0 +1,3 @@
+# s13_directed_switch: main source moved to 0x090000 (length as in the original config)
+main 589824 2687015
+extra 528384 27

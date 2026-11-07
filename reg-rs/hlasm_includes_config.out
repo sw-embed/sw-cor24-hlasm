@@ -1,0 +1,2 @@
+count_33: ERROR: source config has more than 32 members
+name_16: ERROR: name 'abcdefghijklmnop' exceeds 15 characters

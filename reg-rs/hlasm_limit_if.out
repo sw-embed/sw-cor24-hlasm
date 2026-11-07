@@ -1,2 +1,2 @@
 if_at_32: ok, 434 output lines, last: _hlif_2_end:
-if_over_33: ERROR: IF nested deeper than 32
+if_over_33: ERROR: if_over_33:33: IF nested deeper than 32

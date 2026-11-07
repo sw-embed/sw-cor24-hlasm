@@ -1,7 +1,7 @@
-Loaded 21788 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.Bgq0kc4dWK/hlasm.lgo
+Loaded 22008 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.khLOdu73Pc/hlasm.lgo
 Loaded 33 bytes from 'demos/d22_include_return_main.bin' at 0x090000
 Loaded 33 bytes from 'demos/d22_include_return_extra.bin' at 0x081000
-Loaded 27 bytes from 'reg-rs/s14_include_return.cfg' at 0x07F000
+Loaded 47 bytes from 'reg-rs/s14_include_return.cfg' at 0x07F000
 [UART TX @ 150000] 't'  (0x74)
 [UART TX @ 150000] 'a'  (0x61)
 [UART TX @ 150000] 'i'  (0x69)
@@ -18,22 +18,22 @@ Loaded 27 bytes from 'reg-rs/s14_include_return.cfg' at 0x07F000
 [UART TX @ 160000] 'h'  (0x68)
 [UART TX @ 160000] ''  (0x0D)
 [UART TX @ 160000] '\n'
-[UART TX @ 160000] '_'  (0x5F)
-[UART TX @ 160000] 'h'  (0x68)
-[UART TX @ 160000] ':'  (0x3A)
-[UART TX @ 160000] ''  (0x0D)
-[UART TX @ 160000] '\n'
-[UART TX @ 166703] ' '  (0x20)
-[UART TX @ 166703] 'b'  (0x62)
-[UART TX @ 166703] 'r'  (0x72)
-[UART TX @ 166703] 'a'  (0x61)
-[UART TX @ 166703] ' '  (0x20)
-[UART TX @ 166703] 't'  (0x74)
-[UART TX @ 166703] 'a'  (0x61)
-[UART TX @ 166703] 'i'  (0x69)
-[UART TX @ 166703] 'l'  (0x6C)
-[UART TX @ 166703] ''  (0x0D)
-[UART TX @ 166703] '\n'
+[UART TX @ 167411] '_'  (0x5F)
+[UART TX @ 167411] 'h'  (0x68)
+[UART TX @ 167411] ':'  (0x3A)
+[UART TX @ 167411] ''  (0x0D)
+[UART TX @ 167411] '\n'
+[UART TX @ 167411] ' '  (0x20)
+[UART TX @ 167411] 'b'  (0x62)
+[UART TX @ 167411] 'r'  (0x72)
+[UART TX @ 167411] 'a'  (0x61)
+[UART TX @ 167411] ' '  (0x20)
+[UART TX @ 167411] 't'  (0x74)
+[UART TX @ 167411] 'a'  (0x61)
+[UART TX @ 167411] 'i'  (0x69)
+[UART TX @ 167411] 'l'  (0x6C)
+[UART TX @ 167411] ''  (0x0D)
+[UART TX @ 167411] '\n'
 
 UART output: tail:
  bra _h
@@ -41,4 +41,4 @@ _h:
  bra tail
 
 
-Executed 166703 instructions
+Executed 167411 instructions

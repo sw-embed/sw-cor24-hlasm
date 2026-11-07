@@ -12,24 +12,23 @@
 ;   0x07F000  config block for extra source buffers
 ;   0x080000+ preloaded ASCII source/include buffers (main default length
 ;              32767 bytes)
-;   0x0C0000+ runtime arena (counters, source descriptors, source-return
+;   0x0C0000+ runtime arena (counters, current source slot, source-return
 ;              stack), 4700 bytes
 ;   0x0D0000+ relax snapshot; 0x0E0000+ relax tables
 ;   EBR stack: prefer cor24-emu --stack-kilobytes 3 unless a future SRAM
 ;              fallback stack is explicitly needed
 ;
-; Source config block at 0x07F000:
-;   +0   extra source count (legacy-compatible)
-;   +3   extra source 1 base
-;   +6   extra source 1 len
-;   +9   extra source 2 base
-;   +12  extra source 2 len
-;   +15  extra source 3 base
-;   +18  extra source 3 len
-;   +21  optional main source base override (0 = default)
-;   +24  optional main source len override  (0 = default)
-;   +27  include-name count
-;   +30  first include record: slot word + 9-byte null-terminated name
+; Source config block at 0x07F000 (built by reg-rs/make_cfg.sh; all zero
+; means main source only):
+;   +0   member count N (0-32; more stops with an ERROR)
+;   +3   main source base override (0 = default 0x080000)
+;   +6   main source len override  (0 = default 32767)
+;   +9   main source name, 16 bytes NUL-terminated (ERROR locations;
+;        empty = "main")
+;   +25  N member records of 22 bytes: base, len, name (16 bytes,
+;        NUL-terminated, at most 15 chars; INCLUDE/COPY look it up, an
+;        empty name is reachable only by slot number or by chaining).
+;        Record i is source slot i+1.
 ;
 ; Token types (word-sized):
 ;   0=EOF 1=NEWLINE 2=KEYWORD 3=MNEMONIC 4=REGISTER 5=NUMBER
@@ -990,6 +989,13 @@ _rl_loop:
 	la	r2,257
 	clu	r0,r2
 	brt	_rl_loop
+; count the line being read, so the ERROR names it
+	la	r0,_current_src_desc
+	jal	r1,(r0)
+	mov	r2,r0
+	lw	r0,9(r2)
+	add	r0,1
+	sw	r0,9(r2)
 	la	r0,_err_line_long
 	push	r0
 	la	r0,_fatal
@@ -1037,7 +1043,8 @@ _rl_switched_src:
 	la	r2,_hldiag_line_no
 	la	r0,0
 	sw	r0,0(r2)
-	bra	_rl_loop
+	la	r2,_rl_loop
+	jmp	(r2)
 
 _rl_eol:
 	la	r0,0
@@ -1048,6 +1055,12 @@ _rl_ret_len:
 	lw	r0,0(r2)
 	add	r0,1
 	sw	r0,0(r2)
+	la	r0,_current_src_desc
+	jal	r1,(r0)
+	mov	r2,r0
+	lw	r0,9(r2)
+	add	r0,1
+	sw	r0,9(r2)
 	lw	r0,0(fp)
 	mov	sp,fp
 	pop	r2
@@ -2504,6 +2517,8 @@ _fatal:
 	la	r0,_emit_strz
 	jal	r1,(r0)
 	add	sp,3
+	la	r0,_emit_src_location
+	jal	r1,(r0)
 	lw	r0,9(fp)
 	push	r0
 	la	r0,_emit_strz
@@ -2514,6 +2529,81 @@ _fatal:
 
 	la	r0,_halt
 	jmp	(r0)
+
+; _emit_src_location: Print "<member>:<line>: " for the source line being
+; processed (lines from a macro expansion report the line of the call).
+; The member is the config name of the current source, else "main" for
+; slot 0 or "slot<N>". Prints nothing before the first source line is read.
+_emit_src_location:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	la	r1,786597
+	lw	r0,0(r1)
+	ceq	r0,z
+	brf	_esl_src
+_esl_none:
+	la	r1,_esl_ret
+	jmp	(r1)
+_esl_src:
+	la	r0,_current_src_desc
+	jal	r1,(r0)
+	lw	r0,9(r0)
+	ceq	r0,z
+	brt	_esl_none
+_esl_go:
+	la	r1,786600
+	lw	r2,0(r1)
+	push	r2
+	la	r0,_src_name
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brf	_esl_name
+	la	r0,_loc_main_txt
+	ceq	r2,z
+	brt	_esl_name
+	la	r0,_loc_slot_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+	push	r2
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+	bra	_esl_line
+_esl_name:
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+_esl_line:
+	la	r0,_loc_colon_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_current_src_desc
+	jal	r1,(r0)
+	lw	r0,9(r0)
+	push	r0
+	la	r0,_emit_dec24
+	jal	r1,(r0)
+	add	sp,3
+	la	r0,_loc_sep_txt
+	push	r0
+	la	r0,_emit_strz
+	jal	r1,(r0)
+	add	sp,3
+_esl_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
 
 ; _emit_crlf: Print CR+LF to UART.
 _emit_crlf:
@@ -3702,14 +3792,6 @@ _ira_xc_loop:
 	la	r0,1
 	sw	r0,0(r1)
 
-	la	r1,786606
-	la	r0,524288
-	sw	r0,0(r1)
-	la	r0,32767
-	sw	r0,3(r1)
-	la	r0,0
-	sw	r0,6(r1)
-
 	la	r1,786642
 	la	r0,131072
 	sw	r0,0(r1)
@@ -3736,8 +3818,11 @@ _ira_xc_loop:
 	pop	fp
 	jmp	(r1)
 
-; _init_src_table: Initialize source descriptors and optional extra buffers
-; from config at 0x07F000.
+; _init_src_table: Initialize the source descriptors from the config block at
+; 0x07F000 (see the header): slot 0 is the main source, slots 1-32 the
+; configured members.
+; Descriptors at 239104, 12 bytes each: +0 base, +3 length, +6 position,
+; +9 line number (of the line last read from that source).
 _init_src_table:
 	push	fp
 	push	r1
@@ -3745,107 +3830,110 @@ _init_src_table:
 	mov	fp,sp
 	add	sp,-3
 
-	la	r1,786597
-	la	r0,1
-	sw	r0,0(r1)
-
 	la	r1,786600
-	la	r0,0
+	lc	r0,0
 	sw	r0,0(r1)
 
-	la	r1,786606
-	la	r0,0
-	sw	r0,6(r1)
-
-	la	r1,786615
-	la	r0,0
+	la	r1,239104
+	la	r0,524288
 	sw	r0,0(r1)
+	la	r0,32767
 	sw	r0,3(r1)
+	lc	r0,0
 	sw	r0,6(r1)
-
-	la	r1,786624
-	sw	r0,0(r1)
-	sw	r0,3(r1)
-	sw	r0,6(r1)
-
-	la	r1,786633
-	sw	r0,0(r1)
-	sw	r0,3(r1)
-	sw	r0,6(r1)
+	sw	r0,9(r1)
 
 	la	r2,520192
-
-	lw	r0,21(r2)
+	lw	r0,3(r2)
 	ceq	r0,z
 	brt	_ist_main_len
-	la	r1,786606
 	sw	r0,0(r1)
-
 _ist_main_len:
-	lw	r0,24(r2)
+	lw	r0,6(r2)
 	ceq	r0,z
-	brt	_ist_extra_count
-	la	r1,786606
+	brt	_ist_count
 	sw	r0,3(r1)
 
-_ist_extra_count:
+_ist_count:
 	lw	r0,0(r2)
-	ceq	r0,z
-	brt	_ist_ret
-
-	sw	r0,0(fp)
+	lc	r1,33
+	clu	r0,r1
+	brt	_ist_count_ok
+	la	r0,_err_cfg_full
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_ist_count_ok:
 	la	r1,786597
 	add	r0,1
 	sw	r0,0(r1)
 
-	la	r1,786603
-	la	r0,0
-	sw	r0,0(r1)
-
+; copy member i (0-based) to descriptor i+1
+	lc	r0,0
+	sw	r0,0(fp)
 _ist_copy_loop:
-	la	r1,786603
-	lw	r0,0(r1)
-	lw	r1,0(fp)
+	lw	r0,0(fp)
+	la	r1,520192
+	lw	r1,0(r1)
 	clu	r0,r1
 	brf	_ist_ret
 
 	push	r0
-	la	r0,_mul6
+	la	r0,_cfg_member
 	jal	r1,(r0)
 	add	sp,3
-	mov	r1,r0
-	la	r0,520195
-	add	r0,r1
 	mov	r2,r0
 
-	la	r1,786603
-	lw	r0,0(r1)
+	lw	r0,0(fp)
 	add	r0,1
-	push	r2
 	push	r0
-	la	r0,_mul9
+	la	r0,_mul12
 	jal	r1,(r0)
 	add	sp,3
-	pop	r2
-	mov	r1,r0
-	la	r0,786606
-	add	r0,r1
-	mov	r1,r0
+	la	r1,239104
+	add	r1,r0
 
 	lw	r0,0(r2)
 	sw	r0,0(r1)
 	lw	r0,3(r2)
 	sw	r0,3(r1)
-	la	r0,0
+	lc	r0,0
 	sw	r0,6(r1)
+	sw	r0,9(r1)
 
-	la	r1,786603
-	lw	r0,0(r1)
+	lw	r0,0(fp)
 	add	r0,1
-	sw	r0,0(r1)
+	sw	r0,0(fp)
 	bra	_ist_copy_loop
 
 _ist_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _cfg_member: r0 = address of config member record index (0-based):
+; 520217 + index * 22 (+0 base, +3 length, +6 name, 16 bytes).
+; Arg on stack: index
+_cfg_member:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r0,9(fp)
+	add	r0,r0
+	mov	r1,r0
+	add	r0,r0
+	mov	r2,r0
+	add	r0,r0
+	add	r0,r0
+	add	r0,r1
+	add	r0,r2
+	la	r1,520217
+	add	r0,r1
+
 	mov	sp,fp
 	pop	r2
 	pop	r1
@@ -3882,8 +3970,9 @@ _asd_ret:
 	pop	fp
 	jmp	(r1)
 
-; _select_src_slot: Activate a configured source slot and rewind its position.
-; Arg on stack: slot index (0=main, 1+=extra source)
+; _select_src_slot: Activate a configured source slot and rewind it (position
+; and line number).
+; Arg on stack: slot index (0=main, 1+=configured member)
 ; Returns: r0 = 1 if switched, 0 if invalid
 _select_src_slot:
 	push	fp
@@ -3898,13 +3987,14 @@ _select_src_slot:
 	brf	_sss_no
 
 	push	r0
-	la	r0,_mul9
+	la	r0,_mul12
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,786606
+	la	r1,239104
 	add	r1,r0
-	la	r0,0
+	lc	r0,0
 	sw	r0,6(r1)
+	sw	r0,9(r1)
 
 	lw	r0,9(fp)
 	la	r1,786600
@@ -3922,8 +4012,10 @@ _sss_ret:
 	pop	fp
 	jmp	(r1)
 
-; _push_src_return: Save current source slot for include return.
-; Returns: r0 = 1 if pushed, 0 if stack full
+; _push_src_return: Save the current source slot for include return.
+; Stack: depth at 787734, 16 slots of 3 bytes at 787737. Deeper nesting
+; stops with an ERROR.
+; Returns: r0 = 1
 _push_src_return:
 	push	fp
 	push	r1
@@ -3932,12 +4024,16 @@ _push_src_return:
 
 	la	r1,787734
 	lw	r0,0(r1)
-	la	r2,8
+	lc	r2,16
 	clu	r0,r2
-	brf	_psr_no
-
+	brt	_psr_room
+	la	r0,_err_inc_deep
 	push	r0
-	la	r0,_mul6
+	la	r0,_fatal
+	jal	r1,(r0)
+_psr_room:
+	push	r0
+	la	r0,_mul3
 	jal	r1,(r0)
 	add	sp,3
 	la	r1,787737
@@ -3953,12 +4049,7 @@ _push_src_return:
 	add	r0,1
 	sw	r0,0(r1)
 	la	r0,1
-	bra	_psr_ret
 
-_psr_no:
-	la	r0,0
-
-_psr_ret:
 	mov	sp,fp
 	pop	r2
 	pop	r1
@@ -3982,7 +4073,7 @@ _pop_src_return:
 	sw	r0,0(r1)
 
 	push	r0
-	la	r0,_mul6
+	la	r0,_mul3
 	jal	r1,(r0)
 	add	sp,3
 	la	r1,787737
@@ -4006,7 +4097,8 @@ _prr_ret:
 	pop	fp
 	jmp	(r1)
 
-; _lookup_include_slot: Resolve _parse_name_buf through the low-SRAM include table.
+; _lookup_include_slot: Resolve _parse_name_buf against the member names in
+; the config block.
 ; Returns: r0 = 1 if found, 0 if not. Stores slot in _include_lookup_slot.
 _lookup_include_slot:
 	push	fp
@@ -4016,45 +4108,37 @@ _lookup_include_slot:
 	add	sp,-3
 
 	la	r1,787804
-	la	r0,0
+	lc	r0,0
 	sw	r0,0(r1)
 	sw	r0,-3(fp)
 
-	la	r2,520192
-	lw	r1,27(r2)
-	lw	r0,-3(fp)
-	clu	r0,r1
-	brf	_lis_no
-
 _lis_loop:
 	lw	r0,-3(fp)
-	lw	r1,27(r2)
+	la	r1,520192
+	lw	r1,0(r1)
 	clu	r0,r1
 	brf	_lis_no
 
-	lw	r0,-3(fp)
 	push	r0
-	la	r0,_mul6
+	la	r0,_cfg_member
 	jal	r1,(r0)
 	add	sp,3
-	add	r0,r0
-	la	r1,520222
-	add	r1,r0
-	mov	r2,r1
+	add	r0,6
+	lbu	r1,0(r0)
+	ceq	r1,z
+	brt	_lis_next
 
-	push	r2
-	add	r2,3
-	push	r2
+	push	r0
 	la	r2,197128
 	push	r2
 	la	r0,_streq
 	jal	r1,(r0)
 	add	sp,6
-	pop	r2
 	ceq	r0,z
 	brt	_lis_next
 
-	lw	r0,0(r2)
+	lw	r0,-3(fp)
+	add	r0,1
 	la	r1,787804
 	sw	r0,0(r1)
 	la	r0,1
@@ -4064,13 +4148,45 @@ _lis_next:
 	lw	r0,-3(fp)
 	add	r0,1
 	sw	r0,-3(fp)
-	la	r2,520192
 	bra	_lis_loop
 
 _lis_no:
 	la	r0,0
 
 _lis_ret:
+	mov	sp,fp
+	pop	r2
+	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _src_name: r0 = name of source slot (strz): the config name, or 0 when the
+; slot has none (slot 0 uses the main name at 520201).
+; Arg on stack: slot
+_src_name:
+	push	fp
+	push	r1
+	push	r2
+	mov	fp,sp
+
+	lw	r0,9(fp)
+	ceq	r0,z
+	brf	_srn_member
+	la	r0,520201
+	bra	_srn_check
+_srn_member:
+	add	r0,-1
+	push	r0
+	la	r0,_cfg_member
+	jal	r1,(r0)
+	add	sp,3
+	add	r0,6
+_srn_check:
+	lbu	r1,0(r0)
+	ceq	r1,z
+	brf	_srn_ret
+	lc	r0,0
+_srn_ret:
 	mov	sp,fp
 	pop	r2
 	pop	r1
@@ -4087,10 +4203,10 @@ _current_src_desc:
 	la	r1,786600
 	lw	r0,0(r1)
 	push	r0
-	la	r0,_mul9
+	la	r0,_mul12
 	jal	r1,(r0)
 	add	sp,3
-	la	r1,786606
+	la	r1,239104
 	add	r0,r1
 
 	mov	sp,fp
@@ -8675,11 +8791,12 @@ _exr_go:
 	jal	r1,(r0)
 
 	la	r2,520192
-	lw	r0,27(r2)
+	lw	r0,0(r2)
 	sw	r0,-3(fp)
 	la	r0,0
 	sw	r0,-6(fp)
 
+; named members (config records) that a COPY or INCLUDE used
 _exr_copy_loop:
 	lw	r0,-6(fp)
 	lw	r1,-3(fp)
@@ -8687,23 +8804,22 @@ _exr_copy_loop:
 	brf	_exr_macro_defs
 
 	lw	r0,-6(fp)
-	push	r0
-	la	r0,_mul12
-	jal	r1,(r0)
-	add	sp,3
-	la	r2,520222
-	add	r2,r0
-	lw	r0,0(r2)
-	add	r0,-1
 	la	r1,_xref_copy_used
 	add	r1,r0
 	lbu	r0,0(r1)
 	ceq	r0,z
 	brt	_exr_copy_next
 
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_cfg_member
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+	add	r2,6
+
 	la	r0,_xref_copy_txt
 	push	r0
-	add	r2,3
 	push	r2
 	la	r0,_emit_xref_line1
 	jal	r1,(r0)
@@ -14015,6 +14131,24 @@ _err_arg_full:
 _err_def_long:
 	.byte	109,97,99,114,111,32,112,97,114,97,109,101,116,101,114,32,100,101,102,97,117,108,116,32,108,111,110,103,101,114,32,116,104,97,110,32,54,51,32,99,104,97,114,97,99,116,101,114,115,0
 
+_err_inc_deep:
+	.byte	73,78,67,76,85,68,69,32,110,101,115,116,101,100,32,100,101,101,112,101,114,32,116,104,97,110,32,49,54,0
+
+_err_cfg_full:
+	.byte	115,111,117,114,99,101,32,99,111,110,102,105,103,32,104,97,115,32,109,111,114,101,32,116,104,97,110,32,51,50,32,109,101,109,98,101,114,115,0
+
+_loc_main_txt:
+	.byte	109,97,105,110,0
+
+_loc_slot_txt:
+	.byte	115,108,111,116,0
+
+_loc_colon_txt:
+	.byte	58,0
+
+_loc_sep_txt:
+	.byte	58,32,0
+
 _sysndx_txt:
 	.byte	83,89,83,78,68,88,0
 
@@ -14191,6 +14325,10 @@ _kw_endifasm:
 ;                    (see "Macro expansion stack")
 ; 0x039200 (233984)  argument strings per frame: 8 x 512 bytes
 ; 0x03A200 (238080)  parameter defaults while parsing a MACRO line: 16 x 64
+; 0x03A600 (239104)  source descriptors: 33 x 12 bytes (base, length,
+;                    position, line number); slot 0 is the main source
+; 0x0C0000 arena:    786597 source count, 786600 current slot, 787734
+;                    include return depth, 787737 return slots (16 x 3)
 ; 0x038800 (231424)  XREF macro expansion counters: 256 x 3 bytes (cleared
 ;                    at each pass start)
 ; 0x0C0000 (786432)  arena of counters and source state (4700 bytes, cleared
@@ -14308,7 +14446,8 @@ _sel_skip_suffix:
 	.byte	95,115,107,105,112,0
 
 _xref_copy_used:
-	.byte	0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 
 _xref_symbol_count:

@@ -1,2 +1,2 @@
 select_at_32: ok, 434 output lines, last: _hlsel_1_end:
-select_over_33: ERROR: SELECT nested deeper than 32
+select_over_33: ERROR: select_over_33:65: SELECT nested deeper than 32

@@ -1,2 +1,2 @@
 macname_at_31: ok, 1 output lines, last:  nop
-macname_over_32: ERROR: macro name longer than 31 characters
+macname_over_32: ERROR: macname_over_32:1: macro name longer than 31 characters

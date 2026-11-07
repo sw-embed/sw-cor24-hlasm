@@ -50,10 +50,10 @@ COR24 24-bit RISC: 3 GP registers (r0-r2), fp, sp, z, iv, ir,
 | Region | Address | Contents |
 |--------|---------|----------|
 | Code + immutable tables | 0x000000+ | HLASM macro-assembler assembly (must end below 0x010000) |
-| Assembler tables | 0x010000-0x03FFFF | Symbol table (512), macro table (256), 64 KB macro body pool, work area (line/name/operand buffers, expansion buffer, 32-deep stacks), XREF/HLDIAG tables |
-| Source config block | 0x07F000 | Extra-source descriptor config loaded by `--load-binary` |
+| Assembler tables | 0x010000-0x03FFFF | Symbol table (512), macro table (256), 64 KB macro body pool, work area (line/name/operand buffers, 32-deep stacks), XREF/HLDIAG tables, macro expansion frames (8), source descriptors (33) |
+| Source config block | 0x07F000 | Member count, main overrides and name, up to 32 member records (base, length, 15-char name), loaded by `--load-binary` (built by `reg-rs/make_cfg.sh`) |
 | Source/include buffers | 0x080000-0x0BFFFF | Preloaded ASCII HLASM input buffers |
-| Runtime arena | 0x0C0000-0x0C125B | Counters, source descriptors, source-return stack |
+| Runtime arena | 0x0C0000-0x0C125B | Counters, current source slot, source-return stack (16) |
 | Relaxation state | 0x0D0000-0x0ECFFF | Two-pass structured-jump snapshot and tables |
 | Stack | 0xFEEC00 | Preferred 3K EBR stack (`--stack-kilobytes 3`) |
 

@@ -23,11 +23,12 @@ every feature with examples, limits and error messages).
   SELECT/WHEN/OTHERWISE/ENDSEL, with automatic long-range jumps
 - Data conveniences: `.ascii`, `.asciz` (with `\xNN` escapes), `.space`,
   `.fill`
-- Multi-file sources: `INCLUDE` / `COPY` members through source sets
+- Multi-file sources: `INCLUDE` / `COPY` members through source sets (32
+  members, 15-character names, nesting 16)
 - Optional annotations, listing, cross-reference and diagnostics
 - Plain assembly passthrough; checked limits that stop with `ERROR:`
-- Planned: more include members and member:line in errors, compound
-  conditions, DSECT (see docs/limits-and-lifting-plan.md)
+- Errors name the member and line: `ERROR: <member>:<line>: <message>`
+- Planned: compound conditions, DSECT (see docs/limits-and-lifting-plan.md)
 
 ## Opt-in Source Switches
 

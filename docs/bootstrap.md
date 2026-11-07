@@ -104,17 +104,19 @@ That means `hlasm` does not need a host-side include mechanism to get started.
 Stage0 can consume source and include-file buffers entirely through the
 existing emulator interface.
 
-The current source-switch path uses a small config block at `0x07F000` with:
+The current source-switch path uses a small config block at `0x07F000`
+(layout revised in tinyc-macro-ports step 7; `reg-rs/make_cfg.sh` builds
+it):
 
-- `+0`: extra-buffer count
-- `+3`: first extra `(base,len)` record
-- then additional 6-byte `(base,len)` records
-- `+21`: optional main-source base override
-- `+24`: optional main-source length override
-- `+27`: include-name count
-- `+30`: first include record as `(slot,name[9])`
+- `+0`: member count N (0-32)
+- `+3`: optional main-source base override
+- `+6`: optional main-source length override
+- `+9`: main-source name (16 bytes, NUL-terminated; used in ERROR lines)
+- `+25`: N member records of 22 bytes: `(base,len,name[16])`, names of at
+  most 15 characters; record i is source slot i+1
 
-Step 17 keeps that binary layout, but the named-include demos no longer treat
+The earlier layout had 3 extra-buffer records and a separate include table
+with 8-character names. Step 17 kept the binary layout of its time, but the named-include demos no longer treat
 the low-SRAM block as hand-authored bytes. A tiny shell builder now emits the
 same config image from readable manifest files with `main`, `extra`, and
 `include` records, so bootstrap demos can describe include-table contents in

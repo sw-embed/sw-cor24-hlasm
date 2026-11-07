@@ -1,4 +1,4 @@
-Loaded 21733 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.1Jsq2NMyu4/hlasm.lgo
+Loaded 22008 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.4qiJDTLlkR/hlasm.lgo
 Loaded 50 bytes from 'reg-rs/s6_combined.bin' at 0x080000
 [UART TX @ 160000] 'L'  (0x4C)
 [UART TX @ 160000] '0'  (0x30)
@@ -24,30 +24,30 @@ Loaded 50 bytes from 'reg-rs/s6_combined.bin' at 0x080000
 [UART TX @ 170000] '1'  (0x31)
 [UART TX @ 170000] ''  (0x0D)
 [UART TX @ 170000] '\n'
-[UART TX @ 178437] 'L'  (0x4C)
-[UART TX @ 178437] '0'  (0x30)
-[UART TX @ 178437] '0'  (0x30)
-[UART TX @ 178437] '0'  (0x30)
-[UART TX @ 178437] '2'  (0x32)
-[UART TX @ 178437] ':'  (0x3A)
-[UART TX @ 178437] ' '  (0x20)
-[UART TX @ 178437] 's'  (0x73)
-[UART TX @ 178437] 't'  (0x74)
-[UART TX @ 178437] ' '  (0x20)
-[UART TX @ 178437] 'r'  (0x72)
-[UART TX @ 178437] '1'  (0x31)
-[UART TX @ 178437] ''  (0x0D)
-[UART TX @ 178437] '\n'
-[UART TX @ 178437] ' '  (0x20)
-[UART TX @ 178437] 'b'  (0x62)
-[UART TX @ 178437] ' '  (0x20)
-[UART TX @ 178437] 'L'  (0x4C)
-[UART TX @ 178437] '0'  (0x30)
-[UART TX @ 178437] '0'  (0x30)
-[UART TX @ 178437] '0'  (0x30)
-[UART TX @ 178437] '2'  (0x32)
-[UART TX @ 178437] ''  (0x0D)
-[UART TX @ 178437] '\n'
+[UART TX @ 179039] 'L'  (0x4C)
+[UART TX @ 179039] '0'  (0x30)
+[UART TX @ 179039] '0'  (0x30)
+[UART TX @ 179039] '0'  (0x30)
+[UART TX @ 179039] '2'  (0x32)
+[UART TX @ 179039] ':'  (0x3A)
+[UART TX @ 179039] ' '  (0x20)
+[UART TX @ 179039] 's'  (0x73)
+[UART TX @ 179039] 't'  (0x74)
+[UART TX @ 179039] ' '  (0x20)
+[UART TX @ 179039] 'r'  (0x72)
+[UART TX @ 179039] '1'  (0x31)
+[UART TX @ 179039] ''  (0x0D)
+[UART TX @ 179039] '\n'
+[UART TX @ 179039] ' '  (0x20)
+[UART TX @ 179039] 'b'  (0x62)
+[UART TX @ 179039] ' '  (0x20)
+[UART TX @ 179039] 'L'  (0x4C)
+[UART TX @ 179039] '0'  (0x30)
+[UART TX @ 179039] '0'  (0x30)
+[UART TX @ 179039] '0'  (0x30)
+[UART TX @ 179039] '2'  (0x32)
+[UART TX @ 179039] ''  (0x0D)
+[UART TX @ 179039] '\n'
 
 UART output: L0001: st r0
  b L0001
@@ -55,4 +55,4 @@ L0002: st r1
  b L0002
 
 
-Executed 178437 instructions
+Executed 179039 instructions

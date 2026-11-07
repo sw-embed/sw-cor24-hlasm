@@ -1,4 +1,4 @@
-Loaded 21733 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.vaJqlGt2Pw/hlasm.lgo
+Loaded 22008 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.o0lCbcsMYR/hlasm.lgo
 Loaded 58 bytes from 'demos/d27_positional_macro_params.bin' at 0x080000
 [UART TX @ 170000] ' '  (0x20)
 [UART TX @ 170000] 'p'  (0x70)
@@ -15,31 +15,31 @@ Loaded 58 bytes from 'demos/d27_positional_macro_params.bin' at 0x080000
 [UART TX @ 170000] 'u'  (0x75)
 [UART TX @ 170000] 's'  (0x73)
 [UART TX @ 170000] 'h'  (0x68)
-[UART TX @ 170000] ' '  (0x20)
-[UART TX @ 170000] 'r'  (0x72)
-[UART TX @ 170000] '1'  (0x31)
-[UART TX @ 170000] ''  (0x0D)
-[UART TX @ 170000] '\n'
 [UART TX @ 180000] ' '  (0x20)
-[UART TX @ 188249] 'p'  (0x70)
-[UART TX @ 188249] 'u'  (0x75)
-[UART TX @ 188249] 's'  (0x73)
-[UART TX @ 188249] 'h'  (0x68)
-[UART TX @ 188249] ' '  (0x20)
-[UART TX @ 188249] 'r'  (0x72)
-[UART TX @ 188249] '2'  (0x32)
-[UART TX @ 188249] ''  (0x0D)
-[UART TX @ 188249] '\n'
-[UART TX @ 188249] ' '  (0x20)
-[UART TX @ 188249] 'p'  (0x70)
-[UART TX @ 188249] 'u'  (0x75)
-[UART TX @ 188249] 's'  (0x73)
-[UART TX @ 188249] 'h'  (0x68)
-[UART TX @ 188249] ' '  (0x20)
-[UART TX @ 188249] 'r'  (0x72)
-[UART TX @ 188249] '3'  (0x33)
-[UART TX @ 188249] ''  (0x0D)
-[UART TX @ 188249] '\n'
+[UART TX @ 180000] 'r'  (0x72)
+[UART TX @ 180000] '1'  (0x31)
+[UART TX @ 180000] ''  (0x0D)
+[UART TX @ 180000] '\n'
+[UART TX @ 188851] ' '  (0x20)
+[UART TX @ 188851] 'p'  (0x70)
+[UART TX @ 188851] 'u'  (0x75)
+[UART TX @ 188851] 's'  (0x73)
+[UART TX @ 188851] 'h'  (0x68)
+[UART TX @ 188851] ' '  (0x20)
+[UART TX @ 188851] 'r'  (0x72)
+[UART TX @ 188851] '2'  (0x32)
+[UART TX @ 188851] ''  (0x0D)
+[UART TX @ 188851] '\n'
+[UART TX @ 188851] ' '  (0x20)
+[UART TX @ 188851] 'p'  (0x70)
+[UART TX @ 188851] 'u'  (0x75)
+[UART TX @ 188851] 's'  (0x73)
+[UART TX @ 188851] 'h'  (0x68)
+[UART TX @ 188851] ' '  (0x20)
+[UART TX @ 188851] 'r'  (0x72)
+[UART TX @ 188851] '3'  (0x33)
+[UART TX @ 188851] ''  (0x0D)
+[UART TX @ 188851] '\n'
 
 UART output:  push r0
  push r1
@@ -47,4 +47,4 @@ UART output:  push r0
  push r3
 
 
-Executed 188249 instructions
+Executed 188851 instructions

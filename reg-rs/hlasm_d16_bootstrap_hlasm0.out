@@ -1,4 +1,4 @@
-Loaded 21788 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.hmeAggm6IP/hlasm.lgo
+Loaded 22008 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.p1QXjOMfFw/hlasm.lgo
 Loaded 284 bytes from 'bootstrap/hlasm0.bin' at 0x080000
 [UART TX @ 310000] '_'  (0x5F)
 [UART TX @ 310000] 'm'  (0x6D)
@@ -18,14 +18,14 @@ Loaded 284 bytes from 'bootstrap/hlasm0.bin' at 0x080000
 [UART TX @ 320000] 'p'  (0x70)
 [UART TX @ 320000] ''  (0x0D)
 [UART TX @ 320000] '\n'
-[UART TX @ 320000] ' '  (0x20)
-[UART TX @ 320000] 'm'  (0x6D)
-[UART TX @ 320000] 'o'  (0x6F)
-[UART TX @ 320000] 'v'  (0x76)
-[UART TX @ 320000] ' '  (0x20)
-[UART TX @ 320000] 'f'  (0x66)
-[UART TX @ 320000] 'p'  (0x70)
-[UART TX @ 320000] ','  (0x2C)
+[UART TX @ 330000] ' '  (0x20)
+[UART TX @ 330000] 'm'  (0x6D)
+[UART TX @ 330000] 'o'  (0x6F)
+[UART TX @ 330000] 'v'  (0x76)
+[UART TX @ 330000] ' '  (0x20)
+[UART TX @ 330000] 'f'  (0x66)
+[UART TX @ 330000] 'p'  (0x70)
+[UART TX @ 330000] ','  (0x2C)
 [UART TX @ 330000] 's'  (0x73)
 [UART TX @ 330000] 'p'  (0x70)
 [UART TX @ 330000] ''  (0x0D)
@@ -79,21 +79,21 @@ Loaded 284 bytes from 'bootstrap/hlasm0.bin' at 0x080000
 [UART TX @ 360000] ')'  (0x29)
 [UART TX @ 360000] ''  (0x0D)
 [UART TX @ 360000] '\n'
-[UART TX @ 360000] '_'  (0x5F)
-[UART TX @ 360000] 'b'  (0x62)
-[UART TX @ 360000] 'a'  (0x61)
-[UART TX @ 360000] 'n'  (0x6E)
-[UART TX @ 360000] ':'  (0x3A)
-[UART TX @ 360000] ''  (0x0D)
-[UART TX @ 360000] '\n'
-[UART TX @ 370000] ' '  (0x20)
-[UART TX @ 370000] 'p'  (0x70)
-[UART TX @ 370000] 'u'  (0x75)
-[UART TX @ 370000] 's'  (0x73)
-[UART TX @ 370000] 'h'  (0x68)
-[UART TX @ 370000] ' '  (0x20)
-[UART TX @ 370000] 'f'  (0x66)
-[UART TX @ 370000] 'p'  (0x70)
+[UART TX @ 370000] '_'  (0x5F)
+[UART TX @ 370000] 'b'  (0x62)
+[UART TX @ 370000] 'a'  (0x61)
+[UART TX @ 370000] 'n'  (0x6E)
+[UART TX @ 370000] ':'  (0x3A)
+[UART TX @ 370000] ''  (0x0D)
+[UART TX @ 370000] '\n'
+[UART TX @ 380000] ' '  (0x20)
+[UART TX @ 380000] 'p'  (0x70)
+[UART TX @ 380000] 'u'  (0x75)
+[UART TX @ 380000] 's'  (0x73)
+[UART TX @ 380000] 'h'  (0x68)
+[UART TX @ 380000] ' '  (0x20)
+[UART TX @ 380000] 'f'  (0x66)
+[UART TX @ 380000] 'p'  (0x70)
 [UART TX @ 380000] ''  (0x0D)
 [UART TX @ 380000] '\n'
 [UART TX @ 380000] ' '  (0x20)
@@ -116,14 +116,14 @@ Loaded 284 bytes from 'bootstrap/hlasm0.bin' at 0x080000
 [UART TX @ 390000] '1'  (0x31)
 [UART TX @ 390000] ''  (0x0D)
 [UART TX @ 390000] '\n'
-[UART TX @ 390000] ' '  (0x20)
-[UART TX @ 390000] 'm'  (0x6D)
-[UART TX @ 390000] 'o'  (0x6F)
-[UART TX @ 390000] 'v'  (0x76)
-[UART TX @ 390000] ' '  (0x20)
-[UART TX @ 390000] 'f'  (0x66)
-[UART TX @ 390000] 'p'  (0x70)
-[UART TX @ 390000] ','  (0x2C)
+[UART TX @ 400000] ' '  (0x20)
+[UART TX @ 400000] 'm'  (0x6D)
+[UART TX @ 400000] 'o'  (0x6F)
+[UART TX @ 400000] 'v'  (0x76)
+[UART TX @ 400000] ' '  (0x20)
+[UART TX @ 400000] 'f'  (0x66)
+[UART TX @ 400000] 'p'  (0x70)
+[UART TX @ 400000] ','  (0x2C)
 [UART TX @ 400000] 's'  (0x73)
 [UART TX @ 400000] 'p'  (0x70)
 [UART TX @ 400000] ''  (0x0D)
@@ -135,23 +135,23 @@ Loaded 284 bytes from 'bootstrap/hlasm0.bin' at 0x080000
 [UART TX @ 400000] 'r'  (0x72)
 [UART TX @ 400000] '0'  (0x30)
 [UART TX @ 400000] ','  (0x2C)
-[UART TX @ 400000] '_'  (0x5F)
-[UART TX @ 400000] 't'  (0x74)
-[UART TX @ 400000] 'x'  (0x78)
-[UART TX @ 400000] ''  (0x0D)
-[UART TX @ 400000] '\n'
+[UART TX @ 410000] '_'  (0x5F)
+[UART TX @ 410000] 't'  (0x74)
+[UART TX @ 410000] 'x'  (0x78)
+[UART TX @ 410000] ''  (0x0D)
+[UART TX @ 410000] '\n'
 [UART TX @ 410000] ' '  (0x20)
 [UART TX @ 410000] 'm'  (0x6D)
 [UART TX @ 410000] 'o'  (0x6F)
 [UART TX @ 410000] 'v'  (0x76)
-[UART TX @ 410000] ' '  (0x20)
-[UART TX @ 410000] 's'  (0x73)
-[UART TX @ 410000] 'p'  (0x70)
-[UART TX @ 410000] ','  (0x2C)
-[UART TX @ 410000] 'f'  (0x66)
-[UART TX @ 410000] 'p'  (0x70)
-[UART TX @ 410000] ''  (0x0D)
-[UART TX @ 410000] '\n'
+[UART TX @ 420000] ' '  (0x20)
+[UART TX @ 420000] 's'  (0x73)
+[UART TX @ 420000] 'p'  (0x70)
+[UART TX @ 420000] ','  (0x2C)
+[UART TX @ 420000] 'f'  (0x66)
+[UART TX @ 420000] 'p'  (0x70)
+[UART TX @ 420000] ''  (0x0D)
+[UART TX @ 420000] '\n'
 [UART TX @ 420000] ' '  (0x20)
 [UART TX @ 420000] 'p'  (0x70)
 [UART TX @ 420000] 'o'  (0x6F)
@@ -174,11 +174,11 @@ Loaded 284 bytes from 'bootstrap/hlasm0.bin' at 0x080000
 [UART TX @ 430000] 'p'  (0x70)
 [UART TX @ 430000] 'o'  (0x6F)
 [UART TX @ 430000] 'p'  (0x70)
-[UART TX @ 430000] ' '  (0x20)
-[UART TX @ 430000] 'f'  (0x66)
-[UART TX @ 430000] 'p'  (0x70)
-[UART TX @ 430000] ''  (0x0D)
-[UART TX @ 430000] '\n'
+[UART TX @ 440000] ' '  (0x20)
+[UART TX @ 440000] 'f'  (0x66)
+[UART TX @ 440000] 'p'  (0x70)
+[UART TX @ 440000] ''  (0x0D)
+[UART TX @ 440000] '\n'
 [UART TX @ 440000] ' '  (0x20)
 [UART TX @ 440000] 'j'  (0x6A)
 [UART TX @ 440000] 'm'  (0x6D)
@@ -190,29 +190,29 @@ Loaded 284 bytes from 'bootstrap/hlasm0.bin' at 0x080000
 [UART TX @ 440000] ')'  (0x29)
 [UART TX @ 440000] ''  (0x0D)
 [UART TX @ 440000] '\n'
-[UART TX @ 440000] '_'  (0x5F)
-[UART TX @ 440000] 't'  (0x74)
-[UART TX @ 440000] 'x'  (0x78)
-[UART TX @ 440000] ':'  (0x3A)
-[UART TX @ 440000] ''  (0x0D)
-[UART TX @ 440000] '\n'
-[UART TX @ 447994] ' '  (0x20)
-[UART TX @ 447994] '.'  (0x2E)
-[UART TX @ 447994] 'w'  (0x77)
-[UART TX @ 447994] 'o'  (0x6F)
-[UART TX @ 447994] 'r'  (0x72)
-[UART TX @ 447994] 'd'  (0x64)
-[UART TX @ 447994] ' '  (0x20)
-[UART TX @ 447994] '1'  (0x31)
-[UART TX @ 447994] '6'  (0x36)
-[UART TX @ 447994] '7'  (0x37)
-[UART TX @ 447994] '1'  (0x31)
-[UART TX @ 447994] '1'  (0x31)
-[UART TX @ 447994] '9'  (0x39)
-[UART TX @ 447994] '3'  (0x33)
-[UART TX @ 447994] '6'  (0x36)
-[UART TX @ 447994] ''  (0x0D)
-[UART TX @ 447994] '\n'
+[UART TX @ 450000] '_'  (0x5F)
+[UART TX @ 450000] 't'  (0x74)
+[UART TX @ 450000] 'x'  (0x78)
+[UART TX @ 450000] ':'  (0x3A)
+[UART TX @ 450000] ''  (0x0D)
+[UART TX @ 450000] '\n'
+[UART TX @ 450000] ' '  (0x20)
+[UART TX @ 450000] '.'  (0x2E)
+[UART TX @ 450000] 'w'  (0x77)
+[UART TX @ 450000] 'o'  (0x6F)
+[UART TX @ 450000] 'r'  (0x72)
+[UART TX @ 450000] 'd'  (0x64)
+[UART TX @ 450000] ' '  (0x20)
+[UART TX @ 450000] '1'  (0x31)
+[UART TX @ 450000] '6'  (0x36)
+[UART TX @ 450000] '7'  (0x37)
+[UART TX @ 450000] '1'  (0x31)
+[UART TX @ 450468] '1'  (0x31)
+[UART TX @ 450468] '9'  (0x39)
+[UART TX @ 450468] '3'  (0x33)
+[UART TX @ 450468] '6'  (0x36)
+[UART TX @ 450468] ''  (0x0D)
+[UART TX @ 450468] '\n'
 
 UART output: _main:
  push fp
@@ -236,4 +236,4 @@ _tx:
  .word 16711936
 
 
-Executed 447994 instructions
+Executed 450468 instructions

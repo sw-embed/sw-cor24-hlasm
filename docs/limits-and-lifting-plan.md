@@ -3,8 +3,10 @@
 Status: audit complete (2026-10-31, tinyc-macro-ports saga step 2). Step 3
 fixed D1-D3 and D7; step 4 lifted the table limits (see "Now" below); step 5
 added M1 (EQU in operands), M4 (expressions) and D6 (string escapes);
-step 6 added L10, M2 and M3 (macro layering) and fixed D5 and D12.
-The remaining lifts are scheduled as saga steps (see "Schedule").
+step 6 added L10, M2 and M3 (macro layering) and fixed D5 and D12;
+step 7 lifted L19-L21 (32 members, 15-char names, nesting 16) and added M7
+(member:line in errors). The plan's scheduled lifts are all done; the
+remaining items (M5, M6, cost) belong to later sagas (see "Schedule").
 
 This document records every capacity limit and known defect in `hlasm.s`,
 who needs it raised, and how to lift it. Its consumers are:
@@ -82,9 +84,9 @@ each has a reg-rs test (`hlasm_limit_*`) at the limit and one past it.
 | L16 | Structured label id | 999 | none | `_hlif_:00_false`; cor24-asm rejects it | ports, self-host (B4) | **any 24-bit id** (`_emit_dec24` full range); tested to 1200 |
 | L17 | Input line | nominal 128 B; arena space 165 B | **none** | 166 B garbage; 175 B or more hang | plsw G5 | **256 chars, ERROR** |
 | L18 | Main buffer | 32,767 B default (docs say 4,096) | stops at length or NUL | truncated mid-line | self-host | documented (sourceset sets any length up to the 0x0BFFFF window) |
-| L19 | Extra buffers / include slots | 3 (config block layout) | host-side only | - | macro library members, self-host | step 7 |
-| L20 | Include name | 8 chars | host-side only | - | readable member names | step 7 |
-| L21 | Include nesting | 8 | silent | INCLUDE ignored | - | step 7 |
+| L19 | Extra buffers / include slots | 3 (config block layout) | host-side only | - | macro library members, self-host | **32 members (new config layout), ERROR** in hlasm and in `make_cfg.sh` |
+| L20 | Include name | 8 chars | host-side only | - | readable member names | **15 chars**; `make_cfg.sh` refuses longer names |
+| L21 | Include nesting | 8 | silent | INCLUDE ignored | - | **16, ERROR** |
 | L22 | HLXREF symbols / HLDIAG names | 16 x 16 B | silent | extras ignored | larger programs | **512 / 64 names of 31 chars** |
 | L23 | XREF expand counts | 16 B (but 32 macros) | none | macros 17-32 corrupt `_xref_symbol_count`, even with HLXREF off | - | **256 x 3-byte counters** (bytes also wrapped at 256) |
 | L24 | Relax tables | 1,024 ids or jumps; line sizer 255 B | yes | far form (safe, larger) | self-host | **4,096** (beyond: far form, still correct) |
@@ -116,7 +118,7 @@ each has a reg-rs test (`hlasm_limit_*`) at the limit and one past it.
 | M4 | Expressions (G2) | `+` and `-` only; `*`, `/`, `<<`, `( )`, `'A'` gave 0 | table offsets, sizes | **done (step 5):** `\| ^ & << >> + - * / %` with C precedence, unary `- ~ +`, `( )`, `'c'` literals; `>>` is arithmetic, `/` and `%` truncate toward zero, division by zero is an ERROR |
 | M5 | Compound conditions (G1) | extra terms silently ignored | plsw | `IF cc_eq,r0,1,AND,cc_ne,r1,2` lowered as short-circuit branches; error on malformed input |
 | M6 | DSECT / FIELD (G3) | passes through raw | plsw records, services control blocks | `DSECT name` / `FIELD name,size` / `DEND` defining offset symbols via M1 |
-| M7 | Diagnostics (G6) | no file or line context; overflows silent | everyone | `ERROR: <member>:<line>: <message>` on the UART, and a non-zero `HLDIAG` count |
+| M7 | Diagnostics (G6) | no file or line context; overflows silent | everyone | **done (step 7):** every `_fatal` prints `ERROR: <member>:<line>: <message>`. Each source keeps its own line number (an include returns to the caller's count); a macro expansion reports the call line; the main source is named after its file (by the source-set runner) or `main`. HLDIAG warnings keep their existing `src N line M` format, and since `_fatal` halts, an HLDIAG count adds nothing |
 
 ## Cost (G7)
 
@@ -176,7 +178,8 @@ is in the "Runtime memory map" comment in `hlasm.s`.
 | 0x039000-0x0391FF | macro expansion frames: 8 x 64 B (body pointer and end, `\@` number, argument count, 16 argument pointers); depth at 790719 in the arena (step 6) |
 | 0x039200-0x03A1FF | argument strings of each frame: 8 x 512 B (step 6) |
 | 0x03A200-0x03A5FF | parameter defaults while a MACRO header is parsed: 16 x 64 B (step 6) |
-| 0x07F000 | source config block (unchanged until step 7) |
+| 0x03A600-0x03A78B | source descriptors: 33 x 12 B (base, length, position, line number) (step 7) |
+| 0x07F000-0x07F2D8 | source config block, new layout (step 7): member count, main base/length overrides, main name, then 32 x 22 B member records (base, length, 16-byte name) |
 | 0x080000-0x0BFFFF | source buffers |
 | 0x0C0000-0x0C125B | arena: counters, source descriptors, source-return stack (cleared at each pass start) |
 | 0x0D0000 | relax snapshot |
@@ -195,8 +198,8 @@ snapshot. About 1.8 KB of dead legacy tables in the image (`_symbol_table`,
 Every table has one guard that calls the shared routine `_fatal(msg)`. It
 prints `ERROR: <message>` on the UART (also during the sizing pass, by
 switching to the emitting path) and halts with `bra` to self, which
-cor24-emu detects. Nothing hangs, truncates, or drops data silently. Step 7
-adds `<member>:<line>:` to the message (M7).
+cor24-emu detects. Nothing hangs, truncates, or drops data silently. Since
+step 7 the message reads `ERROR: <member>:<line>: <message>` (M7).
 
 ## System services plan (storage, printing, buffer I/O)
 
@@ -304,8 +307,8 @@ In this saga (tinyc-macro-ports), inserted after step 2:
 4. **macro-layering** (saga step 6, done): L10 and M3 (re-feed expansions through the line
    processor: nested calls and directives in bodies), M2 and D5
    (default and keyword params), D12 (nested conditionals in skipped blocks).
-5. **include-capacity-and-diagnostics** (saga step 7): L19-L21 (new config layout, 32
-   members, 15-char names) and M7 (member:line in errors).
+5. **include-capacity-and-diagnostics** (saga step 7, done): L19-L21 (new config layout, 32
+   members, 15-char names, nesting 16) and M7 (member:line in errors).
 
 Then the existing steps continue: e2e harness, survey, the macro library
 (which implements the services interface's bare-metal target, console and

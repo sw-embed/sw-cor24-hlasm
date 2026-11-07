@@ -1,0 +1,4 @@
+command = "bash reg-rs/check_includes.sh depth 2>&1"
+timeout = 120
+exit_code = 0
+desc = "INCLUDE nesting: 16 deep ok, 17 deep stops with ERROR"

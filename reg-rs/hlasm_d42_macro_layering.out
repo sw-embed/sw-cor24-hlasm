@@ -101,4 +101,4 @@ L0034:
 halt:
  bra halt
 
-Executed 2021248 instructions
+Executed 2026386 instructions

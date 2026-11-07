@@ -1,0 +1,3 @@
+# d22: main source moved to 0x090000
+main 589824 33
+extra 528384 33

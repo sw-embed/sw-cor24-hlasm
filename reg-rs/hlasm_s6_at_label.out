@@ -1,4 +1,4 @@
-Loaded 21733 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.kFyt7AkAGg/hlasm.lgo
+Loaded 22008 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.3WW78VJG0E/hlasm.lgo
 Loaded 47 bytes from 'reg-rs/s6_at_label.bin' at 0x080000
 [UART TX @ 160000] 'L'  (0x4C)
 [UART TX @ 160000] '0'  (0x30)
@@ -27,33 +27,33 @@ Loaded 47 bytes from 'reg-rs/s6_at_label.bin' at 0x080000
 [UART TX @ 170000] '1'  (0x31)
 [UART TX @ 170000] ''  (0x0D)
 [UART TX @ 170000] '\n'
-[UART TX @ 178591] 'L'  (0x4C)
-[UART TX @ 178591] '0'  (0x30)
-[UART TX @ 178591] '0'  (0x30)
-[UART TX @ 178591] '0'  (0x30)
-[UART TX @ 178591] '2'  (0x32)
-[UART TX @ 178591] ':'  (0x3A)
-[UART TX @ 178591] ' '  (0x20)
-[UART TX @ 178591] 'a'  (0x61)
-[UART TX @ 178591] 'd'  (0x64)
-[UART TX @ 178591] 'd'  (0x64)
-[UART TX @ 178591] ' '  (0x20)
-[UART TX @ 178591] 'r'  (0x72)
-[UART TX @ 178591] '0'  (0x30)
-[UART TX @ 178591] ','  (0x2C)
-[UART TX @ 178591] '1'  (0x31)
-[UART TX @ 178591] ''  (0x0D)
-[UART TX @ 178591] '\n'
-[UART TX @ 178591] ' '  (0x20)
-[UART TX @ 178591] 'b'  (0x62)
-[UART TX @ 178591] ' '  (0x20)
-[UART TX @ 178591] 'L'  (0x4C)
-[UART TX @ 178591] '0'  (0x30)
-[UART TX @ 178591] '0'  (0x30)
-[UART TX @ 178591] '0'  (0x30)
-[UART TX @ 178591] '2'  (0x32)
-[UART TX @ 178591] ''  (0x0D)
-[UART TX @ 178591] '\n'
+[UART TX @ 179193] 'L'  (0x4C)
+[UART TX @ 179193] '0'  (0x30)
+[UART TX @ 179193] '0'  (0x30)
+[UART TX @ 179193] '0'  (0x30)
+[UART TX @ 179193] '2'  (0x32)
+[UART TX @ 179193] ':'  (0x3A)
+[UART TX @ 179193] ' '  (0x20)
+[UART TX @ 179193] 'a'  (0x61)
+[UART TX @ 179193] 'd'  (0x64)
+[UART TX @ 179193] 'd'  (0x64)
+[UART TX @ 179193] ' '  (0x20)
+[UART TX @ 179193] 'r'  (0x72)
+[UART TX @ 179193] '0'  (0x30)
+[UART TX @ 179193] ','  (0x2C)
+[UART TX @ 179193] '1'  (0x31)
+[UART TX @ 179193] ''  (0x0D)
+[UART TX @ 179193] '\n'
+[UART TX @ 179193] ' '  (0x20)
+[UART TX @ 179193] 'b'  (0x62)
+[UART TX @ 179193] ' '  (0x20)
+[UART TX @ 179193] 'L'  (0x4C)
+[UART TX @ 179193] '0'  (0x30)
+[UART TX @ 179193] '0'  (0x30)
+[UART TX @ 179193] '0'  (0x30)
+[UART TX @ 179193] '2'  (0x32)
+[UART TX @ 179193] ''  (0x0D)
+[UART TX @ 179193] '\n'
 
 UART output: L0001: add r0,1
  b L0001
@@ -61,4 +61,4 @@ L0002: add r0,1
  b L0002
 
 
-Executed 178591 instructions
+Executed 179193 instructions

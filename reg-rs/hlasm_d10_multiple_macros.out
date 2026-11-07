@@ -1,4 +1,4 @@
-Loaded 21733 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.R8W21dhVEC/hlasm.lgo
+Loaded 22008 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.2AaiV31lKL/hlasm.lgo
 Loaded 61 bytes from 'demos/d10_multiple_macros.bin' at 0x080000
 [UART TX @ 160000] ' '  (0x20)
 [UART TX @ 160000] 'a'  (0x61)
@@ -22,21 +22,21 @@ Loaded 61 bytes from 'demos/d10_multiple_macros.bin' at 0x080000
 [UART TX @ 170000] '1'  (0x31)
 [UART TX @ 170000] ''  (0x0D)
 [UART TX @ 170000] '\n'
-[UART TX @ 178277] ' '  (0x20)
-[UART TX @ 178277] 'a'  (0x61)
-[UART TX @ 178277] 'd'  (0x64)
-[UART TX @ 178277] 'd'  (0x64)
-[UART TX @ 178277] ' '  (0x20)
-[UART TX @ 178277] 'r'  (0x72)
-[UART TX @ 178277] '0'  (0x30)
-[UART TX @ 178277] ','  (0x2C)
-[UART TX @ 178277] '1'  (0x31)
-[UART TX @ 178277] ''  (0x0D)
-[UART TX @ 178277] '\n'
+[UART TX @ 179095] ' '  (0x20)
+[UART TX @ 179095] 'a'  (0x61)
+[UART TX @ 179095] 'd'  (0x64)
+[UART TX @ 179095] 'd'  (0x64)
+[UART TX @ 179095] ' '  (0x20)
+[UART TX @ 179095] 'r'  (0x72)
+[UART TX @ 179095] '0'  (0x30)
+[UART TX @ 179095] ','  (0x2C)
+[UART TX @ 179095] '1'  (0x31)
+[UART TX @ 179095] ''  (0x0D)
+[UART TX @ 179095] '\n'
 
 UART output:  add r0,1
  sub r0,1
  add r0,1
 
 
-Executed 178277 instructions
+Executed 179095 instructions

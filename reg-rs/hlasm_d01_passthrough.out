@@ -1,4 +1,4 @@
-Loaded 21733 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.vj2VzTvpFR/hlasm.lgo
+Loaded 22008 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.jjdHs9YXgI/hlasm.lgo
 Loaded 19 bytes from 'demos/d01_passthrough.bin' at 0x080000
 [UART TX @ 130000] 'n'  (0x6E)
 [UART TX @ 130000] 'o'  (0x6F)
@@ -10,23 +10,23 @@ Loaded 19 bytes from 'demos/d01_passthrough.bin' at 0x080000
 [UART TX @ 130000] 'l'  (0x6C)
 [UART TX @ 130000] 't'  (0x74)
 [UART TX @ 130000] ':'  (0x3A)
-[UART TX @ 130000] ''  (0x0D)
-[UART TX @ 130000] '\n'
-[UART TX @ 136398] ' '  (0x20)
-[UART TX @ 136398] 'b'  (0x62)
-[UART TX @ 136398] 'r'  (0x72)
-[UART TX @ 136398] 'a'  (0x61)
-[UART TX @ 136398] ' '  (0x20)
-[UART TX @ 136398] 'h'  (0x68)
-[UART TX @ 136398] 'a'  (0x61)
-[UART TX @ 136398] 'l'  (0x6C)
-[UART TX @ 136398] 't'  (0x74)
-[UART TX @ 136398] ''  (0x0D)
-[UART TX @ 136398] '\n'
+[UART TX @ 136784] ''  (0x0D)
+[UART TX @ 136784] '\n'
+[UART TX @ 136784] ' '  (0x20)
+[UART TX @ 136784] 'b'  (0x62)
+[UART TX @ 136784] 'r'  (0x72)
+[UART TX @ 136784] 'a'  (0x61)
+[UART TX @ 136784] ' '  (0x20)
+[UART TX @ 136784] 'h'  (0x68)
+[UART TX @ 136784] 'a'  (0x61)
+[UART TX @ 136784] 'l'  (0x6C)
+[UART TX @ 136784] 't'  (0x74)
+[UART TX @ 136784] ''  (0x0D)
+[UART TX @ 136784] '\n'
 
 UART output: nop
 halt:
  bra halt
 
 
-Executed 136398 instructions
+Executed 136784 instructions

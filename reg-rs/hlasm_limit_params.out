@@ -1,2 +1,2 @@
 params_at_16: ok, 1 output lines, last:  add r0,16
-params_over_17: ERROR: more than 16 macro parameters
+params_over_17: ERROR: params_over_17:1: more than 16 macro parameters

@@ -1,4 +1,4 @@
-Loaded 21733 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.9RP8ZwxaJi/hlasm.lgo
+Loaded 22008 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.u5R3Pgl0FL/hlasm.lgo
 Loaded 84 bytes from 'demos/d09_comments.bin' at 0x080000
 [UART TX @ 160000] 'n'  (0x6E)
 [UART TX @ 160000] 'o'  (0x6F)
@@ -74,24 +74,24 @@ Loaded 84 bytes from 'demos/d09_comments.bin' at 0x080000
 [UART TX @ 180000] 't'  (0x74)
 [UART TX @ 180000] ''  (0x0D)
 [UART TX @ 180000] '\n'
-[UART TX @ 180000] 'h'  (0x68)
-[UART TX @ 180000] 'a'  (0x61)
-[UART TX @ 180000] 'l'  (0x6C)
-[UART TX @ 180000] 't'  (0x74)
-[UART TX @ 180000] ':'  (0x3A)
-[UART TX @ 180000] ''  (0x0D)
-[UART TX @ 180000] '\n'
-[UART TX @ 186323] ' '  (0x20)
-[UART TX @ 186323] 'b'  (0x62)
-[UART TX @ 186323] 'r'  (0x72)
-[UART TX @ 186323] 'a'  (0x61)
-[UART TX @ 186323] ' '  (0x20)
-[UART TX @ 186323] 'h'  (0x68)
-[UART TX @ 186323] 'a'  (0x61)
-[UART TX @ 186323] 'l'  (0x6C)
-[UART TX @ 186323] 't'  (0x74)
-[UART TX @ 186323] ''  (0x0D)
-[UART TX @ 186323] '\n'
+[UART TX @ 186997] 'h'  (0x68)
+[UART TX @ 186997] 'a'  (0x61)
+[UART TX @ 186997] 'l'  (0x6C)
+[UART TX @ 186997] 't'  (0x74)
+[UART TX @ 186997] ':'  (0x3A)
+[UART TX @ 186997] ''  (0x0D)
+[UART TX @ 186997] '\n'
+[UART TX @ 186997] ' '  (0x20)
+[UART TX @ 186997] 'b'  (0x62)
+[UART TX @ 186997] 'r'  (0x72)
+[UART TX @ 186997] 'a'  (0x61)
+[UART TX @ 186997] ' '  (0x20)
+[UART TX @ 186997] 'h'  (0x68)
+[UART TX @ 186997] 'a'  (0x61)
+[UART TX @ 186997] 'l'  (0x6C)
+[UART TX @ 186997] 't'  (0x74)
+[UART TX @ 186997] ''  (0x0D)
+[UART TX @ 186997] '\n'
 
 UART output: nop
 ; this is a comment
@@ -102,4 +102,4 @@ halt:
  bra halt
 
 
-Executed 186323 instructions
+Executed 186997 instructions

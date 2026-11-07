@@ -56,7 +56,17 @@ needed, is out of scope.
 
 These must be lifted before the full assembler source can go through hlasm.
 The numbers are tracked in `docs/limits-and-lifting-plan.md`, and its
-scheduled steps 1-5 cover all of them. Other findings matter here too:
+scheduled steps 1-5 cover all of them.
+
+**Status (tinyc-macro-ports step 7): all seven are met.** Sources fill the
+256 KB window with up to 32 members named with up to 15 characters, include
+nesting is 16, the tables and relax ids hold 512 symbols, 256 macros, 64 KB
+of bodies and 4,096 ids, the lowering bugs are fixed, macros nest and take
+defaults, keywords and directives in their bodies, every limit stops with an
+ERROR, and errors read `ERROR: <member>:<line>: <message>`. The list below
+is kept as the record of what was needed.
+
+Other findings at the time of the audit:
 - structured label ids break at 1000 and `\@` at 10,000 (L11, L16);
 - nested macro calls are not supported (L10);
 - the macro body pool holds only 1,023 bytes in total (L8).

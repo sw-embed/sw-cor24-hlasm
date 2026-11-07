@@ -1,0 +1,2 @@
+nested: ERROR: mem_n_padded_03:3: division by zero in expression
+after_return: ERROR: prog:8: division by zero in expression

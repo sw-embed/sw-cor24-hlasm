@@ -1,0 +1,2 @@
+# d17: main source chains into one extra buffer
+extra 528384 4096

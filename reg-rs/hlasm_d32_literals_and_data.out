@@ -1,4 +1,4 @@
-Loaded 21788 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.N358uGzCmB/hlasm.lgo
+Loaded 22008 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.aHSdLr4msM/hlasm.lgo
 Loaded 347 bytes from 'demos/d32_literals_and_data.bin' at 0x080000
 [UART TX @ 290000] ';'  (0x3B)
 [UART TX @ 290000] ' '  (0x20)
@@ -77,17 +77,17 @@ Loaded 347 bytes from 'demos/d32_literals_and_data.bin' at 0x080000
 [UART TX @ 320000] '1'  (0x31)
 [UART TX @ 320000] ''  (0x0D)
 [UART TX @ 320000] '\n'
-[UART TX @ 320000] ''  (0x0D)
-[UART TX @ 320000] '\n'
+[UART TX @ 330000] ''  (0x0D)
+[UART TX @ 330000] '\n'
 [UART TX @ 330000] ' '  (0x20)
 [UART TX @ 330000] 'a'  (0x61)
 [UART TX @ 330000] 'd'  (0x64)
 [UART TX @ 330000] 'd'  (0x64)
-[UART TX @ 330000] ' '  (0x20)
-[UART TX @ 330000] 'r'  (0x72)
-[UART TX @ 330000] '0'  (0x30)
-[UART TX @ 330000] ','  (0x2C)
-[UART TX @ 330000] '-'  (0x2D)
+[UART TX @ 340000] ' '  (0x20)
+[UART TX @ 340000] 'r'  (0x72)
+[UART TX @ 340000] '0'  (0x30)
+[UART TX @ 340000] ','  (0x2C)
+[UART TX @ 340000] '-'  (0x2D)
 [UART TX @ 340000] '1'  (0x31)
 [UART TX @ 340000] ''  (0x0D)
 [UART TX @ 340000] '\n'
@@ -114,51 +114,51 @@ Loaded 347 bytes from 'demos/d32_literals_and_data.bin' at 0x080000
 [UART TX @ 340000] 'x'  (0x78)
 [UART TX @ 340000] '2'  (0x32)
 [UART TX @ 340000] 'A'  (0x41)
-[UART TX @ 340000] ''  (0x0D)
-[UART TX @ 340000] '\n'
-[UART TX @ 340000] ' '  (0x20)
-[UART TX @ 340000] 'c'  (0x63)
-[UART TX @ 340000] 'e'  (0x65)
-[UART TX @ 340000] 'q'  (0x71)
-[UART TX @ 340000] ' '  (0x20)
-[UART TX @ 340000] 'r'  (0x72)
-[UART TX @ 340000] '0'  (0x30)
-[UART TX @ 340000] ','  (0x2C)
-[UART TX @ 340000] 'r'  (0x72)
-[UART TX @ 340000] '2'  (0x32)
-[UART TX @ 340000] ''  (0x0D)
-[UART TX @ 340000] '\n'
-[UART TX @ 340000] ' '  (0x20)
-[UART TX @ 340000] 'p'  (0x70)
-[UART TX @ 340000] 'o'  (0x6F)
-[UART TX @ 340000] 'p'  (0x70)
-[UART TX @ 340000] ' '  (0x20)
-[UART TX @ 340000] 'r'  (0x72)
-[UART TX @ 340000] '2'  (0x32)
-[UART TX @ 340000] ''  (0x0D)
-[UART TX @ 340000] '\n'
-[UART TX @ 340000] ' '  (0x20)
-[UART TX @ 340000] 'b'  (0x62)
-[UART TX @ 340000] 'r'  (0x72)
-[UART TX @ 340000] 't'  (0x74)
-[UART TX @ 340000] ' '  (0x20)
-[UART TX @ 340000] '_'  (0x5F)
-[UART TX @ 340000] 'h'  (0x68)
-[UART TX @ 340000] 'l'  (0x6C)
-[UART TX @ 340000] 'i'  (0x69)
-[UART TX @ 340000] 'f'  (0x66)
-[UART TX @ 340000] '_'  (0x5F)
-[UART TX @ 340000] '3'  (0x33)
-[UART TX @ 340000] '_'  (0x5F)
-[UART TX @ 340000] 's'  (0x73)
-[UART TX @ 340000] 'k'  (0x6B)
-[UART TX @ 340000] 'i'  (0x69)
-[UART TX @ 340000] 'p'  (0x70)
-[UART TX @ 340000] ''  (0x0D)
-[UART TX @ 340000] '\n'
-[UART TX @ 340000] ' '  (0x20)
-[UART TX @ 340000] 'b'  (0x62)
-[UART TX @ 340000] 'r'  (0x72)
+[UART TX @ 350000] ''  (0x0D)
+[UART TX @ 350000] '\n'
+[UART TX @ 350000] ' '  (0x20)
+[UART TX @ 350000] 'c'  (0x63)
+[UART TX @ 350000] 'e'  (0x65)
+[UART TX @ 350000] 'q'  (0x71)
+[UART TX @ 350000] ' '  (0x20)
+[UART TX @ 350000] 'r'  (0x72)
+[UART TX @ 350000] '0'  (0x30)
+[UART TX @ 350000] ','  (0x2C)
+[UART TX @ 350000] 'r'  (0x72)
+[UART TX @ 350000] '2'  (0x32)
+[UART TX @ 350000] ''  (0x0D)
+[UART TX @ 350000] '\n'
+[UART TX @ 350000] ' '  (0x20)
+[UART TX @ 350000] 'p'  (0x70)
+[UART TX @ 350000] 'o'  (0x6F)
+[UART TX @ 350000] 'p'  (0x70)
+[UART TX @ 350000] ' '  (0x20)
+[UART TX @ 350000] 'r'  (0x72)
+[UART TX @ 350000] '2'  (0x32)
+[UART TX @ 350000] ''  (0x0D)
+[UART TX @ 350000] '\n'
+[UART TX @ 350000] ' '  (0x20)
+[UART TX @ 350000] 'b'  (0x62)
+[UART TX @ 350000] 'r'  (0x72)
+[UART TX @ 350000] 't'  (0x74)
+[UART TX @ 350000] ' '  (0x20)
+[UART TX @ 350000] '_'  (0x5F)
+[UART TX @ 350000] 'h'  (0x68)
+[UART TX @ 350000] 'l'  (0x6C)
+[UART TX @ 350000] 'i'  (0x69)
+[UART TX @ 350000] 'f'  (0x66)
+[UART TX @ 350000] '_'  (0x5F)
+[UART TX @ 350000] '3'  (0x33)
+[UART TX @ 350000] '_'  (0x5F)
+[UART TX @ 350000] 's'  (0x73)
+[UART TX @ 350000] 'k'  (0x6B)
+[UART TX @ 350000] 'i'  (0x69)
+[UART TX @ 350000] 'p'  (0x70)
+[UART TX @ 350000] ''  (0x0D)
+[UART TX @ 350000] '\n'
+[UART TX @ 350000] ' '  (0x20)
+[UART TX @ 350000] 'b'  (0x62)
+[UART TX @ 350000] 'r'  (0x72)
 [UART TX @ 350000] 'a'  (0x61)
 [UART TX @ 350000] ' '  (0x20)
 [UART TX @ 350000] '_'  (0x5F)
@@ -198,9 +198,9 @@ Loaded 347 bytes from 'demos/d32_literals_and_data.bin' at 0x080000
 [UART TX @ 350000] 'r'  (0x72)
 [UART TX @ 350000] '0'  (0x30)
 [UART TX @ 350000] ','  (0x2C)
-[UART TX @ 350000] '0'  (0x30)
-[UART TX @ 350000] ''  (0x0D)
-[UART TX @ 350000] '\n'
+[UART TX @ 360000] '0'  (0x30)
+[UART TX @ 360000] ''  (0x0D)
+[UART TX @ 360000] '\n'
 [UART TX @ 360000] '_'  (0x5F)
 [UART TX @ 360000] 'h'  (0x68)
 [UART TX @ 360000] 'l'  (0x6C)
@@ -233,16 +233,16 @@ Loaded 347 bytes from 'demos/d32_literals_and_data.bin' at 0x080000
 [UART TX @ 360000] '\n'
 [UART TX @ 360000] ''  (0x0D)
 [UART TX @ 360000] '\n'
-[UART TX @ 360000] ' '  (0x20)
-[UART TX @ 360000] 'p'  (0x70)
-[UART TX @ 360000] 'u'  (0x75)
-[UART TX @ 360000] 's'  (0x73)
-[UART TX @ 360000] 'h'  (0x68)
-[UART TX @ 360000] ' '  (0x20)
-[UART TX @ 360000] 'r'  (0x72)
-[UART TX @ 360000] '2'  (0x32)
-[UART TX @ 360000] ''  (0x0D)
-[UART TX @ 360000] '\n'
+[UART TX @ 370000] ' '  (0x20)
+[UART TX @ 370000] 'p'  (0x70)
+[UART TX @ 370000] 'u'  (0x75)
+[UART TX @ 370000] 's'  (0x73)
+[UART TX @ 370000] 'h'  (0x68)
+[UART TX @ 370000] ' '  (0x20)
+[UART TX @ 370000] 'r'  (0x72)
+[UART TX @ 370000] '2'  (0x32)
+[UART TX @ 370000] ''  (0x0D)
+[UART TX @ 370000] '\n'
 [UART TX @ 370000] ' '  (0x20)
 [UART TX @ 370000] 'l'  (0x6C)
 [UART TX @ 370000] 'c'  (0x63)
@@ -330,14 +330,14 @@ Loaded 347 bytes from 'demos/d32_literals_and_data.bin' at 0x080000
 [UART TX @ 370000] ':'  (0x3A)
 [UART TX @ 370000] ''  (0x0D)
 [UART TX @ 370000] '\n'
-[UART TX @ 370000] ' '  (0x20)
-[UART TX @ 370000] 's'  (0x73)
-[UART TX @ 370000] 'h'  (0x68)
-[UART TX @ 370000] 'l'  (0x6C)
-[UART TX @ 370000] ' '  (0x20)
-[UART TX @ 370000] 'r'  (0x72)
-[UART TX @ 370000] '0'  (0x30)
-[UART TX @ 370000] ','  (0x2C)
+[UART TX @ 380000] ' '  (0x20)
+[UART TX @ 380000] 's'  (0x73)
+[UART TX @ 380000] 'h'  (0x68)
+[UART TX @ 380000] 'l'  (0x6C)
+[UART TX @ 380000] ' '  (0x20)
+[UART TX @ 380000] 'r'  (0x72)
+[UART TX @ 380000] '0'  (0x30)
+[UART TX @ 380000] ','  (0x2C)
 [UART TX @ 380000] 'r'  (0x72)
 [UART TX @ 380000] '1'  (0x31)
 [UART TX @ 380000] ''  (0x0D)
@@ -377,11 +377,11 @@ Loaded 347 bytes from 'demos/d32_literals_and_data.bin' at 0x080000
 [UART TX @ 380000] ':'  (0x3A)
 [UART TX @ 380000] ''  (0x0D)
 [UART TX @ 380000] '\n'
-[UART TX @ 380000] ' '  (0x20)
-[UART TX @ 380000] 's'  (0x73)
-[UART TX @ 380000] 'r'  (0x72)
-[UART TX @ 380000] 'l'  (0x6C)
-[UART TX @ 380000] ' '  (0x20)
+[UART TX @ 390000] ' '  (0x20)
+[UART TX @ 390000] 's'  (0x73)
+[UART TX @ 390000] 'r'  (0x72)
+[UART TX @ 390000] 'l'  (0x6C)
+[UART TX @ 390000] ' '  (0x20)
 [UART TX @ 390000] 'r'  (0x72)
 [UART TX @ 390000] '0'  (0x30)
 [UART TX @ 390000] ','  (0x2C)
@@ -406,22 +406,22 @@ Loaded 347 bytes from 'demos/d32_literals_and_data.bin' at 0x080000
 [UART TX @ 390000] '\n'
 [UART TX @ 390000] ''  (0x0D)
 [UART TX @ 390000] '\n'
-[UART TX @ 390000] '.'  (0x2E)
-[UART TX @ 390000] 'b'  (0x62)
-[UART TX @ 390000] 'y'  (0x79)
-[UART TX @ 390000] 't'  (0x74)
-[UART TX @ 390000] 'e'  (0x65)
-[UART TX @ 390000] ' '  (0x20)
-[UART TX @ 390000] '7'  (0x37)
-[UART TX @ 390000] '2'  (0x32)
-[UART TX @ 390000] ','  (0x2C)
-[UART TX @ 390000] '7'  (0x37)
-[UART TX @ 390000] '3'  (0x33)
-[UART TX @ 390000] ','  (0x2C)
-[UART TX @ 390000] '1'  (0x31)
-[UART TX @ 390000] '0'  (0x30)
-[UART TX @ 390000] ''  (0x0D)
-[UART TX @ 390000] '\n'
+[UART TX @ 400000] '.'  (0x2E)
+[UART TX @ 400000] 'b'  (0x62)
+[UART TX @ 400000] 'y'  (0x79)
+[UART TX @ 400000] 't'  (0x74)
+[UART TX @ 400000] 'e'  (0x65)
+[UART TX @ 400000] ' '  (0x20)
+[UART TX @ 400000] '7'  (0x37)
+[UART TX @ 400000] '2'  (0x32)
+[UART TX @ 400000] ','  (0x2C)
+[UART TX @ 400000] '7'  (0x37)
+[UART TX @ 400000] '3'  (0x33)
+[UART TX @ 400000] ','  (0x2C)
+[UART TX @ 400000] '1'  (0x31)
+[UART TX @ 400000] '0'  (0x30)
+[UART TX @ 400000] ''  (0x0D)
+[UART TX @ 400000] '\n'
 [UART TX @ 400000] '.'  (0x2E)
 [UART TX @ 400000] 'b'  (0x62)
 [UART TX @ 400000] 'y'  (0x79)
@@ -444,33 +444,33 @@ Loaded 347 bytes from 'demos/d32_literals_and_data.bin' at 0x080000
 [UART TX @ 400000] 'e'  (0x65)
 [UART TX @ 400000] ' '  (0x20)
 [UART TX @ 400000] '0'  (0x30)
-[UART TX @ 400000] ','  (0x2C)
-[UART TX @ 400000] '0'  (0x30)
-[UART TX @ 400000] ','  (0x2C)
-[UART TX @ 400000] '0'  (0x30)
-[UART TX @ 400000] ','  (0x2C)
-[UART TX @ 400000] '0'  (0x30)
-[UART TX @ 400000] ''  (0x0D)
-[UART TX @ 400000] '\n'
-[UART TX @ 403780] '.'  (0x2E)
-[UART TX @ 403780] 'b'  (0x62)
-[UART TX @ 403780] 'y'  (0x79)
-[UART TX @ 403780] 't'  (0x74)
-[UART TX @ 403780] 'e'  (0x65)
-[UART TX @ 403780] ' '  (0x20)
-[UART TX @ 403780] '1'  (0x31)
-[UART TX @ 403780] '2'  (0x32)
-[UART TX @ 403780] '7'  (0x37)
-[UART TX @ 403780] ','  (0x2C)
-[UART TX @ 403780] '1'  (0x31)
-[UART TX @ 403780] '2'  (0x32)
-[UART TX @ 403780] '7'  (0x37)
-[UART TX @ 403780] ','  (0x2C)
-[UART TX @ 403780] '1'  (0x31)
-[UART TX @ 403780] '2'  (0x32)
-[UART TX @ 403780] '7'  (0x37)
-[UART TX @ 403780] ''  (0x0D)
-[UART TX @ 403780] '\n'
+[UART TX @ 406254] ','  (0x2C)
+[UART TX @ 406254] '0'  (0x30)
+[UART TX @ 406254] ','  (0x2C)
+[UART TX @ 406254] '0'  (0x30)
+[UART TX @ 406254] ','  (0x2C)
+[UART TX @ 406254] '0'  (0x30)
+[UART TX @ 406254] ''  (0x0D)
+[UART TX @ 406254] '\n'
+[UART TX @ 406254] '.'  (0x2E)
+[UART TX @ 406254] 'b'  (0x62)
+[UART TX @ 406254] 'y'  (0x79)
+[UART TX @ 406254] 't'  (0x74)
+[UART TX @ 406254] 'e'  (0x65)
+[UART TX @ 406254] ' '  (0x20)
+[UART TX @ 406254] '1'  (0x31)
+[UART TX @ 406254] '2'  (0x32)
+[UART TX @ 406254] '7'  (0x37)
+[UART TX @ 406254] ','  (0x2C)
+[UART TX @ 406254] '1'  (0x31)
+[UART TX @ 406254] '2'  (0x32)
+[UART TX @ 406254] '7'  (0x37)
+[UART TX @ 406254] ','  (0x2C)
+[UART TX @ 406254] '1'  (0x31)
+[UART TX @ 406254] '2'  (0x32)
+[UART TX @ 406254] '7'  (0x37)
+[UART TX @ 406254] ''  (0x0D)
+[UART TX @ 406254] '\n'
 
 UART output: ; Demo 32: richer literals and lowered data directives
 
@@ -510,4 +510,4 @@ _hlsel_4_end:
 .byte 127,127,127
 
 
-Executed 403780 instructions
+Executed 406254 instructions

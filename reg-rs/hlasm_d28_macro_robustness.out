@@ -1,4 +1,4 @@
-Loaded 21733 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.75p7DdoJ2Q/hlasm.lgo
+Loaded 22008 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.CmYXJBsvto/hlasm.lgo
 Loaded 239 bytes from 'demos/d28_macro_robustness.bin' at 0x080000
 [UART TX @ 230000] 'L'  (0x4C)
 [UART TX @ 230000] '0'  (0x30)
@@ -76,12 +76,12 @@ Loaded 239 bytes from 'demos/d28_macro_robustness.bin' at 0x080000
 [UART TX @ 270000] '3'  (0x33)
 [UART TX @ 270000] ''  (0x0D)
 [UART TX @ 270000] '\n'
-[UART TX @ 273821] 'i'  (0x69)
-[UART TX @ 273821] 'n'  (0x6E)
-[UART TX @ 273821] 'c'  (0x63)
-[UART TX @ 273821] 'x'  (0x78)
-[UART TX @ 273821] ''  (0x0D)
-[UART TX @ 273821] '\n'
+[UART TX @ 274855] 'i'  (0x69)
+[UART TX @ 274855] 'n'  (0x6E)
+[UART TX @ 274855] 'c'  (0x63)
+[UART TX @ 274855] 'x'  (0x78)
+[UART TX @ 274855] ''  (0x0D)
+[UART TX @ 274855] '\n'
 
 UART output: L0001: push r0
  b L0001
@@ -92,4 +92,4 @@ L0003: push r2
 incx
 
 
-Executed 273821 instructions
+Executed 274855 instructions
