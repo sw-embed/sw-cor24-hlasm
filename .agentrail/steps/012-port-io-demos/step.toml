@@ -1,8 +1,9 @@
 number = 12
 slug = "port-io-demos"
-status = "in-progress"
+status = "completed"
 description = "Port the simplest tiny-C demos (hello, uart_tx, led, button and similar I/O-o..."
 role = "production"
 context_files = []
 created_at = "2026-10-30T09:59:16"
-commits = []
+completed_at = "2026-11-07T15:21:42"
+commits = ["8a2224bd4ecc73c15fb8c70a9849735e20764bd8"]

@@ -1,0 +1,1 @@
+Ported 10 tiny-C I/O demos (uart_tx, hello, led, button, demo2, demo3, demo8, demo9, demo10 + demo10_io member, demo64) to demos/tinyc/ on the macro library; hlasm_e2e_tinyc_* tests via check_tinyc.sh match the C run scripts (marker, r0, LED, button, UART RX interrupt). Added LOCADDR and ISRENTRY/ISRRET to frame.hlasm. Doc entries with C and HLASM side by side. 95/95 pass.
