@@ -1,8 +1,9 @@
 number = 10
 slug = "condition-forms-and-arg-tests"
-status = "in-progress"
+status = "completed"
 description = "Implement M8 and M9 from docs/limits-and-lifting-plan.md (found by the tiny-C..."
 role = "production"
 context_files = []
 created_at = "2026-11-07T09:46:51"
-commits = []
+completed_at = "2026-11-07T11:56:33"
+commits = ["78c6c093fc77a39c0d2c26e9f7bd00d89057c992"]

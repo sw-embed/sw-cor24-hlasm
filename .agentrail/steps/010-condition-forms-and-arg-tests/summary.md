@@ -1,0 +1,1 @@
+M8: cc_le/cc_gt/cc_ge and cc_leu/cc_gtu/cc_geu in IF/ELSEIF/DOEXIT via a _cc_info table (compare, swap, polarity; z rhs rewritten to 0 when swapped; unknown names ERROR). M9: IFSAME/IFDIFF text tests; non-symbol IFEQ/IFNE operand is an ERROR outside skipped regions. Demo d43 + hlasm_e2e_d43_condition_forms, check_conditions.sh (hlasm_condition_checks); docs updated; 79/79 pass.
