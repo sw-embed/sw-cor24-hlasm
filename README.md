@@ -59,8 +59,15 @@ port order. The survey and the hlasm features it called for are done; the
 macro library is being written now, then the ports and a side-by-side
 showcase.
 
-Planned later: compound conditions (`AND`/`OR`), `DSECT` record layouts,
-a sw-tos services target, and the hlasm-in-HLASM bootstrap.
+Not implemented yet (planned for later sagas):
+
+- Compound conditions: `IF cc_eq,r0,1,AND,cc_ne,r1,2`. Today only the first
+  comparison is used; combine conditions with nested `IF`s.
+- `DSECT`/`FIELD` record layouts. Today, define field offsets with `EQU`.
+- A sw-tos target for the system-services macros. Only the bare-metal target
+  exists.
+- hlasm written in HLASM ([docs/bootstrap-hlasm.md](docs/bootstrap-hlasm.md)).
+  Every prerequisite is met, but the work has not started.
 
 ## Opt-in Source Switches
 

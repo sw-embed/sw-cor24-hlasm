@@ -104,17 +104,15 @@ Produces a token stream in memory.
 Stores macro definitions: name, parameter list, body token stream.
 Lookup on macro invocation. Supports nested macros.
 
-Current compatibility baseline is intentionally narrower than full IBM HLASM:
-simple `MACRO ... MEND` definitions are consumed rather than emitted, simple
-invocation-by-name expansion is stable, positional `&1`/`&2` substitution
-works, and HLASM-style named `&arg` substitution works. Full local-label
-compatibility and broader macro robustness are still being hardened in later
-steps.
-Macro names up to 31 characters are supported, and repeated `\@` local-label
-expansion now stays distinct across multiple macro definitions and invocations.
-Macro bodies still expand directly to emitted plain-text lines; the assembler
-does not yet reparse conditional-assembly or structured-control-flow
-directives that appear inside macro bodies.
+`MACRO ... MEND` definitions are consumed rather than emitted. Parameters
+are positional (`&1`, `&2`) or named (`&arg`), with defaults (`&V=5`) and
+keyword arguments at the call (`V=7`); `&SYSNARG` gives the argument count
+and `\@` a unique number per expansion. Macro names are up to 31
+characters. Expanded lines go back through the line processor, so a body may
+call other macros (8 deep, recursion allowed) and use `SET`/`EQU`,
+conditional assembly (including `IFSAME`/`IFDIFF` to test argument text) and
+structured IF/DO/SELECT. Not supported inside a body: defining another
+`MACRO`, and `INCLUDE`/`COPY`.
 
 ### Macro Expander
 Substitutes positional `&N` and named `&name` parameters, with named
