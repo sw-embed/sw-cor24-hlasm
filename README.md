@@ -18,9 +18,13 @@ every feature with examples, limits and error messages).
   local labels; macros can call macros (8 deep, recursion allowed), and
   bodies can use conditional assembly, structured statements and
   `&SYSNARG` (argument count)
-- Conditional assembly: `IFDEF`, `IFNDEF`, `IFEQ`, `IFNE`, `ELSEASM`
+- Conditional assembly: `IFDEF`, `IFNDEF`, `IFEQ`, `IFNE`, `ELSEASM`, and
+  `IFSAME`/`IFDIFF` text tests so a macro can tell a register argument from
+  a constant or label
 - Structured control flow: IF/ELSEIF/ELSE/ENDIF, DO/DOEXIT/ITERATE/ENDDO,
-  SELECT/WHEN/OTHERWISE/ENDSEL, with automatic long-range jumps
+  SELECT/WHEN/OTHERWISE/ENDSEL, with automatic long-range jumps; conditions
+  `cc_eq`, `cc_ne`, `cc_lt`, `cc_le`, `cc_gt`, `cc_ge` and unsigned
+  `cc_lu`, `cc_leu`, `cc_gtu`, `cc_geu`
 - Data conveniences: `.ascii`, `.asciz` (with `\xNN` escapes), `.space`,
   `.fill`
 - Multi-file sources: `INCLUDE` / `COPY` members through source sets (32
@@ -28,7 +32,35 @@ every feature with examples, limits and error messages).
 - Optional annotations, listing, cross-reference and diagnostics
 - Plain assembly passthrough; checked limits that stop with `ERROR:`
 - Errors name the member and line: `ERROR: <member>:<line>: <message>`
-- Planned: compound conditions, DSECT (see docs/limits-and-lifting-plan.md)
+- One-command end-to-end runs: `scripts/hlasm-e2e.sh prog.hlasm` (hlasm,
+  then cor24-asm, then cor24-emu) prints the program's output
+
+## Status
+
+Done:
+
+- All the features above, each with demos and regression tests
+  (`./build.sh test`, 79 tests).
+- Every limit in [docs/limits-and-lifting-plan.md](docs/limits-and-lifting-plan.md)
+  that was scheduled has been lifted: 512 symbols, 256 macros, 64 KB of macro
+  bodies, 32-deep nesting, 32 source members.
+- Structured statements assemble at any branch distance
+  ([docs/structured-jump-relaxation.md](docs/structured-jump-relaxation.md)).
+- All prerequisites for writing hlasm in HLASM itself are met
+  ([docs/bootstrap-hlasm.md](docs/bootstrap-hlasm.md)).
+
+In progress: **porting the tiny-C demos to HLASM.** The example programs of
+the tc24r C compiler (`../sw-cor24-x-tinyc/demos`) are being rewritten in
+HLASM on top of a shared macro library, to show what macros buy over plain
+assembly. See [docs/c-demos-in-hlasm.md](docs/c-demos-in-hlasm.md) for the
+ported demos and the macros used, and
+[docs/tinyc-port-plan.md](docs/tinyc-port-plan.md) for the survey and the
+port order. The survey and the hlasm features it called for are done; the
+macro library is being written now, then the ports and a side-by-side
+showcase.
+
+Planned later: compound conditions (`AND`/`OR`), `DSECT` record layouts,
+a sw-tos services target, and the hlasm-in-HLASM bootstrap.
 
 ## Opt-in Source Switches
 
@@ -91,15 +123,25 @@ build.sh       -- build / test / run script
 scripts/       -- run-kernel.sh: assemble a .s (cor24-asm) and run it (cor24-emu);
                   hlasm-e2e.sh: .hlasm -> hlasm -> cor24-asm -> cor24-emu, prints UART output
 demo.sh        -- demo script
+demos/         -- demo programs (d01-d43) and their source sets
 justfile       -- just targets
-docs/          -- architecture, prd, design, plan
+docs/          -- user guide, architecture, plans
 reg-rs/        -- reg-rs test specifications and baselines
 ```
 
 ## Documentation
 
+- [User Guide](docs/user-guide.md) -- setup, running, every feature, limits
+- [C Demos in HLASM](docs/c-demos-in-hlasm.md) -- the tiny-C example programs
+  ported to HLASM, and the macro library they use
+- [Tiny-C Port Plan](docs/tinyc-port-plan.md) -- survey of the C demos, macro
+  catalog, port order, feature gaps
+- [Limits and Lifting Plan](docs/limits-and-lifting-plan.md) -- every limit,
+  defect and language gap, and when each was fixed
 - [Architecture](docs/architecture.md) -- system overview and memory layout
 - [Bootstrap Plan](docs/bootstrap.md) -- staged self-hosting path and blockers
+- [hlasm in HLASM](docs/bootstrap-hlasm.md) -- plan for rewriting hlasm in its
+  own language
 - [PRD](docs/prd.md) -- product requirements and scope
 - [Design](docs/design.md) -- syntax, lowering rules, data structures
 - [Plan](docs/plan.md) -- step-by-step implementation roadmap
