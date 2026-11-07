@@ -1,0 +1,4 @@
+command = "bash -c 'scripts/hlasm-e2e.sh --hlasm-n 60000000 demos/d43_condition_forms.hlasm 2>&1'"
+timeout = 120
+exit_code = 0
+desc = "Demo 43 end to end: every structured condition (cc_le/gt/ge and unsigned forms included) with register and constant operands, DOEXIT, ELSEIF, and an IFSAME-based argument-pushing macro"

@@ -50,6 +50,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d40 | Long-range structured jumps (far form + trampoline) | WORKS |
 | d41 | EQU constants, expressions, symbols in operands (prints CA4Y2! when run) | WORKS |
 | d42 | Macro layering: nested/recursive calls, directives and IF in bodies, default/keyword params, &SYSNARG (prints Hi!***-7Vok. when run) | WORKS |
+| d43 | Condition forms cc_le/gt/ge and unsigned cc_leu/gtu/geu (register and constant operands, DOEXIT, ELSEIF); IFSAME/IFDIFF argument tests in a CALL-style macro (run end to end by `hlasm_e2e_d43_condition_forms`) | WORKS |
 
 ## Demo Policy
 

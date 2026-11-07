@@ -1,18 +1,18 @@
-Loaded 22008 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.9RHEuoQv6C/hlasm.lgo
+Loaded 22510 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.eOOEgwqhA6/hlasm.lgo
 Loaded 53 bytes from 'demos/d06_elseasm.bin' at 0x080000
-[UART TX @ 133767] ' '  (0x20)
-[UART TX @ 133767] 'a'  (0x61)
-[UART TX @ 133767] 'd'  (0x64)
-[UART TX @ 133767] 'd'  (0x64)
-[UART TX @ 133767] ' '  (0x20)
-[UART TX @ 133767] 'r'  (0x72)
-[UART TX @ 133767] '0'  (0x30)
-[UART TX @ 133767] ','  (0x2C)
-[UART TX @ 133767] '1'  (0x31)
-[UART TX @ 133767] ''  (0x0D)
-[UART TX @ 133767] '\n'
+[UART TX @ 135141] ' '  (0x20)
+[UART TX @ 135141] 'a'  (0x61)
+[UART TX @ 135141] 'd'  (0x64)
+[UART TX @ 135141] 'd'  (0x64)
+[UART TX @ 135141] ' '  (0x20)
+[UART TX @ 135141] 'r'  (0x72)
+[UART TX @ 135141] '0'  (0x30)
+[UART TX @ 135141] ','  (0x2C)
+[UART TX @ 135141] '1'  (0x31)
+[UART TX @ 135141] ''  (0x0D)
+[UART TX @ 135141] '\n'
 
 UART output:  add r0,1
 
 
-Executed 133767 instructions
+Executed 135141 instructions

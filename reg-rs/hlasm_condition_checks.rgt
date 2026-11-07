@@ -1,0 +1,4 @@
+command = "bash reg-rs/check_conditions.sh 2>&1"
+timeout = 120
+exit_code = 0
+desc = "Unknown condition names, IFEQ/IFNE on a non-symbol (ERROR unless skipped), IFSAME/IFDIFF text comparison edge cases"

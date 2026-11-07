@@ -1,0 +1,199 @@
+; Demo 43: condition forms and argument tests. Every structured compare
+; (cc_eq ... cc_geu) runs on the pairs (1,2) (2,2) (3,2) (-1,1) and prints T
+; or F for each, first with a register right-hand side, then with a
+; constant; -1 against 1 shows signed versus unsigned. A DOEXIT and an
+; ELSEIF use the new forms too. Then PUSHARG, a CALL-style macro, uses
+; IFSAME to push a register argument directly and load anything else with
+; la. Assembled and run on cor24-emu this prints (see hlasm_e2e_d43):
+;   eq FTFF ne TFTT lt TFFT le TTFT gt FFTF ge FTTF
+;   lu TFFF leu TTFF gtu FFTT geu FTTT
+; twice, then "do 5 mid 7 sum 42".
+UART EQU -65280
+
+; PUTC: print the character in r0
+MACRO PUTC
+ push r2
+ la r2,UART
+L\@:
+ lb r1,1(r2)
+ cls r1,z
+ brt L\@
+ sb r0,0(r2)
+ pop r2
+MEND
+
+; PUTS2: print two or three characters and a blank
+MACRO PUTS2 &A,&B,&C
+ lc r0,&A
+ PUTC
+ lc r0,&B
+ PUTC
+IFDIFF &C,
+ lc r0,&C
+ PUTC
+ENDIFASM
+ lc r0,' '
+ PUTC
+MEND
+
+; TR: print T if "&CC r0,r1" holds for r0=&A, r1=&B, else F
+MACRO TR &CC,&A,&B
+ lc r0,&A
+ lc r1,&B
+IF &CC,r0,r1
+ lc r0,'T'
+ELSE
+ lc r0,'F'
+ENDIF
+ PUTC
+MEND
+
+; TK: the same with the constant &B as the right-hand side
+MACRO TK &CC,&A,&B
+ lc r0,&A
+IF &CC,r0,&B
+ lc r0,'T'
+ELSE
+ lc r0,'F'
+ENDIF
+ PUTC
+MEND
+
+; FORM: one condition over the four pairs, using test macro &T
+MACRO FORM &T,&CC,&N1,&N2,&N3
+ PUTS2 &N1,&N2,&N3
+ &T &CC,1,2
+ &T &CC,2,2
+ &T &CC,3,2
+ &T &CC,-1,1
+ lc r0,' '
+ PUTC
+MEND
+
+; ALL: every condition with test macro &T, on two lines
+MACRO ALL &T
+ FORM &T,cc_eq,'e','q'
+ FORM &T,cc_ne,'n','e'
+ FORM &T,cc_lt,'l','t'
+ FORM &T,cc_le,'l','e'
+ FORM &T,cc_gt,'g','t'
+ FORM &T,cc_ge,'g','e'
+ lc r0,10
+ PUTC
+ FORM &T,cc_lu,'l','u'
+ FORM &T,cc_leu,'l','e','u'
+ FORM &T,cc_gtu,'g','t','u'
+ FORM &T,cc_geu,'g','e','u'
+ lc r0,10
+ PUTC
+MEND
+
+; PUTDIG: print r0 (0-99) in decimal
+MACRO PUTDIG
+ lc r1,0
+DO
+ DOEXIT cc_lt,r0,10
+ add r0,-10
+ add r1,1
+ENDDO
+ push r0
+IF cc_gt,r1,0
+ lc r0,'0'
+ add r0,r1
+ PUTC
+ENDIF
+ pop r0
+ add r0,'0'
+ PUTC
+MEND
+
+; PUSHARG: push a call argument -- a register as it is, anything else
+; (a constant or a label) through la r0
+MACRO PUSHARG &A
+IFSAME &A,r0
+ push r0
+ELSEASM
+IFSAME &A,r1
+ push r1
+ELSEASM
+IFSAME &A,r2
+ push r2
+ELSEASM
+ la r0,&A
+ push r0
+ENDIFASM
+ENDIFASM
+ENDIFASM
+MEND
+
+; CALL2: call &F with two arguments, pushed right to left
+MACRO CALL2 &F,&A,&B
+ PUSHARG &B
+ PUSHARG &A
+ la r0,&F
+ jal r1,(r0)
+ add sp,6
+MEND
+
+_start:
+ ALL TR
+ ALL TK
+
+; DOEXIT with cc_ge: count up until r0 >= 5
+ PUTS2 'd','o'
+ lc r0,0
+DO
+ DOEXIT cc_ge,r0,5
+ add r0,1
+ENDDO
+ PUTDIG
+ lc r0,' '
+ PUTC
+
+; ELSEIF with cc_le and cc_gtu: classify 7
+ PUTS2 'm','i','d'
+ lc r2,7
+IF cc_le,r2,3
+ lc r0,1
+ELSEIF cc_gtu,r2,9
+ lc r0,9
+ELSE
+ mov r0,r2
+ENDIF
+ PUTDIG
+ lc r0,' '
+ PUTC
+
+; CALL2 with a register, a constant and a label argument
+ PUTS2 's','u','m'
+ lc r2,30
+ CALL2 _add2,r2,_ten
+ mov r2,r0
+ CALL2 _add2,r2,2
+ PUTDIG
+ lc r0,10
+ PUTC
+halt:
+ bra halt
+
+; _add2(a, b): a + b, where b below 64 is a value and above it an address
+; of a word holding the value
+_add2:
+ push fp
+ push r2
+ push r1
+ mov fp,sp
+ lw r0,9(fp)
+ lw r1,12(fp)
+IF cc_geu,r1,64
+ lw r1,0(r1)
+ENDIF
+ add r0,r1
+ mov sp,fp
+ pop r1
+ pop r2
+ pop fp
+ jmp (r1)
+
+_ten:
+ .word 10

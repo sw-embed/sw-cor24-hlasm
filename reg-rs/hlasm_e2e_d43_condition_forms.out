@@ -1,0 +1,5 @@
+eq FTFF ne TFTT lt TFFT le TTFT gt FFTF ge FTTF 
+lu TFFF leu TTFF gtu FFTT geu FTTT 
+eq FTFF ne TFTT lt TFFT le TTFT gt FFTF ge FTTF 
+lu TFFF leu TTFF gtu FFTT geu FTTT 
+do 5 mid 7 sum 42

@@ -1,6 +1,6 @@
 number = 10
 slug = "condition-forms-and-arg-tests"
-status = "pending"
+status = "in-progress"
 description = "Implement M8 and M9 from docs/limits-and-lifting-plan.md (found by the tiny-C..."
 role = "production"
 context_files = []

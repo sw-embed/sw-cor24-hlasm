@@ -1,5 +1,5 @@
 ; hlasm.s -- HLASM-Inspired Macro-Assembler for COR24
-; Step 007: Conditional assembly (SET, IFDEF, IFEQ, IFNDEF, IFNE).
+; Step 007: Conditional assembly (SET, IFDEF, IFEQ, IFNDEF, IFNE; IFSAME, IFDIFF since saga step 10).
 ;
 ; UART at 0xFF0100 (-65280). TX busy: bit 7 of status (sign-extended).
 ;
@@ -150,7 +150,8 @@ _ml_cond_active_skip:
 
 	la	r0,_ml_is_endifasm
 	jal	r1,(r0)
-	bra	_mc_skip_end
+	la	r1,_mc_skip_end
+	jmp	(r1)
 
 _mc_skip_else:
 	la	r1,_kw_elseasm
@@ -164,7 +165,8 @@ _mc_skip_else:
 
 	la	r0,_ml_is_elseasm
 	jal	r1,(r0)
-	bra	_mc_skip_end
+	la	r1,_mc_skip_end
+	jmp	(r1)
 
 _mc_skip_ifdef:
 	la	r1,_kw_ifdef
@@ -178,7 +180,8 @@ _mc_skip_ifdef:
 
 	la	r0,_ml_is_ifdef
 	jal	r1,(r0)
-	bra	_mc_skip_end
+	la	r1,_mc_skip_end
+	jmp	(r1)
 
 _mc_skip_ifndef:
 	la	r1,_kw_ifndef
@@ -192,7 +195,8 @@ _mc_skip_ifndef:
 
 	la	r0,_ml_is_ifndef
 	jal	r1,(r0)
-	bra	_mc_skip_end
+	la	r1,_mc_skip_end
+	jmp	(r1)
 
 _mc_skip_ifeq:
 	la	r1,_kw_ifeq
@@ -206,7 +210,8 @@ _mc_skip_ifeq:
 
 	la	r0,_ml_is_ifeq
 	jal	r1,(r0)
-	bra	_mc_skip_end
+	la	r1,_mc_skip_end
+	jmp	(r1)
 
 _mc_skip_ifne:
 	la	r1,_kw_ifne
@@ -216,11 +221,38 @@ _mc_skip_ifne:
 	add	sp,3
 
 	ceq	r0,z
-	brt	_mc_skip_ifne_handler
+	brt	_mc_skip_ifsame
 
 	la	r0,_ml_is_ifne
 	jal	r1,(r0)
-	bra	_mc_skip_end
+	la	r1,_mc_skip_end
+	jmp	(r1)
+
+_mc_skip_ifsame:
+	la	r1,_kw_ifsame
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_mc_skip_ifdiff
+
+	la	r1,_ml_is_ifsame
+	jmp	(r1)
+
+_mc_skip_ifdiff:
+	la	r1,_kw_ifdiff
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_mc_skip_ifne_handler
+
+	la	r1,_ml_is_ifdiff
+	jmp	(r1)
 
 _mc_skip_ifne_handler:
 
@@ -376,6 +408,34 @@ _ml_is_ifeq_near:
 	jmp	(r1)
 
 _ml_is_ifne_near:
+
+	la	r1,_kw_ifsame
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_ifsame_near
+
+	la	r1,_ml_is_ifsame
+	jmp	(r1)
+
+_ml_is_ifsame_near:
+
+	la	r1,_kw_ifdiff
+	push	r1
+	la	r0,_starts_with
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_ifdiff_near
+
+	la	r1,_ml_is_ifdiff
+	jmp	(r1)
+
+_ml_is_ifdiff_near:
 
 	la	r1,_kw_if
 	push	r1
@@ -827,6 +887,19 @@ _ml_is_ifeq:
 _ml_is_ifne:
 	la	r0,_handle_ifne
 	jal	r1,(r0)
+	la	r1,_ml_loop
+	jmp	(r1)
+
+_ml_is_ifsame:
+	lc	r0,0
+	bra	_ml_ifsame_call
+_ml_is_ifdiff:
+	lc	r0,1
+_ml_ifsame_call:
+	push	r0
+	la	r0,_handle_ifsame
+	jal	r1,(r0)
+	add	sp,3
 	la	r1,_ml_loop
 	jmp	(r1)
 
@@ -4434,7 +4507,29 @@ _cc_table:
 	.byte 99,99,95,108,117,0
 	.byte 99,99,95,122,115,101,116,0
 	.byte 99,99,95,122,99,108,114,0
+	.byte 99,99,95,103,101,0
+	.byte 99,99,95,103,101,117,0
+	.byte 99,99,95,103,116,0
+	.byte 99,99,95,103,116,117,0
+	.byte 99,99,95,108,101,0
+	.byte 99,99,95,108,101,117,0
 	.byte 0
+
+; --- Compare conditions for _cc_info: name, NUL, code ---
+; code bits 0-1: 1 ceq, 2 cls, 3 clu; 4: swap operands; 8: true when the
+; compare is false. le = !(b<a), gt = b<a, ge = !(a<b).
+_cc_info_table:
+	.byte	99,99,95,101,113,0,1
+	.byte	99,99,95,110,101,0,9
+	.byte	99,99,95,108,116,0,2
+	.byte	99,99,95,108,117,0,3
+	.byte	99,99,95,103,101,0,10
+	.byte	99,99,95,103,101,117,0,11
+	.byte	99,99,95,103,116,0,6
+	.byte	99,99,95,103,116,117,0,7
+	.byte	99,99,95,108,101,0,14
+	.byte	99,99,95,108,101,117,0,15
+	.byte	0
 
 
 ; --- Keyword prefix table (for _is_structured) ---
@@ -8471,7 +8566,8 @@ hinf_do_push:
 
 ; _cond_lhs_value: Value of the first operand of IFEQ/IFNE in the line
 ; buffer: an expression (a symbol, or a number such as a substituted &SYSNARG).
-; Undefined symbols count as 0 and are not reported to HLDIAG.
+; A name that is not a SET/EQU symbol is an ERROR unless the line is in a
+; skipped region (to compare text, such as a register name, use IFSAME).
 ; Returns: r0 = value
 _cond_lhs_value:
 	push	fp
@@ -8506,10 +8602,141 @@ _clv_kw_end:
 	la	r0,_eval_full
 	jal	r1,(r0)
 	add	sp,6
+	mov	r2,r0
 
+	la	r1,786651
+	lw	r0,0(r1)
+	ceq	r0,z
+	brt	_clv_ret
+	la	r0,_cond_top
+	jal	r1,(r0)
+	ceq	r0,z
+	brf	_clv_ret
+	la	r0,_err_cond_undef
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+
+_clv_ret:
+	mov	r0,r2
 	mov	sp,fp
 	pop	r2
 	pop	r1
+	pop	fp
+	jmp	(r1)
+
+; _handle_ifsame: IFSAME a,b / IFDIFF a,b -- include if the operand texts
+; are the same (IFSAME) or differ (IFDIFF), compared byte for byte after
+; macro argument substitution. An operand ends at a comma, blank, tab or ';'
+; outside quotes and parentheses, as a macro argument does; either may be
+; empty.
+; Arg on stack: 0 for IFSAME, 1 for IFDIFF (9 fp)
+; Frame: -3 first operand pointer, -6 its end then length, -9 count
+_handle_ifsame:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-9
+
+	la	r0,196608
+	push	r0
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+_his_kw:
+	lbu	r0,0(r2)
+	push	r0
+	la	r0,_is_alpha
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_his_kw_end
+	add	r2,1
+	bra	_his_kw
+_his_kw_end:
+	push	r2
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-3(fp)
+	push	r0
+	la	r0,_arg_end
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-6(fp)
+
+; the second operand follows the comma
+	push	r0
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+	lbu	r0,0(r2)
+	lc	r1,44
+	ceq	r0,r1
+	brf	_his_second
+	add	r2,1
+_his_second:
+	push	r2
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+	push	r0
+	la	r0,_arg_end
+	jal	r1,(r0)
+	add	sp,3
+	sub	r0,r2
+	sw	r0,-9(fp)
+
+	lw	r0,-6(fp)
+	lw	r1,-3(fp)
+	sub	r0,r1
+	lw	r1,-9(fp)
+	ceq	r0,r1
+	brf	_his_differ
+
+_his_cmp:
+	ceq	r0,z
+	brt	_his_same
+	sw	r0,-9(fp)
+	lw	r1,-3(fp)
+	lbu	r0,0(r1)
+	add	r1,1
+	sw	r1,-3(fp)
+	lbu	r1,0(r2)
+	add	r2,1
+	ceq	r0,r1
+	brf	_his_differ
+	lw	r0,-9(fp)
+	add	r0,-1
+	bra	_his_cmp
+
+_his_same:
+	lc	r0,0
+	bra	_his_result
+_his_differ:
+	lc	r0,1
+
+; r0 = 1 if the texts differ: include when that matches the directive
+_his_result:
+	lw	r1,9(fp)
+	ceq	r0,r1
+	brt	_his_include
+	lc	r0,1
+	bra	_his_push
+_his_include:
+	lc	r0,0
+_his_push:
+	push	r0
+	la	r0,_cond_push
+	jal	r1,(r0)
+	add	sp,3
+	mov	sp,fp
+	pop	r1
+	pop	r2
 	pop	fp
 	jmp	(r1)
 
@@ -9711,6 +9938,150 @@ _sitp_ret:
 	pop	fp
 	jmp	(r1)
 
+; _cc_info: Look up the condition name at 197648 in _cc_info_table.
+; Returns its code (bits 0-1: 1 ceq, 2 cls, 3 clu; 4: swap the operands;
+; 8: the compare is true when the condition is false), or 0 if unknown.
+_cc_info:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	la	r2,_cc_info_table
+
+_cci_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_cci_ret
+	push	r2
+	la	r0,197648
+	push	r0
+	la	r0,_streq
+	jal	r1,(r0)
+	add	sp,6
+_cci_skip:
+	lbu	r1,0(r2)
+	add	r2,1
+	ceq	r1,z
+	brf	_cci_skip
+	ceq	r0,z
+	brf	_cci_hit
+	add	r2,1
+	bra	_cci_loop
+
+_cci_hit:
+	lbu	r0,0(r2)
+
+_cci_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _cc_setup: Return the _cc_info code of the current compare condition;
+; ERROR if the name is unknown. A swapped compare cannot take z as its
+; first operand, so a z right-hand side is rewritten as the constant 0.
+_cc_setup:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	la	r0,_cc_info
+	jal	r1,(r0)
+	mov	r2,r0
+	ceq	r0,z
+	brf	_ccs_known
+	la	r0,_err_bad_cc
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+
+_ccs_known:
+	lc	r1,4
+	and	r0,r1
+	ceq	r0,z
+	brt	_ccs_ret
+	la	r1,198168
+	lbu	r0,0(r1)
+	lc	r1,122
+	ceq	r0,r1
+	brf	_ccs_ret
+	la	r1,198168
+	lbu	r0,1(r1)
+	ceq	r0,z
+	brf	_ccs_ret
+	lc	r0,48
+	sb	r0,0(r1)
+
+_ccs_ret:
+	mov	r0,r2
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _emit_cc_compare: Emit the compare for a structured condition: ceq/cls/clu
+; of the left operand (197908) and the right one (the temp register holding
+; a constant, or 198168), in the other order when the code says swap.
+; Args on stack: code (12 fp), temp register string or 0 (9 fp)
+_emit_cc_compare:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+
+	lw	r0,12(fp)
+	lc	r1,3
+	and	r0,r1
+	lc	r1,1
+	ceq	r0,r1
+	brf	_ecc_not_ceq
+	la	r0,_ceq_txt
+	bra	_ecc_op
+_ecc_not_ceq:
+	lc	r1,2
+	ceq	r0,r1
+	brf	_ecc_clu
+	la	r0,_cls_txt
+	bra	_ecc_op
+_ecc_clu:
+	la	r0,_clu_txt
+
+_ecc_op:
+	push	r0
+	lw	r2,9(fp)
+	ceq	r2,z
+	brf	_ecc_rhs
+	la	r2,198168
+
+_ecc_rhs:
+	lw	r0,12(fp)
+	lc	r1,4
+	and	r0,r1
+	ceq	r0,z
+	brf	_ecc_swap
+	la	r0,197908
+	push	r0
+	push	r2
+	bra	_ecc_emit
+
+_ecc_swap:
+	push	r2
+	la	r0,197908
+	push	r0
+
+_ecc_emit:
+	la	r0,_emit_inst2
+	jal	r1,(r0)
+	add	sp,9
+
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; _emit_struct_if_test: Emit compare/test sequence that branches to false label.
 ; Arg on stack: false_label_id
 _emit_struct_if_test:
@@ -9725,7 +10096,8 @@ _emit_struct_if_test:
 	la	r0,_subst_buf
 	jal	r1,(r0)
 	add	sp,3
-	add	sp,-6
+; -3 temp register (0 = none), -6 skip label id, -9 condition code (_cc_info)
+	add	sp,-9
 
 	la	r0,_alloc_struct_label_id
 	jal	r1,(r0)
@@ -9809,6 +10181,9 @@ _esit_zclr:
 	jmp	(r1)
 
 _esit_cmp_setup:
+	la	r0,_cc_setup
+	jal	r1,(r0)
+	sw	r0,-9(fp)
 	la	r0,198168
 	push	r0
 	la	r0,_is_number_str
@@ -9848,68 +10223,13 @@ _esit_cmp_direct:
 	sw	r0,-3(fp)
 
 _esit_cmp_emit:
-	la	r0,_cc_eq_txt
-	push	r0
-	la	r0,197648
-	push	r0
-	la	r0,_streq
-	jal	r1,(r0)
-	add	sp,6
-	ceq	r0,z
-	brt	_esit_cmp_ne
-
-	la	r0,_ceq_txt
-	bra	_esit_emit_cmp
-
-_esit_cmp_ne:
-	la	r0,_cc_ne_txt
-	push	r0
-	la	r0,197648
-	push	r0
-	la	r0,_streq
-	jal	r1,(r0)
-	add	sp,6
-	ceq	r0,z
-	brt	_esit_cmp_lt
-
-	la	r0,_ceq_txt
-	bra	_esit_emit_cmp
-
-_esit_cmp_lt:
-	la	r0,_cc_lt_txt
-	push	r0
-	la	r0,197648
-	push	r0
-	la	r0,_streq
-	jal	r1,(r0)
-	add	sp,6
-	ceq	r0,z
-	brt	_esit_cmp_lu
-
-	la	r0,_cls_txt
-	bra	_esit_emit_cmp
-
-_esit_cmp_lu:
-	la	r0,_clu_txt
-
-_esit_emit_cmp:
-	push	r0
-	la	r0,197908
+	lw	r0,-9(fp)
 	push	r0
 	lw	r0,-3(fp)
-	ceq	r0,z
-	brt	_esit_emit_cmp_rhs
 	push	r0
-	bra	_esit_emit_cmp_call
-
-_esit_emit_cmp_rhs:
-	la	r0,198168
-	push	r0
-
-_esit_emit_cmp_call:
-	la	r0,_emit_inst2
+	la	r0,_emit_cc_compare
 	jal	r1,(r0)
-	add	sp,9
+	add	sp,6
 
 	lw	r0,-3(fp)
 	ceq	r0,z
@@ -9924,13 +10244,10 @@ _esit_emit_cmp_call:
 	add	sp,6
 
 _esit_branch:
-	la	r0,_cc_ne_txt
-	push	r0
-	la	r0,197648
-	push	r0
-	la	r0,_streq
-	jal	r1,(r0)
-	add	sp,6
+; skip the jump to the false label when the condition holds
+	lw	r0,-9(fp)
+	lc	r1,8
+	and	r0,r1
 	ceq	r0,z
 	brt	_esit_branch_false
 
@@ -10427,7 +10744,8 @@ _emit_struct_branch_if_true:
 	la	r0,_subst_buf
 	jal	r1,(r0)
 	add	sp,3
-	add	sp,-6
+; -3 temp register (0 = none), -6 skip label id, -9 condition code (_cc_info)
+	add	sp,-9
 
 	la	r0,_alloc_struct_label_id
 	jal	r1,(r0)
@@ -10511,6 +10829,9 @@ _esbf_zclr:
 	jmp	(r1)
 
 _esbf_cmp_setup:
+	la	r0,_cc_setup
+	jal	r1,(r0)
+	sw	r0,-9(fp)
 	la	r0,198168
 	push	r0
 	la	r0,_is_number_str
@@ -10550,68 +10871,13 @@ _esbf_cmp_direct:
 	sw	r0,-3(fp)
 
 _esbf_cmp_emit:
-	la	r0,_cc_eq_txt
-	push	r0
-	la	r0,197648
-	push	r0
-	la	r0,_streq
-	jal	r1,(r0)
-	add	sp,6
-	ceq	r0,z
-	brt	_esbf_cmp_ne
-
-	la	r0,_ceq_txt
-	bra	_esbf_emit_cmp
-
-_esbf_cmp_ne:
-	la	r0,_cc_ne_txt
-	push	r0
-	la	r0,197648
-	push	r0
-	la	r0,_streq
-	jal	r1,(r0)
-	add	sp,6
-	ceq	r0,z
-	brt	_esbf_cmp_lt
-
-	la	r0,_ceq_txt
-	bra	_esbf_emit_cmp
-
-_esbf_cmp_lt:
-	la	r0,_cc_lt_txt
-	push	r0
-	la	r0,197648
-	push	r0
-	la	r0,_streq
-	jal	r1,(r0)
-	add	sp,6
-	ceq	r0,z
-	brt	_esbf_cmp_lu
-
-	la	r0,_cls_txt
-	bra	_esbf_emit_cmp
-
-_esbf_cmp_lu:
-	la	r0,_clu_txt
-
-_esbf_emit_cmp:
-	push	r0
-	la	r0,197908
+	lw	r0,-9(fp)
 	push	r0
 	lw	r0,-3(fp)
-	ceq	r0,z
-	brt	_esbf_emit_cmp_rhs
 	push	r0
-	bra	_esbf_emit_cmp_call
-
-_esbf_emit_cmp_rhs:
-	la	r0,198168
-	push	r0
-
-_esbf_emit_cmp_call:
-	la	r0,_emit_inst2
+	la	r0,_emit_cc_compare
 	jal	r1,(r0)
-	add	sp,9
+	add	sp,6
 
 	lw	r0,-3(fp)
 	ceq	r0,z
@@ -10626,13 +10892,10 @@ _esbf_emit_cmp_call:
 	add	sp,6
 
 _esbf_branch:
-	la	r0,_cc_ne_txt
-	push	r0
-	la	r0,197648
-	push	r0
-	la	r0,_streq
-	jal	r1,(r0)
-	add	sp,6
+; skip the jump to the target when the condition does not hold
+	lw	r0,-9(fp)
+	lc	r1,8
+	and	r0,r1
 	ceq	r0,z
 	brt	_esbf_branch_false
 
@@ -14133,6 +14396,10 @@ _err_def_long:
 
 _err_inc_deep:
 	.byte	73,78,67,76,85,68,69,32,110,101,115,116,101,100,32,100,101,101,112,101,114,32,116,104,97,110,32,49,54,0
+_err_cond_undef:
+	.byte	73,70,69,81,47,73,70,78,69,32,111,112,101,114,97,110,100,32,105,115,32,110,111,116,32,97,32,83,69,84,32,111,114,32,69,81,85,32,115,121,109,98,111,108,0
+_err_bad_cc:
+	.byte	117,110,107,110,111,119,110,32,115,116,114,117,99,116,117,114,101,100,32,99,111,110,100,105,116,105,111,110,0
 
 _err_cfg_full:
 	.byte	115,111,117,114,99,101,32,99,111,110,102,105,103,32,104,97,115,32,109,111,114,101,32,116,104,97,110,32,51,50,32,109,101,109,98,101,114,115,0
@@ -14244,6 +14511,12 @@ _kw_ifeq:
 
 _kw_ifne:
 	.byte	73,70,78,69,0
+
+_kw_ifsame:
+	.byte	73,70,83,65,77,69,0
+
+_kw_ifdiff:
+	.byte	73,70,68,73,70,70,0
 
 _kw_if:
 	.byte	73,70,0

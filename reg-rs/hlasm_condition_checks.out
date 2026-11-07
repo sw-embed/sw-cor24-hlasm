@@ -1,0 +1,13 @@
+if_bad_cc: ERROR: main:1: unknown structured condition
+elseif_bad_cc: ERROR: main:2: unknown structured condition
+doexit_bad_cc: ERROR: main:2: unknown structured condition
+gt_z: ok:  push r2| lc r2,0| cls r2,r0| pop r2| brt _hlif_3_skip| bra _hlif_1_false|_hlif_3_skip:| nop|_hlif_1_false:|_hlif_2_end:
+le_reg: ok:  clu r1,r0| brf _hlif_3_skip| bra _hlif_1_false|_hlif_3_skip:| nop|_hlif_1_false:|_hlif_2_end:
+ifeq_undef: ERROR: main:1: IFEQ/IFNE operand is not a SET or EQU symbol
+ifne_register: ERROR: main:1: IFEQ/IFNE operand is not a SET or EQU symbol
+ifeq_skipped: ok:  nop ; after
+ifeq_defined: ok:  nop ; k3
+same_reg: ok:  nop ; reg| nop ; other| nop ; other| nop ; other
+same_empty: ok:  nop ; both empty
+same_quoted: ok:  nop ; quoted| nop ; differ
+diff_blanks: ok:  nop ; same

@@ -96,7 +96,8 @@ tc24r compares with `ceq`, `cls` and `clu`, branches with `brt`/`brf`, and
 materialises every comparison result as 0/1 before testing it. Those are
 the hlasm structured conditions `cc_eq`, `cc_ne`, `cc_lt` and `cc_lu`.
 C also uses `<=`, `>` and `>=`, signed and unsigned (demo46 is all of
-them). hlasm has no direct form for these yet; see gap M8.
+them). hlasm has `cc_le`, `cc_gt`, `cc_ge` and `cc_leu`, `cc_gtu`,
+`cc_geu` for these since step 10 (gap M8).
 
 ### Loops
 
@@ -356,11 +357,11 @@ These are already done in hlasm, so the library can rely on them:
 | M8 | Structured conditions have no `<=`, `>`, `>=` forms (`cc_le`, `cc_gt`, `cc_ge`, and unsigned `cc_leu`, `cc_gtu`, `cc_geu`) | most Group B demos; demo46 uses all of them | Without them every C relational operator becomes swapped operands plus an extra register load, or an inverted `IF ... ELSE`. That is exactly the noise the showcase argues macros remove |
 | M9 | Conditional assembly cannot classify a macro argument. There is no text comparison (HLASM `AIF ('&A' EQ 'r2')`), and an undefined name in `IFEQ`/`IFNE` silently evaluates to 0, so `IFEQ &A,r2` is true for any argument that is not a symbol | testing `CALL` | `CALL fn,r2,5,_buf` must `push r2` for a register but `la r0,5`/`push r0` for a constant or label. Without a test it needs separate macros per argument kind, which defeats the point of a single `CALL` |
 
-The inserted step adds the six condition forms to IF/ELSEIF/DOEXIT/WHEN,
-plus a text test for conditional assembly (for example `IFSAME a,b` /
-`IFDIFF a,b`, or quoted-string comparison in `IFEQ`/`IFNE`). It also
-decides whether an undefined symbol in `IFEQ`/`IFNE` becomes an ERROR,
-checking the existing demos first.
+**Both are done (step 10).** IF/ELSEIF/DOEXIT accept the six condition
+forms, and `IFSAME a,b` / `IFDIFF a,b` compare argument text. A non-symbol
+name in `IFEQ`/`IFNE` is now an ERROR outside skipped regions. Demo d43
+shows a `PUSHARG` macro, the core of the library's `CALL`, that pushes a
+register as it is and loads anything else with `la`.
 
 ### Known gaps that do not block the ports
 

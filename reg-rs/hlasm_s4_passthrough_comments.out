@@ -1,34 +1,34 @@
-Loaded 22008 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.yITP6VPlMv/hlasm.lgo
+Loaded 22510 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.6ZncYxuMl1/hlasm.lgo
 Loaded 24 bytes from 'reg-rs/s4_comments.bin' at 0x080000
-[UART TX @ 127627] 'n'  (0x6E)
-[UART TX @ 127627] 'o'  (0x6F)
-[UART TX @ 127627] 'p'  (0x70)
-[UART TX @ 127627] ' '  (0x20)
-[UART TX @ 127627] ';'  (0x3B)
-[UART TX @ 127627] ' '  (0x20)
-[UART TX @ 127627] 'c'  (0x63)
-[UART TX @ 127627] 'o'  (0x6F)
-[UART TX @ 127627] 'm'  (0x6D)
-[UART TX @ 127627] 'm'  (0x6D)
-[UART TX @ 127627] 'e'  (0x65)
-[UART TX @ 127627] 'n'  (0x6E)
-[UART TX @ 127627] 't'  (0x74)
-[UART TX @ 127627] ''  (0x0D)
-[UART TX @ 127627] '\n'
-[UART TX @ 127627] 'a'  (0x61)
-[UART TX @ 127627] 'd'  (0x64)
-[UART TX @ 127627] 'd'  (0x64)
-[UART TX @ 127627] ' '  (0x20)
-[UART TX @ 127627] 'r'  (0x72)
-[UART TX @ 127627] '0'  (0x30)
-[UART TX @ 127627] ','  (0x2C)
-[UART TX @ 127627] 'r'  (0x72)
-[UART TX @ 127627] '1'  (0x31)
-[UART TX @ 127627] ''  (0x0D)
-[UART TX @ 127627] '\n'
+[UART TX @ 128937] 'n'  (0x6E)
+[UART TX @ 128937] 'o'  (0x6F)
+[UART TX @ 128937] 'p'  (0x70)
+[UART TX @ 128937] ' '  (0x20)
+[UART TX @ 128937] ';'  (0x3B)
+[UART TX @ 128937] ' '  (0x20)
+[UART TX @ 128937] 'c'  (0x63)
+[UART TX @ 128937] 'o'  (0x6F)
+[UART TX @ 128937] 'm'  (0x6D)
+[UART TX @ 128937] 'm'  (0x6D)
+[UART TX @ 128937] 'e'  (0x65)
+[UART TX @ 128937] 'n'  (0x6E)
+[UART TX @ 128937] 't'  (0x74)
+[UART TX @ 128937] ''  (0x0D)
+[UART TX @ 128937] '\n'
+[UART TX @ 128937] 'a'  (0x61)
+[UART TX @ 128937] 'd'  (0x64)
+[UART TX @ 128937] 'd'  (0x64)
+[UART TX @ 128937] ' '  (0x20)
+[UART TX @ 128937] 'r'  (0x72)
+[UART TX @ 128937] '0'  (0x30)
+[UART TX @ 128937] ','  (0x2C)
+[UART TX @ 128937] 'r'  (0x72)
+[UART TX @ 128937] '1'  (0x31)
+[UART TX @ 128937] ''  (0x0D)
+[UART TX @ 128937] '\n'
 
 UART output: nop ; comment
 add r0,r1
 
 
-Executed 127627 instructions
+Executed 128937 instructions

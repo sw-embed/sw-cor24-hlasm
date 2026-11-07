@@ -406,13 +406,47 @@ Output:
 |---|---|
 | `IFDEF name` | the symbol is defined and not 0 |
 | `IFNDEF name` | the symbol is not defined |
-| `IFEQ expr,expr` | the two values are equal (an undefined symbol counts as 0) |
+| `IFEQ expr,expr` | the two values are equal |
 | `IFNE expr,expr` | the two values differ |
+| `IFSAME a,b` | the two operands are the same text |
+| `IFDIFF a,b` | the two operands are different text |
 | `ELSEASM` | the preceding condition was false |
 | `ENDIFASM` | ends the block |
 
 Blocks nest up to 32 deep. Everything inside a skipped block is skipped,
 including nested blocks whose own condition is true.
+
+The first operand of `IFEQ`/`IFNE` is an expression of numbers and
+`SET`/`EQU` symbols. Any other name (a typo, a label, a register) stops
+hlasm with `IFEQ/IFNE operand is not a SET or EQU symbol`, except inside a
+skipped block, so `IFDEF X` / `IFEQ X,1` is safe when X is not defined.
+
+`IFSAME`/`IFDIFF` compare text, which is how a macro tells what kind of
+argument it was given. The comparison is exact (case matters, `R2` is not
+`r2`) and happens after argument substitution. An operand ends at a comma,
+blank, tab or `;` outside quotes and parentheses, and either operand may be
+empty, so `IFDIFF &C,` tests whether `&C` was passed. From demo d43:
+
+```
+; PUSHARG: push a call argument -- a register as it is, anything else
+; (a constant or a label) through la r0
+MACRO PUSHARG &A
+IFSAME &A,r0
+ push r0
+ELSEASM
+IFSAME &A,r1
+ push r1
+ELSEASM
+IFSAME &A,r2
+ push r2
+ELSEASM
+ la r0,&A
+ push r0
+ENDIFASM
+ENDIFASM
+ENDIFASM
+MEND
+```
 
 ## Structured control flow
 
@@ -424,9 +458,20 @@ labels and branches. Conditions are written `cc, register, value`:
 | `cc_eq` | register = value |
 | `cc_ne` | register != value |
 | `cc_lt` | register < value (signed) |
+| `cc_le` | register <= value (signed) |
+| `cc_gt` | register > value (signed) |
+| `cc_ge` | register >= value (signed) |
 | `cc_lu` | register < value (unsigned) |
+| `cc_leu` | register <= value (unsigned) |
+| `cc_gtu` | register > value (unsigned) |
+| `cc_geu` | register >= value (unsigned) |
 | `cc_zset` | the C flag is set (no operands; test a compare you just did) |
 | `cc_zclr` | the C flag is clear |
+
+Any other name stops hlasm with `unknown structured condition`. COR24 only
+compares "less than", so `cc_gt` and `cc_le` compare with the operands
+swapped (`cls value,register`), and `cc_ge` and `cc_le` branch on the
+opposite result.
 
 The value can be a register, a number, or a symbol expression. A constant is
 loaded into a scratch register that is saved and restored around the
@@ -732,7 +777,7 @@ These are planned (see `docs/limits-and-lifting-plan.md` for the schedule):
 
 ## Further reading
 
-- `demos/README.md`: the demo programs (d01-d41) and what each shows.
+- `demos/README.md`: the demo programs (d01-d43) and what each shows.
 - `docs/design.md`: the language design and lowering rules.
 - `docs/limits-and-lifting-plan.md`: every limit, known issue and the plan
   for lifting the rest.

@@ -119,8 +119,8 @@ each has a reg-rs test (`hlasm_limit_*`) at the limit and one past it.
 | M5 | Compound conditions (G1) | extra terms silently ignored | plsw | `IF cc_eq,r0,1,AND,cc_ne,r1,2` lowered as short-circuit branches; error on malformed input |
 | M6 | DSECT / FIELD (G3) | passes through raw | plsw records, services control blocks | `DSECT name` / `FIELD name,size` / `DEND` defining offset symbols via M1 |
 | M7 | Diagnostics (G6) | no file or line context; overflows silent | everyone | **done (step 7):** every `_fatal` prints `ERROR: <member>:<line>: <message>`. Each source keeps its own line number (an include returns to the caller's count); a macro expansion reports the call line; the main source is named after its file (by the source-set runner) or `main`. HLDIAG warnings keep their existing `src N line M` format, and since `_fatal` halts, an HLDIAG count adds nothing |
-| M8 | Condition forms `<=`, `>`, `>=` | only `cc_eq`, `cc_ne`, `cc_lt`, `cc_lu` (and the C-flag tests) | tiny-C ports (most control-flow demos; demo46 uses every form), plsw | `cc_le`, `cc_gt`, `cc_ge` and unsigned `cc_leu`, `cc_gtu`, `cc_geu` in IF/ELSEIF/DOEXIT/WHEN; saga step `condition-forms-and-arg-tests` (found by the survey, `docs/tinyc-port-plan.md`) |
-| M9 | Classifying macro arguments | no text comparison in conditional assembly; an undefined name in IFEQ/IFNE evaluates to 0, so `IFEQ &A,r2` is true for any non-symbol | library `CALL` (push a register argument, `la` a constant or label), any macro that varies with its argument's kind | a text test (e.g. `IFSAME a,b` / `IFDIFF a,b`) and a decision on undefined names in IFEQ/IFNE; same saga step |
+| M8 | Condition forms `<=`, `>`, `>=` | only `cc_eq`, `cc_ne`, `cc_lt`, `cc_lu` (and the C-flag tests) | tiny-C ports (most control-flow demos; demo46 uses every form), plsw | **done (step 10):** `cc_le`, `cc_gt`, `cc_ge` and unsigned `cc_leu`, `cc_gtu`, `cc_geu` in IF/ELSEIF/DOEXIT, for register and constant right-hand sides. A table (`_cc_info`) gives each name its compare (`ceq`/`cls`/`clu`), whether to swap the operands (`gt`, `le`: `cls value,reg`) and whether the branch is inverted (`ne`, `ge`, `le`); a swapped compare against `z` uses the constant 0, since `cls z,r` does not exist. An unknown name is now an ERROR (it used to fall through to `clu`). WHEN keeps its equality test against the SELECT register. Found by the survey (`docs/tinyc-port-plan.md`); demo d43 |
+| M9 | Classifying macro arguments | no text comparison in conditional assembly; an undefined name in IFEQ/IFNE evaluates to 0, so `IFEQ &A,r2` is true for any non-symbol | library `CALL` (push a register argument, `la` a constant or label), any macro that varies with its argument's kind | **done (step 10):** `IFSAME a,b` / `IFDIFF a,b` compare operand text exactly after substitution (operands delimited like macro arguments; either may be empty). The first operand of IFEQ/IFNE naming anything but a SET/EQU symbol is now an ERROR, except inside a skipped region; no existing demo or golden relied on the old 0 |
 
 ## Cost (G7)
 
@@ -316,7 +316,8 @@ Then the existing steps continue: e2e harness, survey, the macro library
 (which implements the services interface's bare-metal target, console and
 storage first), the ports, and the showcase. The survey (step 9) found two
 more gaps the library needs, M8 and M9, and inserted the step
-`condition-forms-and-arg-tests` for them ahead of the macro library.
+`condition-forms-and-arg-tests` for them ahead of the macro library (saga
+step 10, done).
 
 **Future saga (plsw-readiness):**
 - M5 compound conditions and M6 DSECT/FIELD;
