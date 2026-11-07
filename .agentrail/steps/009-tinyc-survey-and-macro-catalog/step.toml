@@ -1,6 +1,6 @@
 number = 9
 slug = "tinyc-survey-and-macro-catalog"
-status = "pending"
+status = "in-progress"
 description = "Survey all demos in ../sw-cor24-x-tinyc/demos (C sources and tc24r's generate..."
 role = "production"
 context_files = []
