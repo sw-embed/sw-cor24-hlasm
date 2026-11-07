@@ -1,8 +1,9 @@
 number = 9
 slug = "tinyc-survey-and-macro-catalog"
-status = "in-progress"
+status = "completed"
 description = "Survey all demos in ../sw-cor24-x-tinyc/demos (C sources and tc24r's generate..."
 role = "production"
 context_files = []
 created_at = "2026-10-30T09:59:16"
-commits = []
+completed_at = "2026-11-07T09:47:02"
+commits = ["c6dfda1b4dee2a0c59773c66acf9abbdec274efd"]
