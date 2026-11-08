@@ -1,0 +1,1 @@
+Ported 13 demos (demo5, 6, 7, 16, 39, 41, 50, 51, 52, 53, 54, 58, 63) with hlasm_e2e_tinyc_* tests and doc entries. Added REQUIRE to check.hlasm, deep-offset LOCADDR. Fixed D16 (quoted ' '/',' compare values). 120/120 pass.
