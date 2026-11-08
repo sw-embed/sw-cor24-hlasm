@@ -1,0 +1,1 @@
+M5 compound conditions: IF/ELSEIF/DOEXIT accept up to 8 AND- or OR-joined terms, short-circuit lowering via _cond_split/_emit_cond_false/_emit_cond_true over the existing per-term emitters; errors for mixing, dangling connective, empty term, >8 terms. Demo d44 truth tables, demos/tinyc/demo11_andor, check_conditions cases, docs. 107/107 pass.
