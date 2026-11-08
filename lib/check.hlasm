@@ -2,6 +2,7 @@
 ;   CHECKINIT                  ok = 1
 ;   CHECK cc_eq,r0,25          ok = 0 unless r0 = 25   (C: if (x != 25) ok = 0;)
 ;   CHECKEND "D13OK\n",42      if ok: write the text, r0 = 42; else r0 = 0
+;   REQUIRE cc_eq,r0,7,1       return 1 unless r0 = 7  (C: if (x != 7) return 1;)
 ; Needs: frame, svc_bare. The flag lives in one word, _chk_ok, defined by
 ; CHECKINIT (so use CHECKINIT once per program). Each macro clobbers r0
 ; and r1; CHECK leaves its operands alone.
@@ -31,6 +32,15 @@ MEND
 
 ; CHECKEND ["text"],rc -- if every CHECK held, write text (if given) and set
 ; r0 = rc (r2, a constant or a label); otherwise r0 = 0.
+; REQUIRE cond,a,b,rc -- C's  if (!(cond)) return rc;  : unless the structured
+; condition holds, return rc from the current routine (RETURN).
+MACRO REQUIRE &C,&A,&B,&RC
+IF &C,&A,&B
+ELSE
+ RETURN &RC
+ENDIF
+MEND
+
 MACRO CHECKEND &T,&RC
  la r1,_chk_ok
  lw r0,0(r1)

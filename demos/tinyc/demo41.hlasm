@@ -1,0 +1,48 @@
+; demo41.c in hlasm: atoi, strlen, strcmp and strcpy from the runtime
+; library (RTCALL), on string constants and a local buffer.
+; Prints "D41OK" and returns 42. Output: "D41OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY check
+COPY rt
+SET SHOWRC,1
+ START
+_main:
+ LOCAL BUF,9
+ PROLOG
+ CHECKINIT
+ RTCALL atoi,s42
+ CHECK cc_eq,r0,42
+ RTCALL atoi,sm7
+ CHECK cc_eq,r0,-7
+ RTCALL atoi,s100
+ CHECK cc_eq,r0,100
+ RTCALL strlen,shello
+ CHECK cc_eq,r0,5
+ RTCALL strlen,sempty
+ CHECK cc_eq,r0,0
+ RTCALL strcmp,sabc,sabc
+ CHECK cc_eq,r0,0
+ RTCALL strcmp,sabc,sabd
+ CHECK cc_lt,r0,0
+ RTCALL strcmp,sabd,sabc
+ CHECK cc_gt,r0,0
+; char buf[8]; strcpy(buf, "OK"); strcmp(buf, "OK") == 0
+ LOCADDR r2,BUF
+ RTCALL strcpy,r2,sok
+ RTCALL strcmp,r2,sok
+ CHECK cc_eq,r0,0
+ CHECKEND "D41OK\n",42
+ RET
+ STR s42,"42"
+ STR sm7,"-7"
+ STR s100,"  100"
+ STR shello,"hello"
+ STR sempty,""
+ STR sabc,"abc"
+ STR sabd,"abd"
+ STR sok,"OK"
+COPY svc_bare_code
+COPY rt_code

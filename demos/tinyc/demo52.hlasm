@@ -1,0 +1,82 @@
+; demo52.c in hlasm: a local table of function pointers, called by index
+; directly and in a loop. Returns 1-5 on a failed check, else prints
+; "D52OK" and returns 52. Output: "D52OK" then "r0=52".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ LOCAL TBL,12
+ LOCAL SUM,3
+ LOCAL I,3
+ PROLOG
+; table[0..2] = double_it, triple_it, quad_it
+ la r0,_double_it
+ sw r0,TBL(fp)
+ la r0,_triple_it
+ sw r0,TBL+3(fp)
+ la r0,_quad_it
+ sw r0,TBL+6(fp)
+; r0 = table[0](5) == 10; r1 = table[1](7) == 21; r2 = table[2](3) == 12
+ lw r0,TBL(fp)
+ CALL r0,5
+ REQUIRE cc_eq,r0,10,1
+ sw r0,SUM(fp)
+ lw r0,TBL+3(fp)
+ CALL r0,7
+ REQUIRE cc_eq,r0,21,2
+ lw r1,SUM(fp)
+ add r0,r1
+ sw r0,SUM(fp)
+ lw r0,TBL+6(fp)
+ CALL r0,3
+ REQUIRE cc_eq,r0,12,3
+ lw r1,SUM(fp)
+ add r0,r1
+ REQUIRE cc_eq,r0,43,4
+; for (i = 0; i < 3; i++) acc = acc + table[i](1);
+ lc r0,0
+ sw r0,SUM(fp)
+ sw r0,I(fp)
+ LOCADDR r2,TBL
+DO
+ lw r0,I(fp)
+ DOEXIT cc_ge,r0,3
+ lw r0,0(r2)
+ CALL r0,1
+ lw r1,SUM(fp)
+ add r0,r1
+ sw r0,SUM(fp)
+ add r2,3
+ lw r0,I(fp)
+ add r0,1
+ sw r0,I(fp)
+ENDDO
+ lw r0,SUM(fp)
+ REQUIRE cc_eq,r0,9,5
+ WTO "D52OK\n"
+ RETURN 52
+
+_double_it:
+ PROLOG
+ ARG r0,1
+ add r0,r0
+ RET
+
+_triple_it:
+ PROLOG
+ ARG r0,1
+ mov r1,r0
+ add r0,r0
+ add r0,r1
+ RET
+
+_quad_it:
+ PROLOG
+ ARG r0,1
+ add r0,r0
+ add r0,r0
+ RET
+COPY svc_bare_code

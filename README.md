@@ -41,7 +41,7 @@ every feature with examples, limits and error messages).
 Done:
 
 - All the features above, each with demos and regression tests
-  (`./build.sh test`, 107 tests).
+  (`./build.sh test`, 120 tests).
 - Every limit in [docs/limits-and-lifting-plan.md](docs/limits-and-lifting-plan.md)
   that was scheduled has been lifted: 512 symbols, 256 macros, 64 KB of macro
   bodies, 32-deep nesting, 32 source members.
@@ -57,9 +57,9 @@ assembly. See [docs/c-demos-in-hlasm.md](docs/c-demos-in-hlasm.md) for the
 ported demos and the macros used, and
 [docs/tinyc-port-plan.md](docs/tinyc-port-plan.md) for the survey and the
 port order. The survey, the hlasm features it called for, and the macro library
-(`lib/`) are done, and the first two batches of ports (10 I/O and 10
-control-flow demos, in `demos/tinyc/`) are in. Two more batches follow,
-then a side-by-side showcase.
+(`lib/`) are done, and three of the four batches of ports (33 demos:
+I/O, control flow, functions and data, in `demos/tinyc/`) are in. The struct
+batch follows, then a side-by-side showcase.
 
 Not implemented yet:
 

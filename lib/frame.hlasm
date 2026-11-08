@@ -161,12 +161,14 @@ MACRO ARG &R,&N
  lw &R,6+3*&N(fp)
 MEND
 
-; LOCADDR reg,name -- reg = the address of LOCAL name (C's &x). There is no
-; mov reg,fp, so fp goes through the stack.
+; LOCADDR reg,name -- reg (r0 or r2) = the address of LOCAL name (C's &x).
+; There is no mov reg,fp, so fp goes through the stack; the offset goes
+; through r1, since add takes only -128..127 and locals can lie deeper.
 MACRO LOCADDR &R,&N
  push fp
  pop &R
- add &R,&N
+ la r1,&N
+ add &R,r1
 MEND
 
 ; ISRENTRY / ISRRET -- interrupt handler entry and exit (as tc24r's

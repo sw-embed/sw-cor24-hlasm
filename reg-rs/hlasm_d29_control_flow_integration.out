@@ -1,4 +1,4 @@
-Loaded 23381 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.FYJg07TfHQ/hlasm.lgo
+Loaded 23449 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.ZlHXzBWXpD/hlasm.lgo
 Loaded 239 bytes from 'demos/d29_control_flow_integration.bin' at 0x080000
 [UART TX @ 310000] ' '  (0x20)
 [UART TX @ 310000] 'p'  (0x70)
@@ -158,7 +158,7 @@ Loaded 239 bytes from 'demos/d29_control_flow_integration.bin' at 0x080000
 [UART TX @ 340000] '_'  (0x5F)
 [UART TX @ 340000] 'f'  (0x66)
 [UART TX @ 340000] 'a'  (0x61)
-[UART TX @ 340000] 'l'  (0x6C)
+[UART TX @ 350000] 'l'  (0x6C)
 [UART TX @ 350000] 's'  (0x73)
 [UART TX @ 350000] 'e'  (0x65)
 [UART TX @ 350000] ':'  (0x3A)
@@ -493,8 +493,8 @@ Loaded 239 bytes from 'demos/d29_control_flow_integration.bin' at 0x080000
 [UART TX @ 400000] '_'  (0x5F)
 [UART TX @ 400000] 'h'  (0x68)
 [UART TX @ 400000] 'l'  (0x6C)
-[UART TX @ 400000] 's'  (0x73)
-[UART TX @ 400000] 'e'  (0x65)
+[UART TX @ 410000] 's'  (0x73)
+[UART TX @ 410000] 'e'  (0x65)
 [UART TX @ 410000] 'l'  (0x6C)
 [UART TX @ 410000] '_'  (0x5F)
 [UART TX @ 410000] '8'  (0x38)
@@ -517,21 +517,21 @@ Loaded 239 bytes from 'demos/d29_control_flow_integration.bin' at 0x080000
 [UART TX @ 410000] '0'  (0x30)
 [UART TX @ 410000] ''  (0x0D)
 [UART TX @ 410000] '\n'
-[UART TX @ 411671] '_'  (0x5F)
-[UART TX @ 411671] 'h'  (0x68)
-[UART TX @ 411671] 'l'  (0x6C)
-[UART TX @ 411671] 's'  (0x73)
-[UART TX @ 411671] 'e'  (0x65)
-[UART TX @ 411671] 'l'  (0x6C)
-[UART TX @ 411671] '_'  (0x5F)
-[UART TX @ 411671] '7'  (0x37)
-[UART TX @ 411671] '_'  (0x5F)
-[UART TX @ 411671] 'e'  (0x65)
-[UART TX @ 411671] 'n'  (0x6E)
-[UART TX @ 411671] 'd'  (0x64)
-[UART TX @ 411671] ':'  (0x3A)
-[UART TX @ 411671] ''  (0x0D)
-[UART TX @ 411671] '\n'
+[UART TX @ 411731] '_'  (0x5F)
+[UART TX @ 411731] 'h'  (0x68)
+[UART TX @ 411731] 'l'  (0x6C)
+[UART TX @ 411731] 's'  (0x73)
+[UART TX @ 411731] 'e'  (0x65)
+[UART TX @ 411731] 'l'  (0x6C)
+[UART TX @ 411731] '_'  (0x5F)
+[UART TX @ 411731] '7'  (0x37)
+[UART TX @ 411731] '_'  (0x5F)
+[UART TX @ 411731] 'e'  (0x65)
+[UART TX @ 411731] 'n'  (0x6E)
+[UART TX @ 411731] 'd'  (0x64)
+[UART TX @ 411731] ':'  (0x3A)
+[UART TX @ 411731] ''  (0x0D)
+[UART TX @ 411731] '\n'
 
 UART output:  push r0
  push r1
@@ -575,4 +575,4 @@ _hlsel_8_next:
 _hlsel_7_end:
 
 
-Executed 411671 instructions
+Executed 411731 instructions

@@ -1,0 +1,31 @@
+; demo16.c in hlasm: character literals, including escapes, are numbers
+; to hlasm. Prints "D16OK" and returns 42. Output: "D16OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+ lc r0,'A'
+ CHECK cc_eq,r0,65
+ lc r0,'0'
+ CHECK cc_eq,r0,48
+ lc r0,'\n'
+ CHECK cc_eq,r0,10
+ lc r0,'\0'
+ CHECK cc_eq,r0,0
+ lc r0,'\\'
+ CHECK cc_eq,r0,92
+ lc r0,'\''
+ CHECK cc_eq,r0,39
+ lc r0,'Z'
+ CHECK cc_eq,r0,90
+; 'a' > 'z' must be false
+ lc r0,'a'
+ CHECK cc_le,r0,'z'
+ CHECKEND "D16OK\n",42
+ RET
+COPY svc_bare_code

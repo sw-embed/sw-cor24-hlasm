@@ -1,0 +1,92 @@
+; demo63.c in hlasm: C joins adjacent string literals; in assembly that is
+; simply consecutive .ascii lines before the terminating .byte 0. Sizes
+; that C gets from sizeof are measured here at run time (end label minus
+; start). Returns 1-9 on a failed check, else prints "D63OK" and returns
+; 63. Output: "D63OK" then "r0=63".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY check
+COPY rt
+SET SHOWRC,1
+ START
+_main:
+ LOCAL LOCALS,9
+ LOCAL PADDED,10
+ PROLOG
+; g_ptr points at "ab\n" "cd"
+ la r1,g_ptr
+ lw r2,0(r1)
+ lbu r0,0(r2)
+ REQUIRE cc_eq,r0,'a',1
+ lbu r0,2(r2)
+ REQUIRE cc_eq,r0,'\n',1
+ lbu r0,4(r2)
+ REQUIRE cc_eq,r0,'d',1
+ lbu r0,5(r2)
+ REQUIRE cc_eq,r0,0,1
+; sizeof(g_arr) == 7: the bytes from g_arr to g_arr_end
+ la r0,g_arr_end
+ la r1,g_arr
+ sub r0,r1
+ REQUIRE cc_eq,r0,7,2
+ la r2,g_arr
+ lbu r0,5(r2)
+ REQUIRE cc_eq,r0,'f',3
+ lbu r0,6(r2)
+ REQUIRE cc_eq,r0,0,3
+; char local[] = "ab" "cd" "ef" "gh": 8 characters and the NUL
+ LOCADDR r2,LOCALS
+ RTCALL strcpy,r2,abcdefgh
+ RTCALL strlen,r2
+ REQUIRE cc_eq,r0,8,4
+ lbu r0,7(r2)
+ REQUIRE cc_eq,r0,'h',5
+; char padded[10] = "abc": the rest is zero
+ LOCADDR r2,PADDED
+ RTCALL memset,r2,0,10
+ RTCALL strcpy,r2,abc
+ lbu r0,2(r2)
+ REQUIRE cc_eq,r0,'c',6
+ lbu r0,9(r2)
+ REQUIRE cc_eq,r0,0,7
+; greeting() returns "hello, " "world!" " " "D63"
+ CALL _greeting
+ mov r2,r0
+ lbu r0,7(r2)
+ REQUIRE cc_eq,r0,'w',8
+ lbu r0,13(r2)
+ REQUIRE cc_eq,r0,' ',8
+ lbu r0,16(r2)
+ REQUIRE cc_eq,r0,'3',9
+ lbu r0,17(r2)
+ REQUIRE cc_eq,r0,0,9
+ WTO "D63"
+ WTO "OK\n"
+ RETURN 63
+
+_greeting:
+ PROLOG
+ RETURN greeting_lit
+
+g_arr:
+ .ascii "abc"
+ .ascii "def"
+ .byte 0
+g_arr_end:
+ WORDS g_ptr,g_ptr_lit
+g_ptr_lit:
+ .ascii "ab\n"
+ .ascii "cd"
+ .byte 0
+greeting_lit:
+ .ascii "hello, "
+ .ascii "world!"
+ .ascii " "
+ .ascii "D63"
+ .byte 0
+ STR abcdefgh,"abcdefgh"
+ STR abc,"abc"
+COPY svc_bare_code
+COPY rt_code

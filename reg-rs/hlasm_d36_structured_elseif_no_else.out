@@ -1,4 +1,4 @@
-Loaded 23381 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.oIrBThs7ff/hlasm.lgo
+Loaded 23449 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.SwrJ3h6UvR/hlasm.lgo
 Loaded 874 bytes from 'demos/d36_structured_elseif_no_else.bin' at 0x080000
 [UART TX @ 670000] ';'  (0x3B)
 [UART TX @ 670000] ' '  (0x20)
@@ -199,7 +199,7 @@ Loaded 874 bytes from 'demos/d36_structured_elseif_no_else.bin' at 0x080000
 [UART TX @ 690000] 'f'  (0x66)
 [UART TX @ 690000] 'i'  (0x69)
 [UART TX @ 690000] 'e'  (0x65)
-[UART TX @ 690000] 'l'  (0x6C)
+[UART TX @ 700000] 'l'  (0x6C)
 [UART TX @ 700000] 'd'  (0x64)
 [UART TX @ 700000] '_'  (0x5F)
 [UART TX @ 700000] 'd'  (0x64)
@@ -370,7 +370,7 @@ Loaded 874 bytes from 'demos/d36_structured_elseif_no_else.bin' at 0x080000
 [UART TX @ 780000] 'd'  (0x64)
 [UART TX @ 780000] 'd'  (0x64)
 [UART TX @ 780000] ' '  (0x20)
-[UART TX @ 780000] 'r'  (0x72)
+[UART TX @ 790000] 'r'  (0x72)
 [UART TX @ 790000] '2'  (0x32)
 [UART TX @ 790000] ','  (0x2C)
 [UART TX @ 790000] '1'  (0x31)
@@ -557,7 +557,7 @@ Loaded 874 bytes from 'demos/d36_structured_elseif_no_else.bin' at 0x080000
 [UART TX @ 820000] 'f'  (0x66)
 [UART TX @ 820000] '_'  (0x5F)
 [UART TX @ 820000] '4'  (0x34)
-[UART TX @ 820000] '_'  (0x5F)
+[UART TX @ 830000] '_'  (0x5F)
 [UART TX @ 830000] 'f'  (0x66)
 [UART TX @ 830000] 'a'  (0x61)
 [UART TX @ 830000] 'l'  (0x6C)
@@ -818,8 +818,8 @@ Loaded 874 bytes from 'demos/d36_structured_elseif_no_else.bin' at 0x080000
 [UART TX @ 950000] ','  (0x2C)
 [UART TX @ 950000] '-'  (0x2D)
 [UART TX @ 950000] '1'  (0x31)
-[UART TX @ 950000] ''  (0x0D)
-[UART TX @ 950000] '\n'
+[UART TX @ 960000] ''  (0x0D)
+[UART TX @ 960000] '\n'
 [UART TX @ 960000] ' '  (0x20)
 [UART TX @ 960000] ' '  (0x20)
 [UART TX @ 960000] 'a'  (0x61)
@@ -836,7 +836,7 @@ Loaded 874 bytes from 'demos/d36_structured_elseif_no_else.bin' at 0x080000
 [UART TX @ 960000] ' '  (0x20)
 [UART TX @ 960000] 'p'  (0x70)
 [UART TX @ 960000] 'u'  (0x75)
-[UART TX @ 960000] 's'  (0x73)
+[UART TX @ 970000] 's'  (0x73)
 [UART TX @ 970000] 'h'  (0x68)
 [UART TX @ 970000] ' '  (0x20)
 [UART TX @ 970000] 'r'  (0x72)
@@ -1031,7 +1031,7 @@ Loaded 874 bytes from 'demos/d36_structured_elseif_no_else.bin' at 0x080000
 [UART TX @ 990000] '('  (0x28)
 [UART TX @ 990000] 'r'  (0x72)
 [UART TX @ 990000] '1'  (0x31)
-[UART TX @ 990000] ')'  (0x29)
+[UART TX @ 1000000] ')'  (0x29)
 [UART TX @ 1000000] ''  (0x0D)
 [UART TX @ 1000000] '\n'
 [UART TX @ 1000000] ' '  (0x20)
@@ -1270,8 +1270,8 @@ Loaded 874 bytes from 'demos/d36_structured_elseif_no_else.bin' at 0x080000
 [UART TX @ 1090000] 'c'  (0x63)
 [UART TX @ 1090000] '0'  (0x30)
 [UART TX @ 1090000] '_'  (0x5F)
-[UART TX @ 1090000] 's'  (0x73)
-[UART TX @ 1090000] 'r'  (0x72)
+[UART TX @ 1100000] 's'  (0x73)
+[UART TX @ 1100000] 'r'  (0x72)
 [UART TX @ 1100000] 'c'  (0x63)
 [UART TX @ 1100000] '_'  (0x5F)
 [UART TX @ 1100000] 'p'  (0x70)
@@ -1341,21 +1341,21 @@ Loaded 874 bytes from 'demos/d36_structured_elseif_no_else.bin' at 0x080000
 [UART TX @ 1120000] 'c'  (0x63)
 [UART TX @ 1120000] '_'  (0x5F)
 [UART TX @ 1120000] 'p'  (0x70)
-[UART TX @ 1120000] 't'  (0x74)
-[UART TX @ 1120000] 'r'  (0x72)
-[UART TX @ 1126979] ':'  (0x3A)
-[UART TX @ 1126979] ''  (0x0D)
-[UART TX @ 1126979] '\n'
-[UART TX @ 1126979] ' '  (0x20)
-[UART TX @ 1126979] '.'  (0x2E)
-[UART TX @ 1126979] 'w'  (0x77)
-[UART TX @ 1126979] 'o'  (0x6F)
-[UART TX @ 1126979] 'r'  (0x72)
-[UART TX @ 1126979] 'd'  (0x64)
-[UART TX @ 1126979] ' '  (0x20)
-[UART TX @ 1126979] '0'  (0x30)
-[UART TX @ 1126979] ''  (0x0D)
-[UART TX @ 1126979] '\n'
+[UART TX @ 1127039] 't'  (0x74)
+[UART TX @ 1127039] 'r'  (0x72)
+[UART TX @ 1127039] ':'  (0x3A)
+[UART TX @ 1127039] ''  (0x0D)
+[UART TX @ 1127039] '\n'
+[UART TX @ 1127039] ' '  (0x20)
+[UART TX @ 1127039] '.'  (0x2E)
+[UART TX @ 1127039] 'w'  (0x77)
+[UART TX @ 1127039] 'o'  (0x6F)
+[UART TX @ 1127039] 'r'  (0x72)
+[UART TX @ 1127039] 'd'  (0x64)
+[UART TX @ 1127039] ' '  (0x20)
+[UART TX @ 1127039] '0'  (0x30)
+[UART TX @ 1127039] ''  (0x0D)
+[UART TX @ 1127039] '\n'
 
 UART output: ; Demo 36: IF/ELSEIF/ENDIF without ELSE still defines the shared end label
 _parse_o_spec:
@@ -1458,4 +1458,4 @@ _field_desc2_src_ptr:
  .word 0
 
 
-Executed 1126979 instructions
+Executed 1127039 instructions

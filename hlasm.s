@@ -9593,7 +9593,10 @@ _psi_check_flag:
 	jal	r1,(r0)
 	add	sp,6
 	ceq	r0,z
-	brf	_psi_ret
+	brt	_psi_not_zset
+	la	r1,_psi_ret
+	jmp	(r1)
+_psi_not_zset:
 
 	la	r0,_cc_zclr_txt
 	push	r0
@@ -9603,7 +9606,10 @@ _psi_check_flag:
 	jal	r1,(r0)
 	add	sp,6
 	ceq	r0,z
-	brf	_psi_ret
+	brt	_psi_not_zclr
+	la	r1,_psi_ret
+	jmp	(r1)
+_psi_not_zclr:
 
 	la	r1,197908
 
@@ -9637,7 +9643,10 @@ _psi_lhs_done:
 _psi_sep2:
 	lbu	r0,0(r2)
 	ceq	r0,z
-	brt	_psi_ret
+	brf	_psi_sep2_more
+	la	r1,_psi_ret
+	jmp	(r1)
+_psi_sep2_more:
 	lc	r1,44
 	ceq	r0,r1
 	brt	_psi_sep2_skip
@@ -9660,6 +9669,12 @@ _psi_rhs_loop:
 	lbu	r0,0(r2)
 	ceq	r0,z
 	brt	_psi_rhs_done
+; a quoted literal (' ' or ',') is copied whole
+	push	r1
+	lc	r1,39
+	ceq	r0,r1
+	pop	r1
+	brt	_psi_rhs_quote
 	push	r1
 	lc	r1,44
 	ceq	r0,r1
@@ -9675,6 +9690,37 @@ _psi_rhs_loop:
 	add	r1,1
 	add	r2,1
 	bra	_psi_rhs_loop
+
+_psi_rhs_quote:
+	sb	r0,0(r1)
+	add	r1,1
+	add	r2,1
+_psi_rq_loop:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_psi_rhs_done
+	sb	r0,0(r1)
+	add	r1,1
+	add	r2,1
+	push	r1
+	lc	r1,92
+	ceq	r0,r1
+	pop	r1
+	brt	_psi_rq_escape
+	push	r1
+	lc	r1,39
+	ceq	r0,r1
+	pop	r1
+	brt	_psi_rhs_loop
+	bra	_psi_rq_loop
+_psi_rq_escape:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_psi_rhs_done
+	sb	r0,0(r1)
+	add	r1,1
+	add	r2,1
+	bra	_psi_rq_loop
 
 _psi_rhs_done_pop:
 	pop	r1

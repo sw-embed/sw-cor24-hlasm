@@ -1,0 +1,81 @@
+; demo50.c in hlasm: a 256-byte local buffer next to an int, filled and
+; checked by routines. lw/sw offsets reach only -128..127, so the buffer
+; is addressed with LOCADDR (tc24r's BUG-013 was exactly this). Returns
+; 1-4 on a failed check, else prints "D50OK" and returns 50.
+; Output: "D50OK" then "r0=50".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY rt
+SET SHOWRC,1
+ START
+_main:
+ LOCAL SENT,3
+ LOCAL BUF,256
+ PROLOG
+ la r0,99
+ sw r0,SENT(fp)
+ LOCADDR r2,BUF
+ CALL _fill,r2,256
+ lw r0,SENT(fp)
+ REQUIRE cc_eq,r0,99,1
+ LOCADDR r2,BUF
+ CALL _check,r2,256
+ REQUIRE cc_ne,r0,0,2
+ lbu r0,0(r2)
+ REQUIRE cc_eq,r0,65,3
+ la r1,255
+ add r2,r1
+ lbu r0,0(r2)
+ REQUIRE cc_eq,r0,65+255%26,4
+ WTO "D50OK\n"
+ RETURN 50
+
+; _fill(buf, n): buf[i] = 'A' + i % 26
+_fill:
+ LOCAL FI_I,3
+ PROLOG
+ lc r0,0
+ sw r0,FI_I(fp)
+DO
+ lw r0,FI_I(fp)
+ ARG r1,2
+ DOEXIT cc_ge,r0,r1
+ MOD r0,26
+ add r0,65
+ ARG r2,1
+ lw r1,FI_I(fp)
+ add r2,r1
+ sb r0,0(r2)
+ add r1,1
+ sw r1,FI_I(fp)
+ENDDO
+ RET
+
+; _check(buf, n): 1 if every buf[i] == 'A' + i % 26, else 0
+_check:
+ LOCAL CK_I,3
+ PROLOG
+ lc r0,0
+ sw r0,CK_I(fp)
+DO
+ lw r0,CK_I(fp)
+ ARG r1,2
+ DOEXIT cc_ge,r0,r1
+ MOD r0,26
+ add r0,65
+ ARG r2,1
+ lw r1,CK_I(fp)
+ add r2,r1
+ lbu r1,0(r2)
+IF cc_ne,r0,r1
+ RETURN 0
+ENDIF
+ lw r1,CK_I(fp)
+ add r1,1
+ sw r1,CK_I(fp)
+ENDDO
+ RETURN 1
+COPY svc_bare_code
+COPY rt_code

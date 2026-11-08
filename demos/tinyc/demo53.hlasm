@@ -1,0 +1,44 @@
+; demo53.c in hlasm: a function pointer passed as an argument and called
+; by the callee. Returns 1-3 on a failed check, else prints "D53OK" and
+; returns 53. Output: "D53OK" then "r0=53".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CALL _apply,_add,30,20
+ REQUIRE cc_eq,r0,50,1
+ mov r2,r0
+ CALL _apply,_sub,30,20
+ REQUIRE cc_eq,r0,10,2
+ CALL _apply,_add,r2,3
+ REQUIRE cc_eq,r0,53,3
+ WTO "D53OK\n"
+ RETURN 53
+
+; _apply(f, x, y) = f(x, y)
+_apply:
+ PROLOG
+ ARG r0,1
+ ARG r2,2
+ ARG r1,3
+ CALL r0,r2,r1
+ RET
+
+_add:
+ PROLOG
+ ARG r0,1
+ ARG r1,2
+ add r0,r1
+ RET
+
+_sub:
+ PROLOG
+ ARG r0,1
+ ARG r1,2
+ sub r0,r1
+ RET
+COPY svc_bare_code

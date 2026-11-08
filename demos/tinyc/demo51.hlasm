@@ -1,0 +1,33 @@
+; demo51.c in hlasm: a function pointer in a local variable, called
+; through r0 with CALL. Returns 1 or 2 on a failed check, else prints
+; "D51OK" and returns 51. Output: "D51OK" then "r0=51".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ LOCAL FPTR,3
+ PROLOG
+; fp = add
+ la r0,_add
+ sw r0,FPTR(fp)
+; fp(3, 4) == 7
+ lw r0,FPTR(fp)
+ CALL r0,3,4
+ REQUIRE cc_eq,r0,7,1
+; fp(20, 31) == 51
+ lw r0,FPTR(fp)
+ CALL r0,20,31
+ REQUIRE cc_eq,r0,51,2
+ WTO "D51OK\n"
+ RETURN 51
+
+_add:
+ PROLOG
+ ARG r0,1
+ ARG r1,2
+ add r0,r1
+ RET
+COPY svc_bare_code

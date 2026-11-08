@@ -6,9 +6,9 @@ side by side with the C, using a shared macro library. The point is to
 show what macros buy over writing plain COR24 assembly, and how close
 hlasm source can come to the C it replaces.
 
-Status: the macro library is done, and batches 1 and 2 (10 I/O and
-10 control-flow demos) are ported; see [Ported demos](#ported-demos).
-Batches 3 and 4 follow. The
+Status: the macro library is done, and batches 1-3 (10 I/O, 10
+control-flow and 13 function and data demos) are ported; see
+[Ported demos](#ported-demos). Batch 4 (structs, unions, heap) follows. The
 detailed survey and reasoning are in
 [tinyc-port-plan.md](tinyc-port-plan.md).
 
@@ -108,7 +108,7 @@ and returns past it.
 | `CALL fn[,a1..a8]` | push the arguments right to left, call, pop them; result in r0. fn is a label, r0 or r2 | r0, r1 |
 | `LOADR reg,value` | reg = value: `mov` from a register, `la` for anything else | reg |
 | `PUSHARG value` | push one argument: a register directly, anything else through r1 | r1 |
-| `LOCADDR reg,name` | reg = the address of a `LOCAL` (C's `&x`) | reg |
+| `LOCADDR reg,name` | reg (r0 or r2) = the address of a `LOCAL` (C's `&x`), at any depth | reg, r1 |
 | `ISRENTRY` / `ISRRET` | interrupt handler entry and exit: save and restore r0-r2, the C flag and fp; return with `jmp (ir)` | none |
 
 `CALL` loads constant and label arguments through r1, so an r1 argument must
@@ -155,6 +155,7 @@ Data placement); no registers change.
 | `CHECKINIT` | set the ok flag (one word, `_chk_ok`, jumped over); use once per program |
 | `CHECK cond,a,b` | clear the flag unless the structured condition holds (`CHECK cc_eq,r0,25` is C's `if (x != 25) ok = 0;`) |
 | `CHECKEND "text",rc` | if the flag is set, write text and set r0 = rc; otherwise r0 = 0 |
+| `REQUIRE cond,a,b,rc` | return rc from the current routine unless the condition holds (C's `if (x != 7) return 1;`) |
 
 **`lib/rt.hlasm`** (macros) and **`lib/rt_code.hlasm`** (routines): the C
 library routines the demos use, with tc24r's semantics.
@@ -172,7 +173,7 @@ Ported demos are added to each group as its step lands.
 |---|---|
 | A. I/O (**ported**) | uart_tx, hello, led, button, demo2, demo3, demo8, demo10, demo64, demo9 |
 | B. Control flow (**ported**) | demo, demo4, demo11 (and demo11_andor), demo12, demo13, demo14, demo15, demo21, demo26, demo46 |
-| C. Functions, arrays, pointers, strings | demo5, demo6, demo7, demo16, demo39, demo41, demo50, demo51-54, demo58, demo63 |
+| C. Functions, arrays, pointers, strings (**ported**) | demo5, demo6, demo7, demo16, demo39, demo41, demo50, demo51-54, demo58, demo63 |
 | D. Structs, unions, heap | demo23, demo25, demo28, demo34, demo35, demo38, demo40, demo42, demo43 |
 
 The other 26 demos test C syntax that has no assembly counterpart:
@@ -2530,5 +2531,1641 @@ Output:
 ```
 D11OK
 r0=42
+```
+
+### Batch 3: functions, arrays, pointers, strings (step 15)
+
+Several of these demos report a failed check by returning a small error code (`if (x != 7) return 1;`); `REQUIRE cond,a,b,rc` is that pattern.
+
+### demo5: local arrays and passing them
+
+[`demo5.c`](../../sw-cor24-x-tinyc/demos/demo5.c) (52 lines; 275 lines of tc24r assembly) →
+[`demos/tinyc/demo5.hlasm`](../demos/tinyc/demo5.hlasm) (64 lines).
+Macros: `LOCAL` with `A+3(fp)` offsets, `LOCADDR`, `CALL`, `CHECK`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo5 -- arrays
+//
+// New features:
+//   - Array declarations: int a[N]
+//   - Array indexing: a[i] (read and write)
+//   - Array name decays to pointer to first element
+//
+// Expected: r0 = 42, UART output: "D5OK"
+
+void putc(int c) {
+    while (*(char *)0xFF0101 & 0x80) {}
+    *(char *)0xFF0100 = c;
+}
+
+void puts(char *s) {
+    while (*s) {
+        putc(*s);
+        s = s + 1;
+    }
+}
+
+int sum_array(int *arr, int len) {
+    int total = 0;
+    int i = 0;
+    while (i < len) {
+        total = total + *(arr + i);
+        i = i + 1;
+    }
+    return total;
+}
+
+int main() {
+    int ok = 1;
+
+    // basic array read/write
+    int a[4];
+    a[0] = 10;
+    a[1] = 20;
+    a[2] = 30;
+    a[3] = 40;
+    if (a[0] + a[3] != 50) { ok = 0; }
+
+    // array passed to function as pointer
+    int total = sum_array(a, 4);
+    if (total != 100) { ok = 0; }
+
+    // char array
+    char buf[3];
+    buf[0] = 65;  // 'A'
+    buf[1] = 66;  // 'B'
+    buf[2] = 0;
+    if (buf[0] != 65) { ok = 0; }
+    if (buf[1] != 66) { ok = 0; }
+
+    if (ok == 1) {
+        puts("D5OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo5.c in hlasm: a local int array (one word per element, a[i] at
+; A+3*i), passing it to a routine as a pointer, and a local char array.
+; Prints "D5OK" and returns 42. Output: "D5OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ LOCAL A,12
+ LOCAL BUF,3
+ PROLOG
+ CHECKINIT
+; a[0..3] = 10, 20, 30, 40
+ lc r0,10
+ sw r0,A(fp)
+ lc r0,20
+ sw r0,A+3(fp)
+ lc r0,30
+ sw r0,A+6(fp)
+ lc r0,40
+ sw r0,A+9(fp)
+; a[0] + a[3] == 50
+ lw r0,A(fp)
+ lw r1,A+9(fp)
+ add r0,r1
+ CHECK cc_eq,r0,50
+; sum_array(a, 4) == 100
+ LOCADDR r2,A
+ CALL _sum_array,r2,4
+ CHECK cc_eq,r0,100
+; char buf[3] = 'A', 'B', 0
+ lc r0,65
+ sb r0,BUF(fp)
+ lc r0,66
+ sb r0,BUF+1(fp)
+ lc r0,0
+ sb r0,BUF+2(fp)
+ lbu r0,BUF(fp)
+ CHECK cc_eq,r0,65
+ lbu r0,BUF+1(fp)
+ CHECK cc_eq,r0,66
+ CHECKEND "D5OK\n",42
+ RET
+
+; _sum_array(arr, len): the sum of len words at arr
+_sum_array:
+ LOCAL SA_N,3
+ PROLOG
+ ARG r2,1
+ ARG r0,2
+ sw r0,SA_N(fp)
+ lc r0,0
+DO
+ lw r1,SA_N(fp)
+ DOEXIT cc_le,r1,0
+ add r1,-1
+ sw r1,SA_N(fp)
+ lw r1,0(r2)
+ add r0,r1
+ add r2,3
+ENDDO
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D5OK
+r0=42
+```
+
+### demo6: global char, int and pointer
+
+[`demo6.c`](../../sw-cor24-x-tinyc/demos/demo6.c) (44 lines; 154 lines of tc24r assembly) →
+[`demos/tinyc/demo6.hlasm`](../demos/tinyc/demo6.hlasm) (45 lines).
+Macros: `BYTES`, `WORDS`, `CHECK`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo6 -- global char, global pointer, global array-like patterns
+//
+// New features / fixes:
+//   - Global char variables use .byte (not .word)
+//   - Global char load/store uses lbu/sb
+//   - Global pointer declarations (int *ptr)
+//   - Global pointer lookahead fix (int *ptr vs int func())
+//
+// Expected: r0 = 42, UART output: "D6OK"
+
+void putc(int c) {
+    while (*(char *)0xFF0101 & 0x80) {}
+    *(char *)0xFF0100 = c;
+}
+
+void puts(char *s) {
+    while (*s) {
+        putc(*s);
+        s = s + 1;
+    }
+}
+
+char flag = 0;
+int counter = 0;
+int *cptr;
+
+int main() {
+    int ok = 1;
+
+    // global char: read initial value
+    if (flag != 0) { ok = 0; }
+
+    // global char: write and read back
+    flag = 1;
+    if (flag != 1) { ok = 0; }
+
+    // global int: write and read back
+    counter = 100;
+    if (counter != 100) { ok = 0; }
+
+    // global pointer: point to global int
+    cptr = &counter;
+    *cptr = 200;
+    if (counter != 200) { ok = 0; }
+
+    // global pointer: read through pointer
+    if (*cptr != 200) { ok = 0; }
+
+    if (ok == 1) {
+        puts("D6OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo6.c in hlasm: global char, int and pointer variables (labelled data
+; after the code), written directly and through the pointer.
+; Prints "D6OK" and returns 42. Output: "D6OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; flag == 0, then flag = 1
+ la r2,_flag
+ lbu r0,0(r2)
+ CHECK cc_eq,r0,0
+ lc r0,1
+ sb r0,0(r2)
+ lbu r0,0(r2)
+ CHECK cc_eq,r0,1
+; counter = 100
+ la r2,_counter
+ la r0,100
+ sw r0,0(r2)
+ lw r0,0(r2)
+ CHECK cc_eq,r0,100
+; cptr = &counter; *cptr = 200
+ la r1,_cptr
+ la r0,_counter
+ sw r0,0(r1)
+ lw r2,0(r1)
+ la r0,200
+ sw r0,0(r2)
+ la r1,_counter
+ lw r0,0(r1)
+ CHECK cc_eq,r0,200
+ lw r0,0(r2)
+ CHECK cc_eq,r0,200
+ CHECKEND "D6OK\n",42
+ RET
+ BYTES _flag,0
+ WORDS _counter,0
+ WORDS _cptr,0
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D6OK
+r0=42
+```
+
+### demo7: pointer arithmetic and difference
+
+[`demo7.c`](../../sw-cor24-x-tinyc/demos/demo7.c) (52 lines; 274 lines of tc24r assembly) →
+[`demos/tinyc/demo7.hlasm`](../demos/tinyc/demo7.hlasm) (49 lines).
+Macros: `LOCADDR`, `DIV`, `RTCALL strlen`, `STR`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo7 -- pointer subtraction
+//
+// New features:
+//   - ptr - int: retreats pointer by n elements (scaled)
+//   - ptr - ptr: yields element count between two pointers
+//
+// Expected: r0 = 42, UART output: "D7OK"
+
+void putc(int c) {
+    while (*(char *)0xFF0101 & 0x80) {}
+    *(char *)0xFF0100 = c;
+}
+
+void puts(char *s) {
+    while (*s) {
+        putc(*s);
+        s = s + 1;
+    }
+}
+
+int strlen(char *s) {
+    char *p = s;
+    while (*p) {
+        p = p + 1;
+    }
+    return p - s;
+}
+
+int main() {
+    int ok = 1;
+
+    // ptr - int: retreat through int array
+    int a[3];
+    a[0] = 10;
+    a[1] = 20;
+    a[2] = 30;
+    int *p = a + 2;
+    p = p - 1;
+    if (*p != 20) { ok = 0; }
+
+    // ptr - ptr on int pointers
+    int *start = a;
+    int *end = a + 3;
+    if (end - start != 3) { ok = 0; }
+
+    // ptr - ptr on char pointers (strlen)
+    int len = strlen("Hello");
+    if (len != 5) { ok = 0; }
+
+    // char ptr - int
+    char *s = "ABCDE";
+    char *mid = s + 4;
+    mid = mid - 2;
+    if (*mid != 67) { ok = 0; }  /* 'C' = 67 */
+
+    if (ok == 1) {
+        puts("D7OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo7.c in hlasm: pointer arithmetic is byte arithmetic scaled by the
+; element size (3 for int, 1 for char); pointer difference divides by it.
+; Prints "D7OK" and returns 42. Output: "D7OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY check
+COPY rt
+SET SHOWRC,1
+ START
+_main:
+ LOCAL A,9
+ PROLOG
+ CHECKINIT
+ lc r0,10
+ sw r0,A(fp)
+ lc r0,20
+ sw r0,A+3(fp)
+ lc r0,30
+ sw r0,A+6(fp)
+; int *p = a + 2; p = p - 1;  *p == 20
+ LOCADDR r2,A
+ add r2,6
+ add r2,-3
+ lw r0,0(r2)
+ CHECK cc_eq,r0,20
+; end - start == 3 (elements): 9 bytes / 3
+ LOCADDR r2,A
+ mov r0,r2
+ add r0,9
+ sub r0,r2
+ DIV r0,3
+ CHECK cc_eq,r0,3
+; strlen("Hello") == 5
+ RTCALL strlen,hello
+ CHECK cc_eq,r0,5
+; char *mid = s + 4; mid = mid - 2;  *mid == 'C'
+ la r2,abcde
+ add r2,4
+ add r2,-2
+ lbu r0,0(r2)
+ CHECK cc_eq,r0,67
+ CHECKEND "D7OK\n",42
+ RET
+ STR hello,"Hello"
+ STR abcde,"ABCDE"
+COPY svc_bare_code
+COPY rt_code
+```
+
+Output:
+
+```
+D7OK
+r0=42
+```
+
+### demo16: character literals
+
+[`demo16.c`](../../sw-cor24-x-tinyc/demos/demo16.c) (30 lines; 150 lines of tc24r assembly) →
+[`demos/tinyc/demo16.hlasm`](../demos/tinyc/demo16.hlasm) (31 lines).
+Macros: `lc r0,'\n'` and other literals, `CHECK cc_le`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo16 -- character literals
+//
+// New feature:
+//   - 'a', '\n', '\0', '\\', '\'' character literals
+//   - Evaluate to integer values (ASCII code)
+//
+// Expected: r0 = 42, UART output: "D16OK"
+
+#define UART_DATA 0xFF0100
+#define UART_STATUS 0xFF0101
+void putc(int c) { while (*(char *)UART_STATUS & 0x80) {} *(char *)UART_DATA = c; }
+void puts(char *s) { while (*s) { putc(*s); s = s + 1; } }
+
+int main() {
+    int ok = 1;
+
+    if ('A' != 65) { ok = 0; }
+    if ('0' != 48) { ok = 0; }
+    if ('\n' != 10) { ok = 0; }
+    if ('\0' != 0) { ok = 0; }
+    if ('\\' != 92) { ok = 0; }
+    if ('\'' != 39) { ok = 0; }
+
+    // char literal in expression
+    char c = 'Z';
+    if (c != 90) { ok = 0; }
+
+    // char literal comparison
+    if ('a' > 'z') { ok = 0; }
+
+    if (ok) {
+        puts("D16OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo16.c in hlasm: character literals, including escapes, are numbers
+; to hlasm. Prints "D16OK" and returns 42. Output: "D16OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+ lc r0,'A'
+ CHECK cc_eq,r0,65
+ lc r0,'0'
+ CHECK cc_eq,r0,48
+ lc r0,'\n'
+ CHECK cc_eq,r0,10
+ lc r0,'\0'
+ CHECK cc_eq,r0,0
+ lc r0,'\\'
+ CHECK cc_eq,r0,92
+ lc r0,'\''
+ CHECK cc_eq,r0,39
+ lc r0,'Z'
+ CHECK cc_eq,r0,90
+; 'a' > 'z' must be false
+ lc r0,'a'
+ CHECK cc_le,r0,'z'
+ CHECKEND "D16OK\n",42
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D16OK
+r0=42
+```
+
+### demo39: printf
+
+[`demo39.c`](../../sw-cor24-x-tinyc/demos/demo39.c) (26 lines; 1243 lines of tc24r assembly) →
+[`demos/tinyc/demo39.hlasm`](../demos/tinyc/demo39.hlasm) (17 lines).
+Macros: `WTO`, `PUTDEC`, `PUTC`, `PUTNL`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo39 -- printf and long branches
+//
+// New features:
+//   - #include <stdio.h> with freestanding printf
+//   - printf("%d", val) with format specifiers
+//   - Long branches (no 127-byte range limit)
+//   - Varargs syntax (...) accepted in parameter lists
+//
+// Expected: r0 = 42, UART output: "D39OK"
+
+#include <stdio.h>
+
+int main() {
+    int ok = 1;
+
+    // printf with no args
+    printf("D");
+
+    // printf with %d
+    printf("%d", 39);
+
+    // printf with multiple args
+    printf("%c%c", 79, 75);
+
+    // newline
+    printf("\n");
+
+    // Verify the output was correct by checking we got here
+    if (ok) {
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo39.c in hlasm: printf("D"), printf("%d", 39), printf("%c%c", 79, 75)
+; and printf("\n") are WTO, PUTDEC and PUTC. Returns 42.
+; Output: "D39OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ WTO "D"
+ PUTDEC 39
+ PUTC 79
+ PUTC 75
+ PUTNL
+ RETURN 42
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D39OK
+r0=42
+```
+
+### demo41: atoi and string.h
+
+[`demo41.c`](../../sw-cor24-x-tinyc/demos/demo41.c) (34 lines; 2545 lines of tc24r assembly) →
+[`demos/tinyc/demo41.hlasm`](../demos/tinyc/demo41.hlasm) (48 lines).
+Macros: `RTCALL atoi/strlen/strcmp/strcpy`, `STR`, `LOCADDR`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo41 -- getc, atoi, string.h functions
+//
+// New features:
+//   - getchar()/getc() from UART RX
+//   - atoi() string to integer
+//   - strlen(), strcmp(), strcpy()
+//
+// Expected: r0 = 42, UART output: "D41OK"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main() {
+    int ok = 1;
+
+    // atoi
+    if (atoi("42") != 42) ok = 0;
+    if (atoi("-7") != -7) ok = 0;
+    if (atoi("  100") != 100) ok = 0;
+
+    // strlen
+    if (strlen("hello") != 5) ok = 0;
+    if (strlen("") != 0) ok = 0;
+
+    // strcmp
+    if (strcmp("abc", "abc") != 0) ok = 0;
+    if (strcmp("abc", "abd") >= 0) ok = 0;
+    if (strcmp("abd", "abc") <= 0) ok = 0;
+
+    // strcpy
+    char buf[8];
+    strcpy(buf, "OK");
+    if (strcmp(buf, "OK") != 0) ok = 0;
+
+    if (ok) {
+        printf("D41OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo41.c in hlasm: atoi, strlen, strcmp and strcpy from the runtime
+; library (RTCALL), on string constants and a local buffer.
+; Prints "D41OK" and returns 42. Output: "D41OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY check
+COPY rt
+SET SHOWRC,1
+ START
+_main:
+ LOCAL BUF,9
+ PROLOG
+ CHECKINIT
+ RTCALL atoi,s42
+ CHECK cc_eq,r0,42
+ RTCALL atoi,sm7
+ CHECK cc_eq,r0,-7
+ RTCALL atoi,s100
+ CHECK cc_eq,r0,100
+ RTCALL strlen,shello
+ CHECK cc_eq,r0,5
+ RTCALL strlen,sempty
+ CHECK cc_eq,r0,0
+ RTCALL strcmp,sabc,sabc
+ CHECK cc_eq,r0,0
+ RTCALL strcmp,sabc,sabd
+ CHECK cc_lt,r0,0
+ RTCALL strcmp,sabd,sabc
+ CHECK cc_gt,r0,0
+; char buf[8]; strcpy(buf, "OK"); strcmp(buf, "OK") == 0
+ LOCADDR r2,BUF
+ RTCALL strcpy,r2,sok
+ RTCALL strcmp,r2,sok
+ CHECK cc_eq,r0,0
+ CHECKEND "D41OK\n",42
+ RET
+ STR s42,"42"
+ STR sm7,"-7"
+ STR s100,"  100"
+ STR shello,"hello"
+ STR sempty,""
+ STR sabc,"abc"
+ STR sabd,"abd"
+ STR sok,"OK"
+COPY svc_bare_code
+COPY rt_code
+```
+
+Output:
+
+```
+D41OK
+r0=42
+```
+
+### demo50: a 256-byte local buffer
+
+[`demo50.c`](../../sw-cor24-x-tinyc/demos/demo50.c) (37 lines; 1118 lines of tc24r assembly) →
+[`demos/tinyc/demo50.hlasm`](../demos/tinyc/demo50.hlasm) (79 lines).
+Macros: `LOCAL`, `LOCADDR` (offsets beyond -128), `MOD`, `REQUIRE`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo50 -- large local array with nested function calls
+//
+// BUG-013 fix: char buf[256] on the stack caused offset overflow
+// in lw/sw instructions (8-bit signed immediate range -128..127).
+// Nested function calls would corrupt buf[0] because the store
+// to buf[0] at offset -256 was truncated to offset 0 (saved fp).
+//
+// Expected: r0 = 50, UART output: "D50OK"
+
+#include <stdio.h>
+
+void fill(char *buf, int n) {
+    int i;
+    for (i = 0; i < n; i = i + 1) {
+        buf[i] = 65 + (i % 26);
+    }
+}
+
+int check(char *buf, int n) {
+    int i;
+    for (i = 0; i < n; i = i + 1) {
+        if (buf[i] != 65 + (i % 26)) return 0;
+    }
+    return 1;
+}
+
+int main() {
+    char buf[256];
+    int sentinel;
+
+    sentinel = 99;
+    fill(buf, 256);
+
+    // Nested calls between fill and check -- if the frame is corrupted,
+    // sentinel or buf[0] will be wrong after the call returns.
+    printf("");
+
+    if (sentinel != 99) return 1;
+    if (!check(buf, 256)) return 2;
+    if (buf[0] != 65) return 3;
+    if (buf[255] != 65 + (255 % 26)) return 4;
+
+    printf("D50OK\n");
+    return 50;
+}
+```
+
+</details>
+
+```
+; demo50.c in hlasm: a 256-byte local buffer next to an int, filled and
+; checked by routines. lw/sw offsets reach only -128..127, so the buffer
+; is addressed with LOCADDR (tc24r's BUG-013 was exactly this). Returns
+; 1-4 on a failed check, else prints "D50OK" and returns 50.
+; Output: "D50OK" then "r0=50".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY rt
+SET SHOWRC,1
+ START
+_main:
+ LOCAL SENT,3
+ LOCAL BUF,256
+ PROLOG
+ la r0,99
+ sw r0,SENT(fp)
+ LOCADDR r2,BUF
+ CALL _fill,r2,256
+ lw r0,SENT(fp)
+ REQUIRE cc_eq,r0,99,1
+ LOCADDR r2,BUF
+ CALL _check,r2,256
+ REQUIRE cc_ne,r0,0,2
+ lbu r0,0(r2)
+ REQUIRE cc_eq,r0,65,3
+ la r1,255
+ add r2,r1
+ lbu r0,0(r2)
+ REQUIRE cc_eq,r0,65+255%26,4
+ WTO "D50OK\n"
+ RETURN 50
+
+; _fill(buf, n): buf[i] = 'A' + i % 26
+_fill:
+ LOCAL FI_I,3
+ PROLOG
+ lc r0,0
+ sw r0,FI_I(fp)
+DO
+ lw r0,FI_I(fp)
+ ARG r1,2
+ DOEXIT cc_ge,r0,r1
+ MOD r0,26
+ add r0,65
+ ARG r2,1
+ lw r1,FI_I(fp)
+ add r2,r1
+ sb r0,0(r2)
+ add r1,1
+ sw r1,FI_I(fp)
+ENDDO
+ RET
+
+; _check(buf, n): 1 if every buf[i] == 'A' + i % 26, else 0
+_check:
+ LOCAL CK_I,3
+ PROLOG
+ lc r0,0
+ sw r0,CK_I(fp)
+DO
+ lw r0,CK_I(fp)
+ ARG r1,2
+ DOEXIT cc_ge,r0,r1
+ MOD r0,26
+ add r0,65
+ ARG r2,1
+ lw r1,CK_I(fp)
+ add r2,r1
+ lbu r1,0(r2)
+IF cc_ne,r0,r1
+ RETURN 0
+ENDIF
+ lw r1,CK_I(fp)
+ add r1,1
+ sw r1,CK_I(fp)
+ENDDO
+ RETURN 1
+COPY svc_bare_code
+COPY rt_code
+```
+
+Output:
+
+```
+D50OK
+r0=50
+```
+
+### demo51: function pointer variable
+
+[`demo51.c`](../../sw-cor24-x-tinyc/demos/demo51.c) (20 lines; 985 lines of tc24r assembly) →
+[`demos/tinyc/demo51.hlasm`](../demos/tinyc/demo51.hlasm) (32 lines).
+Macros: `CALL r0,...`, `REQUIRE`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo51 -- function pointer: basic variable call
+//
+// Assign a function to a pointer variable, call through the pointer.
+//
+// Expected: r0 = 51, UART output: "D51OK"
+
+#include <stdio.h>
+
+int add(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    int (*fp)(int, int);
+    fp = add;
+
+    int result = fp(3, 4);
+    if (result != 7) return 1;
+
+    // Verify with a second call
+    result = fp(20, 31);
+    if (result != 51) return 2;
+
+    printf("D51OK\n");
+    return 51;
+}
+```
+
+</details>
+
+```
+; demo51.c in hlasm: a function pointer in a local variable, called
+; through r0 with CALL. Returns 1 or 2 on a failed check, else prints
+; "D51OK" and returns 51. Output: "D51OK" then "r0=51".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ LOCAL FPTR,3
+ PROLOG
+; fp = add
+ la r0,_add
+ sw r0,FPTR(fp)
+; fp(3, 4) == 7
+ lw r0,FPTR(fp)
+ CALL r0,3,4
+ REQUIRE cc_eq,r0,7,1
+; fp(20, 31) == 51
+ lw r0,FPTR(fp)
+ CALL r0,20,31
+ REQUIRE cc_eq,r0,51,2
+ WTO "D51OK\n"
+ RETURN 51
+
+_add:
+ PROLOG
+ ARG r0,1
+ ARG r1,2
+ add r0,r1
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D51OK
+r0=51
+```
+
+### demo52: function pointer table
+
+[`demo52.c`](../../sw-cor24-x-tinyc/demos/demo52.c) (43 lines; 1159 lines of tc24r assembly) →
+[`demos/tinyc/demo52.hlasm`](../demos/tinyc/demo52.hlasm) (79 lines).
+Macros: `CALL r0,...` in a `DO` loop, `LOCADDR`, `REQUIRE`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo52 -- function pointer: array dispatch table
+//
+// Store functions in an array, call through indexed array element.
+//
+// Expected: r0 = 52, UART output: "D52OK"
+
+#include <stdio.h>
+
+int double_it(int x) {
+    return x + x;
+}
+
+int triple_it(int x) {
+    return x + x + x;
+}
+
+int quad_it(int x) {
+    return x + x + x + x;
+}
+
+int main() {
+    int (*table[4])(int);
+    table[0] = double_it;
+    table[1] = triple_it;
+    table[2] = quad_it;
+
+    // double_it(5) = 10
+    int r0 = table[0](5);
+    if (r0 != 10) return 1;
+
+    // triple_it(7) = 21
+    int r1 = table[1](7);
+    if (r1 != 21) return 2;
+
+    // quad_it(3) = 12
+    int r2 = table[2](3);
+    if (r2 != 12) return 3;
+
+    // sum = 10 + 21 + 12 = 43, need 52
+    int sum = r0 + r1 + r2;
+    if (sum != 43) return 4;
+
+    // Loop dispatch: accumulate table[i](1) for i=0..2
+    // double(1)=2, triple(1)=3, quad(1)=4 => 9
+    int acc = 0;
+    int i;
+    for (i = 0; i < 3; i = i + 1) {
+        acc = acc + table[i](1);
+    }
+    if (acc != 9) return 5;
+
+    printf("D52OK\n");
+    return 52;
+}
+```
+
+</details>
+
+```
+; demo52.c in hlasm: a local table of function pointers, called by index
+; directly and in a loop. Returns 1-5 on a failed check, else prints
+; "D52OK" and returns 52. Output: "D52OK" then "r0=52".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ LOCAL TBL,12
+ LOCAL SUM,3
+ LOCAL I,3
+ PROLOG
+; table[0..2] = double_it, triple_it, quad_it
+ la r0,_double_it
+ sw r0,TBL(fp)
+ la r0,_triple_it
+ sw r0,TBL+3(fp)
+ la r0,_quad_it
+ sw r0,TBL+6(fp)
+; r0 = table[0](5) == 10; r1 = table[1](7) == 21; r2 = table[2](3) == 12
+ lw r0,TBL(fp)
+ CALL r0,5
+ REQUIRE cc_eq,r0,10,1
+ sw r0,SUM(fp)
+ lw r0,TBL+3(fp)
+ CALL r0,7
+ REQUIRE cc_eq,r0,21,2
+ lw r1,SUM(fp)
+ add r0,r1
+ sw r0,SUM(fp)
+ lw r0,TBL+6(fp)
+ CALL r0,3
+ REQUIRE cc_eq,r0,12,3
+ lw r1,SUM(fp)
+ add r0,r1
+ REQUIRE cc_eq,r0,43,4
+; for (i = 0; i < 3; i++) acc = acc + table[i](1);
+ lc r0,0
+ sw r0,SUM(fp)
+ sw r0,I(fp)
+ LOCADDR r2,TBL
+DO
+ lw r0,I(fp)
+ DOEXIT cc_ge,r0,3
+ lw r0,0(r2)
+ CALL r0,1
+ lw r1,SUM(fp)
+ add r0,r1
+ sw r0,SUM(fp)
+ add r2,3
+ lw r0,I(fp)
+ add r0,1
+ sw r0,I(fp)
+ENDDO
+ lw r0,SUM(fp)
+ REQUIRE cc_eq,r0,9,5
+ WTO "D52OK\n"
+ RETURN 52
+
+_double_it:
+ PROLOG
+ ARG r0,1
+ add r0,r0
+ RET
+
+_triple_it:
+ PROLOG
+ ARG r0,1
+ mov r1,r0
+ add r0,r0
+ add r0,r1
+ RET
+
+_quad_it:
+ PROLOG
+ ARG r0,1
+ add r0,r0
+ add r0,r0
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D52OK
+r0=52
+```
+
+### demo53: function pointer argument
+
+[`demo53.c`](../../sw-cor24-x-tinyc/demos/demo53.c) (26 lines; 1041 lines of tc24r assembly) →
+[`demos/tinyc/demo53.hlasm`](../demos/tinyc/demo53.hlasm) (41 lines).
+Macros: `CALL _apply,_add,...`, `CALL r0,r2,r1`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo53 -- function pointer: passed as parameter
+//
+// Pass a function pointer as an argument to another function.
+//
+// Expected: r0 = 53, UART output: "D53OK"
+
+#include <stdio.h>
+
+int add(int a, int b) {
+    return a + b;
+}
+
+int sub(int a, int b) {
+    return a - b;
+}
+
+int apply(int (*f)(int, int), int x, int y) {
+    return f(x, y);
+}
+
+int main() {
+    int r1 = apply(add, 30, 20);
+    if (r1 != 50) return 1;
+
+    int r2 = apply(sub, 30, 20);
+    if (r2 != 10) return 2;
+
+    // 50 + 10 = 60, but we want 53
+    int r3 = apply(add, r1, 3);
+    if (r3 != 53) return 3;
+
+    printf("D53OK\n");
+    return 53;
+}
+```
+
+</details>
+
+```
+; demo53.c in hlasm: a function pointer passed as an argument and called
+; by the callee. Returns 1-3 on a failed check, else prints "D53OK" and
+; returns 53. Output: "D53OK" then "r0=53".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CALL _apply,_add,30,20
+ REQUIRE cc_eq,r0,50,1
+ mov r2,r0
+ CALL _apply,_sub,30,20
+ REQUIRE cc_eq,r0,10,2
+ CALL _apply,_add,r2,3
+ REQUIRE cc_eq,r0,53,3
+ WTO "D53OK\n"
+ RETURN 53
+
+; _apply(f, x, y) = f(x, y)
+_apply:
+ PROLOG
+ ARG r0,1
+ ARG r2,2
+ ARG r1,3
+ CALL r0,r2,r1
+ RET
+
+_add:
+ PROLOG
+ ARG r0,1
+ ARG r1,2
+ add r0,r1
+ RET
+
+_sub:
+ PROLOG
+ ARG r0,1
+ ARG r1,2
+ sub r0,r1
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D53OK
+r0=53
+```
+
+### demo54: global function pointer
+
+[`demo54.c`](../../sw-cor24-x-tinyc/demos/demo54.c) (25 lines; no tc24r assembly checked in) →
+[`demos/tinyc/demo54.hlasm`](../demos/tinyc/demo54.hlasm) (42 lines).
+Macros: `WORDS`, `CALL r0,...`, `mul`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo54 -- global function pointer declaration
+//
+// Declare function pointers at global scope (not just local).
+//
+// Expected: r0 = 54, UART output: "D54OK"
+
+#include <stdio.h>
+
+int add(int a, int b) {
+    return a + b;
+}
+
+int mul(int a, int b) {
+    return a * b;
+}
+
+int (*op)(int, int);
+
+int main() {
+    // Assign and call through global function pointer
+    op = add;
+    int r1 = op(20, 30);
+    if (r1 != 50) return 1;
+
+    // Reassign to a different function
+    op = mul;
+    int r2 = op(6, 9);
+    if (r2 != 54) return 2;
+
+    printf("D54OK\n");
+    return 54;
+}
+```
+
+</details>
+
+```
+; demo54.c in hlasm: a global function pointer, reassigned and called.
+; Returns 1 or 2 on a failed check, else prints "D54OK" and returns 54.
+; Output: "D54OK" then "r0=54".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+; op = add; op(20, 30) == 50
+ la r1,_op
+ la r0,_add
+ sw r0,0(r1)
+ lw r0,0(r1)
+ CALL r0,20,30
+ REQUIRE cc_eq,r0,50,1
+; op = mul; op(6, 9) == 54
+ la r1,_op
+ la r0,_mul
+ sw r0,0(r1)
+ lw r0,0(r1)
+ CALL r0,6,9
+ REQUIRE cc_eq,r0,54,2
+ WTO "D54OK\n"
+ RETURN 54
+ WORDS _op,0
+
+_add:
+ PROLOG
+ ARG r0,1
+ ARG r1,2
+ add r0,r1
+ RET
+
+_mul:
+ PROLOG
+ ARG r0,1
+ ARG r1,2
+ mul r0,r1
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D54OK
+r0=54
+```
+
+### demo58: initialised global data
+
+[`demo58.c`](../../sw-cor24-x-tinyc/demos/demo58.c) (50 lines; 1363 lines of tc24r assembly) →
+[`demos/tinyc/demo58.hlasm`](../demos/tinyc/demo58.hlasm) (95 lines).
+Macros: `STR`, `WORDS`, `BYTES`, `REQUIRE` with expressions.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo58 -- global data initialization
+//
+// Exercises static/global array initialization with string literals
+// and initializer lists, including char and int arrays, zero-padding,
+// and runtime access.
+//
+// Expected: r0 = 58, UART output: "D58OK"
+
+#include <stdio.h>
+
+static const char greeting[] = "hello";
+int fib_table[] = {1, 1, 2, 3, 5, 8, 13, 21};
+char vowels[] = {'A', 'E', 'I', 'O', 'U', 0};
+int sparse[5] = {100, 200};
+
+int test_string_init(void) {
+    if (greeting[0] != 'h') return 1;
+    if (greeting[4] != 'o') return 2;
+    if (greeting[5] != '\0') return 3;
+    return greeting[0] + greeting[1] + greeting[2];
+}
+
+int test_int_init_list(void) {
+    if (fib_table[0] != 1) return 1;
+    if (fib_table[5] != 8) return 2;
+    if (fib_table[7] != 21) return 3;
+    return fib_table[0] + fib_table[1] + fib_table[2];
+}
+
+int test_char_init_list(void) {
+    if (vowels[0] != 'A') return 1;
+    if (vowels[4] != 'U') return 2;
+    if (vowels[5] != '\0') return 3;
+    return vowels[0] + vowels[1] + vowels[2] + vowels[3] + vowels[4];
+}
+
+int test_zero_padding(void) {
+    if (sparse[0] != 100) return 1;
+    if (sparse[1] != 200) return 2;
+    if (sparse[2] != 0) return 3;
+    if (sparse[4] != 0) return 4;
+    return sparse[0] + sparse[1];
+}
+
+int main() {
+    int r = 0;
+
+    r = test_string_init();
+    if (r != 104 + 101 + 108) return 1;
+
+    r = test_int_init_list();
+    if (r != 4) return 2;
+
+    r = test_char_init_list();
+    if (r != 'A' + 'E' + 'I' + 'O' + 'U') return 3;
+
+    r = test_zero_padding();
+    if (r != 300) return 4;
+
+    printf("D58OK\n");
+    return 58;
+}
+```
+
+</details>
+
+```
+; demo58.c in hlasm: initialised global data -- a string, an int table,
+; a char table and a partly initialised int array (the rest zero) -- as
+; STR, WORDS and BYTES. Returns 1-4 on a failed check, else prints "D58OK"
+; and returns 58. Output: "D58OK" then "r0=58".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CALL _test_string_init
+ REQUIRE cc_eq,r0,104+101+108,1
+ CALL _test_int_init_list
+ REQUIRE cc_eq,r0,4,2
+ CALL _test_char_init_list
+ REQUIRE cc_eq,r0,'A'+'E'+'I'+'O'+'U',3
+ CALL _test_zero_padding
+ REQUIRE cc_eq,r0,300,4
+ WTO "D58OK\n"
+ RETURN 58
+
+; greeting[0] + greeting[1] + greeting[2], after checking three bytes
+_test_string_init:
+ PROLOG
+ la r2,greeting
+ lbu r0,0(r2)
+ REQUIRE cc_eq,r0,'h',1
+ lbu r0,4(r2)
+ REQUIRE cc_eq,r0,'o',2
+ lbu r0,5(r2)
+ REQUIRE cc_eq,r0,0,3
+ lbu r0,0(r2)
+ lbu r1,1(r2)
+ add r0,r1
+ lbu r1,2(r2)
+ add r0,r1
+ RET
+
+_test_int_init_list:
+ PROLOG
+ la r2,fib_table
+ lw r0,0(r2)
+ REQUIRE cc_eq,r0,1,1
+ lw r0,15(r2)
+ REQUIRE cc_eq,r0,8,2
+ lw r0,21(r2)
+ REQUIRE cc_eq,r0,21,3
+ lw r0,0(r2)
+ lw r1,3(r2)
+ add r0,r1
+ lw r1,6(r2)
+ add r0,r1
+ RET
+
+_test_char_init_list:
+ PROLOG
+ la r2,vowels
+ lbu r0,0(r2)
+ REQUIRE cc_eq,r0,'A',1
+ lbu r0,4(r2)
+ REQUIRE cc_eq,r0,'U',2
+ lbu r0,5(r2)
+ REQUIRE cc_eq,r0,0,3
+ lc r0,0
+ lbu r1,0(r2)
+ add r0,r1
+ lbu r1,1(r2)
+ add r0,r1
+ lbu r1,2(r2)
+ add r0,r1
+ lbu r1,3(r2)
+ add r0,r1
+ lbu r1,4(r2)
+ add r0,r1
+ RET
+
+_test_zero_padding:
+ PROLOG
+ la r2,sparse
+ lw r0,0(r2)
+ REQUIRE cc_eq,r0,100,1
+ lw r0,3(r2)
+ REQUIRE cc_eq,r0,200,2
+ lw r0,6(r2)
+ REQUIRE cc_eq,r0,0,3
+ lw r0,12(r2)
+ REQUIRE cc_eq,r0,0,4
+ lw r0,0(r2)
+ lw r1,3(r2)
+ add r0,r1
+ RET
+
+ STR greeting,"hello"
+ WORDS fib_table,1,1,2,3,5,8,13,21
+ BYTES vowels,'A','E','I','O','U',0
+ WORDS sparse,100,200,0,0,0
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D58OK
+r0=58
+```
+
+### demo63: adjacent string literals
+
+[`demo63.c`](../../sw-cor24-x-tinyc/demos/demo63.c) (54 lines; no tc24r assembly checked in) →
+[`demos/tinyc/demo63.hlasm`](../demos/tinyc/demo63.hlasm) (90 lines).
+Macros: consecutive `.ascii` lines, runtime sizes from labels, `RTCALL memset/strcpy/strlen`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo63 -- adjacent string-literal concatenation (C99 phase 6)
+//                  + char-storage init (pr/codegen-string-storage-bugs)
+//
+// Verifies end-to-end:
+//   - basic two-chunk concat in a return expression
+//   - N-chunk concat across newlines, indexed via function-return ptr
+//   - per-chunk escape resolution: "ab\n" "cd" yields a single 6-byte
+//     literal in .data with the bytes {a,b,'\n',c,d,0}
+//   - concat in a function-call argument
+//   - sizeof(char arr[] = "abc" "def") reports 7, not 4 — both global
+//     and local
+//   - char *global = "..." indexing reads the string bytes
+//   - char local[] = "..." indexing reads the string bytes (zero-pad
+//     for explicit size)
+//
+// Expected: r0 = 63, UART output: "D63OK"
+
+#include <stdio.h>
+
+/* Global char array — bytes-in-place storage. */
+char g_arr[] = "abc" "def";
+
+/* Global char pointer — must store the address of an anonymous rodata
+   literal, NOT the bytes inline. */
+char *g_ptr = "ab\n" "cd";
+
+char *greeting(void) {
+    return "hello, "
+           "world!"
+           " "
+           "D63";
+}
+
+int main(void) {
+    /* Per-chunk escape resolution via global pointer (bug 1 path). */
+    if (g_ptr[0] != 'a' || g_ptr[1] != 'b' || g_ptr[2] != '\n'
+        || g_ptr[3] != 'c' || g_ptr[4] != 'd' || g_ptr[5] != 0) {
+        return 1;
+    }
+
+    /* Global implicit-size: sizeof(g_arr) must use the concatenated
+       length (7 = 6 chars + null), not 4 (just "abc" + null). */
+    if (sizeof(g_arr) != 7) return 2;
+    if (g_arr[0] != 'a' || g_arr[5] != 'f' || g_arr[6] != 0) return 3;
+
+    /* Local implicit-size: sizeof + byte-level access (bug 2 path). */
+    char local[] = "ab" "cd" "ef" "gh";
+    if (sizeof(local) != 9) return 4;
+    if (local[0] != 'a' || local[7] != 'h' || local[8] != 0) return 5;
+
+    /* Local explicit-size with zero pad — char[10] = "abc". */
+    char padded[10] = "abc";
+    if (padded[0] != 'a' || padded[2] != 'c' || padded[3] != 0) return 6;
+    if (padded[9] != 0) return 7; /* trailing zero pad */
+
+    /* Function returning a multi-chunk concatenated string. */
+    char *gr = greeting();
+    if (gr[0] != 'h' || gr[7] != 'w' || gr[13] != ' ') return 8;
+    if (gr[14] != 'D' || gr[15] != '6' || gr[16] != '3' || gr[17] != 0) return 9;
+
+    /* In a function call argument. */
+    printf("D63" "OK\n");
+    return 63;
+}
+```
+
+</details>
+
+```
+; demo63.c in hlasm: C joins adjacent string literals; in assembly that is
+; simply consecutive .ascii lines before the terminating .byte 0. Sizes
+; that C gets from sizeof are measured here at run time (end label minus
+; start). Returns 1-9 on a failed check, else prints "D63OK" and returns
+; 63. Output: "D63OK" then "r0=63".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY check
+COPY rt
+SET SHOWRC,1
+ START
+_main:
+ LOCAL LOCALS,9
+ LOCAL PADDED,10
+ PROLOG
+; g_ptr points at "ab\n" "cd"
+ la r1,g_ptr
+ lw r2,0(r1)
+ lbu r0,0(r2)
+ REQUIRE cc_eq,r0,'a',1
+ lbu r0,2(r2)
+ REQUIRE cc_eq,r0,'\n',1
+ lbu r0,4(r2)
+ REQUIRE cc_eq,r0,'d',1
+ lbu r0,5(r2)
+ REQUIRE cc_eq,r0,0,1
+; sizeof(g_arr) == 7: the bytes from g_arr to g_arr_end
+ la r0,g_arr_end
+ la r1,g_arr
+ sub r0,r1
+ REQUIRE cc_eq,r0,7,2
+ la r2,g_arr
+ lbu r0,5(r2)
+ REQUIRE cc_eq,r0,'f',3
+ lbu r0,6(r2)
+ REQUIRE cc_eq,r0,0,3
+; char local[] = "ab" "cd" "ef" "gh": 8 characters and the NUL
+ LOCADDR r2,LOCALS
+ RTCALL strcpy,r2,abcdefgh
+ RTCALL strlen,r2
+ REQUIRE cc_eq,r0,8,4
+ lbu r0,7(r2)
+ REQUIRE cc_eq,r0,'h',5
+; char padded[10] = "abc": the rest is zero
+ LOCADDR r2,PADDED
+ RTCALL memset,r2,0,10
+ RTCALL strcpy,r2,abc
+ lbu r0,2(r2)
+ REQUIRE cc_eq,r0,'c',6
+ lbu r0,9(r2)
+ REQUIRE cc_eq,r0,0,7
+; greeting() returns "hello, " "world!" " " "D63"
+ CALL _greeting
+ mov r2,r0
+ lbu r0,7(r2)
+ REQUIRE cc_eq,r0,'w',8
+ lbu r0,13(r2)
+ REQUIRE cc_eq,r0,' ',8
+ lbu r0,16(r2)
+ REQUIRE cc_eq,r0,'3',9
+ lbu r0,17(r2)
+ REQUIRE cc_eq,r0,0,9
+ WTO "D63"
+ WTO "OK\n"
+ RETURN 63
+
+_greeting:
+ PROLOG
+ RETURN greeting_lit
+
+g_arr:
+ .ascii "abc"
+ .ascii "def"
+ .byte 0
+g_arr_end:
+ WORDS g_ptr,g_ptr_lit
+g_ptr_lit:
+ .ascii "ab\n"
+ .ascii "cd"
+ .byte 0
+greeting_lit:
+ .ascii "hello, "
+ .ascii "world!"
+ .ascii " "
+ .ascii "D63"
+ .byte 0
+ STR abcdefgh,"abcdefgh"
+ STR abc,"abc"
+COPY svc_bare_code
+COPY rt_code
+```
+
+Output:
+
+```
+D63OK
+r0=63
 ```
 

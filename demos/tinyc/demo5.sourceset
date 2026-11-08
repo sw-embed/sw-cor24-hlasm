@@ -1,0 +1,3 @@
+ROOT .
+MAIN demo5.hlasm
+SOURCESET ../../lib/lib.sourceset

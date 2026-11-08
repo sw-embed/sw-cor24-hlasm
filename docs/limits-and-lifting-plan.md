@@ -110,6 +110,7 @@ each has a reg-rs test (`hlasm_limit_*`) at the limit and one past it.
 | D13 | Indented `.space n` and `.fill n,v` (as in any macro body) emitted nothing: the handlers read the operand at a fixed column | found writing the macro library (`SPACE`) | **fixed (step 11):** both skip leading blanks before the directive |
 | D14 | `DOEXIT` with no condition (C's `break`) had no lowering: it emitted a compare with empty operands (and since step 10 stopped with "unknown structured condition") | found porting demo12/demo13 | **fixed (step 13):** `DOEXIT` alone jumps to the loop end unconditionally, also from inside an IF |
 | D15 | A compare constant such as 16777215 (-1 in 24 bits) passed the `lc` range test by wrapping, so `lc r2,16777215` reached cor24-asm, which rejects it | found porting demo46 | **fixed (step 13):** a constant written without `-` uses `lc` only for 0..127, otherwise `la` |
+| D16 | A quoted character literal containing a blank or comma (`' '`, `','`) as an IF/DOEXIT compare value was cut at that character | found porting demo63 | **fixed (step 15):** the right-hand operand scanner copies a quoted literal whole (with `\` escapes) |
 
 ## Language gaps
 

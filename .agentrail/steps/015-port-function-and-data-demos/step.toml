@@ -1,6 +1,6 @@
 number = 15
 slug = "port-function-and-data-demos"
-status = "pending"
+status = "in-progress"
 description = "Port the tiny-C demos centred on functions/recursion, arrays, pointers, strin..."
 role = "production"
 context_files = []

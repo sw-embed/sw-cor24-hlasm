@@ -1,0 +1,49 @@
+; demo7.c in hlasm: pointer arithmetic is byte arithmetic scaled by the
+; element size (3 for int, 1 for char); pointer difference divides by it.
+; Prints "D7OK" and returns 42. Output: "D7OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY check
+COPY rt
+SET SHOWRC,1
+ START
+_main:
+ LOCAL A,9
+ PROLOG
+ CHECKINIT
+ lc r0,10
+ sw r0,A(fp)
+ lc r0,20
+ sw r0,A+3(fp)
+ lc r0,30
+ sw r0,A+6(fp)
+; int *p = a + 2; p = p - 1;  *p == 20
+ LOCADDR r2,A
+ add r2,6
+ add r2,-3
+ lw r0,0(r2)
+ CHECK cc_eq,r0,20
+; end - start == 3 (elements): 9 bytes / 3
+ LOCADDR r2,A
+ mov r0,r2
+ add r0,9
+ sub r0,r2
+ DIV r0,3
+ CHECK cc_eq,r0,3
+; strlen("Hello") == 5
+ RTCALL strlen,hello
+ CHECK cc_eq,r0,5
+; char *mid = s + 4; mid = mid - 2;  *mid == 'C'
+ la r2,abcde
+ add r2,4
+ add r2,-2
+ lbu r0,0(r2)
+ CHECK cc_eq,r0,67
+ CHECKEND "D7OK\n",42
+ RET
+ STR hello,"Hello"
+ STR abcde,"ABCDE"
+COPY svc_bare_code
+COPY rt_code

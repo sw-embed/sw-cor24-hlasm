@@ -1,0 +1,100 @@
+; demo58.c in hlasm: initialised global data -- a string, an int table,
+; a char table and a partly initialised int array (the rest zero) -- as
+; STR, WORDS and BYTES. Returns 1-4 on a failed check, else prints "D58OK"
+; and returns 58. Output: "D58OK" then "r0=58".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CALL _test_string_init
+ REQUIRE cc_eq,r0,104+101+108,1
+ CALL _test_int_init_list
+ REQUIRE cc_eq,r0,4,2
+ CALL _test_char_init_list
+ REQUIRE cc_eq,r0,'A'+'E'+'I'+'O'+'U',3
+ CALL _test_zero_padding
+ REQUIRE cc_eq,r0,300,4
+ WTO "D58OK\n"
+ RETURN 58
+
+; greeting[0] + greeting[1] + greeting[2], after checking three bytes
+_test_string_init:
+ PROLOG
+ la r2,greeting
+ lbu r0,0(r2)
+ REQUIRE cc_eq,r0,'h',1
+ lbu r0,4(r2)
+ REQUIRE cc_eq,r0,'o',2
+ lbu r0,5(r2)
+ REQUIRE cc_eq,r0,0,3
+ lbu r0,0(r2)
+ lbu r1,1(r2)
+ add r0,r1
+ lbu r1,2(r2)
+ add r0,r1
+ RET
+
+_test_int_init_list:
+ PROLOG
+ la r2,fib_table
+ lw r0,0(r2)
+ REQUIRE cc_eq,r0,1,1
+ lw r0,15(r2)
+ REQUIRE cc_eq,r0,8,2
+ lw r0,21(r2)
+ REQUIRE cc_eq,r0,21,3
+ lw r0,0(r2)
+ lw r1,3(r2)
+ add r0,r1
+ lw r1,6(r2)
+ add r0,r1
+ RET
+
+_test_char_init_list:
+ PROLOG
+ la r2,vowels
+ lbu r0,0(r2)
+ REQUIRE cc_eq,r0,'A',1
+ lbu r0,4(r2)
+ REQUIRE cc_eq,r0,'U',2
+ lbu r0,5(r2)
+ REQUIRE cc_eq,r0,0,3
+ lc r0,0
+ lbu r1,0(r2)
+ add r0,r1
+ lbu r1,1(r2)
+ add r0,r1
+ lbu r1,2(r2)
+ add r0,r1
+ lbu r1,3(r2)
+ add r0,r1
+ lbu r1,4(r2)
+ add r0,r1
+ RET
+
+_test_zero_padding:
+ PROLOG
+ la r2,sparse
+ lw r0,0(r2)
+ REQUIRE cc_eq,r0,100,1
+ lw r0,3(r2)
+ REQUIRE cc_eq,r0,200,2
+ lw r0,6(r2)
+ REQUIRE cc_eq,r0,0,3
+ lw r0,12(r2)
+ REQUIRE cc_eq,r0,0,4
+ lw r0,0(r2)
+ lw r1,3(r2)
+ add r0,r1
+ RET
+
+ STR greeting,"hello"
+ WORDS fib_table,1,1,2,3,5,8,13,21
+ BYTES vowels,'A','E','I','O','U',0
+ WORDS sparse,100,200,0,0,0
+COPY svc_bare_code

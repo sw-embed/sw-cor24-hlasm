@@ -1,0 +1,45 @@
+; demo6.c in hlasm: global char, int and pointer variables (labelled data
+; after the code), written directly and through the pointer.
+; Prints "D6OK" and returns 42. Output: "D6OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; flag == 0, then flag = 1
+ la r2,_flag
+ lbu r0,0(r2)
+ CHECK cc_eq,r0,0
+ lc r0,1
+ sb r0,0(r2)
+ lbu r0,0(r2)
+ CHECK cc_eq,r0,1
+; counter = 100
+ la r2,_counter
+ la r0,100
+ sw r0,0(r2)
+ lw r0,0(r2)
+ CHECK cc_eq,r0,100
+; cptr = &counter; *cptr = 200
+ la r1,_cptr
+ la r0,_counter
+ sw r0,0(r1)
+ lw r2,0(r1)
+ la r0,200
+ sw r0,0(r2)
+ la r1,_counter
+ lw r0,0(r1)
+ CHECK cc_eq,r0,200
+ lw r0,0(r2)
+ CHECK cc_eq,r0,200
+ CHECKEND "D6OK\n",42
+ RET
+ BYTES _flag,0
+ WORDS _counter,0
+ WORDS _cptr,0
+COPY svc_bare_code

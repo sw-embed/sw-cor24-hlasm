@@ -1,8 +1,8 @@
-Loaded 23381 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.37m3CCWw2M/hlasm.lgo
-Loaded 139 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.zr6ZM0/main_d35_listing_xref.bin' at 0x090000
-Loaded 109 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.zr6ZM0/slot1_d34_copy_macro_library_macros.bin' at 0x081000
-Loaded 40 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.zr6ZM0/slot2_d34_copy_macro_library_symbols.bin' at 0x081100
-Loaded 69 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.zr6ZM0/sourceset.cfg' at 0x07F000
+Loaded 23449 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.RoWq2VxnDS/hlasm.lgo
+Loaded 139 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.2RfHx0/main_d35_listing_xref.bin' at 0x090000
+Loaded 109 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.2RfHx0/slot1_d34_copy_macro_library_macros.bin' at 0x081000
+Loaded 40 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.2RfHx0/slot2_d34_copy_macro_library_symbols.bin' at 0x081100
+Loaded 69 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.2RfHx0/sourceset.cfg' at 0x07F000
 [UART TX @ 270000] ';'  (0x3B)
 [UART TX @ 270000] ' '  (0x20)
 [UART TX @ 270000] 'D'  (0x44)
@@ -426,7 +426,7 @@ Loaded 69 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24
 [UART TX @ 380000] 'r'  (0x72)
 [UART TX @ 380000] '0'  (0x30)
 [UART TX @ 380000] ''  (0x0D)
-[UART TX @ 380000] '\n'
+[UART TX @ 380560] '\n'
 
 UART output: ; Demo 35: opt-in listing/xref-friendly output
 ; HLASM COPY libmac
@@ -459,4 +459,4 @@ _hlif_2_end:
  pop r0
 
 
-Executed 380540 instructions
+Executed 380560 instructions

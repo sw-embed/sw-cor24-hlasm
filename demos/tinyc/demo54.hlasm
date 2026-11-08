@@ -1,0 +1,44 @@
+; demo54.c in hlasm: a global function pointer, reassigned and called.
+; Returns 1 or 2 on a failed check, else prints "D54OK" and returns 54.
+; Output: "D54OK" then "r0=54".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+; op = add; op(20, 30) == 50
+ la r1,_op
+ la r0,_add
+ sw r0,0(r1)
+ lw r0,0(r1)
+ CALL r0,20,30
+ REQUIRE cc_eq,r0,50,1
+; op = mul; op(6, 9) == 54
+ la r1,_op
+ la r0,_mul
+ sw r0,0(r1)
+ lw r0,0(r1)
+ CALL r0,6,9
+ REQUIRE cc_eq,r0,54,2
+ WTO "D54OK\n"
+ RETURN 54
+ WORDS _op,0
+
+_add:
+ PROLOG
+ ARG r0,1
+ ARG r1,2
+ add r0,r1
+ RET
+
+_mul:
+ PROLOG
+ ARG r0,1
+ ARG r1,2
+ mul r0,r1
+ RET
+COPY svc_bare_code

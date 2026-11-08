@@ -1,0 +1,17 @@
+; demo39.c in hlasm: printf("D"), printf("%d", 39), printf("%c%c", 79, 75)
+; and printf("\n") are WTO, PUTDEC and PUTC. Returns 42.
+; Output: "D39OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ WTO "D"
+ PUTDEC 39
+ PUTC 79
+ PUTC 75
+ PUTNL
+ RETURN 42
+COPY svc_bare_code

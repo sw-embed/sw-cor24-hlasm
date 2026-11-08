@@ -1,0 +1,65 @@
+; demo5.c in hlasm: a local int array (one word per element, a[i] at
+; A+3*i), passing it to a routine as a pointer, and a local char array.
+; Prints "D5OK" and returns 42. Output: "D5OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ LOCAL A,12
+ LOCAL BUF,3
+ PROLOG
+ CHECKINIT
+; a[0..3] = 10, 20, 30, 40
+ lc r0,10
+ sw r0,A(fp)
+ lc r0,20
+ sw r0,A+3(fp)
+ lc r0,30
+ sw r0,A+6(fp)
+ lc r0,40
+ sw r0,A+9(fp)
+; a[0] + a[3] == 50
+ lw r0,A(fp)
+ lw r1,A+9(fp)
+ add r0,r1
+ CHECK cc_eq,r0,50
+; sum_array(a, 4) == 100
+ LOCADDR r2,A
+ CALL _sum_array,r2,4
+ CHECK cc_eq,r0,100
+; char buf[3] = 'A', 'B', 0
+ lc r0,65
+ sb r0,BUF(fp)
+ lc r0,66
+ sb r0,BUF+1(fp)
+ lc r0,0
+ sb r0,BUF+2(fp)
+ lbu r0,BUF(fp)
+ CHECK cc_eq,r0,65
+ lbu r0,BUF+1(fp)
+ CHECK cc_eq,r0,66
+ CHECKEND "D5OK\n",42
+ RET
+
+; _sum_array(arr, len): the sum of len words at arr
+_sum_array:
+ LOCAL SA_N,3
+ PROLOG
+ ARG r2,1
+ ARG r0,2
+ sw r0,SA_N(fp)
+ lc r0,0
+DO
+ lw r1,SA_N(fp)
+ DOEXIT cc_le,r1,0
+ add r1,-1
+ sw r1,SA_N(fp)
+ lw r1,0(r2)
+ add r0,r1
+ add r2,3
+ENDDO
+ RET
+COPY svc_bare_code
