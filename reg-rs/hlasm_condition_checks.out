@@ -11,3 +11,9 @@ same_reg: ok:  nop ; reg| nop ; other| nop ; other| nop ; other
 same_empty: ok:  nop ; both empty
 same_quoted: ok:  nop ; quoted| nop ; differ
 diff_blanks: ok:  nop ; same
+and_or_mixed: ERROR: main:1: AND and OR mixed in one condition (nest the IFs)
+and_trailing: ERROR: main:1: malformed compound condition
+and_empty_term: ERROR: main:2: malformed compound condition
+and_eight: ok:  push r2| lc r2,1| ceq r0,r2| pop r2| brt _hlif_3_skip| push r2| la r2,_hlif_1_false_far| jmp (r2)|_hlif_3_skip:| push r2| lc r2,1| ceq r0,r2| pop r2| brt _hlif_4_skip| push r2| la r2,_hlif_1_false_far| jmp (r2)|_hlif_4_skip:| push r2| lc r2,1| ceq r0,r2| pop r2| brt _hlif_5_skip| push r2| la r2,_hlif_1_false_far| jmp (r2)|_hlif_5_skip:| push r2| lc r2,1| ceq r0,r2| pop r2| brt _hlif_6_skip| push r2| la r2,_hlif_1_false_far| jmp (r2)|_hlif_6_skip:| push r2| lc r2,1| ceq r0,r2| pop r2| brt _hlif_7_skip| bra _hlif_1_false|_hlif_7_skip:| push r2| lc r2,1| ceq r0,r2| pop r2| brt _hlif_8_skip| bra _hlif_1_false|_hlif_8_skip:| push r2| lc r2,1| ceq r0,r2| pop r2| brt _hlif_9_skip| bra _hlif_1_false|_hlif_9_skip:| push r2| lc r2,1| ceq r0,r2| pop r2| brt _hlif_10_skip| bra _hlif_1_false|_hlif_10_skip:| nop ; eight| bra _hlif_1_false|_hlif_1_false_far:| pop r2|_hlif_1_false:|_hlif_2_end:
+and_nine: ERROR: main:1: more than 8 terms in a condition
+and_not_word: ok:  ceq r0,ANDY| brt _hlif_3_skip| bra _hlif_1_false|_hlif_3_skip:| nop ; ANDY is a value|_hlif_1_false:|_hlif_2_end:

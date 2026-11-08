@@ -1,0 +1,48 @@
+; demo11.c in hlasm, second version: the && and || tests written with
+; compound conditions (IF ...,AND,... / IF ...,OR,...), which lower to the
+; same short-circuit branches as C. Compare demo11.hlasm, which builds them
+; from nested IFs. Prints "D11OK" and returns 42.
+; Output: "D11OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+
+; FAILIF a,AND|OR,b: clear the ok flag when the two-term condition holds,
+; as C's  if (a && b) { ok = 0; }  (each term is cc,register,value)
+MACRO FAILIF &C1,&L1,&R1,&OP,&C2,&L2,&R2
+IF &C1,&L1,&R1,&OP,&C2,&L2,&R2
+ la r1,_chk_ok
+ lc r0,0
+ sw r0,0(r1)
+ENDIF
+MEND
+
+ START
+_main:
+ PROLOG
+ CHECKINIT
+ lc r0,0
+ lc r1,1
+ lc r2,2
+; if (!(1 && 2)) ok = 0;  -- fails unless both are non-zero
+ FAILIF cc_eq,r1,0,OR,cc_eq,r2,0
+; if (0 && 1) ok = 0;
+ FAILIF cc_ne,r0,0,AND,cc_ne,r1,0
+; if (!(1 || 0)) ok = 0;
+ FAILIF cc_eq,r1,0,AND,cc_eq,r0,0
+; if (0 || 0) ok = 0;
+ FAILIF cc_ne,r0,0,OR,cc_ne,r0,0
+; if (!(0 || 5)) ok = 0;  with 5 in r2
+ lc r2,5
+ FAILIF cc_eq,r0,0,AND,cc_eq,r2,0
+; if (!((1 && 0) || 1)) ok = 0;  -- (1 && 0) is false, so this is !1
+ lc r2,0
+IF cc_ne,r1,0,AND,cc_ne,r2,0
+ lc r2,1
+ENDIF
+ FAILIF cc_eq,r2,0,AND,cc_eq,r1,0
+ CHECKEND "D11OK\n",42
+ RET
+COPY svc_bare_code

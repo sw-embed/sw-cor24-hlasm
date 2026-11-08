@@ -9963,6 +9963,459 @@ _sitp_ret:
 	pop	fp
 	jmp	(r1)
 
+; --- Compound conditions (cond,AND,cond,... / cond,OR,cond,...) ---
+; _cond_split copies the line buffer to 239616 (0x03A800) and cuts it into
+; terms there; term pointers at 239888 (8 x 3 B), term count at 239912.
+; Returns r0 = 0 (one term), 1 (AND) or 2 (OR). ERROR when AND and OR are
+; mixed, a connective has no term after it, or there are more than 8 terms.
+; Frame: -3 kind, -6 connective pointer
+_cond_split:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-6
+
+	la	r0,196608
+	push	r0
+	la	r0,239616
+	push	r0
+	la	r0,_copy_strz
+	jal	r1,(r0)
+	add	sp,6
+	lc	r0,0
+	sw	r0,-3(fp)
+
+; skip the keyword; the first term starts after it
+	la	r0,239616
+	push	r0
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+_csp_kw:
+	lbu	r0,0(r2)
+	push	r0
+	la	r0,_is_alpha
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_csp_kw_end
+	add	r2,1
+	bra	_csp_kw
+_csp_kw_end:
+	push	r2
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+	la	r1,239888
+	sw	r2,0(r1)
+	la	r1,239912
+	lc	r0,1
+	sw	r0,0(r1)
+
+_csp_scan:
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brf	_csp_more
+	la	r1,_csp_done
+	jmp	(r1)
+_csp_more:
+	lc	r1,44
+	ceq	r0,r1
+	brt	_csp_comma
+_csp_next:
+	add	r2,1
+	bra	_csp_scan
+
+; a comma: does AND or OR follow?
+_csp_comma:
+	mov	r0,r2
+	add	r0,1
+	push	r0
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	sw	r0,-6(fp)
+	push	r0
+	la	r0,_cond_word
+	jal	r1,(r0)
+	add	sp,3
+	ceq	r0,z
+	brt	_csp_next
+
+	lw	r1,-3(fp)
+	ceq	r1,z
+	brt	_csp_kind_ok
+	ceq	r0,r1
+	brt	_csp_kind_ok
+	la	r0,_err_cond_mix
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_csp_kind_ok:
+	sw	r0,-3(fp)
+; end the previous term at the comma
+	push	r0
+	lc	r0,0
+	sb	r0,0(r2)
+	pop	r0
+; past the word (AND is 3 characters, OR 2) a comma must follow
+	lw	r2,-6(fp)
+	add	r2,2
+	lc	r1,1
+	ceq	r0,r1
+	brf	_csp_word_end
+	add	r2,1
+_csp_word_end:
+	push	r2
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+	lbu	r0,0(r2)
+	lc	r1,44
+	ceq	r0,r1
+	brf	_csp_bad
+	add	r2,1
+	push	r2
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_csp_bad
+	lc	r1,44
+	ceq	r0,r1
+	brt	_csp_bad
+
+	la	r1,239912
+	lw	r0,0(r1)
+	lc	r1,8
+	clu	r0,r1
+	brt	_csp_room
+	la	r0,_err_cond_many
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+_csp_room:
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,239888
+	add	r1,r0
+	sw	r2,0(r1)
+	la	r1,239912
+	lw	r0,0(r1)
+	add	r0,1
+	sw	r0,0(r1)
+	la	r1,_csp_scan
+	jmp	(r1)
+
+_csp_bad:
+	la	r0,_err_cond_bad
+	push	r0
+	la	r0,_fatal
+	jal	r1,(r0)
+
+_csp_done:
+	lw	r0,-3(fp)
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _cond_word: 1 if the text at ptr is the word AND, 2 if OR (followed by a
+; comma, blank, tab or NUL), else 0.
+; Arg on stack: ptr
+_cond_word:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	lw	r2,9(fp)
+	lbu	r0,0(r2)
+	lc	r1,65
+	ceq	r0,r1
+	brf	_cw_or
+	lbu	r0,1(r2)
+	lc	r1,78
+	ceq	r0,r1
+	brf	_cw_no
+	lbu	r0,2(r2)
+	lc	r1,68
+	ceq	r0,r1
+	brf	_cw_no
+	add	r2,3
+	lc	r0,1
+	bra	_cw_end
+_cw_or:
+	lc	r1,79
+	ceq	r0,r1
+	brf	_cw_no
+	lbu	r0,1(r2)
+	lc	r1,82
+	ceq	r0,r1
+	brf	_cw_no
+	add	r2,2
+	lc	r0,2
+; the word must end here
+_cw_end:
+	push	r0
+	lbu	r0,0(r2)
+	ceq	r0,z
+	brt	_cw_yes
+	lc	r1,44
+	ceq	r0,r1
+	brt	_cw_yes
+	lc	r1,32
+	ceq	r0,r1
+	brt	_cw_yes
+	lc	r1,9
+	ceq	r0,r1
+	brt	_cw_yes
+	pop	r0
+_cw_no:
+	lc	r0,0
+	bra	_cw_ret
+_cw_yes:
+	pop	r0
+_cw_ret:
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _cond_load_term: Put term n of the split condition into the line buffer
+; as "C <term>" and parse it into the cc/lhs/rhs buffers.
+; Arg on stack: n (0-based)
+_cond_load_term:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	la	r2,196608
+	lc	r0,67
+	sb	r0,0(r2)
+	lc	r0,32
+	sb	r0,1(r2)
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_mul3
+	jal	r1,(r0)
+	add	sp,3
+	la	r1,239888
+	add	r1,r0
+	lw	r0,0(r1)
+	push	r0
+	la	r0,196610
+	push	r0
+	la	r0,_copy_strz
+	jal	r1,(r0)
+	add	sp,6
+	la	r0,_parse_struct_if
+	jal	r1,(r0)
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _cond_restore: Copy the saved line back into the line buffer.
+_cond_restore:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	la	r0,239616
+	push	r0
+	la	r0,196608
+	push	r0
+	la	r0,_copy_strz
+	jal	r1,(r0)
+	add	sp,6
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _emit_cond_false: IF/ELSEIF test of a possibly compound condition: jump
+; to the false label (id) unless the condition holds. AND: each term jumps
+; to false when it fails. OR: every term but the last jumps to the body
+; (a fresh label) when it holds; the last one jumps to false when it fails.
+; Arg on stack: false label id (9 fp)
+; Frame: -3 kind, -6 term index, -9 body label id
+_emit_cond_false:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-9
+	la	r0,_cond_split
+	jal	r1,(r0)
+	sw	r0,-3(fp)
+; the body label is needed only for OR
+	lc	r1,2
+	ceq	r0,r1
+	brf	_ecf_start
+	la	r0,_alloc_struct_label_id
+	jal	r1,(r0)
+	sw	r0,-9(fp)
+_ecf_start:
+	lc	r0,0
+	sw	r0,-6(fp)
+
+_ecf_loop:
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_cond_load_term
+	jal	r1,(r0)
+	add	sp,3
+; the last term, or any AND term: jump to false when it fails
+	lw	r0,-6(fp)
+	add	r0,1
+	la	r1,239912
+	lw	r1,0(r1)
+	ceq	r0,r1
+	brt	_ecf_to_false
+	lw	r0,-3(fp)
+	lc	r1,2
+	ceq	r0,r1
+	brf	_ecf_to_false
+	lw	r0,-9(fp)
+	push	r0
+	la	r0,_do_skip_suffix
+	push	r0
+	la	r0,_emit_struct_branch_if_true
+	jal	r1,(r0)
+	add	sp,6
+	bra	_ecf_next
+_ecf_to_false:
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_struct_if_test
+	jal	r1,(r0)
+	add	sp,3
+_ecf_next:
+	lw	r0,-6(fp)
+	add	r0,1
+	sw	r0,-6(fp)
+	la	r1,239912
+	lw	r1,0(r1)
+	ceq	r0,r1
+	brf	_ecf_loop
+
+	lw	r0,-3(fp)
+	lc	r1,2
+	ceq	r0,r1
+	brf	_ecf_done
+	lw	r0,-9(fp)
+	push	r0
+	la	r0,_do_skip_suffix
+	push	r0
+	la	r0,_emit_do_label_def
+	jal	r1,(r0)
+	add	sp,6
+_ecf_done:
+	la	r0,_cond_restore
+	jal	r1,(r0)
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
+; _emit_cond_true: DOEXIT test of a possibly compound condition: jump to
+; the target (id, suffix) when the condition holds. OR: each term jumps
+; there when it holds. AND: every term but the last jumps past the exit (a
+; fresh label) when it fails; the last one jumps to the target when it holds.
+; Args on stack: target id (12 fp), suffix (9 fp)
+; Frame: -3 kind, -6 term index, -9 skip label id
+_emit_cond_true:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	add	sp,-9
+	la	r0,_cond_split
+	jal	r1,(r0)
+	sw	r0,-3(fp)
+; the skip label is needed only for AND
+	lc	r1,1
+	ceq	r0,r1
+	brf	_ect_start
+	la	r0,_alloc_struct_label_id
+	jal	r1,(r0)
+	sw	r0,-9(fp)
+_ect_start:
+	lc	r0,0
+	sw	r0,-6(fp)
+
+_ect_loop:
+	lw	r0,-6(fp)
+	push	r0
+	la	r0,_cond_load_term
+	jal	r1,(r0)
+	add	sp,3
+	lw	r0,-6(fp)
+	add	r0,1
+	la	r1,239912
+	lw	r1,0(r1)
+	ceq	r0,r1
+	brt	_ect_to_target
+	lw	r0,-3(fp)
+	lc	r1,1
+	ceq	r0,r1
+	brf	_ect_to_target
+	lw	r0,-9(fp)
+	push	r0
+	la	r0,_emit_struct_if_test
+	jal	r1,(r0)
+	add	sp,3
+	bra	_ect_next
+_ect_to_target:
+	lw	r0,12(fp)
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_struct_branch_if_true
+	jal	r1,(r0)
+	add	sp,6
+_ect_next:
+	lw	r0,-6(fp)
+	add	r0,1
+	sw	r0,-6(fp)
+	la	r1,239912
+	lw	r1,0(r1)
+	ceq	r0,r1
+	brf	_ect_loop
+
+	lw	r0,-3(fp)
+	lc	r1,1
+	ceq	r0,r1
+	brf	_ect_done
+	lw	r0,-9(fp)
+	push	r0
+	la	r0,_if_false_suffix
+	push	r0
+	la	r0,_emit_label_def
+	jal	r1,(r0)
+	add	sp,6
+_ect_done:
+	la	r0,_cond_restore
+	jal	r1,(r0)
+	mov	sp,fp
+	pop	r1
+	pop	r2
+	pop	fp
+	jmp	(r1)
+
 ; _cc_info: Look up the condition name at 197648 in _cc_info_table.
 ; Returns its code (bits 0-1: 1 ceq, 2 cls, 3 clu; 4: swap the operands;
 ; 8: the compare is true when the condition is false), or 0 if unknown.
@@ -10372,7 +10825,7 @@ _hsi_start:
 	lw	r0,-3(fp)
 	lw	r0,0(r0)
 	push	r0
-	la	r0,_emit_struct_if_test
+	la	r0,_emit_cond_false
 	jal	r1,(r0)
 	add	sp,3
 
@@ -10495,7 +10948,7 @@ _hsel_emit:
 
 	lw	r0,0(r2)
 	push	r0
-	la	r0,_emit_struct_if_test
+	la	r0,_emit_cond_false
 	jal	r1,(r0)
 	add	sp,3
 
@@ -10659,7 +11112,7 @@ _handle_struct_doexit:
 	push	r0
 	la	r0,_do_end_suffix
 	push	r0
-	la	r0,_emit_struct_branch_if_true
+	la	r0,_emit_cond_true
 	jal	r1,(r0)
 	add	sp,6
 
@@ -14441,6 +14894,12 @@ _err_inc_deep:
 	.byte	73,78,67,76,85,68,69,32,110,101,115,116,101,100,32,100,101,101,112,101,114,32,116,104,97,110,32,49,54,0
 _err_cond_undef:
 	.byte	73,70,69,81,47,73,70,78,69,32,111,112,101,114,97,110,100,32,105,115,32,110,111,116,32,97,32,83,69,84,32,111,114,32,69,81,85,32,115,121,109,98,111,108,0
+_err_cond_mix:
+	.byte	65,78,68,32,97,110,100,32,79,82,32,109,105,120,101,100,32,105,110,32,111,110,101,32,99,111,110,100,105,116,105,111,110,32,40,110,101,115,116,32,116,104,101,32,73,70,115,41,0
+_err_cond_bad:
+	.byte	109,97,108,102,111,114,109,101,100,32,99,111,109,112,111,117,110,100,32,99,111,110,100,105,116,105,111,110,0
+_err_cond_many:
+	.byte	109,111,114,101,32,116,104,97,110,32,56,32,116,101,114,109,115,32,105,110,32,97,32,99,111,110,100,105,116,105,111,110,0
 _err_bad_cc:
 	.byte	117,110,107,110,111,119,110,32,115,116,114,117,99,116,117,114,101,100,32,99,111,110,100,105,116,105,111,110,0
 

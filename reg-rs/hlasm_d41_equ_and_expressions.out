@@ -88,4 +88,4 @@ table:
 msg:
 .byte 104,105,33,0
 
-Executed 1422160 instructions
+Executed 1428268 instructions

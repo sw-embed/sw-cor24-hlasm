@@ -1,0 +1,4 @@
+command = "bash -c 'scripts/hlasm-e2e.sh demos/d44_compound_conditions.hlasm 2>&1'"
+timeout = 180
+exit_code = 0
+desc = "Demo 44 end to end: AND/OR compound conditions in IF, ELSEIF and DOEXIT, as truth tables"

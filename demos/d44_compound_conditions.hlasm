@@ -1,0 +1,138 @@
+; Demo 44: compound conditions. IF/ELSEIF/DOEXIT accept terms joined by AND
+; or OR (not both in one statement), evaluated left to right with
+; short-circuit. For r0,r1 in (0,0) (0,1) (1,0) (1,1) this prints T or F
+; for IF AND, IF OR, a three-term IF AND, ELSEIF OR and DOEXIT AND/OR.
+; Assembled and run on cor24-emu it prints (see hlasm_e2e_d44):
+;   and FFFT or FTTT and3 FFFT elseif-or FTTT doexit-and FFFT doexit-or FTTT
+UART EQU -65280
+
+MACRO PUTC
+ push r2
+ la r2,UART
+L\@:
+ lb r1,1(r2)
+ cls r1,z
+ brt L\@
+ sb r0,0(r2)
+ pop r2
+MEND
+
+; SAY "text": print a short label
+MACRO SAY &T
+ push r0
+ push r1
+ la r2,S\@
+DO
+ lbu r0,0(r2)
+ DOEXIT cc_eq,r0,0
+ PUTC
+ add r2,1
+ENDDO
+ bra E\@
+S\@:
+ .asciz &T
+E\@:
+ pop r1
+ pop r0
+MEND
+
+; TF: print T if r2 is non-zero, else F (keeps r0 and r1)
+MACRO TF
+ push r0
+ push r1
+IF cc_ne,r2,0
+ lc r0,'T'
+ELSE
+ lc r0,'F'
+ENDIF
+ PUTC
+ pop r1
+ pop r0
+MEND
+
+; FOUR test: run test (a macro leaving r2 = 0/1) for the four r0,r1 pairs
+MACRO FOUR &T
+ lc r0,0
+ lc r1,0
+ &T
+ TF
+ lc r1,1
+ &T
+ TF
+ lc r0,1
+ lc r1,0
+ &T
+ TF
+ lc r1,1
+ &T
+ TF
+MEND
+
+MACRO T_AND
+ lc r2,0
+IF cc_ne,r0,0,AND,cc_ne,r1,0
+ lc r2,1
+ENDIF
+MEND
+
+MACRO T_OR
+ lc r2,0
+IF cc_ne,r0,0,OR,cc_ne,r1,0
+ lc r2,1
+ENDIF
+MEND
+
+MACRO T_AND3
+ lc r2,0
+IF cc_ne,r0,0,AND,cc_ne,r1,0,AND,cc_eq,r0,r1
+ lc r2,1
+ENDIF
+MEND
+
+MACRO T_ELSEIF_OR
+IF cc_eq,r0,9
+ lc r2,0
+ELSEIF cc_eq,r0,1,OR,cc_eq,r1,1
+ lc r2,1
+ELSE
+ lc r2,0
+ENDIF
+MEND
+
+; DOEXIT: leave the loop at once when the condition holds (r2 = 1),
+; otherwise on the second pass (r2 = 0)
+MACRO T_DX_AND
+ lc r2,2
+DO
+ add r2,-1
+ DOEXIT cc_ne,r0,0,AND,cc_ne,r1,0
+ DOEXIT cc_eq,r2,0
+ENDDO
+MEND
+
+MACRO T_DX_OR
+ lc r2,2
+DO
+ add r2,-1
+ DOEXIT cc_ne,r0,0,OR,cc_ne,r1,0
+ DOEXIT cc_eq,r2,0
+ENDDO
+MEND
+
+_start:
+ SAY "and "
+ FOUR T_AND
+ SAY " or "
+ FOUR T_OR
+ SAY " and3 "
+ FOUR T_AND3
+ SAY " elseif-or "
+ FOUR T_ELSEIF_OR
+ SAY " doexit-and "
+ FOUR T_DX_AND
+ SAY " doexit-or "
+ FOUR T_DX_OR
+ lc r0,10
+ PUTC
+halt:
+ bra halt

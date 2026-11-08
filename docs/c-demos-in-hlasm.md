@@ -171,7 +171,7 @@ Ported demos are added to each group as its step lands.
 | Group | Demos |
 |---|---|
 | A. I/O (**ported**) | uart_tx, hello, led, button, demo2, demo3, demo8, demo10, demo64, demo9 |
-| B. Control flow (**ported**) | demo, demo4, demo11, demo12, demo13, demo14, demo15, demo21, demo26, demo46 |
+| B. Control flow (**ported**) | demo, demo4, demo11 (and demo11_andor), demo12, demo13, demo14, demo15, demo21, demo26, demo46 |
 | C. Functions, arrays, pointers, strings | demo5, demo6, demo7, demo16, demo39, demo41, demo50, demo51-54, demo58, demo63 |
 | D. Structs, unions, heap | demo23, demo25, demo28, demo34, demo35, demo38, demo40, demo42, demo43 |
 
@@ -2467,6 +2467,68 @@ Output:
 
 ```
 D46OK
+r0=42
+```
+
+### demo11 again, with AND and OR (step 14)
+
+After batch 2, hlasm gained compound conditions, so demo11 has a second port that uses them. [`demos/tinyc/demo11_andor.hlasm`](../demos/tinyc/demo11_andor.hlasm) (46 lines) replaces the nested-IF macros `AND2`/`OR2` of [demo11.hlasm](../demos/tinyc/demo11.hlasm) (52 lines) with `IF a,AND,b` and `IF a,OR,b`. The lowering is the same short-circuit branch sequence tc24r produces for `&&` and `||`, without first materialising 0 or 1.
+
+```
+; demo11.c in hlasm, second version: the && and || tests written with
+; compound conditions (IF ...,AND,... / IF ...,OR,...), which lower to the
+; same short-circuit branches as C. Compare demo11.hlasm, which builds them
+; from nested IFs. Prints "D11OK" and returns 42.
+; Output: "D11OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+
+; FAILIF a,AND|OR,b: clear the ok flag when the two-term condition holds,
+; as C's  if (a && b) { ok = 0; }  (each term is cc,register,value)
+MACRO FAILIF &C1,&L1,&R1,&OP,&C2,&L2,&R2
+IF &C1,&L1,&R1,&OP,&C2,&L2,&R2
+ la r1,_chk_ok
+ lc r0,0
+ sw r0,0(r1)
+ENDIF
+MEND
+
+ START
+_main:
+ PROLOG
+ CHECKINIT
+ lc r0,0
+ lc r1,1
+ lc r2,2
+; if (!(1 && 2)) ok = 0;  -- fails unless both are non-zero
+ FAILIF cc_eq,r1,0,OR,cc_eq,r2,0
+; if (0 && 1) ok = 0;
+ FAILIF cc_ne,r0,0,AND,cc_ne,r1,0
+; if (!(1 || 0)) ok = 0;
+ FAILIF cc_eq,r1,0,AND,cc_eq,r0,0
+; if (0 || 0) ok = 0;
+ FAILIF cc_ne,r0,0,OR,cc_ne,r0,0
+; if (!(0 || 5)) ok = 0;  with 5 in r2
+ lc r2,5
+ FAILIF cc_eq,r0,0,AND,cc_eq,r2,0
+; if (!((1 && 0) || 1)) ok = 0;  -- (1 && 0) is false, so this is !1
+ lc r2,0
+IF cc_ne,r1,0,AND,cc_ne,r2,0
+ lc r2,1
+ENDIF
+ FAILIF cc_eq,r2,0,AND,cc_eq,r1,0
+ CHECKEND "D11OK\n",42
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D11OK
 r0=42
 ```
 

@@ -572,6 +572,29 @@ ENDSEL
 Each `WHEN value` arm runs when the selected register equals the value;
 `OTHERWISE` runs when no arm matched.
 
+### Compound conditions: AND and OR
+
+`IF`, `ELSEIF` and `DOEXIT` accept up to 8 conditions joined by `AND` or by
+`OR`. The conditions are evaluated left to right and stop as soon as the
+result is known, like C's `&&` and `||`:
+
+```
+IF cc_ge, r0, 0, AND, cc_lt, r0, 10      ; 0 <= r0 < 10
+ ...
+ENDIF
+DO
+ ...
+ DOEXIT cc_eq, r0, 0, OR, cc_eq, r1, 0   ; leave when either is zero
+ENDDO
+```
+
+One statement uses either `AND` or `OR`, not both (`AND and OR mixed in one
+condition`). For a mixture, nest the IFs or compute a flag first. A
+connective with nothing after it gives `malformed compound condition`.
+`cc_zset` and `cc_zclr` test the flag of an earlier compare, so in a
+compound condition use them only as the first term. Demo d44 shows each
+form as a truth table.
+
 ### Nesting and long blocks
 
 IF, DO and SELECT each nest up to 32 deep. Generated labels
@@ -788,14 +811,13 @@ Values are 24-bit and wrap like COR24 arithmetic. Structured labels and
 
 These are planned (see `docs/limits-and-lifting-plan.md` for the schedule):
 
-- **Compound conditions** (`IF cc_eq,r0,1,AND,...`) and record layouts
-  (`DSECT`).
+- **Record layouts** (`DSECT`/`FIELD`); define field offsets with `EQU` for now.
 - **Labels as values.** Labels are resolved by `cor24-asm`, not hlasm, so
   they cannot be used in `EQU`, `SET` or conditions.
 
 ## Further reading
 
-- `demos/README.md`: the demo programs (d01-d43) and what each shows.
+- `demos/README.md`: the demo programs (d01-d44) and what each shows.
 - `docs/design.md`: the language design and lowering rules.
 - `docs/limits-and-lifting-plan.md`: every limit, known issue and the plan
   for lifting the rest.

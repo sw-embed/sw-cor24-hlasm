@@ -44,3 +44,12 @@ run same_reg $'MACRO M &A\nIFSAME &A,r2\n nop ; reg\nELSEASM\n nop ; other\nENDI
 run same_empty $'IFSAME ,\n nop ; both empty\nENDIFASM\nIFSAME x,\n nop ; wrong\nENDIFASM'
 run same_quoted $'IFSAME \'a,b\',\'a,b\'\n nop ; quoted\nENDIFASM\nIFDIFF (r1,r2),(r1, r2)\n nop ; differ\nENDIFASM'
 run diff_blanks $'IFDIFF  r1 , r1 \n nop ; wrong\nELSEASM\n nop ; same\nENDIFASM'
+
+# compound conditions: AND and OR may not be mixed; a connective needs a
+# term after it; at most 8 terms
+run and_or_mixed $'IF cc_eq,r0,1,AND,cc_eq,r1,2,OR,cc_eq,r2,3\nENDIF'
+run and_trailing $'IF cc_eq,r0,1,AND\nENDIF'
+run and_empty_term $'DO\n DOEXIT cc_eq,r0,1,OR,,cc_eq,r1,2\nENDDO'
+run and_eight $'IF cc_eq,r0,1,AND,cc_eq,r0,1,AND,cc_eq,r0,1,AND,cc_eq,r0,1,AND,cc_eq,r0,1,AND,cc_eq,r0,1,AND,cc_eq,r0,1,AND,cc_eq,r0,1\n nop ; eight\nENDIF'
+run and_nine $'IF cc_eq,r0,1,AND,cc_eq,r0,1,AND,cc_eq,r0,1,AND,cc_eq,r0,1,AND,cc_eq,r0,1,AND,cc_eq,r0,1,AND,cc_eq,r0,1,AND,cc_eq,r0,1,AND,cc_eq,r0,1\nENDIF'
+run and_not_word $'IF cc_eq,r0,ANDY\n nop ; ANDY is a value\nENDIF'
