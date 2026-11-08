@@ -1,0 +1,32 @@
+; demo4.c in hlasm: software divide and modulo (COR24 has no divide
+; instruction; DIV and MOD call the library's routines). Prints "D4OK" and
+; returns 42. Output: "D4OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY rt
+SET SHOWRC,1
+
+; T op,a,b,expected: one check of a op b
+MACRO T &OP,&A,&B,&E
+ &OP &A,&B
+ CHECK cc_eq,r0,&E
+MEND
+
+ START
+_main:
+ PROLOG
+ CHECKINIT
+ T DIV,17,5,3
+ T MOD,17,5,2
+ T DIV,100,10,10
+ T MOD,100,10,0
+ T DIV,42,1,42
+ T MOD,42,1,0
+ T DIV,3,7,0
+ T MOD,3,7,3
+ CHECKEND "D4OK\n",42
+ RET
+COPY svc_bare_code
+COPY rt_code

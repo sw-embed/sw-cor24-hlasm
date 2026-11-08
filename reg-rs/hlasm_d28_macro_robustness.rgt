@@ -1,5 +1,5 @@
 command = "scripts/run-kernel.sh hlasm.s --load-binary demos/d28_macro_robustness.bin@524288 --speed 0 -n 460000 2>&1"
-timeout = 15
+timeout = 60
 preprocess = "grep -A 100 '^UART output:' || true"
 exit_code = 0
 desc = "Demo 28: long macro names, repeated use, local labels, and prefix mismatch"

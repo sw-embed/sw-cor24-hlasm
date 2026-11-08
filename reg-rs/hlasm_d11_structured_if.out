@@ -1,4 +1,4 @@
-Loaded 22510 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.97J6Grj38M/hlasm.lgo
+Loaded 22578 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.oWHtwQ9SBO/hlasm.lgo
 Loaded 195 bytes from 'demos/d11_structured_if.bin' at 0x080000
 [UART TX @ 270000] ';'  (0x3B)
 [UART TX @ 270000] ' '  (0x20)
@@ -243,7 +243,7 @@ Loaded 195 bytes from 'demos/d11_structured_if.bin' at 0x080000
 [UART TX @ 290000] 'p'  (0x70)
 [UART TX @ 290000] ':'  (0x3A)
 [UART TX @ 290000] ''  (0x0D)
-[UART TX @ 290000] '\n'
+[UART TX @ 300000] '\n'
 [UART TX @ 300000] ' '  (0x20)
 [UART TX @ 300000] ' '  (0x20)
 [UART TX @ 300000] 'l'  (0x6C)
@@ -491,7 +491,7 @@ Loaded 195 bytes from 'demos/d11_structured_if.bin' at 0x080000
 [UART TX @ 330000] ''  (0x0D)
 [UART TX @ 330000] '\n'
 [UART TX @ 330000] '_'  (0x5F)
-[UART TX @ 330000] 'h'  (0x68)
+[UART TX @ 340000] 'h'  (0x68)
 [UART TX @ 340000] 'l'  (0x6C)
 [UART TX @ 340000] 'i'  (0x69)
 [UART TX @ 340000] 'f'  (0x66)
@@ -591,7 +591,7 @@ Loaded 195 bytes from 'demos/d11_structured_if.bin' at 0x080000
 [UART TX @ 340000] ':'  (0x3A)
 [UART TX @ 340000] ''  (0x0D)
 [UART TX @ 340000] '\n'
-[UART TX @ 340000] ' '  (0x20)
+[UART TX @ 350000] ' '  (0x20)
 [UART TX @ 350000] 'a'  (0x61)
 [UART TX @ 350000] 'd'  (0x64)
 [UART TX @ 350000] 'd'  (0x64)
@@ -640,27 +640,27 @@ Loaded 195 bytes from 'demos/d11_structured_if.bin' at 0x080000
 [UART TX @ 350000] 'a'  (0x61)
 [UART TX @ 350000] 'd'  (0x64)
 [UART TX @ 350000] 'd'  (0x64)
-[UART TX @ 354316] ' '  (0x20)
-[UART TX @ 354316] 'r'  (0x72)
-[UART TX @ 354316] '2'  (0x32)
-[UART TX @ 354316] ','  (0x2C)
-[UART TX @ 354316] '2'  (0x32)
-[UART TX @ 354316] ''  (0x0D)
-[UART TX @ 354316] '\n'
-[UART TX @ 354316] '_'  (0x5F)
-[UART TX @ 354316] 'h'  (0x68)
-[UART TX @ 354316] 'l'  (0x6C)
-[UART TX @ 354316] 'i'  (0x69)
-[UART TX @ 354316] 'f'  (0x66)
-[UART TX @ 354316] '_'  (0x5F)
-[UART TX @ 354316] '2'  (0x32)
-[UART TX @ 354316] '_'  (0x5F)
-[UART TX @ 354316] 'e'  (0x65)
-[UART TX @ 354316] 'n'  (0x6E)
-[UART TX @ 354316] 'd'  (0x64)
-[UART TX @ 354316] ':'  (0x3A)
-[UART TX @ 354316] ''  (0x0D)
-[UART TX @ 354316] '\n'
+[UART TX @ 354336] ' '  (0x20)
+[UART TX @ 354336] 'r'  (0x72)
+[UART TX @ 354336] '2'  (0x32)
+[UART TX @ 354336] ','  (0x2C)
+[UART TX @ 354336] '2'  (0x32)
+[UART TX @ 354336] ''  (0x0D)
+[UART TX @ 354336] '\n'
+[UART TX @ 354336] '_'  (0x5F)
+[UART TX @ 354336] 'h'  (0x68)
+[UART TX @ 354336] 'l'  (0x6C)
+[UART TX @ 354336] 'i'  (0x69)
+[UART TX @ 354336] 'f'  (0x66)
+[UART TX @ 354336] '_'  (0x5F)
+[UART TX @ 354336] '2'  (0x32)
+[UART TX @ 354336] '_'  (0x5F)
+[UART TX @ 354336] 'e'  (0x65)
+[UART TX @ 354336] 'n'  (0x6E)
+[UART TX @ 354336] 'd'  (0x64)
+[UART TX @ 354336] ':'  (0x3A)
+[UART TX @ 354336] ''  (0x0D)
+[UART TX @ 354336] '\n'
 
 UART output: ; Demo 11: IF/ELSEIF/ELSE/ENDIF with nesting
  push r2
@@ -707,4 +707,4 @@ _hlif_9_false:
 _hlif_2_end:
 
 
-Executed 354316 instructions
+Executed 354336 instructions

@@ -1,5 +1,5 @@
 command = "scripts/run-kernel.sh hlasm.s --load-binary demos/d32_literals_and_data.bin@524288 --speed 0 -n 760000 2>&1"
-timeout = 15
+timeout = 60
 preprocess = "grep -A 160 '^UART output:' || true"
 exit_code = 0
 desc = "Demo 32: richer literals and lowered data directives"

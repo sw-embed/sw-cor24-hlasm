@@ -6,8 +6,9 @@ side by side with the C, using a shared macro library. The point is to
 show what macros buy over writing plain COR24 assembly, and how close
 hlasm source can come to the C it replaces.
 
-Status: the macro library is done, and batch 1 (the 10 I/O demos) is
-ported; see [Ported demos](#ported-demos). Batches 2-4 follow. The
+Status: the macro library is done, and batches 1 and 2 (10 I/O and
+10 control-flow demos) are ported; see [Ported demos](#ported-demos).
+Batches 3 and 4 follow. The
 detailed survey and reasoning are in
 [tinyc-port-plan.md](tinyc-port-plan.md).
 
@@ -170,7 +171,7 @@ Ported demos are added to each group as its step lands.
 | Group | Demos |
 |---|---|
 | A. I/O (**ported**) | uart_tx, hello, led, button, demo2, demo3, demo8, demo10, demo64, demo9 |
-| B. Control flow | demo, demo4, demo11, demo12, demo13, demo14, demo15, demo21, demo26, demo46 |
+| B. Control flow (**ported**) | demo, demo4, demo11, demo12, demo13, demo14, demo15, demo21, demo26, demo46 |
 | C. Functions, arrays, pointers, strings | demo5, demo6, demo7, demo16, demo39, demo41, demo50, demo51-54, demo58, demo63 |
 | D. Structs, unions, heap | demo23, demo25, demo28, demo34, demo35, demo38, demo40, demo42, demo43 |
 
@@ -1093,5 +1094,1379 @@ Output:
 
 ```
 r0=5
+```
+
+### Batch 2: control flow (step 13)
+
+### demo: calls, recursion, loops, bit operations
+
+[`demo.c`](../../sw-cor24-x-tinyc/demos/demo.c) (51 lines; 245 lines of tc24r assembly) →
+[`demos/tinyc/demo.hlasm`](../demos/tinyc/demo.hlasm) (93 lines).
+Macros: `CALL`, `PROLOG`/`ARG`/`LOCAL`/`RETURN`, `DO`/`DOEXIT`, `IF`/`ELSE`, `CHECK`, `WORDS`.
+
+<details><summary>C source</summary>
+
+```c
+int counter = 0;
+
+int add(int a, int b) {
+    return a + b;
+}
+
+int fib(int n) {
+    if (n < 2) { return 1; }
+    return fib(n - 1) + fib(n - 2);
+}
+
+int bitops(int x) {
+    int a = x & 15;
+    int b = a | 32;
+    int c = b ^ 7;
+    int d = c << 1;
+    int e = d >> 1;
+    return e;
+}
+
+int main() {
+    int small = 42;
+    int large = 1000;
+
+    int sum = add(17, 25);
+
+    if (sum == small) {
+        counter = 1;
+    } else {
+        counter = 0;
+    }
+
+    int total = 0;
+    int i = 1;
+    while (i <= 5) {
+        total = total + i;
+        i = i + 1;
+    }
+
+    for (int j = 6; j <= 10; j = j + 1) {
+        total = total + j;
+    }
+
+    int f = fib(6);
+
+    int b = bitops(large);
+
+    int neg = -1;
+    int bitnot = ~0;
+    int lognot = !0;
+
+    int ok = 1;
+    if (sum != 42) { ok = 0; }
+    if (total != 55) { ok = 0; }
+    if (f != 13) { ok = 0; }
+    if (counter != 1) { ok = 0; }
+    if (neg != -1) { ok = 0; }
+    if (lognot != 1) { ok = 0; }
+
+    if (ok == 1) {
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo.c in hlasm: calls, recursion (fib), while and for loops, bit
+; operations; returns 42 when every check holds (no UART output in the C).
+; Output: "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; sum = add(17, 25); counter = (sum == small)
+ CALL _add,17,25
+ mov r2,r0
+ la r1,_counter
+IF cc_eq,r2,42
+ lc r0,1
+ELSE
+ lc r0,0
+ENDIF
+ sw r0,0(r1)
+ CHECK cc_eq,r2,42
+; total = 1 + ... + 5 (while), then + 6 + ... + 10 (for)
+ lc r0,0
+ lc r2,1
+DO
+ DOEXIT cc_gt,r2,5
+ add r0,r2
+ add r2,1
+ENDDO
+ lc r2,6
+DO
+ DOEXIT cc_gt,r2,10
+ add r0,r2
+ add r2,1
+ENDDO
+ CHECK cc_eq,r0,55
+; f = fib(6)
+ CALL _fib,6
+ CHECK cc_eq,r0,13
+; b = bitops(large) (computed, not checked, as in the C)
+ CALL _bitops,1000
+; counter == 1; neg == -1; !0 == 1
+ la r1,_counter
+ lw r0,0(r1)
+ CHECK cc_eq,r0,1
+ lc r0,-1
+ CHECK cc_eq,r0,-1
+ lc r0,1
+ CHECK cc_eq,r0,1
+ CHECKEND ,42
+ RET
+ WORDS _counter,0
+
+; _add(a, b) = a + b
+_add:
+ PROLOG
+ ARG r0,1
+ ARG r1,2
+ add r0,r1
+ RET
+
+; _fib(n) = 1 if n < 2, else fib(n-1) + fib(n-2)
+_fib:
+ LOCAL F1,3
+ PROLOG
+ ARG r2,1
+IF cc_lt,r2,2
+ RETURN 1
+ENDIF
+ add r2,-1
+ CALL _fib,r2
+ sw r0,F1(fp)
+ add r2,-1
+ CALL _fib,r2
+ lw r1,F1(fp)
+ add r0,r1
+ RET
+
+; _bitops(x) = (((x & 15) | 32) ^ 7) << 1 >> 1
+_bitops:
+ PROLOG
+ ARG r0,1
+ lc r1,15
+ and r0,r1
+ lc r1,32
+ or r0,r1
+ lc r1,7
+ xor r0,r1
+ lc r1,1
+ shl r0,r1
+ sra r0,r1
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+r0=42
+```
+
+### demo4: software divide and modulo
+
+[`demo4.c`](../../sw-cor24-x-tinyc/demos/demo4.c) (37 lines; 236 lines of tc24r assembly) →
+[`demos/tinyc/demo4.hlasm`](../demos/tinyc/demo4.hlasm) (30 lines).
+Macros: `DIV`, `MOD`, a demo-local test macro `T`, `CHECK`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo4 -- software divide and modulo
+//
+// New features:
+//   - Integer division (/) via software __tc24r_div
+//   - Integer modulo (%) via software __tc24r_mod
+//
+// Expected: r0 = 42, UART output: "D4OK"
+
+void putc(int c) {
+    while (*(char *)0xFF0101 & 0x80) {}
+    *(char *)0xFF0100 = c;
+}
+
+void puts(char *s) {
+    while (*s) {
+        putc(*s);
+        s = s + 1;
+    }
+}
+
+int main() {
+    int ok = 1;
+
+    // basic division
+    if (17 / 5 != 3) { ok = 0; }
+    if (17 % 5 != 2) { ok = 0; }
+
+    // exact division
+    if (100 / 10 != 10) { ok = 0; }
+    if (100 % 10 != 0) { ok = 0; }
+
+    // divide by 1
+    if (42 / 1 != 42) { ok = 0; }
+    if (42 % 1 != 0) { ok = 0; }
+
+    // dividend < divisor
+    if (3 / 7 != 0) { ok = 0; }
+    if (3 % 7 != 3) { ok = 0; }
+
+    if (ok == 1) {
+        puts("D4OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo4.c in hlasm: software divide and modulo (COR24 has no divide
+; instruction; DIV and MOD call the library's routines). Prints "D4OK" and
+; returns 42. Output: "D4OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY rt
+SET SHOWRC,1
+
+; T op,a,b,expected: one check of a op b
+MACRO T &OP,&A,&B,&E
+ &OP &A,&B
+ CHECK cc_eq,r0,&E
+MEND
+
+ START
+_main:
+ PROLOG
+ CHECKINIT
+ T DIV,17,5,3
+ T MOD,17,5,2
+ T DIV,100,10,10
+ T MOD,100,10,0
+ T DIV,42,1,42
+ T MOD,42,1,0
+ T DIV,3,7,0
+ T MOD,3,7,3
+ CHECKEND "D4OK\n",42
+ RET
+COPY svc_bare_code
+COPY rt_code
+```
+
+Output:
+
+```
+D4OK
+r0=42
+```
+
+### demo11: && and || with short-circuit
+
+[`demo11.c`](../../sw-cor24-x-tinyc/demos/demo11.c) (34 lines; 206 lines of tc24r assembly) →
+[`demos/tinyc/demo11.hlasm`](../demos/tinyc/demo11.hlasm) (52 lines).
+Macros: demo-local `AND2`/`OR2` built from nested `IF` (hlasm has no `AND`/`OR` yet), `LOADR`, `CHECK`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo11 -- logical AND (&&) and OR (||) with short-circuit
+//
+// New features:
+//   - && operator with short-circuit (0 && x skips x, yields 0)
+//   - || operator with short-circuit (1 || x skips x, yields 1)
+//   - Correct C precedence: || below &&, && below bitwise |
+//
+// Expected: r0 = 42, UART output: "D11OK"
+
+#define UART_DATA   0xFF0100
+#define UART_STATUS 0xFF0101
+
+void putc(int c) { while (*(char *)UART_STATUS & 0x80) {} *(char *)UART_DATA = c; }
+
+void puts(char *s) {
+    while (*s) { putc(*s); s = s + 1; }
+}
+
+int main() {
+    int ok = 1;
+
+    // && both true
+    if (!(1 && 2)) { ok = 0; }
+
+    // && short-circuit: first false
+    if (0 && 1) { ok = 0; }
+
+    // || first true
+    if (!(1 || 0)) { ok = 0; }
+
+    // || both false
+    if (0 || 0) { ok = 0; }
+
+    // || second true
+    if (!(0 || 5)) { ok = 0; }
+
+    // mixed: (1 && 0) || 1 = 1
+    if (!((1 && 0) || 1)) { ok = 0; }
+
+    if (ok) {
+        puts("D11OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo11.c in hlasm: && and || with short-circuit evaluation. hlasm has no
+; compound conditions yet, so two demo-local macros build them from nested
+; IFs, setting r2 to 0 or 1 and evaluating b only when it matters.
+; Prints "D11OK" and returns 42. Output: "D11OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+
+; AND2 a,b: r2 = (a && b); OR2 a,b: r2 = (a || b). a and b are registers
+; (other than r2 for b) or constants.
+MACRO AND2 &A,&B
+ LOADR r0,&A
+ lc r2,0
+IF cc_ne,r0,0
+ LOADR r0,&B
+IF cc_ne,r0,0
+ lc r2,1
+ENDIF
+ENDIF
+MEND
+
+MACRO OR2 &A,&B
+ LOADR r0,&A
+ lc r2,1
+IF cc_eq,r0,0
+ LOADR r0,&B
+IF cc_eq,r0,0
+ lc r2,0
+ENDIF
+ENDIF
+MEND
+
+ START
+_main:
+ PROLOG
+ CHECKINIT
+ AND2 1,2
+ CHECK cc_eq,r2,1
+ AND2 0,1
+ CHECK cc_eq,r2,0
+ OR2 1,0
+ CHECK cc_eq,r2,1
+ OR2 0,0
+ CHECK cc_eq,r2,0
+ OR2 0,5
+ CHECK cc_eq,r2,1
+; (1 && 0) || 1
+ AND2 1,0
+ OR2 r2,1
+ CHECK cc_eq,r2,1
+ CHECKEND "D11OK\n",42
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D11OK
+r0=42
+```
+
+### demo12: do...while
+
+[`demo12.c`](../../sw-cor24-x-tinyc/demos/demo12.c) (36 lines; 148 lines of tc24r assembly) →
+[`demos/tinyc/demo12.hlasm`](../demos/tinyc/demo12.hlasm) (36 lines).
+Macros: `DO` with the exit test last, `DOEXIT` alone (C's `while (0)`), `cc_ge`, `cc_le`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo12 -- do...while loop
+//
+// New feature:
+//   - do { body } while (cond); -- executes body at least once
+//
+// Expected: r0 = 42, UART output: "D12OK"
+
+#define UART_DATA   0xFF0100
+#define UART_STATUS 0xFF0101
+
+void putc(int c) { while (*(char *)UART_STATUS & 0x80) {} *(char *)UART_DATA = c; }
+void puts(char *s) { while (*s) { putc(*s); s = s + 1; } }
+
+int main() {
+    int ok = 1;
+
+    // do...while executes at least once even if cond is false
+    int ran = 0;
+    do {
+        ran = 1;
+    } while (0);
+    if (!ran) { ok = 0; }
+
+    // do...while loop counting
+    int i = 0;
+    do {
+        i = i + 1;
+    } while (i < 5);
+    if (i != 5) { ok = 0; }
+
+    // compared with while (would not execute)
+    int j = 0;
+    while (j > 100) {
+        j = 999;
+    }
+    if (j != 0) { ok = 0; }
+
+    if (ok) {
+        puts("D12OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo12.c in hlasm: do...while runs its body at least once (DO with the
+; exit test at the end); a while loop whose condition is false never runs.
+; Prints "D12OK" and returns 42. Output: "D12OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; do { ran = 1; } while (0);
+ lc r2,0
+DO
+ lc r2,1
+ DOEXIT
+ENDDO
+ CHECK cc_eq,r2,1
+; do { i = i + 1; } while (i < 5);
+ lc r2,0
+DO
+ add r2,1
+ DOEXIT cc_ge,r2,5
+ENDDO
+ CHECK cc_eq,r2,5
+; while (j > 100) { j = 999; }
+ lc r2,0
+DO
+ DOEXIT cc_le,r2,100
+ la r2,999
+ENDDO
+ CHECK cc_eq,r2,0
+ CHECKEND "D12OK\n",42
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D12OK
+r0=42
+```
+
+### demo13: break and continue
+
+[`demo13.c`](../../sw-cor24-x-tinyc/demos/demo13.c) (49 lines; 241 lines of tc24r assembly) →
+[`demos/tinyc/demo13.hlasm`](../demos/tinyc/demo13.hlasm) (72 lines).
+Macros: `DOEXIT` (break), `ITERATE` (continue), `MOD`, `LOCAL`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo13 -- break and continue
+//
+// New features:
+//   - break: exits innermost loop
+//   - continue: jumps to loop increment/condition
+//   - Works in while, do...while, and for loops
+//
+// Expected: r0 = 42, UART output: "D13OK"
+
+#define UART_DATA   0xFF0100
+#define UART_STATUS 0xFF0101
+void putc(int c) { while (*(char *)UART_STATUS & 0x80) {} *(char *)UART_DATA = c; }
+void puts(char *s) { while (*s) { putc(*s); s = s + 1; } }
+
+int main() {
+    int ok = 1;
+
+    // break in while
+    int i = 0;
+    while (1) {
+        if (i == 5) { break; }
+        i = i + 1;
+    }
+    if (i != 5) { ok = 0; }
+
+    // continue in while (sum odd numbers 1-9)
+    int sum = 0;
+    int j = 0;
+    while (j < 10) {
+        j = j + 1;
+        if (j % 2 == 0) { continue; }
+        sum = sum + j;
+    }
+    if (sum != 25) { ok = 0; }
+
+    // break in for
+    int k = 0;
+    for (k = 0; k < 100; k = k + 1) {
+        if (k == 3) { break; }
+    }
+    if (k != 3) { ok = 0; }
+
+    // continue in for (skip evens)
+    int total = 0;
+    for (int n = 1; n <= 5; n = n + 1) {
+        if (n % 2 == 0) { continue; }
+        total = total + n;
+    }
+    if (total != 9) { ok = 0; }
+
+    if (ok) {
+        puts("D13OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo13.c in hlasm: break is DOEXIT, continue is ITERATE, in while and for
+; loops. In a for loop the increment must still run on continue, so it goes
+; at the top of the loop. Prints "D13OK" and returns 42.
+; Output: "D13OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY rt
+SET SHOWRC,1
+ START
+_main:
+ LOCAL SUM,3
+ PROLOG
+ CHECKINIT
+; while (1) { if (i == 5) break; i = i + 1; }
+ lc r2,0
+DO
+IF cc_eq,r2,5
+ DOEXIT
+ENDIF
+ add r2,1
+ENDDO
+ CHECK cc_eq,r2,5
+; while (j < 10) { j = j + 1; if (j % 2 == 0) continue; sum = sum + j; }
+ lc r0,0
+ sw r0,SUM(fp)
+ lc r2,0
+DO
+ DOEXIT cc_ge,r2,10
+ add r2,1
+ MOD r2,2
+IF cc_eq,r0,0
+ ITERATE
+ENDIF
+ lw r0,SUM(fp)
+ add r0,r2
+ sw r0,SUM(fp)
+ENDDO
+ lw r0,SUM(fp)
+ CHECK cc_eq,r0,25
+; for (k = 0; k < 100; k = k + 1) { if (k == 3) break; }
+ lc r2,0
+DO
+ DOEXIT cc_ge,r2,100
+IF cc_eq,r2,3
+ DOEXIT
+ENDIF
+ add r2,1
+ENDDO
+ CHECK cc_eq,r2,3
+; for (n = 1; n <= 5; n = n + 1) { if (n % 2 == 0) continue; total += n; }
+ lc r0,0
+ sw r0,SUM(fp)
+ lc r2,0
+DO
+ add r2,1
+ DOEXIT cc_gt,r2,5
+ MOD r2,2
+IF cc_eq,r0,0
+ ITERATE
+ENDIF
+ lw r0,SUM(fp)
+ add r0,r2
+ sw r0,SUM(fp)
+ENDDO
+ lw r0,SUM(fp)
+ CHECK cc_eq,r0,9
+ CHECKEND "D13OK\n",42
+ RET
+COPY svc_bare_code
+COPY rt_code
+```
+
+Output:
+
+```
+D13OK
+r0=42
+```
+
+### demo14: increment and decrement
+
+[`demo14.c`](../../sw-cor24-x-tinyc/demos/demo14.c) (38 lines; 208 lines of tc24r assembly) →
+[`demos/tinyc/demo14.hlasm`](../demos/tinyc/demo14.hlasm) (40 lines).
+Macros: plain `add`, `DO`, `CHECK`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo14 -- increment and decrement operators
+//
+// New features:
+//   - Prefix: ++i, --i (returns new value)
+//   - Postfix: i++, i-- (returns old value)
+//
+// Expected: r0 = 42, UART output: "D14OK"
+
+#define UART_DATA   0xFF0100
+#define UART_STATUS 0xFF0101
+void putc(int c) { while (*(char *)UART_STATUS & 0x80) {} *(char *)UART_DATA = c; }
+void puts(char *s) { while (*s) { putc(*s); s = s + 1; } }
+
+int main() {
+    int ok = 1;
+
+    // basic increment
+    int a = 5;
+    a++;
+    if (a != 6) { ok = 0; }
+
+    // basic decrement
+    a--;
+    if (a != 5) { ok = 0; }
+
+    // postfix returns old value
+    int b = a++;
+    if (b != 5 || a != 6) { ok = 0; }
+
+    // prefix returns new value
+    int c = ++a;
+    if (c != 7 || a != 7) { ok = 0; }
+
+    // in for loop
+    int sum = 0;
+    for (int i = 0; i < 5; i++) {
+        sum = sum + i;
+    }
+    if (sum != 10) { ok = 0; }
+
+    if (ok) {
+        puts("D14OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo14.c in hlasm: ++ and -- are add 1 / add -1; postfix keeps the old
+; value, prefix uses the new one. Prints "D14OK" and returns 42.
+; Output: "D14OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; int a = 5; a++; a--;
+ lc r2,5
+ add r2,1
+ CHECK cc_eq,r2,6
+ add r2,-1
+ CHECK cc_eq,r2,5
+; int b = a++;
+ mov r0,r2
+ add r2,1
+ CHECK cc_eq,r0,5
+ CHECK cc_eq,r2,6
+; int c = ++a;
+ add r2,1
+ mov r0,r2
+ CHECK cc_eq,r0,7
+ CHECK cc_eq,r2,7
+; for (i = 0; i < 5; i++) sum = sum + i;
+ lc r0,0
+ lc r2,0
+DO
+ DOEXIT cc_ge,r2,5
+ add r0,r2
+ add r2,1
+ENDDO
+ CHECK cc_eq,r0,10
+ CHECKEND "D14OK\n",42
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D14OK
+r0=42
+```
+
+### demo15: the ternary operator
+
+[`demo15.c`](../../sw-cor24-x-tinyc/demos/demo15.c) (37 lines; 244 lines of tc24r assembly) →
+[`demos/tinyc/demo15.hlasm`](../demos/tinyc/demo15.hlasm) (65 lines).
+Macros: `IF`/`ELSEIF`/`ELSE`, `cc_gt`, `cc_le`, `CALL`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo15 -- ternary operator (? :)
+//
+// New feature:
+//   - Conditional expression: cond ? then_expr : else_expr
+//   - Right-associative, nestable
+//   - Correct C precedence (between assignment and logical-or)
+//
+// Expected: r0 = 42, UART output: "D15OK"
+
+#define UART_DATA 0xFF0100
+#define UART_STATUS 0xFF0101
+void putc(int c) { while (*(char *)UART_STATUS & 0x80) {} *(char *)UART_DATA = c; }
+void puts(char *s) { while (*s) { putc(*s); s = s + 1; } }
+
+int abs(int x) {
+    return x >= 0 ? x : -x;
+}
+
+int max(int a, int b) {
+    return a > b ? a : b;
+}
+
+int main() {
+    int ok = 1;
+
+    // basic true/false
+    if ((1 ? 42 : 0) != 42) { ok = 0; }
+    if ((0 ? 42 : 99) != 99) { ok = 0; }
+
+    // nested ternary
+    int x = 3;
+    int r = x > 5 ? 1 : x > 2 ? 2 : 3;
+    if (r != 2) { ok = 0; }
+
+    // in function
+    if (abs(-7) != 7) { ok = 0; }
+    if (abs(3) != 3) { ok = 0; }
+    if (max(10, 20) != 20) { ok = 0; }
+
+    if (ok) {
+        puts("D15OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo15.c in hlasm: the ternary operator is IF/ELSE (a nested ternary is
+; ELSEIF); abs and max are routines. Prints "D15OK" and returns 42.
+; Output: "D15OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; (1 ? 42 : 0) and (0 ? 42 : 99)
+ lc r2,1
+IF cc_ne,r2,0
+ lc r0,42
+ELSE
+ lc r0,0
+ENDIF
+ CHECK cc_eq,r0,42
+ lc r2,0
+IF cc_ne,r2,0
+ lc r0,42
+ELSE
+ lc r0,99
+ENDIF
+ CHECK cc_eq,r0,99
+; r = x > 5 ? 1 : x > 2 ? 2 : 3;  with x = 3
+ lc r2,3
+IF cc_gt,r2,5
+ lc r0,1
+ELSEIF cc_gt,r2,2
+ lc r0,2
+ELSE
+ lc r0,3
+ENDIF
+ CHECK cc_eq,r0,2
+ CALL _abs,-7
+ CHECK cc_eq,r0,7
+ CALL _abs,3
+ CHECK cc_eq,r0,3
+ CALL _max,10,20
+ CHECK cc_eq,r0,20
+ CHECKEND "D15OK\n",42
+ RET
+
+; _abs(x) = x >= 0 ? x : -x
+_abs:
+ PROLOG
+ ARG r0,1
+IF cc_lt,r0,0
+ lc r1,0
+ sub r1,r0
+ mov r0,r1
+ENDIF
+ RET
+
+; _max(a, b) = a > b ? a : b
+_max:
+ PROLOG
+ ARG r0,1
+ ARG r1,2
+IF cc_le,r0,r1
+ mov r0,r1
+ENDIF
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D15OK
+r0=42
+```
+
+### demo21: compound assignment
+
+[`demo21.c`](../../sw-cor24-x-tinyc/demos/demo21.c) (42 lines; 255 lines of tc24r assembly) →
+[`demos/tinyc/demo21.hlasm`](../demos/tinyc/demo21.hlasm) (51 lines).
+Macros: one instruction per operator, `DIV`/`MOD`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo21 -- compound assignment operators
+//
+// New features:
+//   +=, -=, *=, /=, %=, &=, |=, ^=, <<=, >>=
+//   Desugared at parse time: x += e becomes x = x + e
+//
+// Expected: r0 = 42, UART output: "D21OK"
+
+#define UART_DATA 0xFF0100
+#define UART_STATUS 0xFF0101
+void putc(int c) { while (*(char *)UART_STATUS & 0x80) {} *(char *)UART_DATA = c; }
+void puts(char *s) { while (*s) { putc(*s); s = s + 1; } }
+
+int main() {
+    int ok = 1;
+
+    int a = 10;
+    a += 5;
+    if (a != 15) { ok = 0; }
+
+    a -= 3;
+    if (a != 12) { ok = 0; }
+
+    a *= 2;
+    if (a != 24) { ok = 0; }
+
+    a /= 4;
+    if (a != 6) { ok = 0; }
+
+    a %= 4;
+    if (a != 2) { ok = 0; }
+
+    int b = 0xFF;
+    b &= 0x0F;
+    if (b != 15) { ok = 0; }
+
+    b |= 0x30;
+    if (b != 63) { ok = 0; }
+
+    b ^= 0xFF;
+    if (b != 192) { ok = 0; }
+
+    int c = 1;
+    c <<= 3;
+    if (c != 8) { ok = 0; }
+
+    c >>= 1;
+    if (c != 4) { ok = 0; }
+
+    if (ok) {
+        puts("D21OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo21.c in hlasm: each compound assignment is one instruction (or a DIV
+; or MOD call) on the register holding the variable. Prints "D21OK" and
+; returns 42. Output: "D21OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY rt
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; a = 10; a += 5; a -= 3; a *= 2; a /= 4; a %= 4;
+ lc r2,10
+ add r2,5
+ CHECK cc_eq,r2,15
+ add r2,-3
+ CHECK cc_eq,r2,12
+ lc r1,2
+ mul r2,r1
+ CHECK cc_eq,r2,24
+ DIV r2,4
+ mov r2,r0
+ CHECK cc_eq,r2,6
+ MOD r2,4
+ mov r2,r0
+ CHECK cc_eq,r2,2
+; b = 0xFF; b &= 0x0F; b |= 0x30; b ^= 0xFF;
+ la r2,0xFF
+ lc r1,0x0F
+ and r2,r1
+ CHECK cc_eq,r2,15
+ lc r1,0x30
+ or r2,r1
+ CHECK cc_eq,r2,63
+ la r1,0xFF
+ xor r2,r1
+ CHECK cc_eq,r2,192
+; c = 1; c <<= 3; c >>= 1;
+ lc r2,1
+ lc r1,3
+ shl r2,r1
+ CHECK cc_eq,r2,8
+ lc r1,1
+ sra r2,r1
+ CHECK cc_eq,r2,4
+ CHECKEND "D21OK\n",42
+ RET
+COPY svc_bare_code
+COPY rt_code
+```
+
+Output:
+
+```
+D21OK
+r0=42
+```
+
+### demo26: switch/case
+
+[`demo26.c`](../../sw-cor24-x-tinyc/demos/demo26.c) (84 lines; 420 lines of tc24r assembly) →
+[`demos/tinyc/demo26.hlasm`](../demos/tinyc/demo26.hlasm) (87 lines).
+Macros: `SELECT`/`WHEN`/`OTHERWISE`, `RETURN` inside `WHEN`, range tests for fall-through.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo26 -- switch/case
+//
+// New features:
+//   - switch (expr) { case V: ... break; default: ... }
+//   - fall-through between cases
+//   - break exits switch (not enclosing loop)
+//
+// Expected: r0 = 42, UART output: "D26OK"
+
+#define UART_DATA 0xFF0100
+#define UART_STATUS 0xFF0101
+void putc(int c) { while (*(char *)UART_STATUS & 0x80) {} *(char *)UART_DATA = c; }
+void puts(char *s) { while (*s) { putc(*s); s = s + 1; } }
+
+int classify(int x) {
+    switch (x) {
+        case 0:
+            return 10;
+        case 1:
+            return 20;
+        case 2:
+            return 30;
+        default:
+            return 99;
+    }
+}
+
+int main() {
+    int ok = 1;
+
+    // basic case matching
+    if (classify(0) != 10) ok = 0;
+    if (classify(1) != 20) ok = 0;
+    if (classify(2) != 30) ok = 0;
+    if (classify(3) != 99) ok = 0;
+
+    // switch with break (no fall-through)
+    int result = 0;
+    int val = 2;
+    switch (val) {
+        case 1:
+            result = 11;
+            break;
+        case 2:
+            result = 22;
+            break;
+        case 3:
+            result = 33;
+            break;
+    }
+    if (result != 22) ok = 0;
+
+    // fall-through behavior
+    int count = 0;
+    switch (1) {
+        case 1:
+            count = count + 1;
+        case 2:
+            count = count + 1;
+        case 3:
+            count = count + 1;
+            break;
+        default:
+            count = 100;
+    }
+    if (count != 3) ok = 0;
+
+    // switch inside a loop -- break targets switch, not loop
+    int sum = 0;
+    int i = 0;
+    while (i < 4) {
+        switch (i) {
+            case 0:
+                sum = sum + 1;
+                break;
+            case 1:
+                sum = sum + 10;
+                break;
+            default:
+                sum = sum + 100;
+                break;
+        }
+        i = i + 1;
+    }
+    if (sum != 211) ok = 0;
+
+    if (ok) {
+        puts("D26OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo26.c in hlasm: switch is SELECT/WHEN/OTHERWISE. A WHEN arm never
+; falls into the next one, so the C fall-through case is written as the
+; range tests it amounts to. Prints "D26OK" and returns 42.
+; Output: "D26OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+ CALL _classify,0
+ CHECK cc_eq,r0,10
+ CALL _classify,1
+ CHECK cc_eq,r0,20
+ CALL _classify,2
+ CHECK cc_eq,r0,30
+ CALL _classify,3
+ CHECK cc_eq,r0,99
+; switch (val) with breaks, val = 2
+ lc r0,0
+ lc r2,2
+SELECT r2
+WHEN 1
+ lc r0,11
+WHEN 2
+ lc r0,22
+WHEN 3
+ lc r0,33
+ENDSEL
+ CHECK cc_eq,r0,22
+; switch (1) where cases 1 and 2 fall through to 3: entering at case k
+; runs every case from k to 3; any other value runs the default
+ lc r0,0
+ lc r2,1
+IF cc_ge,r2,1
+IF cc_le,r2,3
+IF cc_le,r2,1
+ add r0,1
+ENDIF
+IF cc_le,r2,2
+ add r0,1
+ENDIF
+ add r0,1
+ELSE
+ lc r0,100
+ENDIF
+ELSE
+ lc r0,100
+ENDIF
+ CHECK cc_eq,r0,3
+; a switch inside a loop
+ lc r0,0
+ lc r2,0
+DO
+ DOEXIT cc_ge,r2,4
+SELECT r2
+WHEN 0
+ add r0,1
+WHEN 1
+ add r0,10
+OTHERWISE
+ add r0,100
+ENDSEL
+ add r2,1
+ENDDO
+ la r1,211
+ CHECK cc_eq,r0,r1
+ CHECKEND "D26OK\n",42
+ RET
+
+; _classify(x): 0 -> 10, 1 -> 20, 2 -> 30, otherwise 99
+_classify:
+ PROLOG
+ ARG r0,1
+SELECT r0
+WHEN 0
+ RETURN 10
+WHEN 1
+ RETURN 20
+WHEN 2
+ RETURN 30
+OTHERWISE
+ RETURN 99
+ENDSEL
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D26OK
+r0=42
+```
+
+### demo46: signed and unsigned comparisons and shifts
+
+[`demo46.c`](../../sw-cor24-x-tinyc/demos/demo46.c) (60 lines; 262 lines of tc24r assembly) →
+[`demos/tinyc/demo46.hlasm`](../demos/tinyc/demo46.hlasm) (44 lines).
+Macros: `sra`/`srl`, `cc_lt`/`cc_le`, `cc_lu`/`cc_gtu`/`cc_geu`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo46 -- unsigned int, signed/unsigned shifts and comparisons
+//
+// Tests:
+//   1. unsigned int declaration and arithmetic
+//   2. Arithmetic right shift (>>) on signed int (sign-extends)
+//   3. Logical right shift (>>) on unsigned int (zero-fills)
+//   4. Signed comparison (< > <= >=) on negative values
+//   5. Unsigned comparison (< > <= >=) treats all values as positive
+//   6. Mixed signed/unsigned in expressions
+
+void putc_uart(int ch) {
+    while (*(char *)0xFF0101 & 0x80) {}
+    *(char *)0xFF0100 = ch;
+}
+
+int ok;
+
+void check(int cond, int id) {
+    if (!cond) {
+        ok = 0;
+        putc_uart(70);   // 'F'
+        putc_uart(48 + id);
+    }
+}
+
+int main() {
+    ok = 1;
+
+    // --- signed right shift (arithmetic: sign-extends) ---
+    int s = -84;
+    int shr_s = s >> 2;
+    check(shr_s == -21, 1);       // -84 >> 2 = -21 (arithmetic)
+
+    // --- unsigned right shift (logical: zero-fills) ---
+    unsigned int u = 0x7FFFAC;    // large positive (fits 24-bit unsigned)
+    unsigned int shr_u = u >> 4;
+    check(shr_u == 0x07FFFA, 2);  // logical shift, no sign extension
+
+    // --- unsigned wrapping: 0 - 1 wraps to max ---
+    unsigned int zero = 0;
+    unsigned int wrapped = zero - 1;  // should be 0xFFFFFF (16777215)
+    check(wrapped == 16777215, 3);
+
+    // --- signed comparison: -1 < 0 ---
+    int neg = -1;
+    check(neg < 0, 4);
+    check(neg <= 0, 5);
+
+    // --- unsigned comparison: (unsigned)-1 > 0 ---
+    // In unsigned, -1 cast is 0xFFFFFF which is > 0
+    unsigned int big = 16777215;  // 0xFFFFFF
+    check(big > 0, 6);
+    check(big >= 1, 7);
+
+    // --- unsigned < : 5 < 10 ---
+    unsigned int a = 5;
+    unsigned int b = 10;
+    check(a < b, 8);
+    check(b > a, 9);
+
+    if (ok == 1) {
+        putc_uart(68);  // 'D'
+        putc_uart(52);  // '4'
+        putc_uart(54);  // '6'
+        putc_uart(79);  // 'O'
+        putc_uart(75);  // 'K'
+        putc_uart(10);
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo46.c in hlasm: signed and unsigned values. sra and srl are the
+; arithmetic and logical right shifts; cc_lt/cc_le compare signed and
+; cc_lu/cc_gtu/cc_geu unsigned. Prints "D46OK" and returns 42.
+; Output: "D46OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; -84 >> 2 == -21 (arithmetic shift)
+ lc r2,-84
+ lc r1,2
+ sra r2,r1
+ CHECK cc_eq,r2,-21
+; 0x7FFFAC >> 4 == 0x07FFFA (logical shift)
+ la r2,0x7FFFAC
+ lc r1,4
+ srl r2,r1
+ CHECK cc_eq,r2,0x07FFFA
+; unsigned 0 - 1 == 0xFFFFFF
+ lc r2,0
+ add r2,-1
+ CHECK cc_eq,r2,16777215
+; signed: -1 < 0, -1 <= 0
+ lc r2,-1
+ CHECK cc_lt,r2,0
+ CHECK cc_le,r2,0
+; unsigned: 0xFFFFFF > 0, >= 1
+ la r2,16777215
+ CHECK cc_gtu,r2,0
+ CHECK cc_geu,r2,1
+; unsigned 5 < 10, 10 > 5
+ lc r2,5
+ lc r0,10
+ CHECK cc_lu,r2,r0
+ lc r0,10
+ CHECK cc_gtu,r0,r2
+ CHECKEND "D46OK\n",42
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D46OK
+r0=42
 ```
 

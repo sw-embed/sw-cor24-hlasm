@@ -1,0 +1,36 @@
+; demo12.c in hlasm: do...while runs its body at least once (DO with the
+; exit test at the end); a while loop whose condition is false never runs.
+; Prints "D12OK" and returns 42. Output: "D12OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; do { ran = 1; } while (0);
+ lc r2,0
+DO
+ lc r2,1
+ DOEXIT
+ENDDO
+ CHECK cc_eq,r2,1
+; do { i = i + 1; } while (i < 5);
+ lc r2,0
+DO
+ add r2,1
+ DOEXIT cc_ge,r2,5
+ENDDO
+ CHECK cc_eq,r2,5
+; while (j > 100) { j = 999; }
+ lc r2,0
+DO
+ DOEXIT cc_le,r2,100
+ la r2,999
+ENDDO
+ CHECK cc_eq,r2,0
+ CHECKEND "D12OK\n",42
+ RET
+COPY svc_bare_code

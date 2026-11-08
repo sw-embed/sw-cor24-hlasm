@@ -1,0 +1,55 @@
+; demo11.c in hlasm: && and || with short-circuit evaluation. hlasm has no
+; compound conditions yet, so two demo-local macros build them from nested
+; IFs, setting r2 to 0 or 1 and evaluating b only when it matters.
+; Prints "D11OK" and returns 42. Output: "D11OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+
+; AND2 a,b: r2 = (a && b); OR2 a,b: r2 = (a || b). a and b are registers
+; (other than r2 for b) or constants.
+MACRO AND2 &A,&B
+ LOADR r0,&A
+ lc r2,0
+IF cc_ne,r0,0
+ LOADR r0,&B
+IF cc_ne,r0,0
+ lc r2,1
+ENDIF
+ENDIF
+MEND
+
+MACRO OR2 &A,&B
+ LOADR r0,&A
+ lc r2,1
+IF cc_eq,r0,0
+ LOADR r0,&B
+IF cc_eq,r0,0
+ lc r2,0
+ENDIF
+ENDIF
+MEND
+
+ START
+_main:
+ PROLOG
+ CHECKINIT
+ AND2 1,2
+ CHECK cc_eq,r2,1
+ AND2 0,1
+ CHECK cc_eq,r2,0
+ OR2 1,0
+ CHECK cc_eq,r2,1
+ OR2 0,0
+ CHECK cc_eq,r2,0
+ OR2 0,5
+ CHECK cc_eq,r2,1
+; (1 && 0) || 1
+ AND2 1,0
+ OR2 r2,1
+ CHECK cc_eq,r2,1
+ CHECKEND "D11OK\n",42
+ RET
+COPY svc_bare_code

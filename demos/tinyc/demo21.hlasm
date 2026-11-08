@@ -1,0 +1,51 @@
+; demo21.c in hlasm: each compound assignment is one instruction (or a DIV
+; or MOD call) on the register holding the variable. Prints "D21OK" and
+; returns 42. Output: "D21OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY rt
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; a = 10; a += 5; a -= 3; a *= 2; a /= 4; a %= 4;
+ lc r2,10
+ add r2,5
+ CHECK cc_eq,r2,15
+ add r2,-3
+ CHECK cc_eq,r2,12
+ lc r1,2
+ mul r2,r1
+ CHECK cc_eq,r2,24
+ DIV r2,4
+ mov r2,r0
+ CHECK cc_eq,r2,6
+ MOD r2,4
+ mov r2,r0
+ CHECK cc_eq,r2,2
+; b = 0xFF; b &= 0x0F; b |= 0x30; b ^= 0xFF;
+ la r2,0xFF
+ lc r1,0x0F
+ and r2,r1
+ CHECK cc_eq,r2,15
+ lc r1,0x30
+ or r2,r1
+ CHECK cc_eq,r2,63
+ la r1,0xFF
+ xor r2,r1
+ CHECK cc_eq,r2,192
+; c = 1; c <<= 3; c >>= 1;
+ lc r2,1
+ lc r1,3
+ shl r2,r1
+ CHECK cc_eq,r2,8
+ lc r1,1
+ sra r2,r1
+ CHECK cc_eq,r2,4
+ CHECKEND "D21OK\n",42
+ RET
+COPY svc_bare_code
+COPY rt_code

@@ -1,0 +1,44 @@
+; demo46.c in hlasm: signed and unsigned values. sra and srl are the
+; arithmetic and logical right shifts; cc_lt/cc_le compare signed and
+; cc_lu/cc_gtu/cc_geu unsigned. Prints "D46OK" and returns 42.
+; Output: "D46OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; -84 >> 2 == -21 (arithmetic shift)
+ lc r2,-84
+ lc r1,2
+ sra r2,r1
+ CHECK cc_eq,r2,-21
+; 0x7FFFAC >> 4 == 0x07FFFA (logical shift)
+ la r2,0x7FFFAC
+ lc r1,4
+ srl r2,r1
+ CHECK cc_eq,r2,0x07FFFA
+; unsigned 0 - 1 == 0xFFFFFF
+ lc r2,0
+ add r2,-1
+ CHECK cc_eq,r2,16777215
+; signed: -1 < 0, -1 <= 0
+ lc r2,-1
+ CHECK cc_lt,r2,0
+ CHECK cc_le,r2,0
+; unsigned: 0xFFFFFF > 0, >= 1
+ la r2,16777215
+ CHECK cc_gtu,r2,0
+ CHECK cc_geu,r2,1
+; unsigned 5 < 10, 10 > 5
+ lc r2,5
+ lc r0,10
+ CHECK cc_lu,r2,r0
+ lc r0,10
+ CHECK cc_gtu,r0,r2
+ CHECKEND "D46OK\n",42
+ RET
+COPY svc_bare_code

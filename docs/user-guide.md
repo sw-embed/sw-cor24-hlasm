@@ -511,7 +511,25 @@ _hlif_2_end:
 ### DO / DOEXIT / ITERATE / ENDDO
 
 `DO` ... `ENDDO` loops forever; `DOEXIT cc, reg, value` leaves the loop when
-the condition is true, and `ITERATE` jumps back to the top.
+the condition is true, and `ITERATE` jumps back to the top. `DOEXIT` with no
+condition leaves unconditionally (C's `break`). Both may sit inside an `IF`
+in the loop and apply to the innermost `DO`:
+
+```
+DO
+ add r0,1
+IF cc_lt, r0, 3
+ ITERATE              ; continue
+ENDIF
+IF cc_ge, r0, 5
+ DOEXIT               ; break
+ENDIF
+ENDDO
+```
+
+C's `while (c)` puts the `DOEXIT` first, `do ... while (c)` puts it last, and
+a `for` loop whose body uses `continue` puts the increment at the top so
+`ITERATE` still runs it.
 
 ```
  lc r0,0

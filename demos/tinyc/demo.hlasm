@@ -1,0 +1,96 @@
+; demo.c in hlasm: calls, recursion (fib), while and for loops, bit
+; operations; returns 42 when every check holds (no UART output in the C).
+; Output: "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; sum = add(17, 25); counter = (sum == small)
+ CALL _add,17,25
+ mov r2,r0
+ la r1,_counter
+IF cc_eq,r2,42
+ lc r0,1
+ELSE
+ lc r0,0
+ENDIF
+ sw r0,0(r1)
+ CHECK cc_eq,r2,42
+; total = 1 + ... + 5 (while), then + 6 + ... + 10 (for)
+ lc r0,0
+ lc r2,1
+DO
+ DOEXIT cc_gt,r2,5
+ add r0,r2
+ add r2,1
+ENDDO
+ lc r2,6
+DO
+ DOEXIT cc_gt,r2,10
+ add r0,r2
+ add r2,1
+ENDDO
+ CHECK cc_eq,r0,55
+; f = fib(6)
+ CALL _fib,6
+ CHECK cc_eq,r0,13
+; b = bitops(large) (computed, not checked, as in the C)
+ CALL _bitops,1000
+; counter == 1; neg == -1; !0 == 1
+ la r1,_counter
+ lw r0,0(r1)
+ CHECK cc_eq,r0,1
+ lc r0,-1
+ CHECK cc_eq,r0,-1
+ lc r0,1
+ CHECK cc_eq,r0,1
+ CHECKEND ,42
+ RET
+ WORDS _counter,0
+
+; _add(a, b) = a + b
+_add:
+ PROLOG
+ ARG r0,1
+ ARG r1,2
+ add r0,r1
+ RET
+
+; _fib(n) = 1 if n < 2, else fib(n-1) + fib(n-2)
+_fib:
+ LOCAL F1,3
+ PROLOG
+ ARG r2,1
+IF cc_lt,r2,2
+ RETURN 1
+ENDIF
+ add r2,-1
+ CALL _fib,r2
+ sw r0,F1(fp)
+ add r2,-1
+ CALL _fib,r2
+ lw r1,F1(fp)
+ add r0,r1
+ RET
+
+; _bitops(x) = (((x & 15) | 32) ^ 7) << 1 >> 1
+_bitops:
+ PROLOG
+ ARG r0,1
+ lc r1,15
+ and r0,r1
+ lc r1,32
+ or r0,r1
+ lc r1,7
+ xor r0,r1
+ lc r1,1
+ shl r0,r1
+ sra r0,r1
+ RET
+COPY svc_bare_code

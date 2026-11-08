@@ -1,0 +1,72 @@
+; demo13.c in hlasm: break is DOEXIT, continue is ITERATE, in while and for
+; loops. In a for loop the increment must still run on continue, so it goes
+; at the top of the loop. Prints "D13OK" and returns 42.
+; Output: "D13OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY rt
+SET SHOWRC,1
+ START
+_main:
+ LOCAL SUM,3
+ PROLOG
+ CHECKINIT
+; while (1) { if (i == 5) break; i = i + 1; }
+ lc r2,0
+DO
+IF cc_eq,r2,5
+ DOEXIT
+ENDIF
+ add r2,1
+ENDDO
+ CHECK cc_eq,r2,5
+; while (j < 10) { j = j + 1; if (j % 2 == 0) continue; sum = sum + j; }
+ lc r0,0
+ sw r0,SUM(fp)
+ lc r2,0
+DO
+ DOEXIT cc_ge,r2,10
+ add r2,1
+ MOD r2,2
+IF cc_eq,r0,0
+ ITERATE
+ENDIF
+ lw r0,SUM(fp)
+ add r0,r2
+ sw r0,SUM(fp)
+ENDDO
+ lw r0,SUM(fp)
+ CHECK cc_eq,r0,25
+; for (k = 0; k < 100; k = k + 1) { if (k == 3) break; }
+ lc r2,0
+DO
+ DOEXIT cc_ge,r2,100
+IF cc_eq,r2,3
+ DOEXIT
+ENDIF
+ add r2,1
+ENDDO
+ CHECK cc_eq,r2,3
+; for (n = 1; n <= 5; n = n + 1) { if (n % 2 == 0) continue; total += n; }
+ lc r0,0
+ sw r0,SUM(fp)
+ lc r2,0
+DO
+ add r2,1
+ DOEXIT cc_gt,r2,5
+ MOD r2,2
+IF cc_eq,r0,0
+ ITERATE
+ENDIF
+ lw r0,SUM(fp)
+ add r0,r2
+ sw r0,SUM(fp)
+ENDDO
+ lw r0,SUM(fp)
+ CHECK cc_eq,r0,9
+ CHECKEND "D13OK\n",42
+ RET
+COPY svc_bare_code
+COPY rt_code

@@ -108,6 +108,8 @@ each has a reg-rs test (`hlasm_limit_*`) at the limit and one past it.
 | D11 | cor24-asm rejects label arithmetic in `.word` (`.word mark+3` in d33 passes through hlasm but has never been assembled) | found writing d41 | open: an assembler limitation, not hlasm; d33 only checks hlasm's text |
 | D12 | A conditional nested inside a skipped conditional was evaluated on its own, so a true inner IFDEF/IFEQ/IFNE (or an ELSEASM) turned output back on inside the skipped block | found writing d42 | **fixed (step 6):** a conditional pushed inside a skipped region gets state 2 (skipped by its parent), which ELSEASM does not flip |
 | D13 | Indented `.space n` and `.fill n,v` (as in any macro body) emitted nothing: the handlers read the operand at a fixed column | found writing the macro library (`SPACE`) | **fixed (step 11):** both skip leading blanks before the directive |
+| D14 | `DOEXIT` with no condition (C's `break`) had no lowering: it emitted a compare with empty operands (and since step 10 stopped with "unknown structured condition") | found porting demo12/demo13 | **fixed (step 13):** `DOEXIT` alone jumps to the loop end unconditionally, also from inside an IF |
+| D15 | A compare constant such as 16777215 (-1 in 24 bits) passed the `lc` range test by wrapping, so `lc r2,16777215` reached cor24-asm, which rejects it | found porting demo46 | **fixed (step 13):** a constant written without `-` uses `lc` only for 0..127, otherwise `la` |
 
 ## Language gaps
 

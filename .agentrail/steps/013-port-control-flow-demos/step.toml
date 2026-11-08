@@ -1,6 +1,6 @@
 number = 13
 slug = "port-control-flow-demos"
-status = "pending"
+status = "in-progress"
 description = "Port the tiny-C demos centred on if/else, while, do-while, for, break/continu..."
 role = "production"
 context_files = []

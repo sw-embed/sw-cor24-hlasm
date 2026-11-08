@@ -1,0 +1,40 @@
+; demo14.c in hlasm: ++ and -- are add 1 / add -1; postfix keeps the old
+; value, prefix uses the new one. Prints "D14OK" and returns 42.
+; Output: "D14OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; int a = 5; a++; a--;
+ lc r2,5
+ add r2,1
+ CHECK cc_eq,r2,6
+ add r2,-1
+ CHECK cc_eq,r2,5
+; int b = a++;
+ mov r0,r2
+ add r2,1
+ CHECK cc_eq,r0,5
+ CHECK cc_eq,r2,6
+; int c = ++a;
+ add r2,1
+ mov r0,r2
+ CHECK cc_eq,r0,7
+ CHECK cc_eq,r2,7
+; for (i = 0; i < 5; i++) sum = sum + i;
+ lc r0,0
+ lc r2,0
+DO
+ DOEXIT cc_ge,r2,5
+ add r0,r2
+ add r2,1
+ENDDO
+ CHECK cc_eq,r0,10
+ CHECKEND "D14OK\n",42
+ RET
+COPY svc_bare_code

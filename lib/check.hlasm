@@ -29,13 +29,15 @@ ELSE
 ENDIF
 MEND
 
-; CHECKEND "text",rc -- if every CHECK held, write text and set r0 = rc
-; (a register, constant or label); otherwise r0 = 0.
+; CHECKEND ["text"],rc -- if every CHECK held, write text (if given) and set
+; r0 = rc (r2, a constant or a label); otherwise r0 = 0.
 MACRO CHECKEND &T,&RC
  la r1,_chk_ok
  lw r0,0(r1)
 IF cc_ne,r0,0
+IFDIFF &T,
  WTO &T
+ENDIFASM
  LOADR r0,&RC
 ELSE
  lc r0,0

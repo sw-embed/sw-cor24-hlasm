@@ -1,0 +1,88 @@
+; demo26.c in hlasm: switch is SELECT/WHEN/OTHERWISE. A WHEN arm never
+; falls into the next one, so the C fall-through case is written as the
+; range tests it amounts to. Prints "D26OK" and returns 42.
+; Output: "D26OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+ CALL _classify,0
+ CHECK cc_eq,r0,10
+ CALL _classify,1
+ CHECK cc_eq,r0,20
+ CALL _classify,2
+ CHECK cc_eq,r0,30
+ CALL _classify,3
+ CHECK cc_eq,r0,99
+; switch (val) with breaks, val = 2
+ lc r0,0
+ lc r2,2
+SELECT r2
+WHEN 1
+ lc r0,11
+WHEN 2
+ lc r0,22
+WHEN 3
+ lc r0,33
+ENDSEL
+ CHECK cc_eq,r0,22
+; switch (1) where cases 1 and 2 fall through to 3: entering at case k
+; runs every case from k to 3; any other value runs the default
+ lc r0,0
+ lc r2,1
+IF cc_ge,r2,1
+IF cc_le,r2,3
+IF cc_le,r2,1
+ add r0,1
+ENDIF
+IF cc_le,r2,2
+ add r0,1
+ENDIF
+ add r0,1
+ELSE
+ lc r0,100
+ENDIF
+ELSE
+ lc r0,100
+ENDIF
+ CHECK cc_eq,r0,3
+; a switch inside a loop
+ lc r0,0
+ lc r2,0
+DO
+ DOEXIT cc_ge,r2,4
+SELECT r2
+WHEN 0
+ add r0,1
+WHEN 1
+ add r0,10
+OTHERWISE
+ add r0,100
+ENDSEL
+ add r2,1
+ENDDO
+ la r1,211
+ CHECK cc_eq,r0,r1
+ CHECKEND "D26OK\n",42
+ RET
+
+; _classify(x): 0 -> 10, 1 -> 20, 2 -> 30, otherwise 99
+_classify:
+ PROLOG
+ ARG r0,1
+SELECT r0
+WHEN 0
+ RETURN 10
+WHEN 1
+ RETURN 20
+WHEN 2
+ RETURN 30
+OTHERWISE
+ RETURN 99
+ENDSEL
+COPY svc_bare_code

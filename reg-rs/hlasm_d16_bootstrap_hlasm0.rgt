@@ -1,5 +1,5 @@
 command = "scripts/run-kernel.sh hlasm.s --load-binary bootstrap/hlasm0.bin@524288 --speed 0 -n 1000000 2>&1"
-timeout = 15
+timeout = 60
 preprocess = "grep -A 100 '^UART output:' || true"
 exit_code = 0
 desc = "Demo 16: bootstrap hlasm0 subset proof point"

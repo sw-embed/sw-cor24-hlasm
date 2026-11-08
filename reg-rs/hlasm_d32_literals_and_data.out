@@ -1,4 +1,4 @@
-Loaded 22526 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.s3ts6bahrS/hlasm.lgo
+Loaded 22578 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.Z3xUFsrJdr/hlasm.lgo
 Loaded 347 bytes from 'demos/d32_literals_and_data.bin' at 0x080000
 [UART TX @ 290000] ';'  (0x3B)
 [UART TX @ 290000] ' '  (0x20)
@@ -455,22 +455,22 @@ Loaded 347 bytes from 'demos/d32_literals_and_data.bin' at 0x080000
 [UART TX @ 410000] '.'  (0x2E)
 [UART TX @ 410000] 'b'  (0x62)
 [UART TX @ 410000] 'y'  (0x79)
-[UART TX @ 410000] 't'  (0x74)
-[UART TX @ 411468] 'e'  (0x65)
-[UART TX @ 411468] ' '  (0x20)
-[UART TX @ 411468] '1'  (0x31)
-[UART TX @ 411468] '2'  (0x32)
-[UART TX @ 411468] '7'  (0x37)
-[UART TX @ 411468] ','  (0x2C)
-[UART TX @ 411468] '1'  (0x31)
-[UART TX @ 411468] '2'  (0x32)
-[UART TX @ 411468] '7'  (0x37)
-[UART TX @ 411468] ','  (0x2C)
-[UART TX @ 411468] '1'  (0x31)
-[UART TX @ 411468] '2'  (0x32)
-[UART TX @ 411468] '7'  (0x37)
-[UART TX @ 411468] ''  (0x0D)
-[UART TX @ 411468] '\n'
+[UART TX @ 411488] 't'  (0x74)
+[UART TX @ 411488] 'e'  (0x65)
+[UART TX @ 411488] ' '  (0x20)
+[UART TX @ 411488] '1'  (0x31)
+[UART TX @ 411488] '2'  (0x32)
+[UART TX @ 411488] '7'  (0x37)
+[UART TX @ 411488] ','  (0x2C)
+[UART TX @ 411488] '1'  (0x31)
+[UART TX @ 411488] '2'  (0x32)
+[UART TX @ 411488] '7'  (0x37)
+[UART TX @ 411488] ','  (0x2C)
+[UART TX @ 411488] '1'  (0x31)
+[UART TX @ 411488] '2'  (0x32)
+[UART TX @ 411488] '7'  (0x37)
+[UART TX @ 411488] ''  (0x0D)
+[UART TX @ 411488] '\n'
 
 UART output: ; Demo 32: richer literals and lowered data directives
 
@@ -510,4 +510,4 @@ _hlsel_4_end:
 .byte 127,127,127
 
 
-Executed 411468 instructions
+Executed 411488 instructions

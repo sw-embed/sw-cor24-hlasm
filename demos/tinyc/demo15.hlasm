@@ -1,0 +1,67 @@
+; demo15.c in hlasm: the ternary operator is IF/ELSE (a nested ternary is
+; ELSEIF); abs and max are routines. Prints "D15OK" and returns 42.
+; Output: "D15OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; (1 ? 42 : 0) and (0 ? 42 : 99)
+ lc r2,1
+IF cc_ne,r2,0
+ lc r0,42
+ELSE
+ lc r0,0
+ENDIF
+ CHECK cc_eq,r0,42
+ lc r2,0
+IF cc_ne,r2,0
+ lc r0,42
+ELSE
+ lc r0,99
+ENDIF
+ CHECK cc_eq,r0,99
+; r = x > 5 ? 1 : x > 2 ? 2 : 3;  with x = 3
+ lc r2,3
+IF cc_gt,r2,5
+ lc r0,1
+ELSEIF cc_gt,r2,2
+ lc r0,2
+ELSE
+ lc r0,3
+ENDIF
+ CHECK cc_eq,r0,2
+ CALL _abs,-7
+ CHECK cc_eq,r0,7
+ CALL _abs,3
+ CHECK cc_eq,r0,3
+ CALL _max,10,20
+ CHECK cc_eq,r0,20
+ CHECKEND "D15OK\n",42
+ RET
+
+; _abs(x) = x >= 0 ? x : -x
+_abs:
+ PROLOG
+ ARG r0,1
+IF cc_lt,r0,0
+ lc r1,0
+ sub r1,r0
+ mov r0,r1
+ENDIF
+ RET
+
+; _max(a, b) = a > b ? a : b
+_max:
+ PROLOG
+ ARG r0,1
+ ARG r1,2
+IF cc_le,r0,r1
+ mov r0,r1
+ENDIF
+ RET
+COPY svc_bare_code

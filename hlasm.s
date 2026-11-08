@@ -3246,11 +3246,26 @@ _emit_inst2:
 	la	r0,_atoi
 	jal	r1,(r0)
 	add	sp,3
+; a constant written without '-' fits only if it is 0..127 (16777215 is -1
+; in 24 bits, but cor24-asm rejects lc r0,16777215)
+	lw	r1,6(fp)
+	lbu	r1,0(r1)
+	push	r2
+	lc	r2,45
+	ceq	r1,r2
+	pop	r2
+	brt	_ei2_neg
+	la	r1,128
+	clu	r0,r1
+	brt	_ei2_ceq
+	bra	_ei2_use_la
+_ei2_neg:
 	la	r1,128
 	add	r0,r1
 	la	r1,256
 	clu	r0,r1
 	brt	_ei2_ceq
+_ei2_use_la:
 	la	r0,_la_txt
 	sw	r0,12(fp)
 
@@ -10757,6 +10772,24 @@ _emit_struct_branch_if_true:
 ; -3 temp register (0 = none), -6 skip label id, -9 condition code (_cc_info)
 	add	sp,-9
 
+; no condition (DOEXIT alone, C's break): jump to the target unconditionally
+	la	r1,197648
+	lbu	r0,0(r1)
+	ceq	r0,z
+	brf	_esbf_has_cc
+	la	r0,_jmp_txt
+	push	r0
+	lw	r0,12(fp)
+	push	r0
+	lw	r0,9(fp)
+	push	r0
+	la	r0,_emit_do_branch_label
+	jal	r1,(r0)
+	add	sp,9
+	la	r1,_esbf_ret
+	jmp	(r1)
+
+_esbf_has_cc:
 	la	r0,_alloc_struct_label_id
 	jal	r1,(r0)
 	sw	r0,-6(fp)
