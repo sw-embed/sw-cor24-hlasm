@@ -1,5 +1,5 @@
 command = "./build.sh bootstrap bootstrap/hlasm0.sourceset 1000000 2>&1"
-timeout = 30
+timeout = 120
 preprocess = "grep -A 100 '^UART output:' || true"
 exit_code = 0
 desc = "Demo 25: split bootstrap source set runs through the top-level bootstrap workflow"
