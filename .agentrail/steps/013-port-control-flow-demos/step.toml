@@ -1,8 +1,9 @@
 number = 13
 slug = "port-control-flow-demos"
-status = "in-progress"
+status = "completed"
 description = "Port the tiny-C demos centred on if/else, while, do-while, for, break/continu..."
 role = "production"
 context_files = []
 created_at = "2026-10-30T09:59:16"
-commits = []
+completed_at = "2026-11-07T17:41:41"
+commits = ["dc38c5d9c8eb69062e2b56fa95ae0c17a474a987"]

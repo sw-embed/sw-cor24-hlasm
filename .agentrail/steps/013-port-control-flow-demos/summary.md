@@ -1,0 +1,1 @@
+Ported 10 control-flow demos (demo, demo4, demo11, demo12, demo13, demo14, demo15, demo21, demo26, demo46) with hlasm_e2e_tinyc_* tests and doc entries. Fixed D14 (operand-less DOEXIT = break) and D15 (lc with large unsigned compare constants). CHECKEND text optional; test timeouts 15s->60s. 105/105 pass.
