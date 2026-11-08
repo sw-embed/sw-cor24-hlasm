@@ -1,0 +1,8 @@
+number = 14
+slug = "compound-conditions"
+status = "pending"
+description = "Implement M5 from docs/limits-and-lifting-plan.md: compound conditions in IF/..."
+role = "production"
+context_files = []
+created_at = "2026-11-07T17:42:35"
+commits = []

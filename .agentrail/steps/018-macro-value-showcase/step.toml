@@ -1,4 +1,4 @@
-number = 16
+number = 18
 slug = "macro-value-showcase"
 status = "pending"
 description = "Finish docs/c-demos-in-hlasm.md as the showcase: for several ported examples,..."

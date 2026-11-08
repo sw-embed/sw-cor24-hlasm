@@ -1,0 +1,8 @@
+number = 16
+slug = "dsect-field"
+status = "pending"
+description = "Implement M6 from docs/limits-and-lifting-plan.md: DSECT name / FIELD name,si..."
+role = "production"
+context_files = []
+created_at = "2026-11-07T17:42:35"
+commits = []
