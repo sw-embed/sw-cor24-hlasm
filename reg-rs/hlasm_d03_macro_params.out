@@ -1,4 +1,4 @@
-Loaded 22510 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.mzTv2wH7Jd/hlasm.lgo
+Loaded 23542 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.NTMoIIZsmP/hlasm.lgo
 Loaded 64 bytes from 'demos/d03_macro_params.bin' at 0x080000
 [UART TX @ 170000] ' '  (0x20)
 [UART TX @ 170000] 'p'  (0x70)
@@ -9,7 +9,7 @@ Loaded 64 bytes from 'demos/d03_macro_params.bin' at 0x080000
 [UART TX @ 170000] 'r'  (0x72)
 [UART TX @ 170000] '0'  (0x30)
 [UART TX @ 170000] ''  (0x0D)
-[UART TX @ 170000] '\n'
+[UART TX @ 180000] '\n'
 [UART TX @ 180000] ' '  (0x20)
 [UART TX @ 180000] 'p'  (0x70)
 [UART TX @ 180000] 'u'  (0x75)
@@ -30,16 +30,16 @@ Loaded 64 bytes from 'demos/d03_macro_params.bin' at 0x080000
 [UART TX @ 190000] '2'  (0x32)
 [UART TX @ 190000] ''  (0x0D)
 [UART TX @ 190000] '\n'
-[UART TX @ 194935] ' '  (0x20)
-[UART TX @ 194935] 'p'  (0x70)
-[UART TX @ 194935] 'u'  (0x75)
-[UART TX @ 194935] 's'  (0x73)
-[UART TX @ 194935] 'h'  (0x68)
-[UART TX @ 194935] ' '  (0x20)
-[UART TX @ 194935] 'r'  (0x72)
-[UART TX @ 194935] '3'  (0x33)
-[UART TX @ 194935] ''  (0x0D)
-[UART TX @ 194935] '\n'
+[UART TX @ 195605] ' '  (0x20)
+[UART TX @ 195605] 'p'  (0x70)
+[UART TX @ 195605] 'u'  (0x75)
+[UART TX @ 195605] 's'  (0x73)
+[UART TX @ 195605] 'h'  (0x68)
+[UART TX @ 195605] ' '  (0x20)
+[UART TX @ 195605] 'r'  (0x72)
+[UART TX @ 195605] '3'  (0x33)
+[UART TX @ 195605] ''  (0x0D)
+[UART TX @ 195605] '\n'
 
 UART output:  push r0
  push r1
@@ -47,4 +47,4 @@ UART output:  push r0
  push r3
 
 
-Executed 194935 instructions
+Executed 195605 instructions

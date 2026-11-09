@@ -26,6 +26,9 @@ every feature with examples, limits and error messages).
   `cc_eq`, `cc_ne`, `cc_lt`, `cc_le`, `cc_gt`, `cc_ge` and unsigned
   `cc_lu`, `cc_leu`, `cc_gtu`, `cc_geu`, joined with `AND` or `OR`
   (short-circuit, like C's `&&` and `||`)
+- Record layouts: `DSECT`/`USECT`/`FIELD`/`DEND` (library macros) define
+  struct and union field offsets and sizes; `ERROR 'message'` lets macros
+  reject bad arguments
 - Data conveniences: `.ascii`, `.asciz` (with `\xNN` escapes), `.space`,
   `.fill`
 - Multi-file sources: `INCLUDE` / `COPY` members through source sets (32
@@ -41,7 +44,7 @@ every feature with examples, limits and error messages).
 Done:
 
 - All the features above, each with demos and regression tests
-  (`./build.sh test`, 120 tests).
+  (`./build.sh test`, 122 tests).
 - Every limit in [docs/limits-and-lifting-plan.md](docs/limits-and-lifting-plan.md)
   that was scheduled has been lifted: 512 symbols, 256 macros, 64 KB of macro
   bodies, 32-deep nesting, 32 source members.
@@ -63,8 +66,6 @@ batch follows, then a side-by-side showcase.
 
 Not implemented yet:
 
-- `DSECT`/`FIELD` record layouts (next in this saga, before the struct ports).
-  Today, define field offsets with `EQU`.
 - A sw-tos target for the system-services macros. Only the bare-metal target
   exists.
 - hlasm written in HLASM ([docs/bootstrap-hlasm.md](docs/bootstrap-hlasm.md)).
@@ -134,7 +135,7 @@ build.sh       -- build / test / run script
 scripts/       -- run-kernel.sh: assemble a .s (cor24-asm) and run it (cor24-emu);
                   hlasm-e2e.sh: .hlasm -> hlasm -> cor24-asm -> cor24-emu, prints UART output
 demo.sh        -- demo script
-demos/         -- demo programs (d01-d44), libtest/ (macro library tests)
+demos/         -- demo programs (d01-d45), libtest/ (macro library tests)
 lib/           -- the macro library (COPY members; see docs/c-demos-in-hlasm.md)
 justfile       -- just targets
 docs/          -- user guide, architecture, plans

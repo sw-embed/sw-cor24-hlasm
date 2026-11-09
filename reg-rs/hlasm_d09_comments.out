@@ -1,4 +1,4 @@
-Loaded 22510 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.mRSd3YgNc9/hlasm.lgo
+Loaded 23542 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.w2XUD8WjG8/hlasm.lgo
 Loaded 84 bytes from 'demos/d09_comments.bin' at 0x080000
 [UART TX @ 160000] 'n'  (0x6E)
 [UART TX @ 160000] 'o'  (0x6F)
@@ -37,12 +37,12 @@ Loaded 84 bytes from 'demos/d09_comments.bin' at 0x080000
 [UART TX @ 170000] '1'  (0x31)
 [UART TX @ 170000] ''  (0x0D)
 [UART TX @ 170000] '\n'
-[UART TX @ 170000] '#'  (0x23)
-[UART TX @ 170000] ' '  (0x20)
-[UART TX @ 170000] 't'  (0x74)
-[UART TX @ 170000] 'h'  (0x68)
-[UART TX @ 170000] 'i'  (0x69)
-[UART TX @ 170000] 's'  (0x73)
+[UART TX @ 180000] '#'  (0x23)
+[UART TX @ 180000] ' '  (0x20)
+[UART TX @ 180000] 't'  (0x74)
+[UART TX @ 180000] 'h'  (0x68)
+[UART TX @ 180000] 'i'  (0x69)
+[UART TX @ 180000] 's'  (0x73)
 [UART TX @ 180000] ' '  (0x20)
 [UART TX @ 180000] 'i'  (0x69)
 [UART TX @ 180000] 's'  (0x73)
@@ -74,24 +74,24 @@ Loaded 84 bytes from 'demos/d09_comments.bin' at 0x080000
 [UART TX @ 180000] 't'  (0x74)
 [UART TX @ 180000] ''  (0x0D)
 [UART TX @ 180000] '\n'
-[UART TX @ 189263] 'h'  (0x68)
-[UART TX @ 189263] 'a'  (0x61)
-[UART TX @ 189263] 'l'  (0x6C)
-[UART TX @ 189263] 't'  (0x74)
-[UART TX @ 189263] ':'  (0x3A)
-[UART TX @ 189263] ''  (0x0D)
-[UART TX @ 189263] '\n'
-[UART TX @ 189263] ' '  (0x20)
-[UART TX @ 189263] 'b'  (0x62)
-[UART TX @ 189263] 'r'  (0x72)
-[UART TX @ 189263] 'a'  (0x61)
-[UART TX @ 189263] ' '  (0x20)
-[UART TX @ 189263] 'h'  (0x68)
-[UART TX @ 189263] 'a'  (0x61)
-[UART TX @ 189263] 'l'  (0x6C)
-[UART TX @ 189263] 't'  (0x74)
-[UART TX @ 189263] ''  (0x0D)
-[UART TX @ 189263] '\n'
+[UART TX @ 189917] 'h'  (0x68)
+[UART TX @ 189917] 'a'  (0x61)
+[UART TX @ 189917] 'l'  (0x6C)
+[UART TX @ 189917] 't'  (0x74)
+[UART TX @ 189917] ':'  (0x3A)
+[UART TX @ 189917] ''  (0x0D)
+[UART TX @ 189917] '\n'
+[UART TX @ 189917] ' '  (0x20)
+[UART TX @ 189917] 'b'  (0x62)
+[UART TX @ 189917] 'r'  (0x72)
+[UART TX @ 189917] 'a'  (0x61)
+[UART TX @ 189917] ' '  (0x20)
+[UART TX @ 189917] 'h'  (0x68)
+[UART TX @ 189917] 'a'  (0x61)
+[UART TX @ 189917] 'l'  (0x6C)
+[UART TX @ 189917] 't'  (0x74)
+[UART TX @ 189917] ''  (0x0D)
+[UART TX @ 189917] '\n'
 
 UART output: nop
 ; this is a comment
@@ -102,4 +102,4 @@ halt:
  bra halt
 
 
-Executed 189263 instructions
+Executed 189917 instructions

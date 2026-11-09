@@ -1,0 +1,4 @@
+FIELD x,3: ERROR: s:2: FIELD outside DSECT/USECT
+DSECT a|DSECT b: ERROR: s:3: DSECT or USECT inside another layout (missing DEND)
+DEND a: ERROR: s:2: DEND without DSECT/USECT
+DSECT a|FIELD a_x,3|DEND a|ERROR 'custom message': ERROR: s:5: custom message

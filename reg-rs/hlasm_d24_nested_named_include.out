@@ -1,8 +1,8 @@
-Loaded 22510 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.K0ATm9fXXI/hlasm.lgo
-Loaded 29 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.3o17Vb/main_d24_nested_named_include_main.bin' at 0x090000
-Loaded 43 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.3o17Vb/slot1_d24_nested_named_include_mid.bin' at 0x081000
-Loaded 13 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.3o17Vb/slot2_d24_nested_named_include_tail.bin' at 0x081100
-Loaded 69 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.3o17Vb/sourceset.cfg' at 0x07F000
+Loaded 23542 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.QIaIhD3UyH/hlasm.lgo
+Loaded 29 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.KctG56/main_d24_nested_named_include_main.bin' at 0x090000
+Loaded 43 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.KctG56/slot1_d24_nested_named_include_mid.bin' at 0x081000
+Loaded 13 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.KctG56/slot2_d24_nested_named_include_tail.bin' at 0x081100
+Loaded 69 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.KctG56/sourceset.cfg' at 0x07F000
 [UART TX @ 170000] 'm'  (0x6D)
 [UART TX @ 170000] 'i'  (0x69)
 [UART TX @ 170000] 'd'  (0x64)
@@ -58,21 +58,21 @@ Loaded 69 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24
 [UART TX @ 200000] ':'  (0x3A)
 [UART TX @ 200000] ''  (0x0D)
 [UART TX @ 200000] '\n'
-[UART TX @ 203269] ' '  (0x20)
-[UART TX @ 203269] 'b'  (0x62)
-[UART TX @ 203269] 'r'  (0x72)
-[UART TX @ 203269] 'a'  (0x61)
-[UART TX @ 203269] ' '  (0x20)
-[UART TX @ 203269] 'm'  (0x6D)
-[UART TX @ 203269] 'i'  (0x69)
-[UART TX @ 203269] 'd'  (0x64)
-[UART TX @ 203269] '_'  (0x5F)
-[UART TX @ 203269] 'd'  (0x64)
-[UART TX @ 203269] 'o'  (0x6F)
-[UART TX @ 203269] 'n'  (0x6E)
-[UART TX @ 203269] 'e'  (0x65)
-[UART TX @ 203269] ''  (0x0D)
-[UART TX @ 203269] '\n'
+[UART TX @ 203923] ' '  (0x20)
+[UART TX @ 203923] 'b'  (0x62)
+[UART TX @ 203923] 'r'  (0x72)
+[UART TX @ 203923] 'a'  (0x61)
+[UART TX @ 203923] ' '  (0x20)
+[UART TX @ 203923] 'm'  (0x6D)
+[UART TX @ 203923] 'i'  (0x69)
+[UART TX @ 203923] 'd'  (0x64)
+[UART TX @ 203923] '_'  (0x5F)
+[UART TX @ 203923] 'd'  (0x64)
+[UART TX @ 203923] 'o'  (0x6F)
+[UART TX @ 203923] 'n'  (0x6E)
+[UART TX @ 203923] 'e'  (0x65)
+[UART TX @ 203923] ''  (0x0D)
+[UART TX @ 203923] '\n'
 
 UART output: mid_entry:
 tail:
@@ -83,4 +83,4 @@ _h:
  bra mid_done
 
 
-Executed 203269 instructions
+Executed 203923 instructions

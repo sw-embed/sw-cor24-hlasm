@@ -1,4 +1,4 @@
-Loaded 22510 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.ZiRzwxbGxh/hlasm.lgo
+Loaded 23542 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.wmDDo0QYkP/hlasm.lgo
 Loaded 50 bytes from 'reg-rs/s6_combined.bin' at 0x080000
 [UART TX @ 160000] 'L'  (0x4C)
 [UART TX @ 160000] '0'  (0x30)
@@ -8,12 +8,12 @@ Loaded 50 bytes from 'reg-rs/s6_combined.bin' at 0x080000
 [UART TX @ 160000] ':'  (0x3A)
 [UART TX @ 160000] ' '  (0x20)
 [UART TX @ 160000] 's'  (0x73)
-[UART TX @ 160000] 't'  (0x74)
-[UART TX @ 160000] ' '  (0x20)
-[UART TX @ 160000] 'r'  (0x72)
-[UART TX @ 160000] '0'  (0x30)
-[UART TX @ 160000] ''  (0x0D)
-[UART TX @ 160000] '\n'
+[UART TX @ 170000] 't'  (0x74)
+[UART TX @ 170000] ' '  (0x20)
+[UART TX @ 170000] 'r'  (0x72)
+[UART TX @ 170000] '0'  (0x30)
+[UART TX @ 170000] ''  (0x0D)
+[UART TX @ 170000] '\n'
 [UART TX @ 170000] ' '  (0x20)
 [UART TX @ 170000] 'b'  (0x62)
 [UART TX @ 170000] ' '  (0x20)
@@ -38,16 +38,16 @@ Loaded 50 bytes from 'reg-rs/s6_combined.bin' at 0x080000
 [UART TX @ 180000] '1'  (0x31)
 [UART TX @ 180000] ''  (0x0D)
 [UART TX @ 180000] '\n'
-[UART TX @ 181273] ' '  (0x20)
-[UART TX @ 181273] 'b'  (0x62)
-[UART TX @ 181273] ' '  (0x20)
-[UART TX @ 181273] 'L'  (0x4C)
-[UART TX @ 181273] '0'  (0x30)
-[UART TX @ 181273] '0'  (0x30)
-[UART TX @ 181273] '0'  (0x30)
-[UART TX @ 181273] '2'  (0x32)
-[UART TX @ 181273] ''  (0x0D)
-[UART TX @ 181273] '\n'
+[UART TX @ 181911] ' '  (0x20)
+[UART TX @ 181911] 'b'  (0x62)
+[UART TX @ 181911] ' '  (0x20)
+[UART TX @ 181911] 'L'  (0x4C)
+[UART TX @ 181911] '0'  (0x30)
+[UART TX @ 181911] '0'  (0x30)
+[UART TX @ 181911] '0'  (0x30)
+[UART TX @ 181911] '2'  (0x32)
+[UART TX @ 181911] ''  (0x0D)
+[UART TX @ 181911] '\n'
 
 UART output: L0001: st r0
  b L0001
@@ -55,4 +55,4 @@ L0002: st r1
  b L0002
 
 
-Executed 181273 instructions
+Executed 181911 instructions

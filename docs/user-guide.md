@@ -448,6 +448,19 @@ ENDIFASM
 MEND
 ```
 
+`ERROR 'message'` stops hlasm with `ERROR: <member>:<line>: message`, so a
+macro can reject bad arguments. Inside a skipped block it does nothing, and
+in a macro body the line reported is the macro call's:
+
+```
+MACRO PUSHN &N
+IFEQ &N,0
+ERROR 'PUSHN needs a count of 1 or more'
+ENDIFASM
+ ...
+MEND
+```
+
 ## Structured control flow
 
 Structured statements compare a register with a value and generate the
@@ -606,6 +619,36 @@ and otherwise as `push r2` / `la r2,L_far` / `jmp (r2)` with a matching
 `pop r2` at the target, so a block can be any size. hlasm decides this by
 sizing its output in a first pass; nothing needs to be marked by hand.
 Demo d40 shows the long form.
+
+## Record layouts: DSECT and FIELD
+
+The library member `lib/struct.hlasm` (COPY `struct`) gives C's structs and
+unions as named field offsets, like HLASM's DSECT. Each `FIELD` name becomes
+the member's byte offset; `DEND name` defines `SIZEOF_name`:
+
+```
+ DSECT point            ; struct point { int x; int y; char tag; };
+ FIELD pt_x,3           ; pt_x = 0
+ FIELD pt_y,3           ; pt_y = 3
+ FIELD pt_tag,1         ; pt_tag = 6
+ DEND point             ; SIZEOF_point = 7
+
+ USECT val              ; union: every field at 0, size of the largest
+ FIELD v_i,3
+ FIELD v_c,1
+ DEND val               ; SIZEOF_val = 3
+
+ lw r0,pt_y(r2)         ; r2 points at a point
+ add r2,SIZEOF_point    ; next element of an array of points
+```
+
+Field sizes are expressions (`FIELD r_vals,3*3` for an `int[3]` member,
+`FIELD ln_a,SIZEOF_point` for a nested record), and offsets combine in
+displacements (`lw r0,ln_b+pt_y(r2)`). Field names are global symbols, so
+prefix each record's fields. A redefined `EQU` silently takes the last
+value, so reusing a name is not caught. `FIELD` or `DEND` outside a
+layout, or a layout opened inside another, stops with an `ERROR`. Demo
+d45 shows all of this.
 
 ## Data directives
 
@@ -811,13 +854,12 @@ Values are 24-bit and wrap like COR24 arithmetic. Structured labels and
 
 These are planned (see `docs/limits-and-lifting-plan.md` for the schedule):
 
-- **Record layouts** (`DSECT`/`FIELD`); define field offsets with `EQU` for now.
 - **Labels as values.** Labels are resolved by `cor24-asm`, not hlasm, so
   they cannot be used in `EQU`, `SET` or conditions.
 
 ## Further reading
 
-- `demos/README.md`: the demo programs (d01-d44) and what each shows.
+- `demos/README.md`: the demo programs (d01-d45) and what each shows.
 - `docs/design.md`: the language design and lowering rules.
 - `docs/limits-and-lifting-plan.md`: every limit, known issue and the plan
   for lifting the rest.

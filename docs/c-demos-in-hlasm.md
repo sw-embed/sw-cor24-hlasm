@@ -157,6 +157,17 @@ Data placement); no registers change.
 | `CHECKEND "text",rc` | if the flag is set, write text and set r0 = rc; otherwise r0 = 0 |
 | `REQUIRE cond,a,b,rc` | return rc from the current routine unless the condition holds (C's `if (x != 7) return 1;`) |
 
+**`lib/struct.hlasm`**: record layouts (C's struct and union), no code.
+
+| Macro | Does |
+|---|---|
+| `DSECT name` / `USECT name` | start a struct / union layout |
+| `FIELD name,bytes` | the next member: `name` = its offset (in a union, 0); bytes is an expression |
+| `DEND name` | end the layout; `SIZEOF_name` = its size |
+
+Misuse stops with an `ERROR` (raised with hlasm's `ERROR 'message'` directive).
+Prefix field names per record, since they are global symbols.
+
 **`lib/rt.hlasm`** (macros) and **`lib/rt_code.hlasm`** (routines): the C
 library routines the demos use, with tc24r's semantics.
 

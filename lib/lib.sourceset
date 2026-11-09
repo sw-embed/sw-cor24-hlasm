@@ -13,5 +13,6 @@ COPY svc_bare_code svc_bare_code.hlasm
 COPY board board.hlasm
 COPY data data.hlasm
 COPY check check.hlasm
+COPY struct struct.hlasm
 COPY rt rt.hlasm
 COPY rt_code rt_code.hlasm

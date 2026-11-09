@@ -1,6 +1,6 @@
 number = 16
 slug = "dsect-field"
-status = "pending"
+status = "in-progress"
 description = "Implement M6 from docs/limits-and-lifting-plan.md: DSECT name / FIELD name,si..."
 role = "production"
 context_files = []

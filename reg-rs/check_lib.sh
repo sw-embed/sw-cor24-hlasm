@@ -10,6 +10,7 @@
 #            SPACE STR
 #   board    BUTTON with S2 released and pressed; the final LED state after
 #            LEDON, LEDOFF, LEDON (cor24-emu logs the state at the end)
+#   struct   DSECT/FIELD/DEND misuse and the ERROR directive
 # See lib/*.hlasm and docs/c-demos-in-hlasm.md.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -38,8 +39,17 @@ case "${1:-}" in
         scripts/run-kernel.sh "$WORK/board.s" --speed 0 -n 100000 2>&1 \
             | grep '^\[LED' | sed 's/ @ [0-9]*\]/]/'
         ;;
+    struct)
+        # each misuse stops with the ERROR line that names it
+        for c in "FIELD x,3" "DSECT a|DSECT b" "DEND a" "DSECT a|FIELD a_x,3|DEND a|ERROR 'custom message'"; do
+            printf '%s\n' "COPY struct" > "$WORK/s.hlasm"
+            printf '%s\n' "$c" | tr '|' '\n' >> "$WORK/s.hlasm"
+            printf 'ROOT /\nMAIN %s\nSOURCESET %s\n' "$WORK/s.hlasm" "$PWD/lib/lib.sourceset" > "$WORK/s.sourceset"
+            echo "$c: $( { e2e "$WORK/s.sourceset" 2>&1 || true; } | grep -m1 '^ERROR' || true)"
+        done
+        ;;
     *)
-        echo "usage: $0 console|frame|rt|io|check|board" >&2
+        echo "usage: $0 console|frame|rt|io|check|board|struct" >&2
         exit 2
         ;;
 esac

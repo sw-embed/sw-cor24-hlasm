@@ -1,4 +1,4 @@
-Loaded 22510 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.R5BptwlSFO/hlasm.lgo
+Loaded 23542 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.NPg5pIbpy8/hlasm.lgo
 Loaded 61 bytes from 'reg-rs/s6_params.bin' at 0x080000
 [UART TX @ 170000] ' '  (0x20)
 [UART TX @ 170000] 's'  (0x73)
@@ -24,14 +24,14 @@ Loaded 61 bytes from 'reg-rs/s6_params.bin' at 0x080000
 [UART TX @ 180000] '2'  (0x32)
 [UART TX @ 180000] ''  (0x0D)
 [UART TX @ 180000] '\n'
-[UART TX @ 182305] ' '  (0x20)
-[UART TX @ 182305] 's'  (0x73)
-[UART TX @ 182305] 't'  (0x74)
-[UART TX @ 182305] ' '  (0x20)
-[UART TX @ 182305] 'f'  (0x66)
-[UART TX @ 182305] 'p'  (0x70)
-[UART TX @ 182305] ''  (0x0D)
-[UART TX @ 182305] '\n'
+[UART TX @ 182975] ' '  (0x20)
+[UART TX @ 182975] 's'  (0x73)
+[UART TX @ 182975] 't'  (0x74)
+[UART TX @ 182975] ' '  (0x20)
+[UART TX @ 182975] 'f'  (0x66)
+[UART TX @ 182975] 'p'  (0x70)
+[UART TX @ 182975] ''  (0x0D)
+[UART TX @ 182975] '\n'
 
 UART output:  st r0
  st r1
@@ -39,4 +39,4 @@ UART output:  st r0
  st fp
 
 
-Executed 182305 instructions
+Executed 182975 instructions

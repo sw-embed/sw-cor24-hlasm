@@ -1,4 +1,4 @@
-Loaded 22510 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.sWWR7HLbBN/hlasm.lgo
+Loaded 23542 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.bQVhJSErez/hlasm.lgo
 Loaded 58 bytes from 'demos/d27_positional_macro_params.bin' at 0x080000
 [UART TX @ 170000] ' '  (0x20)
 [UART TX @ 170000] 'p'  (0x70)
@@ -33,13 +33,13 @@ Loaded 58 bytes from 'demos/d27_positional_macro_params.bin' at 0x080000
 [UART TX @ 190000] ' '  (0x20)
 [UART TX @ 190000] 'p'  (0x70)
 [UART TX @ 190000] 'u'  (0x75)
-[UART TX @ 190000] 's'  (0x73)
-[UART TX @ 190000] 'h'  (0x68)
-[UART TX @ 191149] ' '  (0x20)
-[UART TX @ 191149] 'r'  (0x72)
-[UART TX @ 191149] '3'  (0x33)
-[UART TX @ 191149] ''  (0x0D)
-[UART TX @ 191149] '\n'
+[UART TX @ 191819] 's'  (0x73)
+[UART TX @ 191819] 'h'  (0x68)
+[UART TX @ 191819] ' '  (0x20)
+[UART TX @ 191819] 'r'  (0x72)
+[UART TX @ 191819] '3'  (0x33)
+[UART TX @ 191819] ''  (0x0D)
+[UART TX @ 191819] '\n'
 
 UART output:  push r0
  push r1
@@ -47,4 +47,4 @@ UART output:  push r0
  push r3
 
 
-Executed 191149 instructions
+Executed 191819 instructions

@@ -1,0 +1,3 @@
+ROOT .
+MAIN d45_dsect.hlasm
+SOURCESET ../lib/lib.sourceset

@@ -52,6 +52,7 @@ Use `make_bin.sh` to convert `.hlasm` to `.bin` for loading into the emulator.
 | d42 | Macro layering: nested/recursive calls, directives and IF in bodies, default/keyword params, &SYSNARG (prints Hi!***-7Vok. when run) | WORKS |
 | d43 | Condition forms cc_le/gt/ge and unsigned cc_leu/gtu/geu (register and constant operands, DOEXIT, ELSEIF); IFSAME/IFDIFF argument tests in a CALL-style macro (run end to end by `hlasm_e2e_d43_condition_forms`) | WORKS |
 | d44 | Compound conditions: AND/OR in IF, ELSEIF and DOEXIT as truth tables (run end to end by `hlasm_e2e_d44_compound_conditions`) | WORKS |
+| d45 | Record layouts: DSECT/USECT/FIELD/DEND from lib/struct.hlasm -- struct, array of records, nested record, union (run end to end by `hlasm_e2e_d45_dsect`) | WORKS |
 
 ## Demo Policy
 

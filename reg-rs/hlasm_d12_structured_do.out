@@ -1,4 +1,4 @@
-Loaded 23449 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.5Tb7UsNKy0/hlasm.lgo
+Loaded 23542 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.n3nCcP96un/hlasm.lgo
 Loaded 118 bytes from 'demos/d12_structured_do.bin' at 0x080000
 [UART TX @ 200000] ';'  (0x3B)
 [UART TX @ 200000] ' '  (0x20)
@@ -19,23 +19,23 @@ Loaded 118 bytes from 'demos/d12_structured_do.bin' at 0x080000
 [UART TX @ 200000] 'E'  (0x45)
 [UART TX @ 200000] 'X'  (0x58)
 [UART TX @ 200000] 'I'  (0x49)
-[UART TX @ 200000] 'T'  (0x54)
-[UART TX @ 200000] '/'  (0x2F)
-[UART TX @ 200000] 'I'  (0x49)
-[UART TX @ 200000] 'T'  (0x54)
-[UART TX @ 200000] 'E'  (0x45)
-[UART TX @ 200000] 'R'  (0x52)
-[UART TX @ 200000] 'A'  (0x41)
-[UART TX @ 200000] 'T'  (0x54)
-[UART TX @ 200000] 'E'  (0x45)
-[UART TX @ 200000] '/'  (0x2F)
-[UART TX @ 200000] 'E'  (0x45)
-[UART TX @ 200000] 'N'  (0x4E)
-[UART TX @ 200000] 'D'  (0x44)
-[UART TX @ 200000] 'D'  (0x44)
-[UART TX @ 200000] 'O'  (0x4F)
-[UART TX @ 200000] ''  (0x0D)
-[UART TX @ 200000] '\n'
+[UART TX @ 210000] 'T'  (0x54)
+[UART TX @ 210000] '/'  (0x2F)
+[UART TX @ 210000] 'I'  (0x49)
+[UART TX @ 210000] 'T'  (0x54)
+[UART TX @ 210000] 'E'  (0x45)
+[UART TX @ 210000] 'R'  (0x52)
+[UART TX @ 210000] 'A'  (0x41)
+[UART TX @ 210000] 'T'  (0x54)
+[UART TX @ 210000] 'E'  (0x45)
+[UART TX @ 210000] '/'  (0x2F)
+[UART TX @ 210000] 'E'  (0x45)
+[UART TX @ 210000] 'N'  (0x4E)
+[UART TX @ 210000] 'D'  (0x44)
+[UART TX @ 210000] 'D'  (0x44)
+[UART TX @ 210000] 'O'  (0x4F)
+[UART TX @ 210000] ''  (0x0D)
+[UART TX @ 210000] '\n'
 [UART TX @ 210000] '_'  (0x5F)
 [UART TX @ 210000] 'h'  (0x68)
 [UART TX @ 210000] 'l'  (0x6C)
@@ -236,49 +236,49 @@ Loaded 118 bytes from 'demos/d12_structured_do.bin' at 0x080000
 [UART TX @ 240000] 'p'  (0x70)
 [UART TX @ 240000] ''  (0x0D)
 [UART TX @ 240000] '\n'
-[UART TX @ 247928] ' '  (0x20)
-[UART TX @ 247928] 'a'  (0x61)
-[UART TX @ 247928] 'd'  (0x64)
-[UART TX @ 247928] 'd'  (0x64)
-[UART TX @ 247928] ' '  (0x20)
-[UART TX @ 247928] 'r'  (0x72)
-[UART TX @ 247928] '2'  (0x32)
-[UART TX @ 247928] ','  (0x2C)
-[UART TX @ 247928] '1'  (0x31)
-[UART TX @ 247928] ''  (0x0D)
-[UART TX @ 247928] '\n'
-[UART TX @ 247928] ' '  (0x20)
-[UART TX @ 247928] 'b'  (0x62)
-[UART TX @ 247928] 'r'  (0x72)
-[UART TX @ 247928] 'a'  (0x61)
-[UART TX @ 247928] ' '  (0x20)
-[UART TX @ 247928] '_'  (0x5F)
-[UART TX @ 247928] 'h'  (0x68)
-[UART TX @ 247928] 'l'  (0x6C)
-[UART TX @ 247928] 'd'  (0x64)
-[UART TX @ 247928] 'o'  (0x6F)
-[UART TX @ 247928] '_'  (0x5F)
-[UART TX @ 247928] '4'  (0x34)
-[UART TX @ 247928] '_'  (0x5F)
-[UART TX @ 247928] 't'  (0x74)
-[UART TX @ 247928] 'o'  (0x6F)
-[UART TX @ 247928] 'p'  (0x70)
-[UART TX @ 247928] ''  (0x0D)
-[UART TX @ 247928] '\n'
-[UART TX @ 247928] '_'  (0x5F)
-[UART TX @ 247928] 'h'  (0x68)
-[UART TX @ 247928] 'l'  (0x6C)
-[UART TX @ 247928] 'd'  (0x64)
-[UART TX @ 247928] 'o'  (0x6F)
-[UART TX @ 247928] '_'  (0x5F)
-[UART TX @ 247928] '5'  (0x35)
-[UART TX @ 247928] '_'  (0x5F)
-[UART TX @ 247928] 'e'  (0x65)
-[UART TX @ 247928] 'n'  (0x6E)
-[UART TX @ 247928] 'd'  (0x64)
-[UART TX @ 247928] ':'  (0x3A)
-[UART TX @ 247928] ''  (0x0D)
-[UART TX @ 247928] '\n'
+[UART TX @ 249002] ' '  (0x20)
+[UART TX @ 249002] 'a'  (0x61)
+[UART TX @ 249002] 'd'  (0x64)
+[UART TX @ 249002] 'd'  (0x64)
+[UART TX @ 249002] ' '  (0x20)
+[UART TX @ 249002] 'r'  (0x72)
+[UART TX @ 249002] '2'  (0x32)
+[UART TX @ 249002] ','  (0x2C)
+[UART TX @ 249002] '1'  (0x31)
+[UART TX @ 249002] ''  (0x0D)
+[UART TX @ 249002] '\n'
+[UART TX @ 249002] ' '  (0x20)
+[UART TX @ 249002] 'b'  (0x62)
+[UART TX @ 249002] 'r'  (0x72)
+[UART TX @ 249002] 'a'  (0x61)
+[UART TX @ 249002] ' '  (0x20)
+[UART TX @ 249002] '_'  (0x5F)
+[UART TX @ 249002] 'h'  (0x68)
+[UART TX @ 249002] 'l'  (0x6C)
+[UART TX @ 249002] 'd'  (0x64)
+[UART TX @ 249002] 'o'  (0x6F)
+[UART TX @ 249002] '_'  (0x5F)
+[UART TX @ 249002] '4'  (0x34)
+[UART TX @ 249002] '_'  (0x5F)
+[UART TX @ 249002] 't'  (0x74)
+[UART TX @ 249002] 'o'  (0x6F)
+[UART TX @ 249002] 'p'  (0x70)
+[UART TX @ 249002] ''  (0x0D)
+[UART TX @ 249002] '\n'
+[UART TX @ 249002] '_'  (0x5F)
+[UART TX @ 249002] 'h'  (0x68)
+[UART TX @ 249002] 'l'  (0x6C)
+[UART TX @ 249002] 'd'  (0x64)
+[UART TX @ 249002] 'o'  (0x6F)
+[UART TX @ 249002] '_'  (0x5F)
+[UART TX @ 249002] '5'  (0x35)
+[UART TX @ 249002] '_'  (0x5F)
+[UART TX @ 249002] 'e'  (0x65)
+[UART TX @ 249002] 'n'  (0x6E)
+[UART TX @ 249002] 'd'  (0x64)
+[UART TX @ 249002] ':'  (0x3A)
+[UART TX @ 249002] ''  (0x0D)
+[UART TX @ 249002] '\n'
 
 UART output: ; Demo 12: DO/DOEXIT/ITERATE/ENDDO
 _hldo_1_top:
@@ -301,4 +301,4 @@ _hldo_4_top:
 _hldo_5_end:
 
 
-Executed 247928 instructions
+Executed 249002 instructions

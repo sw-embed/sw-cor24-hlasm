@@ -1,0 +1,89 @@
+; Demo 45: record layouts with DSECT/USECT/FIELD/DEND (lib/struct.hlasm).
+; A struct with a char and an int[3] member, an array of those records
+; stepped by SIZEOF, a nested record, and a union. Run end to end it
+; prints the offsets and sizes, then values read through the layouts:
+;   point 0 3 6 7  rec 0 1 10  line 0 7 14  val 0 0 3  sum 6 42 Z
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY data
+COPY struct
+
+ DSECT point
+ FIELD pt_x,3
+ FIELD pt_y,3
+ FIELD pt_tag,1
+ DEND point
+
+ DSECT rec
+ FIELD r_flag,1
+ FIELD r_vals,3*3
+ DEND rec
+
+ DSECT line
+ FIELD ln_a,SIZEOF_point
+ FIELD ln_b,SIZEOF_point
+ DEND line
+
+ USECT val
+ FIELD v_i,3
+ FIELD v_c,1
+ DEND val
+
+; SHOW n: print a number and a blank
+MACRO SHOW &N
+ PUTDEC &N
+ PUTC ' '
+MEND
+
+ START
+_main:
+ PROLOG
+ WTO "point "
+ SHOW pt_x
+ SHOW pt_y
+ SHOW pt_tag
+ SHOW SIZEOF_point
+ WTO " rec "
+ SHOW r_flag
+ SHOW r_vals
+ SHOW SIZEOF_rec
+ WTO " line "
+ SHOW ln_a
+ SHOW ln_b
+ SHOW SIZEOF_line
+ WTO " val "
+ SHOW v_i
+ SHOW v_c
+ SHOW SIZEOF_val
+; recs[1].r_vals[2] through the layout: recs + 1*SIZEOF_rec + r_vals + 2*3
+ WTO " sum "
+ la r2,recs
+ add r2,SIZEOF_rec
+ lw r0,r_vals+2*3(r2)
+ SHOW r0
+; lines[0].ln_b.pt_y
+ la r2,lines
+ lw r0,ln_b+pt_y(r2)
+ SHOW r0
+; a union read through its char member
+ la r2,uval
+ lbu r0,v_c(r2)
+ PUTC
+ PUTNL
+ RETURN 0
+; two recs: flag, then three ints
+recs:
+ .byte 0
+ .word 1,2,3
+ .byte 1
+ .word 4,5,6
+; one line: two points
+lines:
+ .word 0,0
+ .byte 0
+ .word 0,42
+ .byte 0
+uval:
+ .word 90
+COPY svc_bare_code

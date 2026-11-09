@@ -1,4 +1,4 @@
-Loaded 22510 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.nNcb0J81Wt/hlasm.lgo
+Loaded 23542 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.zinEppcIBE/hlasm.lgo
 Loaded 102 bytes from 'demos/d38_hldiag_unknown_mnemonic.bin' at 0x080000
 [UART TX @ 160000] ';'  (0x3B)
 [UART TX @ 160000] ' '  (0x20)
@@ -125,65 +125,65 @@ Loaded 102 bytes from 'demos/d38_hldiag_unknown_mnemonic.bin' at 0x080000
 [UART TX @ 180000] '4'  (0x34)
 [UART TX @ 180000] ''  (0x0D)
 [UART TX @ 180000] '\n'
-[UART TX @ 180000] ' '  (0x20)
-[UART TX @ 180000] 'f'  (0x66)
-[UART TX @ 180000] 'r'  (0x72)
-[UART TX @ 180000] 'o'  (0x6F)
-[UART TX @ 180000] 'b'  (0x62)
-[UART TX @ 180000] 'n'  (0x6E)
-[UART TX @ 180000] 'i'  (0x69)
-[UART TX @ 180000] 'c'  (0x63)
-[UART TX @ 186565] 'a'  (0x61)
-[UART TX @ 186565] 't'  (0x74)
-[UART TX @ 186565] 'e'  (0x65)
-[UART TX @ 186565] ' '  (0x20)
-[UART TX @ 186565] 'r'  (0x72)
-[UART TX @ 186565] '0'  (0x30)
-[UART TX @ 186565] ''  (0x0D)
-[UART TX @ 186565] '\n'
-[UART TX @ 186565] ' '  (0x20)
-[UART TX @ 186565] 'n'  (0x6E)
-[UART TX @ 186565] 'o'  (0x6F)
-[UART TX @ 186565] 'p'  (0x70)
-[UART TX @ 186565] ''  (0x0D)
-[UART TX @ 186565] '\n'
-[UART TX @ 186565] ';'  (0x3B)
-[UART TX @ 186565] ' '  (0x20)
-[UART TX @ 186565] '!'  (0x21)
-[UART TX @ 186565] '!'  (0x21)
-[UART TX @ 186565] ' '  (0x20)
-[UART TX @ 186565] 'h'  (0x68)
-[UART TX @ 186565] 'l'  (0x6C)
-[UART TX @ 186565] 'a'  (0x61)
-[UART TX @ 186565] 's'  (0x73)
-[UART TX @ 186565] 'm'  (0x6D)
-[UART TX @ 186565] ':'  (0x3A)
-[UART TX @ 186565] ' '  (0x20)
-[UART TX @ 186565] 'H'  (0x48)
-[UART TX @ 186565] 'L'  (0x4C)
-[UART TX @ 186565] 'D'  (0x44)
-[UART TX @ 186565] 'I'  (0x49)
-[UART TX @ 186565] 'A'  (0x41)
-[UART TX @ 186565] 'G'  (0x47)
-[UART TX @ 186565] ' '  (0x20)
-[UART TX @ 186565] 'a'  (0x61)
-[UART TX @ 186565] 'c'  (0x63)
-[UART TX @ 186565] 't'  (0x74)
-[UART TX @ 186565] 'i'  (0x69)
-[UART TX @ 186565] 'v'  (0x76)
-[UART TX @ 186565] 'e'  (0x65)
-[UART TX @ 186565] ' '  (0x20)
-[UART TX @ 186565] 'a'  (0x61)
-[UART TX @ 186565] 't'  (0x74)
-[UART TX @ 186565] ' '  (0x20)
-[UART TX @ 186565] 's'  (0x73)
-[UART TX @ 186565] 'r'  (0x72)
-[UART TX @ 186565] 'c'  (0x63)
-[UART TX @ 186565] '0'  (0x30)
-[UART TX @ 186565] ':'  (0x3A)
-[UART TX @ 186565] '5'  (0x35)
-[UART TX @ 186565] ''  (0x0D)
-[UART TX @ 186565] '\n'
+[UART TX @ 186979] ' '  (0x20)
+[UART TX @ 186979] 'f'  (0x66)
+[UART TX @ 186979] 'r'  (0x72)
+[UART TX @ 186979] 'o'  (0x6F)
+[UART TX @ 186979] 'b'  (0x62)
+[UART TX @ 186979] 'n'  (0x6E)
+[UART TX @ 186979] 'i'  (0x69)
+[UART TX @ 186979] 'c'  (0x63)
+[UART TX @ 186979] 'a'  (0x61)
+[UART TX @ 186979] 't'  (0x74)
+[UART TX @ 186979] 'e'  (0x65)
+[UART TX @ 186979] ' '  (0x20)
+[UART TX @ 186979] 'r'  (0x72)
+[UART TX @ 186979] '0'  (0x30)
+[UART TX @ 186979] ''  (0x0D)
+[UART TX @ 186979] '\n'
+[UART TX @ 186979] ' '  (0x20)
+[UART TX @ 186979] 'n'  (0x6E)
+[UART TX @ 186979] 'o'  (0x6F)
+[UART TX @ 186979] 'p'  (0x70)
+[UART TX @ 186979] ''  (0x0D)
+[UART TX @ 186979] '\n'
+[UART TX @ 186979] ';'  (0x3B)
+[UART TX @ 186979] ' '  (0x20)
+[UART TX @ 186979] '!'  (0x21)
+[UART TX @ 186979] '!'  (0x21)
+[UART TX @ 186979] ' '  (0x20)
+[UART TX @ 186979] 'h'  (0x68)
+[UART TX @ 186979] 'l'  (0x6C)
+[UART TX @ 186979] 'a'  (0x61)
+[UART TX @ 186979] 's'  (0x73)
+[UART TX @ 186979] 'm'  (0x6D)
+[UART TX @ 186979] ':'  (0x3A)
+[UART TX @ 186979] ' '  (0x20)
+[UART TX @ 186979] 'H'  (0x48)
+[UART TX @ 186979] 'L'  (0x4C)
+[UART TX @ 186979] 'D'  (0x44)
+[UART TX @ 186979] 'I'  (0x49)
+[UART TX @ 186979] 'A'  (0x41)
+[UART TX @ 186979] 'G'  (0x47)
+[UART TX @ 186979] ' '  (0x20)
+[UART TX @ 186979] 'a'  (0x61)
+[UART TX @ 186979] 'c'  (0x63)
+[UART TX @ 186979] 't'  (0x74)
+[UART TX @ 186979] 'i'  (0x69)
+[UART TX @ 186979] 'v'  (0x76)
+[UART TX @ 186979] 'e'  (0x65)
+[UART TX @ 186979] ' '  (0x20)
+[UART TX @ 186979] 'a'  (0x61)
+[UART TX @ 186979] 't'  (0x74)
+[UART TX @ 186979] ' '  (0x20)
+[UART TX @ 186979] 's'  (0x73)
+[UART TX @ 186979] 'r'  (0x72)
+[UART TX @ 186979] 'c'  (0x63)
+[UART TX @ 186979] '0'  (0x30)
+[UART TX @ 186979] ':'  (0x3A)
+[UART TX @ 186979] '5'  (0x35)
+[UART TX @ 186979] ''  (0x0D)
+[UART TX @ 186979] '\n'
 
 UART output: ; Demo 38: HLDIAG warns on unknown mnemonic at pass-through
  add r0,1
@@ -193,4 +193,4 @@ UART output: ; Demo 38: HLDIAG warns on unknown mnemonic at pass-through
 ; !! hlasm: HLDIAG active at src0:5
 
 
-Executed 186565 instructions
+Executed 186979 instructions

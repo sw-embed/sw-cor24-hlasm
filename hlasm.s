@@ -437,6 +437,20 @@ _ml_is_ifsame_near:
 
 _ml_is_ifdiff_near:
 
+	la	r1,_kw_error
+	push	r1
+	la	r0,_line_is_keyword
+	jal	r1,(r0)
+	add	sp,3
+
+	ceq	r0,z
+	brt	_ml_is_error_near
+
+	la	r0,_handle_error
+	jal	r1,(r0)
+
+_ml_is_error_near:
+
 	la	r1,_kw_if
 	push	r1
 	la	r0,_line_is_keyword
@@ -8765,6 +8779,56 @@ _his_push:
 	pop	fp
 	jmp	(r1)
 
+; _handle_error: ERROR 'message' -- stop with "ERROR: <member>:<line>:
+; <message>" (for macros that check their arguments). The message is the
+; text between the first pair of quotes (' or "), or else everything after
+; the keyword. Does not return.
+_handle_error:
+	push	fp
+	push	r2
+	push	r1
+	mov	fp,sp
+	la	r0,196608
+	push	r0
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	add	r0,5
+	push	r0
+	la	r0,_skip_ws_ptr
+	jal	r1,(r0)
+	add	sp,3
+	mov	r2,r0
+; a quoted message: drop the quotes
+	lbu	r0,0(r2)
+	lc	r1,39
+	ceq	r0,r1
+	brt	_herr_quoted
+	lc	r1,34
+	ceq	r0,r1
+	brf	_herr_report
+_herr_quoted:
+	add	r2,1
+	mov	r1,r2
+_herr_find:
+	push	r1
+	lbu	r1,0(r1)
+	ceq	r1,z
+	brt	_herr_end
+	ceq	r0,r1
+	brt	_herr_end
+	pop	r1
+	add	r1,1
+	bra	_herr_find
+_herr_end:
+	pop	r1
+	lc	r0,0
+	sb	r0,0(r1)
+_herr_report:
+	push	r2
+	la	r0,_fatal
+	jal	r1,(r0)
+
 ; _handle_ifeq: IFEQ expr,value -- include if the two values are equal.
 _handle_ifeq:
 	push	fp
@@ -15065,6 +15129,9 @@ _kw_ifsame:
 
 _kw_ifdiff:
 	.byte	73,70,68,73,70,70,0
+
+_kw_error:
+	.byte	69,82,82,79,82,0
 
 _kw_if:
 	.byte	73,70,0

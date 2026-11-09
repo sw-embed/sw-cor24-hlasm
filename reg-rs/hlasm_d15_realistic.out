@@ -1,4 +1,4 @@
-Loaded 22510 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.8INsccP20n/hlasm.lgo
+Loaded 23542 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.6hwkqJdaKt/hlasm.lgo
 Loaded 120 bytes from 'demos/d15_realistic.bin' at 0x080000
 [UART TX @ 180000] ' '  (0x20)
 [UART TX @ 180000] 'n'  (0x6E)
@@ -16,19 +16,19 @@ Loaded 120 bytes from 'demos/d15_realistic.bin' at 0x080000
 [UART TX @ 190000] '0'  (0x30)
 [UART TX @ 190000] ''  (0x0D)
 [UART TX @ 190000] '\n'
-[UART TX @ 194861] ' '  (0x20)
-[UART TX @ 194861] 'p'  (0x70)
-[UART TX @ 194861] 'o'  (0x6F)
-[UART TX @ 194861] 'p'  (0x70)
-[UART TX @ 194861] ' '  (0x20)
-[UART TX @ 194861] 'r'  (0x72)
-[UART TX @ 194861] '0'  (0x30)
-[UART TX @ 194861] ''  (0x0D)
-[UART TX @ 194861] '\n'
+[UART TX @ 195515] ' '  (0x20)
+[UART TX @ 195515] 'p'  (0x70)
+[UART TX @ 195515] 'o'  (0x6F)
+[UART TX @ 195515] 'p'  (0x70)
+[UART TX @ 195515] ' '  (0x20)
+[UART TX @ 195515] 'r'  (0x72)
+[UART TX @ 195515] '0'  (0x30)
+[UART TX @ 195515] ''  (0x0D)
+[UART TX @ 195515] '\n'
 
 UART output:  nop
  push r0
  pop r0
 
 
-Executed 194861 instructions
+Executed 195515 instructions

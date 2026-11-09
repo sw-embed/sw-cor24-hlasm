@@ -1,13 +1,13 @@
-Loaded 22510 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.sRRMpCil3G/hlasm.lgo
+Loaded 23542 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.QyWSY1ibLD/hlasm.lgo
 Loaded 60 bytes from 'demos/d08_macro_and_cond.bin' at 0x080000
-[UART TX @ 145357] ' '  (0x20)
-[UART TX @ 145357] 'n'  (0x6E)
-[UART TX @ 145357] 'o'  (0x6F)
-[UART TX @ 145357] 'p'  (0x70)
-[UART TX @ 145357] ''  (0x0D)
-[UART TX @ 145357] '\n'
+[UART TX @ 145659] ' '  (0x20)
+[UART TX @ 145659] 'n'  (0x6E)
+[UART TX @ 145659] 'o'  (0x6F)
+[UART TX @ 145659] 'p'  (0x70)
+[UART TX @ 145659] ''  (0x0D)
+[UART TX @ 145659] '\n'
 
 UART output:  nop
 
 
-Executed 145357 instructions
+Executed 145659 instructions

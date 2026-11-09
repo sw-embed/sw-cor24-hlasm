@@ -1,4 +1,4 @@
-Loaded 22510 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.jCADTbnXMy/hlasm.lgo
+Loaded 23542 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.yneQIjgLUz/hlasm.lgo
 Loaded 36 bytes from 'demos/d02_simple_macro.bin' at 0x080000
 [UART TX @ 160000] ' '  (0x20)
 [UART TX @ 160000] 'a'  (0x61)
@@ -22,21 +22,21 @@ Loaded 36 bytes from 'demos/d02_simple_macro.bin' at 0x080000
 [UART TX @ 170000] '1'  (0x31)
 [UART TX @ 170000] ''  (0x0D)
 [UART TX @ 170000] '\n'
-[UART TX @ 172947] ' '  (0x20)
-[UART TX @ 172947] 'a'  (0x61)
-[UART TX @ 172947] 'd'  (0x64)
-[UART TX @ 172947] 'd'  (0x64)
-[UART TX @ 172947] ' '  (0x20)
-[UART TX @ 172947] 'r'  (0x72)
-[UART TX @ 172947] '0'  (0x30)
-[UART TX @ 172947] ','  (0x2C)
-[UART TX @ 172947] '1'  (0x31)
-[UART TX @ 172947] ''  (0x0D)
-[UART TX @ 172947] '\n'
+[UART TX @ 173601] ' '  (0x20)
+[UART TX @ 173601] 'a'  (0x61)
+[UART TX @ 173601] 'd'  (0x64)
+[UART TX @ 173601] 'd'  (0x64)
+[UART TX @ 173601] ' '  (0x20)
+[UART TX @ 173601] 'r'  (0x72)
+[UART TX @ 173601] '0'  (0x30)
+[UART TX @ 173601] ','  (0x2C)
+[UART TX @ 173601] '1'  (0x31)
+[UART TX @ 173601] ''  (0x0D)
+[UART TX @ 173601] '\n'
 
 UART output:  add r0,1
  add r0,1
  add r0,1
 
 
-Executed 172947 instructions
+Executed 173601 instructions

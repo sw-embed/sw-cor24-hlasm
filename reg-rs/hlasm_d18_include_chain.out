@@ -1,4 +1,4 @@
-Loaded 22510 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.IfiTETNO0I/hlasm.lgo
+Loaded 23542 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.BMcCEkuLuB/hlasm.lgo
 Loaded 43 bytes from 'demos/d18_include_main.bin' at 0x080000
 Loaded 45 bytes from 'demos/d18_include_mid.bin' at 0x081000
 Loaded 38 bytes from 'demos/d18_include_tail.bin' at 0x082000
@@ -40,4 +40,4 @@ tail:
  bra _h
 
 
-Executed 200615 instructions
+Executed 201173 instructions

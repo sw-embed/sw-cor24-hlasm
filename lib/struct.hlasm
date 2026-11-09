@@ -1,0 +1,71 @@
+; lib/struct.hlasm -- record layouts (macros only, no code): C's struct and
+; union as named field offsets, the role of HLASM's DSECT.
+;
+;   DSECT point            ; struct point {
+;   FIELD pt_x,3           ;   int x;      pt_x = 0
+;   FIELD pt_y,3           ;   int y;      pt_y = 3
+;   FIELD pt_tag,1         ;   char tag;   pt_tag = 6
+;   DEND point             ; };          SIZEOF_point = 7
+;
+;   USECT val              ; union val {   every field at offset 0,
+;   FIELD v_i,3            ;   int i;      SIZEOF_val = the largest
+;   FIELD v_c,1            ;   char c;
+;   DEND val               ; };
+;
+; A field is used as a displacement: lw r0,pt_y(r2) with r2 pointing at a
+; point; an array of records steps by SIZEOF_point. FIELD sizes are
+; expressions (an int[3] member is 3*3; a nested record is SIZEOF_inner).
+; Field names are global symbols, so give each record's fields a prefix.
+; Misuse (FIELD or DEND outside a layout, a layout inside another) stops
+; with an ERROR.
+IFNDEF LIB_STRUCT
+SET LIB_STRUCT,1
+SET DS_OPEN,0
+SET DS_UNION,0
+SET DS_OFF,0
+
+; DSECT name / USECT name -- start a struct / union layout.
+MACRO DSECT &N
+ DSBEGIN 0
+MEND
+
+MACRO USECT &N
+ DSBEGIN 1
+MEND
+
+; DSBEGIN union -- shared start of DSECT and USECT
+MACRO DSBEGIN &U
+IFNE DS_OPEN,0
+ERROR 'DSECT or USECT inside another layout (missing DEND)'
+ENDIFASM
+SET DS_OPEN,1
+SET DS_UNION,&U
+SET DS_OFF,0
+MEND
+
+; FIELD name,bytes -- the next member: name = its offset. In a union every
+; member is at 0 and the size grows to the largest member.
+MACRO FIELD &F,&S
+IFEQ DS_OPEN,0
+ERROR 'FIELD outside DSECT/USECT'
+ENDIFASM
+IFEQ DS_UNION,0
+&F EQU DS_OFF
+SET DS_OFF,DS_OFF+(&S)
+ELSEASM
+&F EQU 0
+; DS_OFF = max(DS_OFF, size): (a + b + |a - b|) / 2
+SET DS_D,DS_OFF-(&S)
+SET DS_OFF,(DS_OFF+(&S)+(DS_D^(DS_D>>23))-(DS_D>>23))/2
+ENDIFASM
+MEND
+
+; DEND name -- end the layout; SIZEOF_name = its size in bytes.
+MACRO DEND &N
+IFEQ DS_OPEN,0
+ERROR 'DEND without DSECT/USECT'
+ENDIFASM
+SET SIZEOF_&N,DS_OFF
+SET DS_OPEN,0
+MEND
+ENDIFASM

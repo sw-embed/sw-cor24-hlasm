@@ -1,7 +1,7 @@
-Loaded 22510 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.fmRqXOQ7Jl/hlasm.lgo
-Loaded 37 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.Wz7gHn/main_d23_named_include_main.bin' at 0x090000
-Loaded 33 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.Wz7gHn/slot1_d23_named_include_extra.bin' at 0x081000
-Loaded 47 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.Wz7gHn/sourceset.cfg' at 0x07F000
+Loaded 23542 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.5iX5ydQweH/hlasm.lgo
+Loaded 37 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.u7dn3S/main_d23_named_include_main.bin' at 0x090000
+Loaded 33 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.u7dn3S/slot1_d23_named_include_extra.bin' at 0x081000
+Loaded 47 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24-hlasm-sourceset.u7dn3S/sourceset.cfg' at 0x07F000
 [UART TX @ 160000] 't'  (0x74)
 [UART TX @ 160000] 'a'  (0x61)
 [UART TX @ 160000] 'i'  (0x69)
@@ -27,13 +27,13 @@ Loaded 47 bytes from '/var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T//sw-cor24
 [UART TX @ 170000] 'b'  (0x62)
 [UART TX @ 170000] 'r'  (0x72)
 [UART TX @ 170000] 'a'  (0x61)
-[UART TX @ 170000] ' '  (0x20)
-[UART TX @ 170000] 't'  (0x74)
-[UART TX @ 170000] 'a'  (0x61)
-[UART TX @ 170000] 'i'  (0x69)
-[UART TX @ 170000] 'l'  (0x6C)
-[UART TX @ 170000] ''  (0x0D)
-[UART TX @ 170000] '\n'
+[UART TX @ 170775] ' '  (0x20)
+[UART TX @ 170775] 't'  (0x74)
+[UART TX @ 170775] 'a'  (0x61)
+[UART TX @ 170775] 'i'  (0x69)
+[UART TX @ 170775] 'l'  (0x6C)
+[UART TX @ 170775] ''  (0x0D)
+[UART TX @ 170775] '\n'
 
 UART output: tail:
  bra _h
@@ -41,4 +41,4 @@ _h:
  bra tail
 
 
-Executed 170377 instructions
+Executed 170775 instructions

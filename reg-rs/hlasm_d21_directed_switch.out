@@ -1,4 +1,4 @@
-Loaded 22510 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.w2pjb0zncs/hlasm.lgo
+Loaded 23542 bytes from /var/folders/wm/4h2wt33j4sv97l8098515h1h0000gn/T/run-kernel.gT1keKynRz/hlasm.lgo
 Loaded 47 bytes from 'demos/d21_directed_switch_main.bin' at 0x090000
 Loaded 24 bytes from 'demos/d21_directed_switch_extra.bin' at 0x081000
 Loaded 47 bytes from 'reg-rs/s13_directed_switch.cfg' at 0x07F000
@@ -21,4 +21,4 @@ UART output: _h:
  bra _h
 
 
-Executed 160153 instructions
+Executed 160535 instructions
