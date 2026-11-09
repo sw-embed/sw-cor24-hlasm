@@ -1,8 +1,9 @@
 number = 16
 slug = "dsect-field"
-status = "in-progress"
+status = "completed"
 description = "Implement M6 from docs/limits-and-lifting-plan.md: DSECT name / FIELD name,si..."
 role = "production"
 context_files = []
 created_at = "2026-11-07T17:42:35"
-commits = []
+completed_at = "2026-11-08T17:26:44"
+commits = ["a41d13a2374774d3ae559a5079f7ebf776b7ded0"]

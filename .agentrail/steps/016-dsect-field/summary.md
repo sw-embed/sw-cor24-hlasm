@@ -1,0 +1,1 @@
+M6 as library macros: lib/struct.hlasm DSECT/USECT/FIELD/DEND (offsets, SIZEOF_name, union max via expressions). New hlasm directive ERROR 'message' for macro argument checks. Demo d45 + hlasm_e2e_d45_dsect, check_lib struct case; docs. 122/122 pass.
