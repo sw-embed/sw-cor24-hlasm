@@ -1,0 +1,41 @@
+; demo34.c in hlasm: a two-dimensional array is rows*cols elements laid out
+; row by row; sizes are assembly-time expressions. Prints "D34OK" and
+; returns 42. Output: "D34OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ LOCAL A,2*3*3
+ PROLOG
+ CHECKINIT
+; sizeof(int[2][3]) == 18, sizeof(int[3][4]) == 36, sizeof(char[2][3]) == 6
+ la r0,2*3*3
+ CHECK cc_eq,r0,18
+ la r0,3*4*3
+ CHECK cc_eq,r0,36
+ la r0,2*3*1
+ CHECK cc_eq,r0,6
+; int *p = (int *)a; p[0..5] = 10..60
+ lc r0,10
+ sw r0,A(fp)
+ lc r0,20
+ sw r0,A+3(fp)
+ lc r0,30
+ sw r0,A+6(fp)
+ lc r0,40
+ sw r0,A+9(fp)
+ lc r0,50
+ sw r0,A+12(fp)
+ lc r0,60
+ sw r0,A+15(fp)
+; p[0] + p[5] == 70  (p[5] is a[1][2]: row 1, column 2)
+ lw r0,A(fp)
+ lw r1,A+(1*3+2)*3(fp)
+ add r0,r1
+ CHECK cc_eq,r0,70
+ CHECKEND "D34OK\n",42
+ RET
+COPY svc_bare_code

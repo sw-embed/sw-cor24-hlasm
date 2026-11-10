@@ -1,6 +1,6 @@
 number = 17
 slug = "port-struct-and-heap-demos"
-status = "pending"
+status = "in-progress"
 description = "Port Group D of docs/tinyc-port-plan.md (structs, unions, heap: demo23, demo2..."
 role = "production"
 context_files = []

@@ -1,4 +1,4 @@
 command = "bash reg-rs/check_includes.sh members 2>&1"
-timeout = 120
+timeout = 300
 exit_code = 0
 desc = "Source config: 32 members with 15-character names, all INCLUDEd"

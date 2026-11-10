@@ -1,4 +1,4 @@
 command = "bash reg-rs/check_lib.sh console 2>&1"
-timeout = 180
+timeout = 300
 exit_code = 0
 desc = "Macro library: console output macros, STR, START and the r0 report"

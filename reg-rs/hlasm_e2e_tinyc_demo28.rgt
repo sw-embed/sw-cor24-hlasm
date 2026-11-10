@@ -1,0 +1,4 @@
+command = "bash reg-rs/check_tinyc.sh demo28 2>&1"
+timeout = 300
+exit_code = 0
+desc = "tiny-C demo28.c ported to hlasm (demos/tinyc/demo28.hlasm), run end to end"

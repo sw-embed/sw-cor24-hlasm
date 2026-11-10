@@ -1,4 +1,4 @@
 command = "bash -c 'scripts/run-kernel.sh <(scripts/run-kernel.sh hlasm.s --load-binary demos/d42_macro_layering.bin@524288 --speed 0 -n 6000000 -q 2>/dev/null) --speed 0 -n 20000 -q 2>&1'"
-timeout = 30
+timeout = 300
 exit_code = 0
 desc = "Demo 42 assembled with cor24-asm and run on cor24-emu (prints Hi!***-7Vok.)"

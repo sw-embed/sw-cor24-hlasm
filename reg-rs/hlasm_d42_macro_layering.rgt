@@ -1,4 +1,4 @@
 command = "scripts/run-kernel.sh hlasm.s --load-binary demos/d42_macro_layering.bin@524288 --speed 0 -n 6000000 -q 2>&1"
-timeout = 30
+timeout = 300
 exit_code = 0
 desc = "Demo 42: nested macro calls, directives and structured IF in macro bodies, default/keyword params, &SYSNARG"

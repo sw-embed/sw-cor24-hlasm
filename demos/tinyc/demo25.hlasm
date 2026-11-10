@@ -1,0 +1,60 @@
+; demo25.c in hlasm: structs as DSECT layouts; a local struct is a LOCAL
+; of SIZEOF bytes, and s.a is the displacement S+s_a from fp.
+; Prints "D25OK" and returns 42. Output: "D25OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY struct
+SET SHOWRC,1
+
+ DSECT point
+ FIELD pt_x,3
+ FIELD pt_y,3
+ DEND point
+
+; the anonymous struct { int a; int b; }
+ DSECT ab
+ FIELD s_a,3
+ FIELD s_b,3
+ DEND ab
+
+ START
+_main:
+ LOCAL S,SIZEOF_ab
+ LOCAL P,SIZEOF_point
+ PROLOG
+ CHECKINIT
+; s.a = 10; s.b = 20;  s.a + s.b == 30
+ lc r0,10
+ sw r0,S+s_a(fp)
+ lc r0,20
+ sw r0,S+s_b(fp)
+ lw r0,S+s_a(fp)
+ lw r1,S+s_b(fp)
+ add r0,r1
+ CHECK cc_eq,r0,30
+; p.x = 3; p.y = 4;
+ lc r0,3
+ sw r0,P+pt_x(fp)
+ lc r0,4
+ sw r0,P+pt_y(fp)
+ lw r0,P+pt_x(fp)
+ CHECK cc_eq,r0,3
+ lw r0,P+pt_y(fp)
+ CHECK cc_eq,r0,4
+; sizeof(struct point) == 6
+ la r0,SIZEOF_point
+ CHECK cc_eq,r0,6
+ lw r0,P+pt_x(fp)
+ lw r1,P+pt_y(fp)
+ add r0,r1
+ CHECK cc_eq,r0,7
+; p.x += 10;
+ lw r0,P+pt_x(fp)
+ add r0,10
+ sw r0,P+pt_x(fp)
+ CHECK cc_eq,r0,13
+ CHECKEND "D25OK\n",42
+ RET
+COPY svc_bare_code

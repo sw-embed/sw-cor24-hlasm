@@ -1,0 +1,62 @@
+; demo42.c in hlasm: a linked list of local nodes; p->next->val is two
+; loads through the layout's displacements. Prints "D42OK" and returns 42.
+; Output: "D42OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY struct
+SET SHOWRC,1
+
+ DSECT node
+ FIELD nd_val,3
+ FIELD nd_next,3
+ DEND node
+
+ START
+_main:
+ LOCAL NA,SIZEOF_node
+ LOCAL NB,SIZEOF_node
+ LOCAL NC,SIZEOF_node
+ PROLOG
+ CHECKINIT
+; a.val = 10; a.next = &b;  b.val = 20; b.next = &c;  c.val = 12; c.next = 0;
+ lc r0,10
+ sw r0,NA+nd_val(fp)
+ LOCADDR r2,NB
+ sw r2,NA+nd_next(fp)
+ lc r0,20
+ sw r0,NB+nd_val(fp)
+ LOCADDR r2,NC
+ sw r2,NB+nd_next(fp)
+ lc r0,12
+ sw r0,NC+nd_val(fp)
+ lc r0,0
+ sw r0,NC+nd_next(fp)
+; a.next->val == 20; a.next->next->val == 12
+ lw r2,NA+nd_next(fp)
+ lw r0,nd_val(r2)
+ CHECK cc_eq,r0,20
+ lw r2,nd_next(r2)
+ lw r0,nd_val(r2)
+ CHECK cc_eq,r0,12
+; sum_list(&a) == 42
+ LOCADDR r2,NA
+ CALL _sum_list,r2
+ CHECK cc_eq,r0,42
+ CHECKEND "D42OK\n",42
+ RET
+
+; _sum_list(p): the sum of val over the list starting at p
+_sum_list:
+ PROLOG
+ ARG r2,1
+ lc r0,0
+DO
+ DOEXIT cc_eq,r2,0
+ lw r1,nd_val(r2)
+ add r0,r1
+ lw r2,nd_next(r2)
+ENDDO
+ RET
+COPY svc_bare_code

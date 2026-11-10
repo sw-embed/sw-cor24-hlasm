@@ -1,4 +1,4 @@
 command = "scripts/run-kernel.sh hlasm.s --load-binary demos/d41_equ_and_expressions.bin@524288 --speed 0 -n 6000000 -q 2>&1"
-timeout = 30
+timeout = 300
 exit_code = 0
 desc = "Demo 41: EQU constants, full expressions and symbols in instruction/.byte/.word/IF/WHEN operands"

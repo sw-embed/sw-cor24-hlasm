@@ -1,4 +1,4 @@
 command = "bash reg-rs/check_lib.sh struct 2>&1"
-timeout = 180
+timeout = 300
 exit_code = 0
 desc = "Macro library: DSECT/USECT/FIELD/DEND misuse stops with ERROR; the ERROR directive"

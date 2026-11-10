@@ -1,0 +1,37 @@
+; demo35.c in hlasm: array members in a struct take their full size in the
+; layout (FIELD rc_tag,4 for char tag[4]). Prints "D35OK" and returns 42.
+; Output: "D35OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY struct
+SET SHOWRC,1
+
+ DSECT record
+ FIELD rc_tag,4*1
+ FIELD rc_value,3
+ DEND record
+
+ DSECT pair
+ FIELD pr_a,3*1
+ FIELD pr_b,5*1
+ DEND pair
+
+ START
+_main:
+ LOCAL R,SIZEOF_record
+ PROLOG
+ CHECKINIT
+ la r0,SIZEOF_record
+ CHECK cc_eq,r0,7
+ la r0,SIZEOF_pair
+ CHECK cc_eq,r0,8
+; r.value = 42
+ lc r0,42
+ sw r0,R+rc_value(fp)
+ lw r0,R+rc_value(fp)
+ CHECK cc_eq,r0,42
+ CHECKEND "D35OK\n",42
+ RET
+COPY svc_bare_code

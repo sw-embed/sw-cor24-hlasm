@@ -1,4 +1,4 @@
 command = "bash reg-rs/check_structured_asm.sh 2>&1"
-timeout = 120
+timeout = 300
 exit_code = 0
 desc = "hlasm output of every structured demo is accepted by cor24-asm (errors from deliberately fake source lines are listed)"

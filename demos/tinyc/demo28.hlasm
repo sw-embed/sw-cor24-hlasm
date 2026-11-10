@@ -1,0 +1,47 @@
+; demo28.c in hlasm: unions as USECT layouts -- every member at offset 0,
+; the size of the largest. Writing the int and reading the char gives its
+; low byte (COR24 is little-endian). Prints "D28OK" and returns 42.
+; Output: "D28OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY struct
+SET SHOWRC,1
+
+ USECT intchar
+ FIELD ic_i,3
+ FIELD ic_c,1
+ DEND intchar
+
+; the anonymous union { int x; int y; }
+ USECT xy
+ FIELD u_x,3
+ FIELD u_y,3
+ DEND xy
+
+ START
+_main:
+ LOCAL U,SIZEOF_intchar
+ LOCAL V,SIZEOF_xy
+ PROLOG
+ CHECKINIT
+ lc r0,42
+ sw r0,U+ic_i(fp)
+ lw r0,U+ic_i(fp)
+ CHECK cc_eq,r0,42
+; u.i = 65;  u.c == 65
+ lc r0,65
+ sw r0,U+ic_i(fp)
+ lbu r0,U+ic_c(fp)
+ CHECK cc_eq,r0,65
+ la r0,SIZEOF_intchar
+ CHECK cc_eq,r0,3
+; v.x = 100;  v.y == 100
+ la r0,100
+ sw r0,V+u_x(fp)
+ lw r0,V+u_y(fp)
+ CHECK cc_eq,r0,100
+ CHECKEND "D28OK\n",42
+ RET
+COPY svc_bare_code

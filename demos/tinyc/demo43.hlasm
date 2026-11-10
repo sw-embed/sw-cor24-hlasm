@@ -1,0 +1,92 @@
+; demo43.c in hlasm: Lisp-style cons cells allocated with GETMAIN and
+; returned by pointer; lst->cdr->car->num is three loads.
+; Prints "D43OK" and returns 42. Output: "D43OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY struct
+SET SHOWRC,1
+
+; struct val { int tag; int num; struct val *car; struct val *cdr; };
+ DSECT cell
+ FIELD v_tag,3
+ FIELD v_num,3
+ FIELD v_car,3
+ FIELD v_cdr,3
+ DEND cell
+
+; CONSNUM n: LST = cons(make_num(n), LST)  (a demo-local macro; macros are
+; defined before their first use)
+MACRO CONSNUM &N
+ CALL _make_num,&N
+ mov r2,r0
+ lw r0,LST(fp)
+ CALL _cons,r2,r0
+ sw r0,LST(fp)
+MEND
+
+ START
+_main:
+ LOCAL NIL,3
+ LOCAL LST,3
+ PROLOG
+ CHECKINIT
+ CALL _make_num,0
+ sw r0,NIL(fp)
+; lst = cons(make_num(1), cons(make_num(2), cons(make_num(3), nil)))
+ lw r0,NIL(fp)
+ sw r0,LST(fp)
+ CONSNUM 3
+ CONSNUM 2
+ CONSNUM 1
+; lst->car->num == 1, lst->cdr->car->num == 2, lst->cdr->cdr->car->num == 3
+ lw r2,LST(fp)
+ lw r1,v_car(r2)
+ lw r0,v_num(r1)
+ CHECK cc_eq,r0,1
+ lw r2,v_cdr(r2)
+ lw r1,v_car(r2)
+ lw r0,v_num(r1)
+ CHECK cc_eq,r0,2
+ lw r2,v_cdr(r2)
+ lw r1,v_car(r2)
+ lw r0,v_num(r1)
+ CHECK cc_eq,r0,3
+; while (p->tag == 1) { sum += p->car->num; p = p->cdr; }
+ lc r0,0
+ lw r2,LST(fp)
+DO
+ lw r1,v_tag(r2)
+ DOEXIT cc_ne,r1,1
+ lw r1,v_car(r2)
+ lw r1,v_num(r1)
+ add r0,r1
+ lw r2,v_cdr(r2)
+ENDDO
+ CHECK cc_eq,r0,6
+ CHECKEND "D43OK\n",42
+ RET
+
+; _make_num(n): a new cell with tag 0 and num n
+_make_num:
+ PROLOG
+ GETMAIN r2,SIZEOF_cell
+ lc r0,0
+ sw r0,v_tag(r2)
+ ARG r0,1
+ sw r0,v_num(r2)
+ RETURN r2
+
+; _cons(a, d): a new cell with tag 1, car a, cdr d
+_cons:
+ PROLOG
+ GETMAIN r2,SIZEOF_cell
+ lc r0,1
+ sw r0,v_tag(r2)
+ ARG r0,1
+ sw r0,v_car(r2)
+ ARG r0,2
+ sw r0,v_cdr(r2)
+ RETURN r2
+COPY svc_bare_code

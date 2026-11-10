@@ -1,0 +1,59 @@
+; demo38.c in hlasm: a struct initialiser is a store per member; members
+; without an initialiser are set to 0. Prints "D38OK" and returns 42.
+; Output: "D38OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY struct
+SET SHOWRC,1
+
+ DSECT point
+ FIELD pt_x,3
+ FIELD pt_y,3
+ DEND point
+
+ DSECT abc
+ FIELD s_a,3
+ FIELD s_b,3
+ FIELD s_c,3
+ DEND abc
+
+; INIT2 local,field1,value1,field2,value2: initialise two members
+MACRO INIT2 &L,&F1,&V1,&F2,&V2
+ la r0,&V1
+ sw r0,&L+&F1(fp)
+ la r0,&V2
+ sw r0,&L+&F2(fp)
+MEND
+
+ START
+_main:
+ LOCAL P,SIZEOF_point
+ LOCAL Q,SIZEOF_point
+ LOCAL S,SIZEOF_abc
+ PROLOG
+ CHECKINIT
+; struct point p = {3, 4};
+ INIT2 P,pt_x,3,pt_y,4
+ lw r0,P+pt_x(fp)
+ CHECK cc_eq,r0,3
+ lw r0,P+pt_y(fp)
+ CHECK cc_eq,r0,4
+; struct point q = {10, 20,};
+ INIT2 Q,pt_x,10,pt_y,20
+ lw r0,Q+pt_x(fp)
+ lw r1,Q+pt_y(fp)
+ add r0,r1
+ CHECK cc_eq,r0,30
+; struct { int a; int b; int c; } s = {1, 2};  (c is 0)
+ INIT2 S,s_a,1,s_b,2
+ lc r0,0
+ sw r0,S+s_c(fp)
+ lw r0,S+s_a(fp)
+ CHECK cc_eq,r0,1
+ lw r0,S+s_b(fp)
+ CHECK cc_eq,r0,2
+ CHECKEND "D38OK\n",42
+ RET
+COPY svc_bare_code

@@ -1,0 +1,56 @@
+; demo23.c in hlasm: an enum is a run of EQU symbols. A demo-local ENUM
+; macro numbers its names from a start value, as C does. Prints "D23OK"
+; and returns 42. Output: "D23OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+
+; ENUM first,n1[,...,n6]: n1 = first, n2 = first + 1, ...
+MACRO ENUM &F,&N1,&N2,&N3,&N4,&N5,&N6
+SET EN_V,&F
+ ENUMONE &N1
+ ENUMONE &N2
+ ENUMONE &N3
+ ENUMONE &N4
+ ENUMONE &N5
+ ENUMONE &N6
+MEND
+
+MACRO ENUMONE &N
+IFDIFF &N,
+&N EQU EN_V
+SET EN_V,EN_V+1
+ENDIFASM
+MEND
+
+; enum color { RED, GREEN, BLUE };
+ ENUM 0,RED,GREEN,BLUE
+; enum { OFF = 0, ON = 1, AUTO = 10 };
+OFF EQU 0
+ON EQU 1
+AUTO EQU 10
+; ({ enum { A = 20, B }; B; })
+ ENUM 20,EA,EB
+
+ START
+_main:
+ PROLOG
+ CHECKINIT
+ la r0,RED
+ CHECK cc_eq,r0,0
+ la r0,GREEN
+ CHECK cc_eq,r0,1
+ la r0,BLUE
+ CHECK cc_eq,r0,2
+ la r0,AUTO
+ CHECK cc_eq,r0,10
+; int x = GREEN + BLUE;
+ la r0,GREEN+BLUE
+ CHECK cc_eq,r0,3
+ la r0,EB
+ CHECK cc_eq,r0,21
+ CHECKEND "D23OK\n",42
+ RET
+COPY svc_bare_code

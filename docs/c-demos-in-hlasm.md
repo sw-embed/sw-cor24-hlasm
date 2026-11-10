@@ -6,9 +6,10 @@ side by side with the C, using a shared macro library. The point is to
 show what macros buy over writing plain COR24 assembly, and how close
 hlasm source can come to the C it replaces.
 
-Status: the macro library is done, and batches 1-3 (10 I/O, 10
-control-flow and 13 function and data demos) are ported; see
-[Ported demos](#ported-demos). Batch 4 (structs, unions, heap) follows. The
+Status: the macro library is done, and all four batches are ported: 42
+demos (10 I/O, 10 control flow, 13 functions and data, 9 structs, unions
+and heap), plus a second demo11 using AND/OR; see
+[Ported demos](#ported-demos). The
 detailed survey and reasoning are in
 [tinyc-port-plan.md](tinyc-port-plan.md).
 
@@ -185,7 +186,7 @@ Ported demos are added to each group as its step lands.
 | A. I/O (**ported**) | uart_tx, hello, led, button, demo2, demo3, demo8, demo10, demo64, demo9 |
 | B. Control flow (**ported**) | demo, demo4, demo11 (and demo11_andor), demo12, demo13, demo14, demo15, demo21, demo26, demo46 |
 | C. Functions, arrays, pointers, strings (**ported**) | demo5, demo6, demo7, demo16, demo39, demo41, demo50, demo51-54, demo58, demo63 |
-| D. Structs, unions, heap | demo23, demo25, demo28, demo34, demo35, demo38, demo40, demo42, demo43 |
+| D. Structs, unions, heap (**ported**) | demo23, demo25, demo28, demo34, demo35, demo38, demo40, demo42, demo43 |
 
 The other 26 demos test C syntax that has no assembly counterpart:
 typedef, line continuation, prototypes, compound literals, and tc24r
@@ -4178,5 +4179,1129 @@ Output:
 ```
 D63OK
 r0=63
+```
+
+### Batch 4: structs, unions, heap (step 17)
+
+These use the record-layout macros from `lib/struct.hlasm` (`DSECT`/`USECT`/`FIELD`/`DEND`): a field name is its offset, so `s.a` on a local is `S+s_a(fp)` and `p->val` through a pointer in r2 is `nd_val(r2)`.
+
+### demo23: enum
+
+[`demo23.c`](../../sw-cor24-x-tinyc/demos/demo23.c) (35 lines; 142 lines of tc24r assembly) →
+[`demos/tinyc/demo23.hlasm`](../demos/tinyc/demo23.hlasm) (52 lines).
+Macros: a demo-local `ENUM` macro (auto-numbered `EQU`s), `EQU` expressions.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo23 -- enum
+//
+// New features:
+//   - enum { A, B, C } -- auto-incrementing constants
+//   - enum { X=5, Y, Z } -- explicit values
+//   - enum tag { ... } -- named enum types
+//   - enum constants resolve to int at parse time
+//
+// Expected: r0 = 42, UART output: "D23OK"
+
+#define UART_DATA 0xFF0100
+#define UART_STATUS 0xFF0101
+void putc(int c) { while (*(char *)UART_STATUS & 0x80) {} *(char *)UART_DATA = c; }
+void puts(char *s) { while (*s) { putc(*s); s = s + 1; } }
+
+enum color { RED, GREEN, BLUE };
+
+int main() {
+    int ok = 1;
+
+    // auto-increment
+    if (RED != 0) ok = 0;
+    if (GREEN != 1) ok = 0;
+    if (BLUE != 2) ok = 0;
+
+    // explicit values
+    enum { OFF = 0, ON = 1, AUTO = 10 };
+    if (AUTO != 10) ok = 0;
+
+    // in expressions
+    int x = GREEN + BLUE;
+    if (x != 3) ok = 0;
+
+    // in statement expression
+    int y = ({ enum { A=20, B }; B; });
+    if (y != 21) ok = 0;
+
+    if (ok) {
+        puts("D23OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo23.c in hlasm: an enum is a run of EQU symbols. A demo-local ENUM
+; macro numbers its names from a start value, as C does. Prints "D23OK"
+; and returns 42. Output: "D23OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+
+; ENUM first,n1[,...,n6]: n1 = first, n2 = first + 1, ...
+MACRO ENUM &F,&N1,&N2,&N3,&N4,&N5,&N6
+SET EN_V,&F
+ ENUMONE &N1
+ ENUMONE &N2
+ ENUMONE &N3
+ ENUMONE &N4
+ ENUMONE &N5
+ ENUMONE &N6
+MEND
+
+MACRO ENUMONE &N
+IFDIFF &N,
+&N EQU EN_V
+SET EN_V,EN_V+1
+ENDIFASM
+MEND
+
+; enum color { RED, GREEN, BLUE };
+ ENUM 0,RED,GREEN,BLUE
+; enum { OFF = 0, ON = 1, AUTO = 10 };
+OFF EQU 0
+ON EQU 1
+AUTO EQU 10
+; ({ enum { A = 20, B }; B; })
+ ENUM 20,EA,EB
+
+ START
+_main:
+ PROLOG
+ CHECKINIT
+ la r0,RED
+ CHECK cc_eq,r0,0
+ la r0,GREEN
+ CHECK cc_eq,r0,1
+ la r0,BLUE
+ CHECK cc_eq,r0,2
+ la r0,AUTO
+ CHECK cc_eq,r0,10
+; int x = GREEN + BLUE;
+ la r0,GREEN+BLUE
+ CHECK cc_eq,r0,3
+ la r0,EB
+ CHECK cc_eq,r0,21
+ CHECKEND "D23OK\n",42
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D23OK
+r0=42
+```
+
+### demo25: struct
+
+[`demo25.c`](../../sw-cor24-x-tinyc/demos/demo25.c) (45 lines; 199 lines of tc24r assembly) →
+[`demos/tinyc/demo25.hlasm`](../demos/tinyc/demo25.hlasm) (57 lines).
+Macros: `DSECT`/`FIELD`/`DEND`, `LOCAL name,SIZEOF_...`, displacements `P+pt_x(fp)`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo25 -- struct support
+//
+// New features:
+//   - struct { type member; ... } definition
+//   - struct tag { ... } named struct
+//   - struct tag var; variable declaration
+//   - var.member read and write
+//   - sizeof(struct tag)
+//
+// Expected: r0 = 42, UART output: "D25OK"
+
+#define UART_DATA 0xFF0100
+#define UART_STATUS 0xFF0101
+void putc(int c) { while (*(char *)UART_STATUS & 0x80) {} *(char *)UART_DATA = c; }
+void puts(char *s) { while (*s) { putc(*s); s = s + 1; } }
+
+struct point {
+    int x;
+    int y;
+};
+
+int main() {
+    int ok = 1;
+
+    // anonymous struct
+    struct { int a; int b; } s;
+    s.a = 10;
+    s.b = 20;
+    if (s.a + s.b != 30) ok = 0;
+
+    // named struct
+    struct point p;
+    p.x = 3;
+    p.y = 4;
+    if (p.x != 3) ok = 0;
+    if (p.y != 4) ok = 0;
+
+    // sizeof
+    if (sizeof(struct point) != 6) ok = 0;
+
+    // struct in expression
+    int sum = p.x + p.y;
+    if (sum != 7) ok = 0;
+
+    // compound assignment on member
+    p.x += 10;
+    if (p.x != 13) ok = 0;
+
+    if (ok) {
+        puts("D25OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo25.c in hlasm: structs as DSECT layouts; a local struct is a LOCAL
+; of SIZEOF bytes, and s.a is the displacement S+s_a from fp.
+; Prints "D25OK" and returns 42. Output: "D25OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY struct
+SET SHOWRC,1
+
+ DSECT point
+ FIELD pt_x,3
+ FIELD pt_y,3
+ DEND point
+
+; the anonymous struct { int a; int b; }
+ DSECT ab
+ FIELD s_a,3
+ FIELD s_b,3
+ DEND ab
+
+ START
+_main:
+ LOCAL S,SIZEOF_ab
+ LOCAL P,SIZEOF_point
+ PROLOG
+ CHECKINIT
+; s.a = 10; s.b = 20;  s.a + s.b == 30
+ lc r0,10
+ sw r0,S+s_a(fp)
+ lc r0,20
+ sw r0,S+s_b(fp)
+ lw r0,S+s_a(fp)
+ lw r1,S+s_b(fp)
+ add r0,r1
+ CHECK cc_eq,r0,30
+; p.x = 3; p.y = 4;
+ lc r0,3
+ sw r0,P+pt_x(fp)
+ lc r0,4
+ sw r0,P+pt_y(fp)
+ lw r0,P+pt_x(fp)
+ CHECK cc_eq,r0,3
+ lw r0,P+pt_y(fp)
+ CHECK cc_eq,r0,4
+; sizeof(struct point) == 6
+ la r0,SIZEOF_point
+ CHECK cc_eq,r0,6
+ lw r0,P+pt_x(fp)
+ lw r1,P+pt_y(fp)
+ add r0,r1
+ CHECK cc_eq,r0,7
+; p.x += 10;
+ lw r0,P+pt_x(fp)
+ add r0,10
+ sw r0,P+pt_x(fp)
+ CHECK cc_eq,r0,13
+ CHECKEND "D25OK\n",42
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D25OK
+r0=42
+```
+
+### demo28: union
+
+[`demo28.c`](../../sw-cor24-x-tinyc/demos/demo28.c) (39 lines; 183 lines of tc24r assembly) →
+[`demos/tinyc/demo28.hlasm`](../demos/tinyc/demo28.hlasm) (44 lines).
+Macros: `USECT` (all members at 0, size of the largest).
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo28 -- union support
+//
+// New features:
+//   - union { type member; ... } definition
+//   - union tag { ... } named union
+//   - Members share same memory (offset 0)
+//   - sizeof(union) = max member size
+//
+// Expected: r0 = 42, UART output: "D28OK"
+
+#define UART_DATA 0xFF0100
+#define UART_STATUS 0xFF0101
+void putc(int c) { while (*(char *)UART_STATUS & 0x80) {} *(char *)UART_DATA = c; }
+void puts(char *s) { while (*s) { putc(*s); s = s + 1; } }
+
+union intchar {
+    int i;
+    char c;
+};
+
+int main() {
+    int ok = 1;
+
+    // basic union: members share same memory
+    union intchar u;
+    u.i = 42;
+    if (u.i != 42) ok = 0;
+
+    // writing to one member affects the other (same offset)
+    u.i = 65;
+    if (u.c != 65) ok = 0;
+
+    // sizeof union = max member size (int=3, char=1, so 3)
+    if (sizeof(union intchar) != 3) ok = 0;
+
+    // anonymous union
+    union { int x; int y; } v;
+    v.x = 100;
+    // x and y share same memory
+    if (v.y != 100) ok = 0;
+
+    if (ok) {
+        puts("D28OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo28.c in hlasm: unions as USECT layouts -- every member at offset 0,
+; the size of the largest. Writing the int and reading the char gives its
+; low byte (COR24 is little-endian). Prints "D28OK" and returns 42.
+; Output: "D28OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY struct
+SET SHOWRC,1
+
+ USECT intchar
+ FIELD ic_i,3
+ FIELD ic_c,1
+ DEND intchar
+
+; the anonymous union { int x; int y; }
+ USECT xy
+ FIELD u_x,3
+ FIELD u_y,3
+ DEND xy
+
+ START
+_main:
+ LOCAL U,SIZEOF_intchar
+ LOCAL V,SIZEOF_xy
+ PROLOG
+ CHECKINIT
+ lc r0,42
+ sw r0,U+ic_i(fp)
+ lw r0,U+ic_i(fp)
+ CHECK cc_eq,r0,42
+; u.i = 65;  u.c == 65
+ lc r0,65
+ sw r0,U+ic_i(fp)
+ lbu r0,U+ic_c(fp)
+ CHECK cc_eq,r0,65
+ la r0,SIZEOF_intchar
+ CHECK cc_eq,r0,3
+; v.x = 100;  v.y == 100
+ la r0,100
+ sw r0,V+u_x(fp)
+ lw r0,V+u_y(fp)
+ CHECK cc_eq,r0,100
+ CHECKEND "D28OK\n",42
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D28OK
+r0=42
+```
+
+### demo34: two-dimensional arrays
+
+[`demo34.c`](../../sw-cor24-x-tinyc/demos/demo34.c) (33 lines; 258 lines of tc24r assembly) →
+[`demos/tinyc/demo34.hlasm`](../demos/tinyc/demo34.hlasm) (41 lines).
+Macros: assembly-time size expressions, row-major displacement `A+(1*3+2)*3(fp)`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo34 -- multi-dimensional array declarations
+//
+// New feature:
+//   - int a[2][3]; (multi-dimensional array declaration)
+//   - sizeof(int[N][M]) correct sizing
+//
+// Expected: r0 = 42, UART output: "D34OK"
+
+#define UART_DATA 0xFF0100
+#define UART_STATUS 0xFF0101
+void putc(int c) { while (*(char *)UART_STATUS & 0x80) {} *(char *)UART_DATA = c; }
+void puts(char *s) { while (*s) { putc(*s); s = s + 1; } }
+
+int main() {
+    int ok = 1;
+
+    // multi-dimensional array sizeof
+    if (sizeof(int[2][3]) != 18) ok = 0;
+    if (sizeof(int[3][4]) != 36) ok = 0;
+    if (sizeof(char[2][3]) != 6) ok = 0;
+
+    // multi-dim array declaration allocates correct stack space
+    int a[2][3];
+    int *p = (int *)a;
+    p[0] = 10;
+    p[1] = 20;
+    p[2] = 30;
+    p[3] = 40;
+    p[4] = 50;
+    p[5] = 60;
+    if (p[0] + p[5] != 70) ok = 0;
+
+    if (ok) {
+        puts("D34OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo34.c in hlasm: a two-dimensional array is rows*cols elements laid out
+; row by row; sizes are assembly-time expressions. Prints "D34OK" and
+; returns 42. Output: "D34OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+SET SHOWRC,1
+ START
+_main:
+ LOCAL A,2*3*3
+ PROLOG
+ CHECKINIT
+; sizeof(int[2][3]) == 18, sizeof(int[3][4]) == 36, sizeof(char[2][3]) == 6
+ la r0,2*3*3
+ CHECK cc_eq,r0,18
+ la r0,3*4*3
+ CHECK cc_eq,r0,36
+ la r0,2*3*1
+ CHECK cc_eq,r0,6
+; int *p = (int *)a; p[0..5] = 10..60
+ lc r0,10
+ sw r0,A(fp)
+ lc r0,20
+ sw r0,A+3(fp)
+ lc r0,30
+ sw r0,A+6(fp)
+ lc r0,40
+ sw r0,A+9(fp)
+ lc r0,50
+ sw r0,A+12(fp)
+ lc r0,60
+ sw r0,A+15(fp)
+; p[0] + p[5] == 70  (p[5] is a[1][2]: row 1, column 2)
+ lw r0,A(fp)
+ lw r1,A+(1*3+2)*3(fp)
+ add r0,r1
+ CHECK cc_eq,r0,70
+ CHECKEND "D34OK\n",42
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D34OK
+r0=42
+```
+
+### demo35: arrays inside structs
+
+[`demo35.c`](../../sw-cor24-x-tinyc/demos/demo35.c) (35 lines; 151 lines of tc24r assembly) →
+[`demos/tinyc/demo35.hlasm`](../demos/tinyc/demo35.hlasm) (34 lines).
+Macros: `FIELD rc_tag,4*1` (an array member), `SIZEOF_`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo35 -- struct array members
+//
+// New feature:
+//   - struct { char a[3]; int b; } (array members in structs)
+//   - sizeof(struct tag) correctly accounts for array member sizes
+//
+// Expected: r0 = 42, UART output: "D35OK"
+
+#define UART_DATA 0xFF0100
+#define UART_STATUS 0xFF0101
+void putc(int c) { while (*(char *)UART_STATUS & 0x80) {} *(char *)UART_DATA = c; }
+void puts(char *s) { while (*s) { putc(*s); s = s + 1; } }
+
+struct record {
+    char tag[4];
+    int value;
+};
+
+struct pair {
+    char a[3];
+    char b[5];
+};
+
+int main() {
+    int ok = 1;
+
+    // sizeof with array member: char[4] + int = 4 + 3 = 7
+    if (sizeof(struct record) != 7) ok = 0;
+
+    // sizeof with multiple array members: char[3] + char[5] = 8
+    if (sizeof(struct pair) != 8) ok = 0;
+
+    // struct with array member - access scalar after array
+    struct record r;
+    r.value = 42;
+    if (r.value != 42) ok = 0;
+
+    if (ok) {
+        puts("D35OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo35.c in hlasm: array members in a struct take their full size in the
+; layout (FIELD rc_tag,4 for char tag[4]). Prints "D35OK" and returns 42.
+; Output: "D35OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY struct
+SET SHOWRC,1
+
+ DSECT record
+ FIELD rc_tag,4*1
+ FIELD rc_value,3
+ DEND record
+
+ DSECT pair
+ FIELD pr_a,3*1
+ FIELD pr_b,5*1
+ DEND pair
+
+ START
+_main:
+ LOCAL R,SIZEOF_record
+ PROLOG
+ CHECKINIT
+ la r0,SIZEOF_record
+ CHECK cc_eq,r0,7
+ la r0,SIZEOF_pair
+ CHECK cc_eq,r0,8
+; r.value = 42
+ lc r0,42
+ sw r0,R+rc_value(fp)
+ lw r0,R+rc_value(fp)
+ CHECK cc_eq,r0,42
+ CHECKEND "D35OK\n",42
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D35OK
+r0=42
+```
+
+### demo38: struct initialisers
+
+[`demo38.c`](../../sw-cor24-x-tinyc/demos/demo38.c) (31 lines; 229 lines of tc24r assembly) →
+[`demos/tinyc/demo38.hlasm`](../demos/tinyc/demo38.hlasm) (55 lines).
+Macros: a demo-local `INIT2` macro storing members.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo38 -- struct brace initializer
+//
+// New feature:
+//   - struct point p = {3, 4}; (brace initializer)
+//   - Desugars to declaration + member assignments
+//
+// Expected: r0 = 42, UART output: "D38OK"
+
+#define UART_DATA 0xFF0100
+#define UART_STATUS 0xFF0101
+void putc(int c) { while (*(char *)UART_STATUS & 0x80) {} *(char *)UART_DATA = c; }
+void puts(char *s) { while (*s) { putc(*s); s = s + 1; } }
+
+struct point { int x; int y; };
+
+int main() {
+    int ok = 1;
+
+    // basic brace initializer
+    struct point p = {3, 4};
+    if (p.x != 3) ok = 0;
+    if (p.y != 4) ok = 0;
+
+    // trailing comma allowed
+    struct point q = {10, 20,};
+    if (q.x + q.y != 30) ok = 0;
+
+    // partial initializer (fewer values than members)
+    struct { int a; int b; int c; } s = {1, 2};
+    if (s.a != 1) ok = 0;
+    if (s.b != 2) ok = 0;
+
+    if (ok) {
+        puts("D38OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo38.c in hlasm: a struct initialiser is a store per member; members
+; without an initialiser are set to 0. Prints "D38OK" and returns 42.
+; Output: "D38OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY struct
+SET SHOWRC,1
+
+ DSECT point
+ FIELD pt_x,3
+ FIELD pt_y,3
+ DEND point
+
+ DSECT abc
+ FIELD s_a,3
+ FIELD s_b,3
+ FIELD s_c,3
+ DEND abc
+
+; INIT2 local,field1,value1,field2,value2: initialise two members
+MACRO INIT2 &L,&F1,&V1,&F2,&V2
+ la r0,&V1
+ sw r0,&L+&F1(fp)
+ la r0,&V2
+ sw r0,&L+&F2(fp)
+MEND
+
+ START
+_main:
+ LOCAL P,SIZEOF_point
+ LOCAL Q,SIZEOF_point
+ LOCAL S,SIZEOF_abc
+ PROLOG
+ CHECKINIT
+; struct point p = {3, 4};
+ INIT2 P,pt_x,3,pt_y,4
+ lw r0,P+pt_x(fp)
+ CHECK cc_eq,r0,3
+ lw r0,P+pt_y(fp)
+ CHECK cc_eq,r0,4
+; struct point q = {10, 20,};
+ INIT2 Q,pt_x,10,pt_y,20
+ lw r0,Q+pt_x(fp)
+ lw r1,Q+pt_y(fp)
+ add r0,r1
+ CHECK cc_eq,r0,30
+; struct { int a; int b; int c; } s = {1, 2};  (c is 0)
+ INIT2 S,s_a,1,s_b,2
+ lc r0,0
+ sw r0,S+s_c(fp)
+ lw r0,S+s_a(fp)
+ CHECK cc_eq,r0,1
+ lw r0,S+s_b(fp)
+ CHECK cc_eq,r0,2
+ CHECKEND "D38OK\n",42
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D38OK
+r0=42
+```
+
+### demo40: malloc, calloc, free
+
+[`demo40.c`](../../sw-cor24-x-tinyc/demos/demo40.c) (35 lines; 1638 lines of tc24r assembly) →
+[`demos/tinyc/demo40.hlasm`](../demos/tinyc/demo40.hlasm) (47 lines).
+Macros: `GETMAIN`, `FREEMAIN`, `RTCALL memset`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo40 -- malloc/free (stdlib.h)
+//
+// New features:
+//   - #include <stdlib.h> with bump allocator
+//   - malloc(size), free(ptr), calloc(n, size)
+//
+// Expected: r0 = 42, UART output: "D40OK"
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int ok = 1;
+
+    // malloc and use
+    int *p = (int *)malloc(3);
+    *p = 10;
+    if (*p != 10) ok = 0;
+    free(p);
+
+    // malloc array
+    int *arr = (int *)malloc(12);
+    arr[0] = 1;
+    arr[1] = 2;
+    arr[2] = 3;
+    arr[3] = 4;
+    if (arr[0] + arr[3] != 5) ok = 0;
+    free(arr);
+
+    // calloc (zero-initialized)
+    char *buf = (char *)calloc(4, 1);
+    if (buf[0] != 0) ok = 0;
+    if (buf[3] != 0) ok = 0;
+    free(buf);
+
+    if (ok) {
+        printf("D40OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo40.c in hlasm: malloc is GETMAIN (a bump allocator, like tc24r's),
+; free is FREEMAIN, calloc is GETMAIN plus memset. Prints "D40OK" and
+; returns 42. Output: "D40OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY rt
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; int *p = malloc(3); *p = 10;
+ GETMAIN r2,3
+ lc r0,10
+ sw r0,0(r2)
+ lw r0,0(r2)
+ CHECK cc_eq,r0,10
+ FREEMAIN r2,3
+; int *arr = malloc(12); arr[0..3] = 1..4;  arr[0] + arr[3] == 5
+ GETMAIN r2,12
+ lc r0,1
+ sw r0,0(r2)
+ lc r0,2
+ sw r0,3(r2)
+ lc r0,3
+ sw r0,6(r2)
+ lc r0,4
+ sw r0,9(r2)
+ lw r0,0(r2)
+ lw r1,9(r2)
+ add r0,r1
+ CHECK cc_eq,r0,5
+ FREEMAIN r2,12
+; char *buf = calloc(4, 1);
+ GETMAIN r2,4
+ RTCALL memset,r2,0,4
+ lbu r0,0(r2)
+ CHECK cc_eq,r0,0
+ lbu r0,3(r2)
+ CHECK cc_eq,r0,0
+ FREEMAIN r2,4
+ CHECKEND "D40OK\n",42
+ RET
+COPY svc_bare_code
+COPY rt_code
+```
+
+Output:
+
+```
+D40OK
+r0=42
+```
+
+### demo42: linked list
+
+[`demo42.c`](../../sw-cor24-x-tinyc/demos/demo42.c) (42 lines; 1831 lines of tc24r assembly) →
+[`demos/tinyc/demo42.hlasm`](../demos/tinyc/demo42.hlasm) (59 lines).
+Macros: `DSECT node`, `LOCADDR`, loads through `nd_next(r2)`.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo42 -- nested struct member access (linked list)
+//
+// New feature:
+//   - a.next->val (chained dot + arrow access)
+//   - a->b->c (multi-level arrow traversal)
+//   - Codegen resolves struct types through expression chains
+//
+// Expected: r0 = 42, UART output: "D42OK"
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int val;
+    struct node *next;
+};
+
+int sum_list(struct node *p) {
+    int total = 0;
+    while (p != (struct node *)0) {
+        total = total + p->val;
+        p = p->next;
+    }
+    return total;
+}
+
+int main() {
+    int ok = 1;
+
+    // Build a linked list: 10 -> 20 -> 12
+    struct node a;
+    struct node b;
+    struct node c;
+    a.val = 10; a.next = &b;
+    b.val = 20; b.next = &c;
+    c.val = 12; c.next = (struct node *)0;
+
+    // Chained access
+    if (a.next->val != 20) ok = 0;
+    if (a.next->next->val != 12) ok = 0;
+
+    // Walk the list
+    if (sum_list(&a) != 42) ok = 0;
+
+    if (ok) {
+        printf("D42OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo42.c in hlasm: a linked list of local nodes; p->next->val is two
+; loads through the layout's displacements. Prints "D42OK" and returns 42.
+; Output: "D42OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY struct
+SET SHOWRC,1
+
+ DSECT node
+ FIELD nd_val,3
+ FIELD nd_next,3
+ DEND node
+
+ START
+_main:
+ LOCAL NA,SIZEOF_node
+ LOCAL NB,SIZEOF_node
+ LOCAL NC,SIZEOF_node
+ PROLOG
+ CHECKINIT
+; a.val = 10; a.next = &b;  b.val = 20; b.next = &c;  c.val = 12; c.next = 0;
+ lc r0,10
+ sw r0,NA+nd_val(fp)
+ LOCADDR r2,NB
+ sw r2,NA+nd_next(fp)
+ lc r0,20
+ sw r0,NB+nd_val(fp)
+ LOCADDR r2,NC
+ sw r2,NB+nd_next(fp)
+ lc r0,12
+ sw r0,NC+nd_val(fp)
+ lc r0,0
+ sw r0,NC+nd_next(fp)
+; a.next->val == 20; a.next->next->val == 12
+ lw r2,NA+nd_next(fp)
+ lw r0,nd_val(r2)
+ CHECK cc_eq,r0,20
+ lw r2,nd_next(r2)
+ lw r0,nd_val(r2)
+ CHECK cc_eq,r0,12
+; sum_list(&a) == 42
+ LOCADDR r2,NA
+ CALL _sum_list,r2
+ CHECK cc_eq,r0,42
+ CHECKEND "D42OK\n",42
+ RET
+
+; _sum_list(p): the sum of val over the list starting at p
+_sum_list:
+ PROLOG
+ ARG r2,1
+ lc r0,0
+DO
+ DOEXIT cc_eq,r2,0
+ lw r1,nd_val(r2)
+ add r0,r1
+ lw r2,nd_next(r2)
+ENDDO
+ RET
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D42OK
+r0=42
+```
+
+### demo43: cons cells on the heap
+
+[`demo43.c`](../../sw-cor24-x-tinyc/demos/demo43.c) (49 lines; 1951 lines of tc24r assembly) →
+[`demos/tinyc/demo43.hlasm`](../demos/tinyc/demo43.hlasm) (87 lines).
+Macros: `GETMAIN r2,SIZEOF_cell`, `RETURN r2`, a demo-local `CONSNUM` macro.
+
+<details><summary>C source</summary>
+
+```c
+// tc24r demo43 -- Lisp-style cons cells (struct pointer return + nested access)
+//
+// New features:
+//   - Functions returning struct pointers (struct val *make())
+//   - Nested arrow access through malloc'd structs
+//   - Cons cell pattern: car/cdr linked list
+//
+// Expected: r0 = 42, UART output: "D43OK"
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct val { int tag; int num; struct val *car; struct val *cdr; };
+
+struct val *make_num(int n) {
+    struct val *v = (struct val *)malloc(12);
+    v->tag = 0;
+    v->num = n;
+    return v;
+}
+
+struct val *cons(struct val *a, struct val *d) {
+    struct val *v = (struct val *)malloc(12);
+    v->tag = 1;
+    v->car = a;
+    v->cdr = d;
+    return v;
+}
+
+int main() {
+    int ok = 1;
+
+    // Build list: (1 2 3)
+    struct val *nil = make_num(0);
+    struct val *lst = cons(make_num(1), cons(make_num(2), cons(make_num(3), nil)));
+
+    // car = 1
+    if (lst->car->num != 1) ok = 0;
+    // cadr = 2
+    if (lst->cdr->car->num != 2) ok = 0;
+    // caddr = 3
+    if (lst->cdr->cdr->car->num != 3) ok = 0;
+
+    // Sum the list
+    int sum = 0;
+    struct val *p = lst;
+    while (p->tag == 1) {
+        sum = sum + p->car->num;
+        p = p->cdr;
+    }
+    if (sum != 6) ok = 0;
+
+    if (ok) {
+        printf("D43OK\n");
+        return 42;
+    }
+    return 0;
+}
+```
+
+</details>
+
+```
+; demo43.c in hlasm: Lisp-style cons cells allocated with GETMAIN and
+; returned by pointer; lst->cdr->car->num is three loads.
+; Prints "D43OK" and returns 42. Output: "D43OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY struct
+SET SHOWRC,1
+
+; struct val { int tag; int num; struct val *car; struct val *cdr; };
+ DSECT cell
+ FIELD v_tag,3
+ FIELD v_num,3
+ FIELD v_car,3
+ FIELD v_cdr,3
+ DEND cell
+
+; CONSNUM n: LST = cons(make_num(n), LST)  (a demo-local macro; macros are
+; defined before their first use)
+MACRO CONSNUM &N
+ CALL _make_num,&N
+ mov r2,r0
+ lw r0,LST(fp)
+ CALL _cons,r2,r0
+ sw r0,LST(fp)
+MEND
+
+ START
+_main:
+ LOCAL NIL,3
+ LOCAL LST,3
+ PROLOG
+ CHECKINIT
+ CALL _make_num,0
+ sw r0,NIL(fp)
+; lst = cons(make_num(1), cons(make_num(2), cons(make_num(3), nil)))
+ lw r0,NIL(fp)
+ sw r0,LST(fp)
+ CONSNUM 3
+ CONSNUM 2
+ CONSNUM 1
+; lst->car->num == 1, lst->cdr->car->num == 2, lst->cdr->cdr->car->num == 3
+ lw r2,LST(fp)
+ lw r1,v_car(r2)
+ lw r0,v_num(r1)
+ CHECK cc_eq,r0,1
+ lw r2,v_cdr(r2)
+ lw r1,v_car(r2)
+ lw r0,v_num(r1)
+ CHECK cc_eq,r0,2
+ lw r2,v_cdr(r2)
+ lw r1,v_car(r2)
+ lw r0,v_num(r1)
+ CHECK cc_eq,r0,3
+; while (p->tag == 1) { sum += p->car->num; p = p->cdr; }
+ lc r0,0
+ lw r2,LST(fp)
+DO
+ lw r1,v_tag(r2)
+ DOEXIT cc_ne,r1,1
+ lw r1,v_car(r2)
+ lw r1,v_num(r1)
+ add r0,r1
+ lw r2,v_cdr(r2)
+ENDDO
+ CHECK cc_eq,r0,6
+ CHECKEND "D43OK\n",42
+ RET
+
+; _make_num(n): a new cell with tag 0 and num n
+_make_num:
+ PROLOG
+ GETMAIN r2,SIZEOF_cell
+ lc r0,0
+ sw r0,v_tag(r2)
+ ARG r0,1
+ sw r0,v_num(r2)
+ RETURN r2
+
+; _cons(a, d): a new cell with tag 1, car a, cdr d
+_cons:
+ PROLOG
+ GETMAIN r2,SIZEOF_cell
+ lc r0,1
+ sw r0,v_tag(r2)
+ ARG r0,1
+ sw r0,v_car(r2)
+ ARG r0,2
+ sw r0,v_cdr(r2)
+ RETURN r2
+COPY svc_bare_code
+```
+
+Output:
+
+```
+D43OK
+r0=42
 ```
 

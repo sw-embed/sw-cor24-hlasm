@@ -1,0 +1,47 @@
+; demo40.c in hlasm: malloc is GETMAIN (a bump allocator, like tc24r's),
+; free is FREEMAIN, calloc is GETMAIN plus memset. Prints "D40OK" and
+; returns 42. Output: "D40OK" then "r0=42".
+COPY cor24
+COPY frame
+COPY svc_bare
+COPY check
+COPY rt
+SET SHOWRC,1
+ START
+_main:
+ PROLOG
+ CHECKINIT
+; int *p = malloc(3); *p = 10;
+ GETMAIN r2,3
+ lc r0,10
+ sw r0,0(r2)
+ lw r0,0(r2)
+ CHECK cc_eq,r0,10
+ FREEMAIN r2,3
+; int *arr = malloc(12); arr[0..3] = 1..4;  arr[0] + arr[3] == 5
+ GETMAIN r2,12
+ lc r0,1
+ sw r0,0(r2)
+ lc r0,2
+ sw r0,3(r2)
+ lc r0,3
+ sw r0,6(r2)
+ lc r0,4
+ sw r0,9(r2)
+ lw r0,0(r2)
+ lw r1,9(r2)
+ add r0,r1
+ CHECK cc_eq,r0,5
+ FREEMAIN r2,12
+; char *buf = calloc(4, 1);
+ GETMAIN r2,4
+ RTCALL memset,r2,0,4
+ lbu r0,0(r2)
+ CHECK cc_eq,r0,0
+ lbu r0,3(r2)
+ CHECK cc_eq,r0,0
+ FREEMAIN r2,4
+ CHECKEND "D40OK\n",42
+ RET
+COPY svc_bare_code
+COPY rt_code

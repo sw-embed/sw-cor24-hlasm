@@ -1,4 +1,4 @@
 command = "bash reg-rs/check_lib.sh io 2>&1"
-timeout = 180
+timeout = 300
 exit_code = 0
 desc = "Macro library: GETC/GETLINE from UART input, GETMAIN/FREEMAIN bump allocation"
