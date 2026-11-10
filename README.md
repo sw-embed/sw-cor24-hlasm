@@ -53,16 +53,22 @@ Done:
 - All prerequisites for writing hlasm in HLASM itself are met
   ([docs/bootstrap-hlasm.md](docs/bootstrap-hlasm.md)).
 
-In progress: **porting the tiny-C demos to HLASM.** The example programs of
-the tc24r C compiler (`../sw-cor24-x-tinyc/demos`) are being rewritten in
-HLASM on top of a shared macro library, to show what macros buy over plain
-assembly. See [docs/c-demos-in-hlasm.md](docs/c-demos-in-hlasm.md) for the
-ported demos and the macros used, and
-[docs/tinyc-port-plan.md](docs/tinyc-port-plan.md) for the survey and the
-port order. The survey, the hlasm features it called for, and the macro library
-(`lib/`) are done, and all 42 planned ports (I/O, control flow,
-functions and data, structs and heap, in `demos/tinyc/`) are in. A
-side-by-side showcase with tc24r's output follows.
+**The tiny-C demos in HLASM.** 42 example programs of the tc24r C compiler
+(`../sw-cor24-x-tinyc/demos`) are rewritten in HLASM on a shared macro
+library (`lib/`), in `demos/tinyc/`, each with a regression test. Run them
+with `./demo.sh c-demos`.
+[docs/c-demos-in-hlasm.md](docs/c-demos-in-hlasm.md) shows every port next to
+its C source, documents every macro, and compares each port with tc24r's
+compiled version. Across the 38 demos with both versions:
+
+- the hlasm programs are 41% of tc24r's code size;
+- 32 of the 38 run fewer instructions;
+- of the other six, five divide (the library's divide is correct for
+  negative operands and tc24r's is not, and slower), and demo9 waits for an
+  interrupt in both.
+
+[docs/tinyc-port-plan.md](docs/tinyc-port-plan.md) has the survey and the
+port plan.
 
 Not implemented yet:
 
@@ -120,6 +126,9 @@ just bootstrap
 
 # Run an HLASM program end to end (hlasm -> cor24-asm -> cor24-emu)
 scripts/hlasm-e2e.sh demos/d42_macro_layering.hlasm
+
+# Run the tiny-C demos ported to HLASM
+./demo.sh c-demos
 
 # Or use shell scripts directly:
 ./build.sh          # build / test / run

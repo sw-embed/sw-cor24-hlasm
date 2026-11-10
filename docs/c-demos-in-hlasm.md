@@ -9,8 +9,9 @@ hlasm source can come to the C it replaces.
 Status: the macro library is done, and all four batches are ported: 42
 demos (10 I/O, 10 control flow, 13 functions and data, 9 structs, unions
 and heap), plus a second demo11 using AND/OR; see
-[Ported demos](#ported-demos). The
-detailed survey and reasoning are in
+[Ported demos](#ported-demos). [What the macros buy](#what-the-macros-buy-hlasm-against-tc24r)
+compares every port with tc24r's output; `./demo.sh c-demos` runs them all.
+The detailed survey and reasoning are in
 [tinyc-port-plan.md](tinyc-port-plan.md).
 
 ## How to run a ported demo
@@ -192,6 +193,863 @@ The other 26 demos test C syntax that has no assembly counterpart:
 typedef, line continuation, prototypes, compound literals, and tc24r
 parser regressions. They are not ported. The list and the reasons are
 in [tinyc-port-plan.md](tinyc-port-plan.md#demos-to-skip).
+
+## What the macros buy: hlasm against tc24r
+
+`scripts/c-demos.sh --table` compares every port with tc24r's compiled
+version of the same C program. Source lines are non-blank, non-comment
+lines. `.s` lines are instruction and data lines (not labels, comments or
+section directives). Bytes are the assembled code and data. Executed is the
+number of instructions cor24-emu runs to the halt. The hlasm versions are
+measured without their `r0=` report, so both do the same work. A `-` means
+tc24r's `.s` is not checked in for that demo.
+
+| Demo | C lines | HLASM lines | tc24r .s lines | hlasm .s lines | tc24r bytes | hlasm bytes | tc24r executed | hlasm executed |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| button | 6 | 15 | - | 27 | - | 39 | - | 26 |
+| demo | 51 | 82 | 212 | 210 | 367 | 372 | 840 | 798 |
+| demo10 | 14 | 27 | 100 | 101 | 180 | 187 | 265 | 163 |
+| demo11_andor | 20 | 33 | 166 | 161 | 285 | 283 | 305 | 201 |
+| demo11 | 20 | 45 | 166 | 225 | 285 | 418 | 305 | 251 |
+| demo12 | 27 | 30 | 117 | 105 | 208 | 194 | 309 | 193 |
+| demo13 | 37 | 64 | 200 | 320 | 350 | 555 | 1033 | 5356 |
+| demo14 | 26 | 33 | 176 | 141 | 298 | 260 | 393 | 226 |
+| demo15 | 26 | 58 | 200 | 202 | 334 | 359 | 367 | 260 |
+| demo16 | 21 | 28 | 122 | 141 | 217 | 265 | 275 | 185 |
+| demo2 | 31 | 34 | 140 | 126 | 245 | 243 | 151 | 137 |
+| demo21 | 35 | 45 | 219 | 332 | 382 | 585 | 397 | 863 |
+| demo23 | 22 | 44 | 116 | 119 | 206 | 235 | 273 | 171 |
+| demo25 | 30 | 49 | 173 | 134 | 284 | 255 | 330 | 186 |
+| demo26 | 72 | 78 | 370 | 296 | 564 | 528 | 710 | 424 |
+| demo28 | 25 | 37 | 159 | 104 | 244 | 201 | 360 | 164 |
+| demo3 | 39 | 30 | 159 | 140 | 288 | 265 | 339 | 217 |
+| demo34 | 24 | 35 | 234 | 112 | 346 | 218 | 435 | 172 |
+| demo35 | 25 | 30 | 128 | 89 | 200 | 172 | 331 | 153 |
+| demo38 | 21 | 48 | 204 | 125 | 307 | 249 | 403 | 181 |
+| demo39 | 12 | 14 | 1091 | 168 | 1834 | 320 | 977 | 329 |
+| demo4 | 25 | 26 | 202 | 337 | 345 | 620 | 895 | 2824 |
+| demo40 | 24 | 41 | 1453 | 197 | 2372 | 355 | 991 | 395 |
+| demo41 | 22 | 44 | 2229 | 371 | 3695 | 677 | 1952 | 882 |
+| demo42 | 31 | 52 | 1613 | 135 | 2624 | 244 | 596 | 222 |
+| demo43 | 36 | 76 | 1728 | 245 | 2813 | 441 | 1542 | 825 |
+| demo46 | 43 | 34 | 242 | 150 | 426 | 292 | 427 | 190 |
+| demo5 | 40 | 56 | 246 | 150 | 389 | 276 | 449 | 237 |
+| demo50 | 27 | 72 | 970 | 331 | 1687 | 562 | 31017 | 181968 |
+| demo51 | 14 | 26 | 850 | 93 | 1470 | 159 | 328 | 170 |
+| demo52 | 32 | 73 | 1012 | 195 | 1715 | 317 | 574 | 319 |
+| demo53 | 20 | 37 | 899 | 144 | 1550 | 236 | 408 | 246 |
+| demo54 | 18 | 37 | - | 109 | - | 186 | - | 173 |
+| demo58 | 43 | 90 | 1200 | 365 | 2094 | 600 | 603 | 304 |
+| demo6 | 28 | 39 | 126 | 124 | 253 | 252 | 248 | 162 |
+| demo63 | 30 | 80 | - | 386 | - | 650 | - | 639 |
+| demo64 | 17 | 33 | - | 65 | - | 111 | - | 58 |
+| demo7 | 40 | 42 | 240 | 285 | 397 | 497 | 417 | 556 |
+| demo8 | 35 | 26 | 130 | 117 | 255 | 239 | 600 | 378 |
+| demo9 | 13 | 28 | 47 | 46 | 81 | 76 | 10035 | 10036 |
+| hello | 13 | 10 | 72 | 38 | 126 | 73 | 619 | 237 |
+| led | 6 | 11 | - | 16 | - | 28 | - | 15 |
+| uart_tx | 10 | 13 | 59 | 45 | 99 | 88 | 129 | 62 |
+
+Over the 38 demos with both versions:
+
+- **Code size: 12,168 bytes against 29,815 (41%).**
+  - From demo39 on, tc24r includes its whole `<stdio.h>`/`<stdlib.h>`
+    library in every program that names a header, so demo41 is 3,695 bytes
+    against 677.
+  - The library's code members emit only the routines a program calls (the
+    `IFDEF NEED_<name>` pattern), and a macro such as `PUTC` costs 7
+    instructions inline instead of a call to a 25-instruction routine.
+- **Instructions executed: lower in 32 of the 38.** tc24r pushes and pops
+  around every constant it loads and turns every comparison into 0 or 1
+  before testing it. The structured macros compare and branch directly, so
+  hello runs in 237 instructions against 619 and demo34 in 172 against 435.
+- **The exception is division.** (demo9 is the sixth that is not faster: it
+  waits for an interrupt, and the two versions differ by one instruction.)
+  demo4, demo7, demo13, demo21 and demo50 run 1.3-6x longer:
+  - tc24r divides by repeated subtraction. That is fast for small quotients,
+    but it returns 0 for a negative dividend (`-17 / 5` gives 0, not -3).
+  - The library's `DIV`/`MOD` are correct for every signed 24-bit value
+    (shift and subtract, 24 steps at most, with leading zero bits skipped),
+    and that costs a few hundred instructions per call.
+  - demo50 calls `MOD` 512 times, so it alone makes the total executed count
+    210,643 against 60,628. Without demo50 the hlasm versions run fewer
+    instructions in total (28,675 against 29,611).
+- **Source lines: HLASM is 0.7-2.7x the C.** About a third of the ports
+  are within a third of the C, and several are shorter (demo3, demo8, demo46). The longer ones spell out what C hides: one load per
+  operand, a register per variable, the layout of each local.
+
+### Side by side: hello
+
+The C:
+
+```c
+// Hello World -- string constants + pointer iteration + UART TX
+
+void putc(int c) {
+    while (*(char *)0xFF0101 & 0x80) {}
+    *(char *)0xFF0100 = c;
+}
+
+void puts(char *s) {
+    while (*s) {
+        putc(*s);
+        s = s + 1;
+    }
+}
+
+int main() {
+    puts("Hello, COR24!\n");
+    return 0;
+}
+```
+
+The HLASM port, the whole program:
+
+```
+; hello.c in hlasm: print "Hello, COR24!" and return 0.
+; Output: "Hello, COR24!" then "r0=0".
+COPY cor24
+COPY frame
+COPY svc_bare
+ START
+_main:
+ PROLOG
+ WTO "Hello, COR24!\n"
+ RETURN 0
+COPY svc_bare_code
+```
+
+hlasm's output is 38 instruction and data lines and 73 bytes. tc24r's is
+72 lines and 126 bytes, because `putc` and `puts` are full
+routines with frames, and every constant is pushed and popped.
+
+<details><summary>hlasm output</summary>
+
+```
+_start:
+ la r0,_main
+ jal r1,(r0)
+_exit:
+_halt:
+ bra _halt
+_main:
+ push fp
+ push r2
+ push r1
+ mov fp,sp
+ la r0,_svc_wto
+ jal r1,(r0)
+.byte 72,101,108,108,111,44,32,67,79,82,50,52,33,10
+ .byte 0
+ la r0,0
+ mov sp,fp
+ pop r1
+ pop r2
+ pop fp
+ jmp (r1)
+_svc_wto:
+ push r2
+ mov r2,r1
+_hldo_1_top:
+ lbu r0,0(r2)
+ add r2,1
+ push r2
+ lc r2,0
+ ceq r0,r2
+ pop r2
+ brf _hldo_3_skip
+ bra _hldo_2_end
+_hldo_3_skip:
+ push r2
+ la r2,-65280
+L0008:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0008
+ sb r0,0(r2)
+ pop r2
+ bra _hldo_1_top
+_hldo_2_end:
+ mov r1,r2
+ pop r2
+ jmp (r1)
+```
+
+</details>
+
+<details><summary>tc24r output</summary>
+
+```
+        .text
+
+        .globl  _start
+_start:
+        la      r0,_main
+        jal     r1,(r0)
+_halt:
+        bra     _halt
+
+        .globl  _putc
+_putc:
+        push    fp
+        push    r2
+        push    r1
+        mov     fp,sp
+L1:
+        la      r0,16711937
+        lbu     r0,0(r0)
+        push    r0
+        la      r0,128
+        mov     r1,r0
+        pop     r0
+        and     r0,r1
+        ceq     r0,z
+        brt     L2
+        bra     L1
+L2:
+        lw      r0,9(fp)
+        push    r0
+        la      r0,16711936
+        mov     r1,r0
+        pop     r0
+        sb      r0,0(r1)
+L0:
+        mov     sp,fp
+        pop     r1
+        pop     r2
+        pop     fp
+        jmp     (r1)
+
+        .globl  _puts
+_puts:
+        push    fp
+        push    r2
+        push    r1
+        mov     fp,sp
+L4:
+        lw      r0,9(fp)
+        lbu     r0,0(r0)
+        ceq     r0,z
+        brt     L5
+        lw      r0,9(fp)
+        lbu     r0,0(r0)
+        push    r0
+        la      r0,_putc
+        jal     r1,(r0)
+        add     sp,3
+        lw      r0,9(fp)
+        push    r0
+        lc      r0,1
+        mov     r1,r0
+        pop     r0
+        add     r0,r1
+        sw      r0,9(fp)
+        bra     L4
+L5:
+L3:
+        mov     sp,fp
+        pop     r1
+        pop     r2
+        pop     fp
+        jmp     (r1)
+
+        .globl  _main
+_main:
+        push    fp
+        push    r2
+        push    r1
+        mov     fp,sp
+        la      r0,_S0
+        push    r0
+        la      r0,_puts
+        jal     r1,(r0)
+        add     sp,3
+        lc      r0,0
+        bra     L6
+L6:
+        mov     sp,fp
+        pop     r1
+        pop     r2
+        pop     fp
+        jmp     (r1)
+
+        .data
+_S0:
+        .byte   72,101,108,108,111,44,32,67,79,82,50,52,33,10,0
+```
+
+</details>
+
+### Side by side: break and continue (demo13)
+
+The loops of demo13.c are `DO`/`DOEXIT`/`ITERATE`; the source is in the
+[demo13 entry](#demo13-break-and-continue) below. Here the hlasm output is
+longer than tc24r's (320 lines against 200, 555 bytes against 350), and the
+reasons are instructive:
+
+- every `MOD r2,2` is a call to the general signed divide, where tc24r calls
+  its short `__tc24r_mod`;
+- each compare with a constant saves and restores a scratch register
+  (`push r2`/`lc r2,n`/`pop r2`) so that the generated code changes no
+  register the program uses.
+
+Both are visible in the output:
+
+<details><summary>hlasm output</summary>
+
+```
+_start:
+ la r0,_main
+ jal r1,(r0)
+_exit:
+_halt:
+ bra _halt
+_main:
+ push fp
+ push r2
+ push r1
+ mov fp,sp
+ sub sp,3
+ bra CK0005
+_chk_ok:
+ .word 0
+CK0005:
+ la r1,_chk_ok
+ lc r0,1
+ sw r0,0(r1)
+ lc r2,0
+_hldo_1_top:
+ push r1
+ lc r1,5
+ ceq r1,r2
+ pop r1
+ brt _hlif_5_skip
+ bra _hlif_3_false
+_hlif_5_skip:
+ bra _hldo_2_end
+_hlif_3_false:
+_hlif_4_end:
+ add r2,1
+ bra _hldo_1_top
+_hldo_2_end:
+ push r1
+ lc r1,5
+ ceq r1,r2
+ pop r1
+ brt _hlif_8_skip
+ bra _hlif_6_false
+_hlif_8_skip:
+ bra _hlif_7_end
+_hlif_6_false:
+ la r1,_chk_ok
+ lc r0,0
+ sw r0,0(r1)
+_hlif_7_end:
+ lc r0,0
+ sw r0,-3(fp)
+ lc r2,0
+ bra _hldo_9_top
+_hldo_9_top_far:
+ pop r2
+_hldo_9_top:
+ push r1
+ lc r1,10
+ cls r2,r1
+ pop r1
+ brt _hldo_11_skip
+ push r2
+ la r2,_hldo_10_end_far
+ jmp (r2)
+_hldo_11_skip:
+ add r2,1
+ la r1,2
+ push r1
+ push r2
+ la r0,_mod
+ jal r1,(r0)
+ add sp,6
+ push r2
+ lc r2,0
+ ceq r0,r2
+ pop r2
+ brt _hlif_14_skip
+ bra _hlif_12_false
+_hlif_14_skip:
+ bra _hldo_9_top
+_hlif_12_false:
+_hlif_13_end:
+ lw r0,-3(fp)
+ add r0,r2
+ sw r0,-3(fp)
+ push r2
+ la r2,_hldo_9_top_far
+ jmp (r2)
+ bra _hldo_10_end
+_hldo_10_end_far:
+ pop r2
+_hldo_10_end:
+ lw r0,-3(fp)
+ push r2
+ lc r2,25
+ ceq r0,r2
+ pop r2
+ brt _hlif_17_skip
+ bra _hlif_15_false
+_hlif_17_skip:
+ bra _hlif_16_end
+_hlif_15_false:
+ la r1,_chk_ok
+ lc r0,0
+ sw r0,0(r1)
+_hlif_16_end:
+ lc r2,0
+_hldo_18_top:
+ push r1
+ lc r1,100
+ cls r2,r1
+ pop r1
+ brt _hldo_20_skip
+ bra _hldo_19_end
+_hldo_20_skip:
+ push r1
+ lc r1,3
+ ceq r1,r2
+ pop r1
+ brt _hlif_23_skip
+ bra _hlif_21_false
+_hlif_23_skip:
+ bra _hldo_19_end
+_hlif_21_false:
+_hlif_22_end:
+ add r2,1
+ bra _hldo_18_top
+_hldo_19_end:
+ push r1
+ lc r1,3
+ ceq r1,r2
+ pop r1
+ brt _hlif_26_skip
+ bra _hlif_24_false
+_hlif_26_skip:
+ bra _hlif_25_end
+_hlif_24_false:
+ la r1,_chk_ok
+ lc r0,0
+ sw r0,0(r1)
+_hlif_25_end:
+ lc r0,0
+ sw r0,-3(fp)
+ lc r2,0
+ bra _hldo_27_top
+_hldo_27_top_far:
+ pop r2
+_hldo_27_top:
+ add r2,1
+ push r1
+ lc r1,5
+ cls r1,r2
+ pop r1
+ brf _hldo_29_skip
+ bra _hldo_28_end
+_hldo_29_skip:
+ la r1,2
+ push r1
+ push r2
+ la r0,_mod
+ jal r1,(r0)
+ add sp,6
+ push r2
+ lc r2,0
+ ceq r0,r2
+ pop r2
+ brt _hlif_32_skip
+ bra _hlif_30_false
+_hlif_32_skip:
+ bra _hldo_27_top
+_hlif_30_false:
+_hlif_31_end:
+ lw r0,-3(fp)
+ add r0,r2
+ sw r0,-3(fp)
+ push r2
+ la r2,_hldo_27_top_far
+ jmp (r2)
+_hldo_28_end:
+ lw r0,-3(fp)
+ push r2
+ lc r2,9
+ ceq r0,r2
+ pop r2
+ brt _hlif_35_skip
+ bra _hlif_33_false
+_hlif_35_skip:
+ bra _hlif_34_end
+_hlif_33_false:
+ la r1,_chk_ok
+ lc r0,0
+ sw r0,0(r1)
+_hlif_34_end:
+ la r1,_chk_ok
+ lw r0,0(r1)
+ push r2
+ lc r2,0
+ ceq r0,r2
+ pop r2
+ brf _hlif_38_skip
+ bra _hlif_36_false
+_hlif_38_skip:
+ la r0,_svc_wto
+ jal r1,(r0)
+.byte 68,49,51,79,75,10
+ .byte 0
+ la r0,42
+ bra _hlif_37_end
+_hlif_36_false:
+ lc r0,0
+_hlif_37_end:
+ mov sp,fp
+ pop r1
+ pop r2
+ pop fp
+ jmp (r1)
+_svc_wto:
+ push r2
+ mov r2,r1
+_hldo_39_top:
+ lbu r0,0(r2)
+ add r2,1
+ push r2
+ lc r2,0
+ ceq r0,r2
+ pop r2
+ brf _hldo_41_skip
+ bra _hldo_40_end
+_hldo_41_skip:
+ push r2
+ la r2,-65280
+L0024:
+ lb r1,1(r2)
+ cls r1,z
+ brt L0024
+ sb r0,0(r2)
+ pop r2
+ bra _hldo_39_top
+_hldo_40_end:
+ mov r1,r2
+ pop r2
+ jmp (r1)
+_mod:
+ push fp
+ push r2
+ push r1
+ mov fp,sp
+ lw r0,9(fp)
+ lw r2,12(fp)
+ push r2
+ push r0
+ la r0,_rt_sdivmod
+ jal r1,(r0)
+ add sp,6
+ la r1,_rt_rem
+ lw r0,0(r1)
+ mov sp,fp
+ pop r1
+ pop r2
+ pop fp
+ jmp (r1)
+_rt_sdivmod:
+ push fp
+ push r2
+ push r1
+ mov fp,sp
+ sub sp,6
+ lc r0,0
+ sw r0,-3(fp)
+ sw r0,-6(fp)
+ lw r2,9(fp)
+ push r1
+ lc r1,0
+ cls r2,r1
+ pop r1
+ brt _hlif_44_skip
+ bra _hlif_42_false
+_hlif_44_skip:
+ lc r0,0
+ sub r0,r2
+ mov r2,r0
+ lc r0,1
+ sw r0,-3(fp)
+ sw r0,-6(fp)
+_hlif_42_false:
+_hlif_43_end:
+ lw r1,12(fp)
+ push r2
+ lc r2,0
+ cls r1,r2
+ pop r2
+ brt _hlif_47_skip
+ bra _hlif_45_false
+_hlif_47_skip:
+ lc r0,0
+ sub r0,r1
+ mov r1,r0
+ lw r0,-3(fp)
+ push r1
+ lc r1,1
+ xor r0,r1
+ pop r1
+ sw r0,-3(fp)
+_hlif_45_false:
+_hlif_46_end:
+ push r1
+ push r2
+ la r0,_rt_udivmod
+ jal r1,(r0)
+ add sp,6
+ lw r1,-3(fp)
+ push r2
+ lc r2,0
+ ceq r1,r2
+ pop r2
+ brf _hlif_50_skip
+ bra _hlif_48_false
+_hlif_50_skip:
+ lc r1,0
+ sub r1,r0
+ mov r0,r1
+_hlif_48_false:
+_hlif_49_end:
+ sw r0,-3(fp)
+ lw r1,-6(fp)
+ push r2
+ lc r2,0
+ ceq r1,r2
+ pop r2
+ brf _hlif_53_skip
+ bra _hlif_51_false
+_hlif_53_skip:
+ la r1,_rt_rem
+ lw r2,0(r1)
+ lc r0,0
+ sub r0,r2
+ sw r0,0(r1)
+_hlif_51_false:
+_hlif_52_end:
+ lw r0,-3(fp)
+ mov sp,fp
+ pop r1
+ pop r2
+ pop fp
+ jmp (r1)
+_rt_udivmod:
+ push fp
+ push r2
+ push r1
+ mov fp,sp
+ sub sp,3
+ lw r2,9(fp)
+ lc r0,24
+ sw r0,-3(fp)
+_rt_ud_skip:
+ cls r2,z
+ brt _rt_ud_go
+ lw r0,-3(fp)
+ ceq r0,z
+ brt _rt_ud_go
+ add r0,-1
+ sw r0,-3(fp)
+ add r2,r2
+ bra _rt_ud_skip
+_rt_ud_go:
+ lc r0,0
+_rt_ud_loop:
+ lw r1,-3(fp)
+ ceq r1,z
+ brt _rt_ud_done
+ add r1,-1
+ sw r1,-3(fp)
+ add r0,r0
+ cls r2,z
+ brf _rt_ud_nobit
+ add r0,1
+_rt_ud_nobit:
+ add r2,r2
+ lw r1,12(fp)
+ clu r0,r1
+ brt _rt_ud_loop
+ sub r0,r1
+ add r2,1
+ bra _rt_ud_loop
+_rt_ud_done:
+ la r1,_rt_rem
+ sw r0,0(r1)
+ mov r0,r2
+ mov sp,fp
+ pop r1
+ pop r2
+ pop fp
+ jmp (r1)
+_rt_rem:
+ .word 0
+```
+
+</details>
+
+### Side by side: cons cells (demo43)
+
+The C routine:
+
+```c
+struct val *cons(struct val *a, struct val *d) {
+    struct val *v = (struct val *)malloc(12);
+    v->tag = 1;
+    v->car = a;
+    v->cdr = d;
+    return v;
+}
+```
+
+The HLASM routine, with the layout declared once (`DSECT cell`):
+
+```
+_cons:
+ PROLOG
+ GETMAIN r2,SIZEOF_cell
+ lc r0,1
+ sw r0,v_tag(r2)
+ ARG r0,1
+ sw r0,v_car(r2)
+ ARG r0,2
+ sw r0,v_cdr(r2)
+ RETURN r2
+```
+
+It expands to 22 instructions. tc24r's `_cons` is 45:
+
+<details><summary>hlasm output of _cons</summary>
+
+```
+_cons:
+ push fp
+ push r2
+ push r1
+ mov fp,sp
+ la r1,12
+ push r1
+ la r0,_svc_getmain
+ jal r1,(r0)
+ add sp,3
+ mov r2,r0
+ lc r0,1
+ sw r0,0(r2)
+ lw r0,9(fp)
+ sw r0,6(r2)
+ lw r0,12(fp)
+ sw r0,9(r2)
+ mov r0,r2
+ mov sp,fp
+ pop r1
+ pop r2
+ pop fp
+ jmp (r1)
+```
+
+</details>
+
+<details><summary>tc24r output of _cons</summary>
+
+```
+_cons:
+        push    fp
+        push    r2
+        push    r1
+        mov     fp,sp
+        add     sp,-3
+        lc      r0,12
+        push    r0
+        la      r0,_malloc
+        jal     r1,(r0)
+        add     sp,3
+        sw      r0,-3(fp)
+        lc      r0,1
+        push    r0
+        lw      r0,-3(fp)
+        mov     r1,r0
+        pop     r0
+        sw      r0,0(r1)
+        lw      r0,9(fp)
+        push    r0
+        lw      r0,-3(fp)
+        push    r0
+        lc      r0,6
+        pop     r1
+        add     r0,r1
+        mov     r1,r0
+        pop     r0
+        sw      r0,0(r1)
+        lw      r0,12(fp)
+        push    r0
+        lw      r0,-3(fp)
+        push    r0
+        lc      r0,9
+        pop     r1
+        add     r0,r1
+        mov     r1,r0
+        pop     r0
+        sw      r0,0(r1)
+        lw      r0,-3(fp)
+        la      r2,L157
+        jmp     (r2)
+L157:
+        mov     sp,fp
+        pop     r1
+        pop     r2
+        pop     fp
+        jmp     (r1)
+```
+
+</details>
+
+### Every macro and where the ports use it
+
+Counted from `demos/tinyc/*.hlasm` (direct calls; demo4 also calls `DIV` and
+`MOD` through a local macro). `EXIT`, `PUTS`, `PUTHEX`, `GETC` and `GETLINE`
+are exercised by the library tests in `demos/libtest/` only.
+
+| Macro | Member | Ports | Used by |
+|---|---|---:|---|
+| `START svc_bare` |  | 0 |  |
+| `PROLOG frame` |  | 0 |  |
+| `RET frame` |  | 0 |  |
+| `RETURN frame` |  | 0 |  |
+| `ARG frame` |  | 0 |  |
+| `LOCAL frame` |  | 0 |  |
+| `LOCADDR frame` |  | 0 |  |
+| `CALL frame` |  | 0 |  |
+| `ISRENTRY frame` |  | 0 |  |
+| `PUTC svc_bare` |  | 0 |  |
+| `PUTNL svc_bare` |  | 0 |  |
+| `WTO svc_bare` |  | 0 |  |
+| `PUTDEC svc_bare` |  | 0 |  |
+| `GETMAIN svc_bare` |  | 0 |  |
+| `FREEMAIN svc_bare` |  | 0 |  |
+| `LEDON board` |  | 0 |  |
+| `BUTTON board` |  | 0 |  |
+| `STR data` |  | 0 |  |
+| `WORDS data` |  | 0 |  |
+| `BYTES data` |  | 0 |  |
+| `SPACE data` |  | 0 |  |
+| `CHECKINIT check` |  | 0 |  |
+| `CHECK check` |  | 0 |  |
+| `CHECKEND check` |  | 0 |  |
+| `REQUIRE check` |  | 0 |  |
+| `DIV rt` |  | 0 |  |
+| `MOD rt` |  | 0 |  |
+| `RTCALL rt` |  | 0 |  |
+| `DSECT struct` |  | 0 |  |
+| `USECT struct` |  | 0 |  |
+| `FIELD struct` |  | 0 |  |
+| `DEND struct` |  | 0 |  |
 
 ## Ported demos
 

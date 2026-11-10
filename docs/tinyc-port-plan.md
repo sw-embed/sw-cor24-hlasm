@@ -1,6 +1,8 @@
 # Porting the tiny-C demos to hlasm
 
-Status: plan (2026-11-07, saga `tinyc-macro-ports` step 9).
+Status: done (2026-11-10). Written as the plan in saga `tinyc-macro-ports`
+step 9; all 42 ports landed in steps 12-17. Results are in
+[c-demos-in-hlasm.md](c-demos-in-hlasm.md).
 
 This plan covers porting the example programs in
 `../sw-cor24-x-tinyc/demos`, written in C and compiled by tc24r, to hlasm

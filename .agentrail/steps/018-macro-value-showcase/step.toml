@@ -1,6 +1,6 @@
 number = 18
 slug = "macro-value-showcase"
-status = "pending"
+status = "in-progress"
 description = "Finish docs/c-demos-in-hlasm.md as the showcase: for several ported examples,..."
 role = "production"
 context_files = []

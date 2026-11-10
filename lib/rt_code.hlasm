@@ -78,32 +78,48 @@ ENDIF
  RET
 ENDIFASM
 
-; _rt_udivmod(a,b): unsigned shift-and-subtract division, 24 steps;
-; quotient in r0, remainder in _rt_rem
+; _rt_udivmod(a,b): unsigned shift-and-subtract division; quotient in r0,
+; remainder in _rt_rem. The dividend's leading zero bits are skipped first
+; (they leave the remainder 0), so small dividends take few steps. Written
+; as a plain loop: it is the inner loop of every DIV and MOD.
 IFDEF NEED_rt_udivmod
 _rt_udivmod:
  LOCAL UD_I,3
  PROLOG
  ARG r2,1
- lc r0,0
- lc r1,24
- sw r1,UD_I(fp)
-DO
- add r0,r0
-IF cc_lt,r2,0
- add r0,1
-ENDIF
+ lc r0,24
+ sw r0,UD_I(fp)
+_rt_ud_skip:
+ cls r2,z
+ brt _rt_ud_go
+ lw r0,UD_I(fp)
+ ceq r0,z
+ brt _rt_ud_go
+ add r0,-1
+ sw r0,UD_I(fp)
  add r2,r2
- ARG r1,2
-IF cc_geu,r0,r1
- sub r0,r1
- add r2,1
-ENDIF
+ bra _rt_ud_skip
+_rt_ud_go:
+ lc r0,0
+_rt_ud_loop:
  lw r1,UD_I(fp)
+ ceq r1,z
+ brt _rt_ud_done
  add r1,-1
  sw r1,UD_I(fp)
- DOEXIT cc_eq,r1,0
-ENDDO
+ add r0,r0
+ cls r2,z
+ brf _rt_ud_nobit
+ add r0,1
+_rt_ud_nobit:
+ add r2,r2
+ ARG r1,2
+ clu r0,r1
+ brt _rt_ud_loop
+ sub r0,r1
+ add r2,1
+ bra _rt_ud_loop
+_rt_ud_done:
  la r1,_rt_rem
  sw r0,0(r1)
  mov r0,r2

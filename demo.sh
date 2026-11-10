@@ -4,6 +4,7 @@
 #   ./demo.sh           Run automated demo
 #   ./demo.sh test      Run test suite
 #   ./demo.sh bootstrap Run bootstrap source-set proof
+#   ./demo.sh c-demos   Run the tiny-C demos ported to hlasm (demos/tinyc/)
 #   ./demo.sh repl      Interactive (future)
 
 set -euo pipefail
@@ -19,12 +20,17 @@ case "${1:-demo}" in
     bootstrap)
         echo "=== sw-cor24-hlasm Bootstrap Demo ==="
         echo ""
-        ./build.sh bootstrap bootstrap/hlasm0.sourceset 460000 2>&1 \
+        ./build.sh bootstrap bootstrap/hlasm0.sourceset 1000000 2>&1 \
             | grep "^UART output:" -A 20 | tr '\n' ' ' \
             | sed -e 's/.*UART output: //' -e 's/Executed.*//' \
             | sed -e 's/  */ /g' -e 's/^ //;s/ $//'
         echo ""
         echo "To run tests: ./demo.sh test"
+        ;;
+    c-demos)
+        echo "=== The tiny-C demos in hlasm (docs/c-demos-in-hlasm.md) ==="
+        echo ""
+        exec scripts/c-demos.sh
         ;;
     repl)
         echo "=== sw-cor24-hlasm REPL (not yet implemented) ==="
@@ -61,7 +67,7 @@ case "${1:-demo}" in
         echo "To run tests: ./demo.sh test"
         ;;
     *)
-        echo "Usage: $0 [demo|test|bootstrap|repl]"
+        echo "Usage: $0 [demo|test|bootstrap|c-demos|repl]"
         exit 1
         ;;
 esac
