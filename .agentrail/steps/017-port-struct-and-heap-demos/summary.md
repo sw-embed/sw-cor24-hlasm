@@ -1,0 +1,1 @@
+Ported batch 4 (demo23, 25, 28, 34, 35, 38, 40, 42, 43) on DSECT/USECT/FIELD and GETMAIN, with hlasm_e2e_tinyc_* tests and doc entries; all 42 planned ports done. Test timeouts set to 300s. 131/131 pass.
