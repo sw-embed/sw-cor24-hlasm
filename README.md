@@ -72,10 +72,12 @@ port plan.
 
 Not implemented yet:
 
-- A sw-tos target for the system-services macros. Only the bare-metal target
-  exists.
-- hlasm written in HLASM ([docs/bootstrap-hlasm.md](docs/bootstrap-hlasm.md)).
-  Every prerequisite is met, but the work has not started.
+- A sw-tos target for the system-services macros, so the same programs run
+  under sw-tos. Planned in [docs/svc-swtos-plan.md](docs/svc-swtos-plan.md).
+  Only the bare-metal target exists.
+- hlasm written in HLASM, reaching a fixed point. Planned in
+  [docs/bootstrap-hlasm.md](docs/bootstrap-hlasm.md); every prerequisite is
+  met, but the work has not started.
 
 ## Opt-in Source Switches
 
@@ -164,6 +166,8 @@ reg-rs/        -- reg-rs test specifications and baselines
 - [Bootstrap Plan](docs/bootstrap.md) -- staged self-hosting path and blockers
 - [hlasm in HLASM](docs/bootstrap-hlasm.md) -- plan for rewriting hlasm in its
   own language
+- [sw-tos services target](docs/svc-swtos-plan.md) -- plan for running the same
+  HLASM programs under sw-tos
 - [PRD](docs/prd.md) -- product requirements and scope
 - [Design](docs/design.md) -- syntax, lowering rules, data structures
 - [Plan](docs/plan.md) -- the original (phase 1) implementation roadmap

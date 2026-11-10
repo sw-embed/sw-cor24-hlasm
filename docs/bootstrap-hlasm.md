@@ -1,7 +1,9 @@
 # Bootstrapping hlasm in HLASM (future saga plan)
 
-Status: plan only. This saga starts after the limits work in
-`docs/limits-and-lifting-plan.md` has landed (see "Prerequisites").
+Status: plan only, no code yet (refreshed 2026-11-10, after release 0.1.0).
+Every prerequisite below is met, so the saga can start when it is scheduled.
+The services target for sw-tos is a separate plan
+([svc-swtos-plan.md](svc-swtos-plan.md)); this one does not depend on it.
 
 ## Goal
 
@@ -36,7 +38,30 @@ require: hlasm1.s == hlasm2.s (byte-identical text)
 Rewriting machine-code generation in HLASM, so that cor24-asm is no longer
 needed, is out of scope.
 
-## Starting point (measured 2026-10-31)
+## Starting point (measured 2026-10-31; updated 2026-11-10)
+
+As of 0.1.0, `hlasm.s` is 15,410 lines (210 KB of text), with 1,258 labels
+and 842 `jal` call sites, and assembles to a 23.5 KB image. The rest of this
+section is the original measurement; the idioms and costs it describes still
+hold.
+
+What the tiny-C saga added that the port can use directly:
+
+- **`lib/` (frame, data, struct, check).** The routine idioms are already
+  macros in `lib/frame.hlasm` (`PROLOG`, `RET`, `RETURN`, `ARG`, `LOCAL`,
+  `LOCADDR`, `CALL`). Phase 3 should start from these rather than a new
+  `src/macros.hlasm`, adding variants where gate A needs byte-identical
+  expansions. For example, `PUSHARG` loads constants through r1, while many
+  `hlasm.s` call sites use r0.
+- **AND/OR compound conditions and the full set of condition forms**
+  (`cc_le` ... `cc_geu`), for the token and keyword dispatch chains.
+- **`DSECT`/`FIELD`** for hlasm's own tables: symbol, macro and expansion
+  frames, source descriptors, the config block.
+- **`IFSAME`/`IFDIFF` and `ERROR`** for macros that check their arguments.
+- **`scripts/hlasm-e2e.sh`** and the 131-test suite, which become gate B.
+
+Original measurement (2026-10-31):
+
 
 - `hlasm.s`: 12,268 lines, 159 KB of text.
   - 937 labels, 643 `jal` call sites, ~820 data directives.

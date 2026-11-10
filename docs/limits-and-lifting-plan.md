@@ -323,11 +323,11 @@ more gaps the library needs, M8 and M9, and inserted the step
 `condition-forms-and-arg-tests` for them ahead of the macro library (saga
 step 10, done).
 
-**Future saga (plsw-readiness):**
-- M5 compound conditions and M6 DSECT/FIELD;
-- the sw-tos services target and buffer I/O;
+**Future saga (plsw-readiness):** (M5 and M6 were pulled into tinyc-macro-ports
+and are done.)
+- the sw-tos services target and buffer I/O: [svc-swtos-plan.md](svc-swtos-plan.md);
 - UART framing library (`UFRAME_*`), and hlasm accepting framed input;
 - G7 cost wins.
 
-**Future saga (self-host):** `docs/bootstrap-hlasm.md`. Its prerequisites
-are the five steps above.
+**Future saga (self-host):** [bootstrap-hlasm.md](bootstrap-hlasm.md). Its
+prerequisites are the five steps above, all done.
